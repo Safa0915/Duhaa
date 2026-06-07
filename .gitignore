@@ -1,34 +1,33 @@
-# Dependencies
+# Node (prayer-verify harness)
 node_modules/
-.pnp
-.pnp.js
 
-# React Native / Expo
-.expo/
-dist/
-web-build/
-*.jsbundle
-ios/Pods/
-ios/build/
-android/build/
-android/app/build/
-.gradle/
+# macOS
+.DS_Store
 
-# Native / Xcode
+# Xcode — user-specific state & build artifacts
+xcuserdata/
 *.xcuserstate
+*.xcscmblueprint
 DerivedData/
+build/
 *.hmap
 *.ipa
-*.dSYM.zip
 *.dSYM
+*.dSYM.zip
 
-# Audio masters / large media (recitation, adhan files) — use Git LFS or keep out of repo
+# Swift Package Manager
+#   Keep shared Package.resolved tracked (reproducible builds);
+#   it lives under xcshareddata/swiftpm and is NOT matched below.
+.swiftpm/
+.build/
+
+# Audio masters / large media (recitation, adhan files) — keep out of repo.
+# Ship-ready compressed audio can be force-added intentionally (git add -f).
 *.wav
 *.aiff
 *.flac
-# (note: ship-ready compressed audio can be force-added intentionally)
 
-# Env / secrets
+# Env / secrets / signing
 .env
 .env.*
 *.pem
@@ -36,15 +35,8 @@ DerivedData/
 *.p12
 *.mobileprovision
 
-# OS
-.DS_Store
-Thumbs.db
-
 # Logs
 *.log
-npm-debug.*
-yarn-debug.*
-yarn-error.*
 
 # IDE
 .idea/
