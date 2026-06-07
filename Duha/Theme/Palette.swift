@@ -48,13 +48,14 @@ enum AppTheme: String, CaseIterable, Identifiable {
                 prayerTime: Color.white.opacity(0.85),
                 colorScheme: .dark, isDark: true)
 
-        case .light: // soft warm "dawn"
-            let ink = Color(hex: 0x222A36)
+        case .light: // soft warm "dawn" — tuned for contrast on the cream bg
+            let ink = Color(hex: 0x1E2530)
             return ThemeColors(
-                pageBg: Color(hex: 0xE7DFD1), appBg: Color(hex: 0xF4EFE6),
-                gold: Color(hex: 0xC2901C), blue: Color(hex: 0x2E6E94),
-                card: Color.black.opacity(0.045), cardBorder: Color.black.opacity(0.10),
-                prayerTime: ink.opacity(0.85),
+                pageBg: Color(hex: 0xDED4C2), appBg: Color(hex: 0xECE4D6),
+                gold: Color(hex: 0xAD7A0A), blue: Color(hex: 0x215A7C),
+                // Lighter, near-white cards so they read as raised surfaces, with a firmer edge.
+                card: Color.white.opacity(0.66), cardBorder: Color.black.opacity(0.13),
+                prayerTime: ink.opacity(0.92),
                 colorScheme: .light, isDark: false)
         }
     }
