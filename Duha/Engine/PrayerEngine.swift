@@ -26,7 +26,7 @@ struct PrayerConfig: Equatable {
 }
 
 /// Per-prayer manual offsets, in minutes (may be negative).
-struct PrayerOffsets: Equatable {
+struct PrayerOffsets: Equatable, Codable {
     var fajr = 0
     var sunrise = 0
     var dhuhr = 0

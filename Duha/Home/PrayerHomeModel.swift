@@ -40,8 +40,10 @@ struct PrayerRowData: Identifiable {
 struct HomeDisplay {
     var hasData = false
     var locationName = ""
-    var hijri = ""
-    var gregorian = ""
+    /// Smaller date in the header; larger date under the clock. Which is Hijri vs
+    /// Gregorian depends on the user's "primary date" setting (§12).
+    var headerDate = ""
+    var heroDate = ""
     var clock = ""
     var period = ""
     var nextName = ""
@@ -56,14 +58,10 @@ struct HomeDisplay {
 
 // MARK: - Model
 
-/// Turns engine output + the active location into the home screen's display data.
-/// Ticks a 1-second clock so the countdown stays live. Location-agnostic: the
-/// caller passes in the `ActiveLocation` to render for (see `display(for:)`).
+/// Turns engine output + the active location + the user's settings into the home
+/// screen's display data. Ticks a 1-second clock so the countdown stays live.
 @Observable
 final class PrayerHomeModel {
-
-    /// Calculation settings — defaults for now; Settings (Slice 4) will own these.
-    var config = PrayerConfig()
 
     /// "Now", refreshed every second to keep the countdown moving.
     var now = Date()
@@ -80,25 +78,32 @@ final class PrayerHomeModel {
 
     // MARK: Snapshot the view reads
 
-    func display(for location: ActiveLocation) -> HomeDisplay {
+    func display(for location: ActiveLocation,
+                 config: PrayerConfig,
+                 hijriOffsetDays: Int,
+                 hijriIsPrimary: Bool) -> HomeDisplay {
         let tz = location.timeZone
         var d = HomeDisplay()
         d.locationName = location.name
-        d.hijri = hijri(now, tz)
-        d.gregorian = format("EEEE, d MMMM yyyy", now, tz)
+
+        let hijriStr = hijri(now, tz, offsetDays: hijriOffsetDays)
+        let gregorianStr = format("EEEE, d MMMM yyyy", now, tz)
+        d.headerDate = hijriIsPrimary ? gregorianStr : hijriStr
+        d.heroDate = hijriIsPrimary ? hijriStr : gregorianStr
+
         d.clock = format("h:mm", now, tz)
         d.period = format("a", now, tz)
 
-        guard let today = times(location, dayOffset: 0) else { return d } // polar fallback: header only
+        guard let today = times(location, config, dayOffset: 0) else { return d } // polar fallback
         d.hasData = true
 
         // A timeline spanning yesterday's Isha → today's five → tomorrow's Fajr,
         // so "previous" and "next" resolve correctly at any hour.
         var timeline: [(Prayer, Date)] = []
-        if let y = times(location, dayOffset: -1) { timeline.append((.isha, y.isha)) }
+        if let y = times(location, config, dayOffset: -1) { timeline.append((.isha, y.isha)) }
         timeline += [(.fajr, today.fajr), (.dhuhr, today.dhuhr), (.asr, today.asr),
                      (.maghrib, today.maghrib), (.isha, today.isha)]
-        if let t = times(location, dayOffset: 1) { timeline.append((.fajr, t.fajr)) }
+        if let t = times(location, config, dayOffset: 1) { timeline.append((.fajr, t.fajr)) }
         timeline.sort { $0.1 < $1.1 }
 
         let next = timeline.first { $0.1 > now }
@@ -145,7 +150,7 @@ final class PrayerHomeModel {
     // MARK: Engine access
 
     /// Times for the day `offset` days from now (0 = today), in the location's zone.
-    private func times(_ location: ActiveLocation, dayOffset: Int) -> DuhaPrayerTimes? {
+    private func times(_ location: ActiveLocation, _ config: PrayerConfig, dayOffset: Int) -> DuhaPrayerTimes? {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = location.timeZone
         guard let day = calendar.date(byAdding: .day, value: dayOffset, to: now) else { return nil }
@@ -189,12 +194,15 @@ final class PrayerHomeModel {
         return f.string(from: date)
     }
 
-    private func hijri(_ date: Date, _ tz: TimeZone) -> String {
+    private func hijri(_ date: Date, _ tz: TimeZone, offsetDays: Int) -> String {
+        var calendar = Calendar(identifier: .islamicUmmAlQura)
+        calendar.timeZone = tz
+        let adjusted = calendar.date(byAdding: .day, value: offsetDays, to: date) ?? date
         let f = DateFormatter()
-        f.calendar = Calendar(identifier: .islamicUmmAlQura)
+        f.calendar = calendar
         f.locale = Locale(identifier: "en_US_POSIX")
         f.timeZone = tz
         f.dateFormat = "d MMMM yyyy"
-        return f.string(from: date)
+        return f.string(from: adjusted)
     }
 }

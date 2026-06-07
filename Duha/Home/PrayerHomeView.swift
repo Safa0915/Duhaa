@@ -5,17 +5,36 @@ import SwiftUI
 /// all on the locked celestial design (design/design-1-celestial.html).
 struct PrayerHomeView: View {
     @Environment(LocationProvider.self) private var location
+    @Environment(SettingsStore.self) private var settings
     @State private var model = PrayerHomeModel()
     @State private var showingLocationPicker = false
+    @State private var showingSettings = false
 
     var body: some View {
-        let d = model.display(for: location.active)
+        let d = model.display(for: location.active,
+                              config: settings.prayerConfig,
+                              hijriOffsetDays: settings.hijriOffsetDays,
+                              hijriIsPrimary: settings.hijriIsPrimary)
 
         ZStack {
             CelestialBackground()
 
             ScrollView {
                 VStack(spacing: 0) {
+                    HStack {
+                        Spacer()
+                        Button {
+                            showingSettings = true
+                        } label: {
+                            Image(systemName: "gearshape")
+                                .font(.system(size: 18))
+                                .foregroundStyle(Palette.blue.opacity(0.8))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.horizontal, 22)
+                    .padding(.top, 4)
+
                     header(d)
                     hero(d)
 
@@ -38,6 +57,9 @@ struct PrayerHomeView: View {
         .preferredColorScheme(.dark)
         .sheet(isPresented: $showingLocationPicker) {
             LocationPickerView()
+        }
+        .sheet(isPresented: $showingSettings) {
+            SettingsView()
         }
     }
 
@@ -62,7 +84,7 @@ struct PrayerHomeView: View {
             }
             .buttonStyle(.plain)
 
-            Text(d.hijri)
+            Text(d.headerDate)
                 .font(.system(size: 12))
                 .foregroundStyle(Palette.blue.opacity(0.75))
         }
@@ -93,7 +115,7 @@ struct PrayerHomeView: View {
                     .foregroundStyle(.white.opacity(0.7))
             }
 
-            Text(d.gregorian.uppercased())
+            Text(d.heroDate.uppercased())
                 .font(.system(size: 13))
                 .tracking(0.5)
                 .foregroundStyle(Palette.blue.opacity(0.75))
@@ -105,4 +127,5 @@ struct PrayerHomeView: View {
 #Preview {
     PrayerHomeView()
         .environment(LocationProvider())
+        .environment(SettingsStore())
 }
