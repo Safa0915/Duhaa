@@ -10,7 +10,7 @@ struct DuhaApp: App {
 
     var body: some Scene {
         WindowGroup {
-            PrayerHomeView()
+            MainTabView()
                 .environment(location)
                 .environment(settings)
                 .environment(notifications)
