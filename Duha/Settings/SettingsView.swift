@@ -15,6 +15,14 @@ struct SettingsView: View {
 
         NavigationStack {
             Form {
+                Section {
+                    NavigationLink {
+                        NotificationSettingsView()
+                    } label: {
+                        Label("Notifications", systemImage: "bell.badge")
+                    }
+                }
+
                 Section("Calculation Method") {
                     Picker("Method", selection: $store.method) {
                         ForEach(CalcMethod.allCases) { method in
