@@ -6,10 +6,14 @@ import SwiftUI
 struct PrayerHomeView: View {
     @Environment(LocationProvider.self) private var location
     @Environment(SettingsStore.self) private var settings
+    @Environment(PrayerTracker.self) private var tracker
     @State private var model = PrayerHomeModel()
     @State private var showingLocationPicker = false
     @State private var showingSettings = false
     @State private var moonBreath = false
+    @State private var toast: String?
+    @State private var toastToken = 0
+    @State private var welcomeBack: String?
 
     var body: some View {
         let d = model.display(for: location.active,
@@ -39,14 +43,26 @@ struct PrayerHomeView: View {
                     header(d)
                     hero(d)
 
+                    if let welcomeBack {
+                        WelcomeBackBanner(message: welcomeBack) {
+                            withAnimation { self.welcomeBack = nil }
+                        }
+                        .padding(.horizontal, 22).padding(.top, 16)
+                    }
+
                     if d.hasData {
                         NextPrayerBanner(nextName: d.nextName, countdown: d.countdown,
                                          progress: d.progress, prevLabel: d.prevLabel,
                                          nextLabel: d.nextLabel)
                             .padding(.horizontal, 22).padding(.top, 20)
 
-                        PrayersCard(rows: d.rows)
-                            .padding(.horizontal, 22).padding(.top, 16)
+                        PrayersCard(rows: d.rows, dayKey: d.dayKey) { _, nowPrayed in
+                            if nowPrayed { showToast(Encouragements.afterPrayerMessage()) }
+                        }
+                        .padding(.horizontal, 22).padding(.top, 16)
+
+                        TodayProgressCard(dayKey: d.dayKey, week: d.week)
+                            .padding(.horizontal, 22).padding(.top, 14)
 
                         NightCard(tahajjud: d.tahajjud, islamicMidnight: d.islamicMidnight)
                             .padding(.horizontal, 22).padding(.top, 14)
@@ -61,6 +77,40 @@ struct PrayerHomeView: View {
         }
         .sheet(isPresented: $showingSettings) {
             SettingsView()
+        }
+        .overlay(alignment: .bottom) {
+            if let toast {
+                Text(toast)
+                    .font(.system(size: 14, weight: .medium))
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 22).padding(.vertical, 14)
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+                    .overlay(RoundedRectangle(cornerRadius: 16).stroke(Palette.gold.opacity(0.35), lineWidth: 1))
+                    .shadow(color: .black.opacity(0.4), radius: 14)
+                    .padding(.horizontal, 30).padding(.bottom, 46)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .animation(.spring(duration: 0.4), value: toast)
+        .task { evaluateWelcomeBack() }
+    }
+
+    // MARK: Marking + welcome-back
+
+    private func showToast(_ message: String) {
+        toast = message
+        toastToken += 1
+        let token = toastToken
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.4) {
+            if toastToken == token { withAnimation { toast = nil } }
+        }
+    }
+
+    private func evaluateWelcomeBack() {
+        let todayKey = PrayerTracker.dayKey(Date(), location.active.timeZone)
+        if let gap = tracker.recordOpen(today: todayKey), gap >= 2 {
+            welcomeBack = Encouragements.welcomeBackMessage()
         }
     }
 
@@ -133,4 +183,36 @@ struct PrayerHomeView: View {
     PrayerHomeView()
         .environment(LocationProvider())
         .environment(SettingsStore())
+        .environment(PrayerTracker())
+}
+
+/// A warm, dismissible welcome for someone returning after a gap (spec §5).
+private struct WelcomeBackBanner: View {
+    let message: String
+    let onDismiss: () -> Void
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "sun.haze.fill")
+                .font(.system(size: 18))
+                .foregroundStyle(Palette.gold)
+            Text(message)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(.white.opacity(0.92))
+            Spacer(minLength: 6)
+            Button(action: onDismiss) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(Palette.blue.opacity(0.7))
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 16).padding(.vertical, 14)
+        .background(
+            LinearGradient(colors: [Palette.gold.opacity(0.16), Palette.gold.opacity(0.06)],
+                           startPoint: .topLeading, endPoint: .bottomTrailing)
+        )
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(Palette.gold.opacity(0.3), lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
 }

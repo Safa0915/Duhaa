@@ -190,6 +190,9 @@ struct NextPrayerBanner: View {
 
 struct PrayersCard: View {
     let rows: [PrayerRowData]
+    let dayKey: String
+    /// Fires when a prayer is tapped to mark/unmark; Bool = now prayed.
+    let onMark: (Prayer, Bool) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -202,7 +205,7 @@ struct PrayersCard: View {
             VStack(spacing: 0) {
                 ForEach(Array(rows.enumerated()), id: \.element.id) { index, row in
                     if index > 0 { Divider().overlay(Color.white.opacity(0.09)) }
-                    PrayerRowView(row: row)
+                    PrayerRowView(row: row, dayKey: dayKey, onMark: onMark)
                 }
             }
             .background(Palette.card)
@@ -213,48 +216,51 @@ struct PrayersCard: View {
 }
 
 private struct PrayerRowView: View {
+    @Environment(PrayerTracker.self) private var tracker
     let row: PrayerRowData
+    let dayKey: String
+    let onMark: (Prayer, Bool) -> Void
 
     private var isNext: Bool { row.state == .next }
+    private var isPrayed: Bool { tracker.isMarked(row.prayer, dayKey: dayKey) }
+    /// Softly de-emphasise a passed-and-unmarked prayer — gentle, never a scold.
+    private var contentOpacity: Double { isPrayed ? 1 : (row.state == .passed ? 0.5 : 1) }
 
     var body: some View {
         HStack(spacing: 13) {
-            RoundedRectangle(cornerRadius: 10)
-                .fill(isNext ? Palette.gold.opacity(0.12) : Color.white.opacity(0.05))
-                .frame(width: 34, height: 34)
-                .overlay(
-                    Image(systemName: row.prayer.icon)
-                        .font(.system(size: 15))
-                        .foregroundStyle(isNext ? Palette.gold : Palette.blue)
-                )
+            HStack(spacing: 13) {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(isNext ? Palette.gold.opacity(0.12) : Color.white.opacity(0.05))
+                    .frame(width: 34, height: 34)
+                    .overlay(
+                        Image(systemName: row.prayer.icon)
+                            .font(.system(size: 15))
+                            .foregroundStyle(isNext ? Palette.gold : Palette.blue)
+                    )
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(row.prayer.rawValue)
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundStyle(.white)
-                if let sub = row.sub {
-                    Text(sub)
-                        .font(.system(size: 11))
-                        .foregroundStyle(Palette.blue.opacity(0.45))
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 6) {
+                        Text(row.prayer.rawValue)
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundStyle(.white)
+                        if isNext { nextBadge }
+                    }
+                    if let sub = row.sub {
+                        Text(sub)
+                            .font(.system(size: 11))
+                            .foregroundStyle(Palette.blue.opacity(0.45))
+                    }
                 }
+
+                Spacer()
+
+                Text(row.time)
+                    .font(.system(size: isNext ? 16 : 15, weight: isNext ? .semibold : .medium))
+                    .foregroundStyle(isNext ? Palette.gold : Palette.prayerTime)
             }
+            .opacity(contentOpacity)
 
-            Spacer()
-
-            Text(row.time)
-                .font(.system(size: isNext ? 16 : 15, weight: isNext ? .semibold : .medium))
-                .foregroundStyle(isNext ? Palette.gold : Palette.prayerTime)
-
-            if isNext {
-                Text("NEXT")
-                    .font(.system(size: 10, weight: .semibold))
-                    .tracking(0.5)
-                    .foregroundStyle(Palette.gold)
-                    .padding(.horizontal, 7).padding(.vertical, 2)
-                    .background(Palette.gold.opacity(0.15))
-                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(Palette.gold.opacity(0.3), lineWidth: 1))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-            }
+            markButton
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 15)
@@ -266,7 +272,31 @@ private struct PrayerRowView: View {
                 }
             }
         }
-        .opacity(row.state == .passed ? 0.38 : 1)
+    }
+
+    private var markButton: some View {
+        Button {
+            let nowPrayed = tracker.toggle(row.prayer, dayKey: dayKey)
+            onMark(row.prayer, nowPrayed)
+        } label: {
+            Image(systemName: isPrayed ? "checkmark.circle.fill" : "circle")
+                .font(.system(size: 22))
+                .foregroundStyle(isPrayed ? Palette.gold : Color.white.opacity(0.22))
+                .symbolEffect(.bounce, value: isPrayed)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(isPrayed ? "\(row.prayer.rawValue) prayed" : "Mark \(row.prayer.rawValue) as prayed")
+    }
+
+    private var nextBadge: some View {
+        Text("NEXT")
+            .font(.system(size: 10, weight: .semibold))
+            .tracking(0.5)
+            .foregroundStyle(Palette.gold)
+            .padding(.horizontal, 7).padding(.vertical, 2)
+            .background(Palette.gold.opacity(0.15))
+            .overlay(RoundedRectangle(cornerRadius: 6).stroke(Palette.gold.opacity(0.3), lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: 6))
     }
 }
 

@@ -6,6 +6,7 @@ struct DuhaApp: App {
     @State private var location = LocationProvider()
     @State private var settings = SettingsStore()
     @State private var notifications = NotificationSettings()
+    @State private var tracker = PrayerTracker()
 
     var body: some Scene {
         WindowGroup {
@@ -13,6 +14,7 @@ struct DuhaApp: App {
                 .environment(location)
                 .environment(settings)
                 .environment(notifications)
+                .environment(tracker)
                 .task {
                     location.start()
                     await NotificationScheduler.requestAuthorization()

@@ -35,11 +35,21 @@ struct PrayerRowData: Identifiable {
     var id: String { prayer.rawValue }
 }
 
+/// One day in the 7-day progress strip.
+struct DayRef: Identifiable {
+    let key: String      // "yyyy-MM-dd"
+    let letter: String   // narrow weekday letter, e.g. "M"
+    let isToday: Bool
+    var id: String { key }
+}
+
 /// A single immutable snapshot the view renders from. Building it once per render
 /// keeps all the date math in one place (and off the view).
 struct HomeDisplay {
     var hasData = false
     var locationName = ""
+    var dayKey = ""
+    var week: [DayRef] = []
     /// Smaller date in the header; larger date under the clock. Which is Hijri vs
     /// Gregorian depends on the user's "primary date" setting (§12).
     var headerDate = ""
@@ -85,6 +95,8 @@ final class PrayerHomeModel {
         let tz = location.timeZone
         var d = HomeDisplay()
         d.locationName = location.name
+        d.dayKey = PrayerTracker.dayKey(now, tz)
+        d.week = weekRefs(now, tz, todayKey: d.dayKey)
 
         let hijriStr = hijri(now, tz, offsetDays: hijriOffsetDays)
         let gregorianStr = format("EEEE, d MMMM yyyy", now, tz)
@@ -191,6 +203,24 @@ final class PrayerHomeModel {
         f.locale = Locale(identifier: "en_US_POSIX")
         f.timeZone = tz
         f.dateFormat = pattern
+        return f.string(from: date)
+    }
+
+    private func weekRefs(_ now: Date, _ tz: TimeZone, todayKey: String) -> [DayRef] {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = tz
+        return (0..<7).reversed().compactMap { offset in
+            guard let day = calendar.date(byAdding: .day, value: -offset, to: now) else { return nil }
+            let key = PrayerTracker.dayKey(day, tz)
+            return DayRef(key: key, letter: weekdayLetter(day, tz), isToday: key == todayKey)
+        }
+    }
+
+    private func weekdayLetter(_ date: Date, _ tz: TimeZone) -> String {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US")
+        f.timeZone = tz
+        f.dateFormat = "EEEEE"
         return f.string(from: date)
     }
 
