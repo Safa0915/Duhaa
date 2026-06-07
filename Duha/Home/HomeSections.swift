@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation
 
 // MARK: - Background
 
@@ -18,28 +19,110 @@ struct CelestialBackground: View {
     }
 }
 
-/// A subtle, fixed scatter of stars across the upper portion of the screen.
-private struct StarField: View {
-    // (xFraction, yFraction, radius, opacity, color)
-    private let stars: [(Double, Double, Double, Double, Color)] = [
-        (0.11, 0.10, 1.0, 0.6, Palette.blue), (0.22, 0.07, 0.7, 0.5, Palette.gold),
-        (0.33, 0.11, 1.2, 0.3, .white),       (0.79, 0.08, 0.8, 0.5, Palette.blue),
-        (0.90, 0.12, 1.0, 0.3, .white),       (0.85, 0.16, 0.6, 0.4, Palette.gold),
-        (0.15, 0.19, 0.7, 0.25, .white),      (0.95, 0.20, 0.8, 0.4, Palette.blue),
-        (0.05, 0.24, 1.0, 0.2, .white),       (0.44, 0.06, 0.6, 0.35, Palette.gold),
-        (0.56, 0.09, 0.5, 0.3, .white),       (0.68, 0.05, 0.9, 0.45, Palette.blue),
-    ]
+/// One star's fixed properties. Position drifts slowly; opacity twinkles.
+private struct StarSpec {
+    let x: CGFloat            // 0…1 of width
+    let y: CGFloat            // 0…1 of height
+    let radius: CGFloat
+    let baseOpacity: Double
+    let twinkleSpeed: Double
+    let phase: Double
+    let drift: Double         // fractions of height per second (tiny)
+    let color: Color
+}
 
+/// A tiny deterministic RNG so the star layout stays put across the home
+/// screen's per-second redraws (no jumping).
+private struct SeededGenerator: RandomNumberGenerator {
+    private var state: UInt64
+    init(seed: UInt64) { state = seed == 0 ? 0x9E3779B97F4A7C15 : seed }
+    mutating func next() -> UInt64 {
+        state ^= state << 13; state ^= state >> 7; state ^= state << 17
+        return state
+    }
+}
+
+private enum StarFactory {
+    /// Generated once. Density/brightness biased toward the top (the "sky").
+    static let stars: [StarSpec] = {
+        var rng = SeededGenerator(seed: 0xD002_DABA)
+        return (0..<55).map { _ in
+            let y = CGFloat(Double.random(in: 0...1, using: &rng))
+            let topFactor = 1.0 - Double(y) * 0.6            // fade lower stars
+            let hue = Double.random(in: 0...1, using: &rng)
+            let color: Color = hue < 0.7 ? .white : (hue < 0.86 ? Palette.blue : Palette.gold)
+            return StarSpec(
+                x: CGFloat(Double.random(in: 0...1, using: &rng)),
+                y: y,
+                radius: CGFloat(Double.random(in: 0.6...1.7, using: &rng)),
+                baseOpacity: Double.random(in: 0.25...0.85, using: &rng) * topFactor,
+                twinkleSpeed: Double.random(in: 0.5...2.2, using: &rng),
+                phase: Double.random(in: 0...(2 * .pi), using: &rng),
+                drift: Double.random(in: 0.002...0.010, using: &rng),
+                color: color
+            )
+        }
+    }()
+}
+
+/// A living star field: each star twinkles and drifts slowly upward, with an
+/// occasional gold shooting star streaking across the upper sky. Drawn in a
+/// Canvas (one GPU layer) and driven by `TimelineView(.animation)`.
+private struct StarField: View {
     var body: some View {
-        GeometryReader { geo in
-            ForEach(Array(stars.enumerated()), id: \.offset) { _, s in
-                Circle()
-                    .fill(s.4)
-                    .frame(width: s.2 * 2, height: s.2 * 2)
-                    .opacity(s.3)
-                    .position(x: geo.size.width * s.0, y: geo.size.height * s.1)
+        TimelineView(.animation) { timeline in
+            Canvas { context, size in
+                let t = timeline.date.timeIntervalSinceReferenceDate
+
+                for star in StarFactory.stars {
+                    let twinkle = 0.5 + 0.5 * sin(t * star.twinkleSpeed + star.phase)
+                    context.opacity = star.baseOpacity * (0.3 + 0.7 * twinkle)
+
+                    var yFrac = star.y - CGFloat((t * star.drift).truncatingRemainder(dividingBy: 1))
+                    if yFrac < 0 { yFrac += 1 }
+                    let c = CGPoint(x: star.x * size.width, y: yFrac * size.height)
+                    let rect = CGRect(x: c.x - star.radius, y: c.y - star.radius,
+                                      width: star.radius * 2, height: star.radius * 2)
+                    context.fill(Path(ellipseIn: rect), with: .color(star.color))
+                }
+
+                drawShootingStar(in: context, size: size, time: t)
             }
         }
+        .allowsHitTesting(false)
+    }
+
+    /// One gold meteor every ~11s, streaking down-right and fading in/out.
+    private func drawShootingStar(in context: GraphicsContext, size: CGSize, time: Double) {
+        let period = 11.0, duration = 1.1
+        let local = time.truncatingRemainder(dividingBy: period)
+        guard local < duration else { return }
+
+        let progress = local / duration
+        let cycle = floor(time / period)
+        var rng = SeededGenerator(seed: UInt64(bitPattern: Int64(cycle)) &* 2654435761)
+        let startX = CGFloat(Double.random(in: 0.05...0.55, using: &rng))
+        let startY = CGFloat(Double.random(in: 0.04...0.28, using: &rng))
+        let angle = Double.random(in: 0.25...0.5, using: &rng)
+        let dx = CGFloat(0.35 * cos(angle)), dy = CGFloat(0.35 * sin(angle))
+
+        let head = CGPoint(x: (startX + dx * CGFloat(progress)) * size.width,
+                           y: (startY + dy * CGFloat(progress)) * size.height)
+        let tailP = CGFloat(max(0, progress - 0.18))
+        let tail = CGPoint(x: (startX + dx * tailP) * size.width,
+                           y: (startY + dy * tailP) * size.height)
+
+        var path = Path()
+        path.move(to: tail)
+        path.addLine(to: head)
+
+        var ctx = context
+        ctx.opacity = sin(progress * .pi) * 0.9            // ease in then out
+        ctx.stroke(path, with: .linearGradient(
+            Gradient(colors: [Palette.gold.opacity(0), Palette.gold]),
+            startPoint: tail, endPoint: head), lineWidth: 2)
+        ctx.fill(Path(ellipseIn: CGRect(x: head.x - 1.6, y: head.y - 1.6, width: 3.2, height: 3.2)),
+                 with: .color(.white))
     }
 }
 

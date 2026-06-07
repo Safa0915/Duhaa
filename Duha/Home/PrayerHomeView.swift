@@ -9,6 +9,7 @@ struct PrayerHomeView: View {
     @State private var model = PrayerHomeModel()
     @State private var showingLocationPicker = false
     @State private var showingSettings = false
+    @State private var moonBreath = false
 
     var body: some View {
         let d = model.display(for: location.active,
@@ -100,11 +101,15 @@ struct PrayerHomeView: View {
                     .fill(RadialGradient(colors: [Palette.gold.opacity(0.35), .clear],
                                          center: .center, startRadius: 0, endRadius: 55))
                     .frame(width: 110, height: 110)
+                    .scaleEffect(moonBreath ? 1.06 : 0.92)
+                    .opacity(moonBreath ? 1.0 : 0.72)
+                    .animation(.easeInOut(duration: 3.5).repeatForever(autoreverses: true), value: moonBreath)
                 Image(systemName: "moon.stars.fill")
                     .font(.system(size: 46))
                     .foregroundStyle(Palette.gold)
             }
             .frame(height: 90)
+            .onAppear { moonBreath = true }
 
             HStack(alignment: .firstTextBaseline, spacing: 6) {
                 Text(d.clock)
