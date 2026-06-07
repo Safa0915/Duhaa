@@ -9,11 +9,19 @@ struct CelestialBackground: View {
     var body: some View {
         ZStack {
             Palette.appBg
-            RadialGradient(colors: [Palette.gold.opacity(0.18), .clear],
-                           center: .top, startRadius: 0, endRadius: 320)
-            RadialGradient(colors: [Palette.blue.opacity(0.12), .clear],
-                           center: .init(x: 0.95, y: 0.32), startRadius: 0, endRadius: 260)
-            StarField()
+            if Palette.active.isDark {
+                RadialGradient(colors: [Palette.gold.opacity(0.18), .clear],
+                               center: .top, startRadius: 0, endRadius: 320)
+                RadialGradient(colors: [Palette.blue.opacity(0.12), .clear],
+                               center: .init(x: 0.95, y: 0.32), startRadius: 0, endRadius: 260)
+                StarField()
+            } else {
+                // Soft "dawn": a warm glow from the top, a cool hint from below.
+                RadialGradient(colors: [Palette.gold.opacity(0.22), .clear],
+                               center: .top, startRadius: 0, endRadius: 380)
+                RadialGradient(colors: [Palette.blue.opacity(0.10), .clear],
+                               center: .bottom, startRadius: 0, endRadius: 320)
+            }
         }
         .ignoresSafeArea()
     }
@@ -50,7 +58,7 @@ private enum StarFactory {
             let y = CGFloat(Double.random(in: 0...1, using: &rng))
             let topFactor = 1.0 - Double(y) * 0.6            // fade lower stars
             let hue = Double.random(in: 0...1, using: &rng)
-            let color: Color = hue < 0.7 ? .white : (hue < 0.86 ? Palette.blue : Palette.gold)
+            let color: Color = hue < 0.7 ? .primary : (hue < 0.86 ? Palette.blue : Palette.gold)
             return StarSpec(
                 x: CGFloat(Double.random(in: 0...1, using: &rng)),
                 y: y,
@@ -132,7 +140,7 @@ private struct StarField: View {
             Gradient(colors: [Palette.gold.opacity(0), Palette.gold]),
             startPoint: tail, endPoint: head), lineWidth: 2)
         ctx.fill(Path(ellipseIn: CGRect(x: head.x - 1.6, y: head.y - 1.6, width: 3.2, height: 3.2)),
-                 with: .color(.white))
+                 with: .color(.primary))
     }
 }
 
@@ -159,14 +167,14 @@ struct NextPrayerBanner: View {
                         .foregroundStyle(Palette.gold.opacity(0.8))
                 }
                 Spacer()
-                (Text("\(nextName) in ").foregroundStyle(.white)
+                (Text("\(nextName) in ").foregroundStyle(.primary)
                  + Text(countdown).foregroundStyle(Palette.gold))
                     .font(.system(size: 18, weight: .semibold))
             }
 
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    Capsule().fill(Color.white.opacity(0.08))
+                    Capsule().fill(Color.primary.opacity(0.08))
                     Capsule()
                         .fill(LinearGradient(colors: [Palette.gold.opacity(0.5), Palette.gold],
                                              startPoint: .leading, endPoint: .trailing))
@@ -214,7 +222,7 @@ struct PrayersCard: View {
 
             VStack(spacing: 0) {
                 ForEach(Array(rows.enumerated()), id: \.element.id) { index, row in
-                    if index > 0 { Divider().overlay(Color.white.opacity(0.09)) }
+                    if index > 0 { Divider().overlay(Color.primary.opacity(0.09)) }
                     PrayerRowView(row: row, dayKey: dayKey, onMark: onMark)
                 }
             }
@@ -240,7 +248,7 @@ private struct PrayerRowView: View {
         HStack(spacing: 13) {
             HStack(spacing: 13) {
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(isNext ? Palette.gold.opacity(0.12) : Color.white.opacity(0.05))
+                    .fill(isNext ? Palette.gold.opacity(0.12) : Color.primary.opacity(0.05))
                     .frame(width: 34, height: 34)
                     .overlay(
                         Image(systemName: row.prayer.icon)
@@ -252,7 +260,7 @@ private struct PrayerRowView: View {
                     HStack(spacing: 6) {
                         Text(row.prayer.rawValue)
                             .font(.system(size: 15, weight: .medium))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.primary)
                         if isNext { nextBadge }
                     }
                     if let sub = row.sub {
@@ -293,7 +301,7 @@ private struct PrayerRowView: View {
         } label: {
             Image(systemName: isPrayed ? "checkmark.circle.fill" : "circle")
                 .font(.system(size: 22))
-                .foregroundStyle(isPrayed ? Palette.gold : Color.white.opacity(0.22))
+                .foregroundStyle(isPrayed ? Palette.gold : Color.primary.opacity(0.22))
                 .symbolEffect(.bounce, value: isPrayed)
         }
         .buttonStyle(.plain)
@@ -331,11 +339,11 @@ struct NightCard: View {
                 Spacer()
             }
             .padding(.horizontal, 18).padding(.top, 14).padding(.bottom, 12)
-            .overlay(alignment: .bottom) { Divider().overlay(Color.white.opacity(0.05)) }
+            .overlay(alignment: .bottom) { Divider().overlay(Color.primary.opacity(0.05)) }
 
             nightRow(icon: "moon.stars", name: "Tahajjud",
                      sub: "Last third of night", time: tahajjud)
-            Divider().overlay(Color.white.opacity(0.04))
+            Divider().overlay(Color.primary.opacity(0.04))
             nightRow(icon: "clock", name: "Islamic Midnight",
                      sub: "Between Maghrib & Fajr", time: islamicMidnight)
         }
@@ -354,7 +362,7 @@ struct NightCard: View {
                 .frame(width: 34, height: 34)
                 .overlay(Image(systemName: icon).font(.system(size: 15)).foregroundStyle(Palette.blue))
             VStack(alignment: .leading, spacing: 1) {
-                Text(name).font(.system(size: 14, weight: .medium)).foregroundStyle(.white)
+                Text(name).font(.system(size: 14, weight: .medium)).foregroundStyle(.primary)
                 Text(sub).font(.system(size: 11)).foregroundStyle(Palette.blue.opacity(0.4))
             }
             Spacer()

@@ -74,7 +74,7 @@ struct PrayerHomeView: View {
                 .padding(.bottom, 40)
             }
         }
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(Palette.active.colorScheme)
         .sheet(isPresented: $showingLocationPicker) {
             LocationPickerView()
         }
@@ -86,7 +86,7 @@ struct PrayerHomeView: View {
                 Text(toast)
                     .font(.system(size: 14, weight: .medium))
                     .multilineTextAlignment(.center)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.primary)
                     .padding(.horizontal, 22).padding(.vertical, 14)
                     .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
                     .overlay(RoundedRectangle(cornerRadius: 16).stroke(Palette.gold.opacity(0.35), lineWidth: 1))
@@ -167,10 +167,10 @@ struct PrayerHomeView: View {
             HStack(alignment: .firstTextBaseline, spacing: 6) {
                 Text(d.clock)
                     .font(.system(size: 62, weight: .ultraLight))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.primary)
                 Text(d.period)
                     .font(.system(size: 22, weight: .light))
-                    .foregroundStyle(.white.opacity(0.7))
+                    .foregroundStyle(.primary.opacity(0.7))
             }
 
             Text(d.heroDate.uppercased())
@@ -190,7 +190,7 @@ struct PrayerHomeView: View {
                 .foregroundStyle(Palette.blue.opacity(0.6))
             Text("Prayer times aren't available for this location right now.")
                 .font(.system(size: 14, weight: .medium))
-                .foregroundStyle(.white.opacity(0.85))
+                .foregroundStyle(.primary.opacity(0.85))
                 .multilineTextAlignment(.center)
             Text("This can happen at extreme latitudes. Try a nearby city from the location picker above.")
                 .font(.system(size: 12))
@@ -224,7 +224,7 @@ private struct WelcomeBackBanner: View {
                 .foregroundStyle(Palette.gold)
             Text(message)
                 .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(.white.opacity(0.92))
+                .foregroundStyle(.primary.opacity(0.92))
             Spacer(minLength: 6)
             Button(action: onDismiss) {
                 Image(systemName: "xmark")

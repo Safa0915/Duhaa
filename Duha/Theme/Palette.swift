@@ -1,15 +1,99 @@
 import SwiftUI
+import Observation
 
-/// The locked celestial palette (DUHA_SPEC.md §6). Do not change these values —
-/// every screen pulls its colors from here so the look stays consistent.
+/// The resolved colors for one theme. `gold`/`blue` are the warm/cool accents
+/// (gold & sky in dark, rose & lavender in Sisters, deeper tones in light).
+struct ThemeColors {
+    let pageBg: Color
+    let appBg: Color
+    let gold: Color        // warm accent
+    let blue: Color        // cool accent
+    let card: Color
+    let cardBorder: Color
+    let prayerTime: Color
+    let colorScheme: ColorScheme
+    /// True for the night-sky themes (show stars/glows); false for the light "dawn" theme.
+    let isDark: Bool
+}
+
+/// The selectable themes (spec: v1 dark; v1.1 adds light + Sisters/rose).
+enum AppTheme: String, CaseIterable, Identifiable {
+    case dark, light, sisters
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .dark:    return "Celestial"
+        case .light:   return "Dawn (Light)"
+        case .sisters: return "Sisters (Rose)"
+        }
+    }
+
+    var colors: ThemeColors {
+        switch self {
+        case .dark: // the locked v1 palette
+            return ThemeColors(
+                pageBg: Color(hex: 0x08111F), appBg: Color(hex: 0x0D1628),
+                gold: Color(hex: 0xF0C040), blue: Color(hex: 0x8ECFE8),
+                card: Color.white.opacity(0.07), cardBorder: Color.white.opacity(0.13),
+                prayerTime: Color.white.opacity(0.8),
+                colorScheme: .dark, isDark: true)
+
+        case .sisters: // all-pink celestial (still a night theme)
+            return ThemeColors(
+                pageBg: Color(hex: 0x140A18), appBg: Color(hex: 0x1E1126),
+                gold: Color(hex: 0xF48FB1), blue: Color(hex: 0xCBA6E8),
+                card: Color.white.opacity(0.07), cardBorder: Color.white.opacity(0.14),
+                prayerTime: Color.white.opacity(0.85),
+                colorScheme: .dark, isDark: true)
+
+        case .light: // soft warm "dawn"
+            let ink = Color(hex: 0x222A36)
+            return ThemeColors(
+                pageBg: Color(hex: 0xE7DFD1), appBg: Color(hex: 0xF4EFE6),
+                gold: Color(hex: 0xC2901C), blue: Color(hex: 0x2E6E94),
+                card: Color.black.opacity(0.045), cardBorder: Color.black.opacity(0.10),
+                prayerTime: ink.opacity(0.85),
+                colorScheme: .light, isDark: false)
+        }
+    }
+}
+
+/// Holds the selected theme, persists it, and updates the active palette.
+@Observable
+final class ThemeStore {
+    var theme: AppTheme {
+        didSet {
+            Palette.active = theme.colors
+            UserDefaults.standard.set(theme.rawValue, forKey: Self.key)
+        }
+    }
+
+    @ObservationIgnored private static let key = "duha.theme"
+
+    init() {
+        let saved = AppTheme(rawValue: UserDefaults.standard.string(forKey: Self.key) ?? "") ?? .dark
+        theme = saved
+        Palette.active = saved.colors // didSet doesn't fire during init
+    }
+}
+
+/// Theme-driven color tokens. Views read these; the active set is swapped when
+/// the theme changes (the root re-renders via `.id(theme)`).
 enum Palette {
-    static let pageBg     = Color(hex: 0x08111F) // outermost
-    static let appBg      = Color(hex: 0x0D1628) // main background (dark navy)
-    static let gold       = Color(hex: 0xF0C040) // highlights, active prayer, moon
-    static let blue       = Color(hex: 0x8ECFE8) // location, dates, labels, night card
-    static let card       = Color.white.opacity(0.07)
-    static let cardBorder = Color.white.opacity(0.13)
-    static let prayerTime = Color.white.opacity(0.8)
+    static var active: ThemeColors = AppTheme.dark.colors
+
+    static var pageBg: Color     { active.pageBg }
+    static var appBg: Color      { active.appBg }
+    static var gold: Color       { active.gold }
+    static var blue: Color       { active.blue }
+    static var card: Color       { active.card }
+    static var cardBorder: Color { active.cardBorder }
+    static var prayerTime: Color { active.prayerTime }
+
+    /// Text/icon color to use on TOP of a gold/accent fill — always dark for contrast.
+    static let onAccent = Color(hex: 0x10182A)
 }
 
 extension Color {

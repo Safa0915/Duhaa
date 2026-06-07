@@ -16,6 +16,6 @@ struct MainTabView: View {
                 .tabItem { Label("Qibla", systemImage: "location.north.line.fill") }
         }
         .tint(Palette.gold)
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(Palette.active.colorScheme)
     }
 }

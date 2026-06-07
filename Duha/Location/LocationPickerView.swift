@@ -26,7 +26,7 @@ struct LocationPickerView: View {
                 }
             }
         }
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(Palette.active.colorScheme)
     }
 
     private var list: some View {
@@ -37,7 +37,7 @@ struct LocationPickerView: View {
                 } label: {
                     HStack(spacing: 12) {
                         Image(systemName: "location.fill").foregroundStyle(Palette.gold)
-                        Text("Use Current Location").foregroundStyle(.white)
+                        Text("Use Current Location").foregroundStyle(.primary)
                         Spacer()
                         if location.isLocating { ProgressView().tint(Palette.gold) }
                     }
@@ -47,7 +47,7 @@ struct LocationPickerView: View {
                     Image(systemName: location.active.isManual ? "mappin.circle.fill" : "location.circle.fill")
                         .foregroundStyle(Palette.blue)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(location.active.name).foregroundStyle(.white)
+                        Text(location.active.name).foregroundStyle(.primary)
                         Text(location.active.isManual ? "Selected city" : "Current location")
                             .font(.caption).foregroundStyle(Palette.blue.opacity(0.6))
                     }
@@ -73,7 +73,7 @@ struct LocationPickerView: View {
                         } label: {
                             HStack(spacing: 12) {
                                 Image(systemName: "mappin").foregroundStyle(Palette.blue)
-                                Text(city.name).foregroundStyle(.white)
+                                Text(city.name).foregroundStyle(.primary)
                             }
                         }
                     }

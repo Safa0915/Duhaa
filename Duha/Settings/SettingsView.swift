@@ -5,6 +5,7 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(SettingsStore.self) private var store
     @Environment(LocationProvider.self) private var location
+    @Environment(ThemeStore.self) private var themeStore
     @Environment(\.dismiss) private var dismiss
 
     /// High latitudes (≈ above 48°) get the gentle Fajr/Isha precaution copy.
@@ -21,6 +22,16 @@ struct SettingsView: View {
                     } label: {
                         Label("Notifications", systemImage: "bell.badge")
                     }
+                }
+
+                Section("Appearance") {
+                    Picker("Theme", selection: themeBinding) {
+                        ForEach(AppTheme.allCases) { theme in
+                            Text(theme.displayName).tag(theme)
+                        }
+                    }
+                    .pickerStyle(.inline)
+                    .labelsHidden()
                 }
 
                 Section("Calculation Method") {
@@ -88,7 +99,7 @@ struct SettingsView: View {
                 }
             }
         }
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(Palette.active.colorScheme)
     }
 
     // MARK: High-latitude precaution (spec §13)
@@ -110,7 +121,7 @@ struct SettingsView: View {
     private func precaution(_ icon: String, _ text: String) -> some View {
         HStack(alignment: .top, spacing: 10) {
             Image(systemName: icon).foregroundStyle(Palette.blue).frame(width: 20)
-            Text(text).font(.footnote).foregroundStyle(.white.opacity(0.85))
+            Text(text).font(.footnote).foregroundStyle(.primary.opacity(0.85))
         }
     }
 
@@ -128,4 +139,8 @@ struct SettingsView: View {
     }
 
     private func signed(_ n: Int) -> String { n > 0 ? "+\(n)" : "\(n)" }
+
+    private var themeBinding: Binding<AppTheme> {
+        Binding(get: { themeStore.theme }, set: { themeStore.theme = $0 })
+    }
 }

@@ -32,7 +32,7 @@ struct OnboardingView: View {
             }
             .padding(.bottom, 30)
         }
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(Palette.active.colorScheme)
         .sheet(isPresented: $showingCitySearch) { LocationPickerView() }
     }
 
@@ -55,7 +55,7 @@ struct OnboardingView: View {
                 .foregroundStyle(Palette.gold)
             Text("Welcome to Duha")
                 .font(.system(size: 26, weight: .semibold))
-                .foregroundStyle(.white)
+                .foregroundStyle(.primary)
             Text("Duha means “the morning brightness.”\nA gentle return to prayer — built on hope, never guilt.")
                 .font(.system(size: 15))
                 .foregroundStyle(Palette.blue.opacity(0.85))
@@ -74,7 +74,7 @@ struct OnboardingView: View {
                 .foregroundStyle(Palette.blue)
             Text("Where are you?")
                 .font(.system(size: 24, weight: .semibold))
-                .foregroundStyle(.white)
+                .foregroundStyle(.primary)
             Text("So Duha can show accurate prayer times for your place.")
                 .font(.system(size: 14))
                 .foregroundStyle(Palette.blue.opacity(0.8))
@@ -84,7 +84,7 @@ struct OnboardingView: View {
             HStack(spacing: 8) {
                 Image(systemName: location.active.isManual ? "mappin.circle.fill" : "location.fill")
                     .foregroundStyle(Palette.gold)
-                Text(location.active.name).foregroundStyle(.white)
+                Text(location.active.name).foregroundStyle(.primary)
                 if location.isLocating { ProgressView().tint(Palette.gold).scaleEffect(0.8) }
             }
             .font(.system(size: 14, weight: .medium))
@@ -113,7 +113,7 @@ struct OnboardingView: View {
                 .foregroundStyle(Palette.gold)
             Text("Calculation")
                 .font(.system(size: 24, weight: .semibold))
-                .foregroundStyle(.white)
+                .foregroundStyle(.primary)
             Text("You can change these anytime in Settings.")
                 .font(.system(size: 13))
                 .foregroundStyle(Palette.blue.opacity(0.7))
@@ -126,7 +126,7 @@ struct OnboardingView: View {
                     }
                 } label: {
                     HStack {
-                        Text(settings.method.displayName).foregroundStyle(.white)
+                        Text(settings.method.displayName).foregroundStyle(.primary)
                         Spacer()
                         Image(systemName: "chevron.up.chevron.down")
                             .font(.system(size: 12)).foregroundStyle(Palette.blue)
@@ -153,7 +153,7 @@ struct OnboardingView: View {
         HStack(spacing: 8) {
             ForEach(0..<3, id: \.self) { i in
                 Capsule()
-                    .fill(i == step ? Palette.gold : Color.white.opacity(0.2))
+                    .fill(i == step ? Palette.gold : Color.primary.opacity(0.2))
                     .frame(width: i == step ? 22 : 7, height: 7)
             }
         }
@@ -167,7 +167,7 @@ struct OnboardingView: View {
         } label: {
             Text(step < 2 ? "Continue" : "Get Started")
                 .font(.system(size: 17, weight: .semibold))
-                .foregroundStyle(Palette.appBg)
+                .foregroundStyle(Palette.onAccent)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
                 .background(Palette.gold)

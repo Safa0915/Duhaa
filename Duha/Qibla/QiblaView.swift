@@ -53,7 +53,7 @@ struct QiblaView: View {
                 Spacer()
             }
         }
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(Palette.active.colorScheme)
         .onAppear { headingProvider.start() }
         .onDisappear { headingProvider.stop() }
         .onChange(of: headingProvider.heading) { _, newValue in
@@ -77,7 +77,7 @@ struct QiblaView: View {
     private func compass(size: CGFloat) -> some View {
         let r = size / 2
         return ZStack {
-            Circle().stroke(Color.white.opacity(0.10), lineWidth: 1)
+            Circle().stroke(Color.primary.opacity(0.10), lineWidth: 1)
                 .frame(width: size, height: size)
             Circle()
                 .stroke((aligned ? Palette.gold : Palette.blue).opacity(aligned ? 0.55 : 0.15),
@@ -90,7 +90,7 @@ struct QiblaView: View {
                 ForEach(0..<72, id: \.self) { i in
                     let major = i % 9 == 0
                     Capsule()
-                        .fill(Color.white.opacity(major ? 0.45 : 0.16))
+                        .fill(Color.primary.opacity(major ? 0.45 : 0.16))
                         .frame(width: major ? 2 : 1, height: major ? 12 : 6)
                         .offset(y: -(r - 8))
                         .rotationEffect(.degrees(Double(i) * 5))
@@ -114,20 +114,20 @@ struct QiblaView: View {
             // Center hub with Kaaba glyph
             ZStack {
                 Circle().fill(Palette.appBg).frame(width: 66, height: 66)
-                Circle().stroke(Color.white.opacity(0.12), lineWidth: 1).frame(width: 66, height: 66)
+                Circle().stroke(Color.primary.opacity(0.12), lineWidth: 1).frame(width: 66, height: 66)
                 VStack(spacing: 1) {
                     Image(systemName: "cube.fill")
                         .font(.system(size: 22))
                         .foregroundStyle(aligned ? Palette.gold : Palette.blue)
                     Text("\(Int(qiblaBearing.rounded()))°")
                         .font(.system(size: 11, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.6))
+                        .foregroundStyle(.primary.opacity(0.6))
                 }
             }
 
             // Fixed reference marker at the top, pointing down at the dial
             Triangle()
-                .fill(aligned ? Palette.gold : .white.opacity(0.7))
+                .fill(aligned ? Palette.gold : .primary.opacity(0.7))
                 .frame(width: 16, height: 13)
                 .rotationEffect(.degrees(180))
                 .offset(y: -(r + 6))
@@ -138,7 +138,7 @@ struct QiblaView: View {
     private func cardinal(_ text: String, _ angle: Double, _ radius: CGFloat, gold: Bool = false) -> some View {
         Text(text)
             .font(.system(size: gold ? 17 : 13, weight: .semibold))
-            .foregroundStyle(gold ? Palette.gold : .white.opacity(0.55))
+            .foregroundStyle(gold ? Palette.gold : .primary.opacity(0.55))
             .rotationEffect(.degrees(-angle))   // keep upright relative to the dial
             .offset(y: -radius)
             .rotationEffect(.degrees(angle))
@@ -150,7 +150,7 @@ struct QiblaView: View {
         VStack(spacing: 6) {
             Text("\(Int(qiblaBearing.rounded()))° \(compassPoint(qiblaBearing))")
                 .font(.system(size: 24, weight: .semibold))
-                .foregroundStyle(.white)
+                .foregroundStyle(.primary)
             Text("\(formattedDistance) to Makkah")
                 .font(.system(size: 14))
                 .foregroundStyle(Palette.blue.opacity(0.8))

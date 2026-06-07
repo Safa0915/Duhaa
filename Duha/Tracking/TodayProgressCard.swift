@@ -20,16 +20,16 @@ struct TodayProgressCard: View {
                 Spacer()
                 Text("\(prayedCount) / 5")
                     .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(prayedCount == 5 ? Palette.gold : .white.opacity(0.85))
+                    .foregroundStyle(prayedCount == 5 ? Palette.gold : .primary.opacity(0.85))
             }
 
             HStack(spacing: 10) {
                 ForEach(Prayer.allCases, id: \.self) { prayer in
                     let done = tracker.isMarked(prayer, dayKey: dayKey)
                     Circle()
-                        .fill(done ? Palette.gold : Color.white.opacity(0.07))
+                        .fill(done ? Palette.gold : Color.primary.opacity(0.07))
                         .frame(width: 13, height: 13)
-                        .overlay(Circle().stroke(done ? .clear : Color.white.opacity(0.18), lineWidth: 1))
+                        .overlay(Circle().stroke(done ? .clear : Color.primary.opacity(0.18), lineWidth: 1))
                         .shadow(color: done ? Palette.gold.opacity(0.5) : .clear, radius: 4)
                 }
                 Spacer()
@@ -39,7 +39,7 @@ struct TodayProgressCard: View {
                 .font(.system(size: 13))
                 .foregroundStyle(Palette.blue.opacity(0.85))
 
-            Divider().overlay(Color.white.opacity(0.06))
+            Divider().overlay(Color.primary.opacity(0.06))
 
             HStack(spacing: 0) {
                 ForEach(week) { day in
@@ -47,7 +47,7 @@ struct TodayProgressCard: View {
                         let fraction = CGFloat(tracker.count(dayKey: day.key)) / 5
                         ZStack {
                             Circle()
-                                .stroke(Color.white.opacity(0.1), lineWidth: 2.5)
+                                .stroke(Color.primary.opacity(0.1), lineWidth: 2.5)
                                 .frame(width: 24, height: 24)
                             Circle()
                                 .trim(from: 0, to: fraction)
