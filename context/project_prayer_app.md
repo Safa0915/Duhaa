@@ -1,6 +1,6 @@
 ---
 name: project_prayer_app
-description: "Islamic prayer app for iOS (React Native), decisions made so far"
+description: "Islamic prayer app for iOS (Native SwiftUI), decisions made so far"
 metadata: 
   node_type: memory
   type: project
@@ -12,14 +12,14 @@ metadata:
 User is building an Islamic prayer iOS app named **Duha (ﺿﺤﻰ)** — see [[project_duha_first_launch]] for the first-launch cinematic, the emotional heart of the app. Decisions locked in so far:
 
 - **App name:** Duha (Arabic for "morning brightness"; mission = hope/motivation to bring people back to all 5 daily prayers)
-- **Framework:** React Native (iOS-first, Android-ready later)
+- **Framework:** **Native SwiftUI (Xcode)** — iOS-only for now; Android = future rewrite if ever. ⚠️ REVERSED the earlier React Native choice on 2026-06-07. Reasons: Duha is iOS-native-heavy (the cinematic's Core Haptics + animations, WidgetKit widgets, custom adhan notification sounds are all native work even in RN, eroding RN's cross-platform benefit), and the user wants to work IN Xcode with Claude. Tooling: Xcode 26 with Claude added as an Intelligence provider, and/or Claude Code in the repo. Min deployment target iOS 17+ (for @Observable / modern SwiftUI).
 - **v1 features:** Prayer Times (home), Qibla compass, Quran reader, Duas, Settings — bottom tab bar in that order
 - **Quran reader:** Arabic + Sahih International English, bundled offline (SQLite), bookmarks, surah/ayah nav, NO audio in v1
 - **Duas:** occasion-based categories + dedicated "After Prayer" section, ~50–80 duas, Arabic + transliteration + English
 - **Hijri date:** Umm al-Qura calendar, user chooses which date (Hijri/Gregorian) is primary/larger — both always shown, ±1–2 day manual adjustment in Settings for moon sighting
 - **Onboarding:** 3 screens (welcome → location → calc method+madhab), no account, <60s — but the Duha cinematic plays first
 - **Monetization:** free, voluntary "Support the App" IAP (~$2.99), NO paywalled features
-- **State/storage:** Zustand + MMKV
+- **State/storage:** Native SwiftUI — `@Observable`/`@State` for state, `@AppStorage`/UserDefaults for settings, SwiftData (or bundled SQLite/GRDB) for Quran/Duas content in v1.1. (Was Zustand + MMKV under the old React Native plan — no longer applies.)
 - **Widgets:** small + medium + lock screen (all celestial theme)
 - **Themes:** v1 = dark celestial only. v1.1 = light mode + "Sisters theme" (all pink celestial variant)
 - **Apple Watch:** none in v1, complication in v1.1
@@ -31,7 +31,7 @@ User is building an Islamic prayer iOS app named **Duha (ﺿﺤﻰ)** — see [[
   - **v1.0 MVP:** Prayer times engine + Duha cinematic + notifications + Qibla + widgets + Settings + onboarding + gentle prayer tracking. Complete & special on its own.
   - **v1.1:** Quran reader + Duas + light mode + Sisters (pink) theme + Watch complication
   - Rationale: Quran/Duas are the heaviest content + least differentiated; shipping prayer-first gets to App Store sooner, protects momentum, gets real feedback.
-- **Prayer time library:** `adhan` (by Batoul Apps)
+- **Prayer time library:** **Adhan Swift** (`batoulapps/adhan-swift` via Swift Package Manager) — same algorithms as the adhan-js we validated with, incl. `SunnahTimes` (middleOfTheNight = Islamic midnight, lastThirdOfTheNight = Tahajjud). The Node `prayer-verify` harness stays as a cross-check reference.
 - **Calculation method:** User-selectable on first launch
 - **Asr madhab toggle:** "Shafi'i, Hanbali, Maliki" vs "Hanafi" (user picks)
 - **Location:** GPS auto-detect with manual city override, cache last coords, "While Using" permission only

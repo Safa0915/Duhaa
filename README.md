@@ -21,7 +21,7 @@ node test-london-angles.js # 18° vs 15° vs East London Mosque
 ```
 
 ## Build
-iOS-first React Native app (recommend Expo prebuild). Requires macOS + Xcode for the app shell, widgets, Core Haptics, simulator, and signing.
+Native **SwiftUI** app (iOS-only for now), min target iOS 17+. Built and run in **Xcode** on macOS. Prayer math via **Adhan Swift** (Swift Package Manager). Widgets = WidgetKit, haptics = Core Haptics, notifications = UserNotifications.
 
 ---
 *Hope, not guilt. 🌅*

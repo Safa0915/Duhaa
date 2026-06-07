@@ -6,13 +6,14 @@
 
 ## Current status
 - **Design: complete & locked.** Every decision is in `DUHA_SPEC.md`.
-- **Engine: not yet built.** The prayer-time logic (adhan + Tahajjud/Islamic-midnight + offsets + Hijri) is the next thing to build — pure TypeScript, fully unit-testable, the riskiest/most important piece.
-- **App shell: not started.** React Native, to be built/run on macOS + Xcode.
+- **Framework: NATIVE SwiftUI (Xcode).** Switched from React Native on 2026-06-07 — Duha is iOS-native-heavy (cinematic Core Haptics, WidgetKit, custom sounds) and the dev wants to work in Xcode. iOS-only for now; Android = future rewrite if ever.
+- **Engine: not yet built.** The prayer-time logic (Adhan Swift + Tahajjud/Islamic-midnight + offsets + Hijri) is the next thing to build — as a Swift module with unit tests, the riskiest/most important piece.
+- **App shell: not started.** SwiftUI app, built/run in Xcode on macOS.
 
 ## How to work on this project
-- **Build target:** iOS first (Android-ready later). Needs macOS + Xcode for the app shell, widgets, Core Haptics, simulator, signing.
-- **Stack:** React Native (recommend **Expo prebuild** — config plugins + dev client, for native access to widgets/haptics/notifications), `adhan` library, Zustand, MMKV, bundled SQLite (offline).
-- **Verification harness:** `prayer-verify/` — Node scripts that compute times with `adhan` and were validated against East London Mosque. Run `cd prayer-verify && npm install && node verify.js`.
+- **Build target:** iOS-only (SwiftUI), min deployment iOS 17+. Built and run in Xcode.
+- **Stack:** Native **SwiftUI**, **Adhan Swift** (`batoulapps/adhan-swift` via Swift Package Manager), state via `@Observable`/`@AppStorage`, persistence via UserDefaults (settings) and SwiftData/SQLite (Quran/Duas in v1.1). Widgets = WidgetKit; haptics = Core Haptics; notifications = UserNotifications; audio = AVFoundation.
+- **Verification harness:** `prayer-verify/` — Node scripts (adhan-js) validated against East London Mosque. Keep as a cross-check reference for the Swift engine's output: `cd prayer-verify && npm install && node verify.js`. The Swift engine should reproduce these same numbers.
 
 ## 🚨 Read before touching prayer-time logic
 High-latitude (UK/N.Europe) **Fajr & Isha are a KNOWN EMERGENCY / unsolved debt** — see the banner at the top of `context/project_prayer_app.md` and §13 of `DUHA_SPEC.md`. No calculation reproduces a real local mosque (proven with numbers). v1 ships a stopgap (manual offsets + seasonal re-check); it must be properly fixed later. Do NOT present any high-lat number as authoritative.

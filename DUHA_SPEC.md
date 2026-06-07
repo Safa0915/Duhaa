@@ -47,12 +47,15 @@ Plays on **very first launch only**. Skippable ("Skip" fades in after ~4–5s). 
 
 | Area | Choice |
 |---|---|
-| Framework | **React Native** (iOS-first, Android-ready later) |
-| Prayer calc | **`adhan`** library (Batoul Apps) |
-| State | **Zustand** |
-| Storage | **MMKV** (fast, synchronous) |
-| Content data | **Bundled SQLite**, fully offline (Quran ~3–4MB, Duas ~200KB) |
-| Target size | Well under 30MB |
+| Framework | **Native SwiftUI** (Xcode) — iOS-only for now; Android = future rewrite. *(Switched from React Native 2026-06-07; see note below.)* |
+| Min target | **iOS 17+** (for `@Observable` / modern SwiftUI) |
+| Prayer calc | **Adhan Swift** (`batoulapps/adhan-swift`, via Swift Package Manager) |
+| State | SwiftUI **`@Observable`** / `@AppStorage` |
+| Storage | **UserDefaults** (settings) · **SwiftData/SQLite** (Quran/Duas, v1.1) |
+| Widgets / Haptics / Notifs / Audio | WidgetKit · Core Haptics · UserNotifications · AVFoundation |
+| Tooling | Xcode 26 (Claude as Intelligence provider) and/or Claude Code |
+
+> **Why native, not React Native:** Duha's emotional core and standout features — the first-launch cinematic (Core Haptics + animation), home/lock-screen widgets, and custom adhan notification sounds — are all native work *even in React Native*, which erodes RN's cross-platform benefit. The dev also wants to work in Xcode. Trade-off consciously accepted: iOS-only now; Android would be a future rewrite (Adhan also has Kotlin/JS ports, so the engine logic ports cleanly).
 
 ---
 
