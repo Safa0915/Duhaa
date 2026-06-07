@@ -4,6 +4,8 @@
 
 **If you are a fresh Claude session: read `DUHA_SPEC.md` first — it is the full, authoritative spec.** The `context/` folder holds the original locked decision docs from the design session.
 
+**Full design-session transcript** (the complete "why" behind every decision) is archived in `docs/design-session.md` (conversation + decisions) and `docs/design-session-full.md` (also includes tool outputs: the prayer-time verifications, the East London Mosque comparison, and the high-latitude fiqh research). Read these if you need the reasoning behind a decision — but `DUHA_SPEC.md` + `BUILD_PLAN.md` are the day-to-day source of truth.
+
 ## Current status
 - **Design: complete & locked.** Every decision is in `DUHA_SPEC.md`.
 - **Framework: NATIVE SwiftUI (Xcode).** Switched from React Native on 2026-06-07 — Duha is iOS-native-heavy (cinematic Core Haptics, WidgetKit, custom sounds) and the dev wants to work in Xcode. iOS-only for now; Android = future rewrite if ever.
