@@ -8,6 +8,7 @@ struct DuhaApp: App {
     @State private var notifications = NotificationSettings()
     @State private var tracker = PrayerTracker()
     @State private var theme = ThemeStore()
+    @State private var quranBookmarks = QuranBookmarks()
     @AppStorage("duha.hasOnboarded") private var hasOnboarded = false
 
     var body: some Scene {
@@ -24,6 +25,7 @@ struct DuhaApp: App {
             .environment(notifications)
             .environment(tracker)
             .environment(theme)
+            .environment(quranBookmarks)
             .id(theme.theme) // rebuild the tree so the new palette takes effect everywhere
             .task(id: hasOnboarded) {
                 // Start location + notifications only once we're past onboarding.

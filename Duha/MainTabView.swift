@@ -14,6 +14,10 @@ struct MainTabView: View {
             QiblaView()
                 .tag(1)
                 .tabItem { Label("Qibla", systemImage: "location.north.line.fill") }
+
+            QuranListView()
+                .tag(2)
+                .tabItem { Label("Quran", systemImage: "book.closed.fill") }
         }
         .tint(Palette.gold)
         .preferredColorScheme(Palette.active.colorScheme)
