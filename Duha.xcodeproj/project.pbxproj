@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 71;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -26,16 +26,8 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		DA0000000000000000000030 /* Duha */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Duha;
-			sourceTree = "<group>";
-		};
-		DA0000000000000000000031 /* DuhaTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = DuhaTests;
-			sourceTree = "<group>";
-		};
+		DA0000000000000000000030 /* Duha */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Duha; sourceTree = "<group>"; };
+		DA0000000000000000000031 /* DuhaTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = DuhaTests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,7 +148,6 @@
 			packageReferences = (
 				DA0000000000000000000080 /* XCRemoteSwiftPackageReference "adhan-swift" */,
 			);
-			preferredProjectObjectVersion = 77;
 			productRefGroup = DA0000000000000000000003 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
