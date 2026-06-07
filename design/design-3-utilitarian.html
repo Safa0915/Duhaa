@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prayer Times — Flat Utilitarian</title>
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: #E5E5EA;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    padding: 40px 20px;
+  }
+
+  /* Phone frame */
+  .phone {
+    width: 390px;
+    min-height: 844px;
+    background: #FFFFFF;
+    border-radius: 54px;
+    box-shadow:
+      0 0 0 1px #C8C8CC,
+      0 0 0 10px #1C1C1E,
+      0 0 0 12px #3A3A3C,
+      0 28px 80px rgba(0,0,0,0.4);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 54px;
+    background: #FFFFFF;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 28px 8px 28px;
+    flex-shrink: 0;
+  }
+
+  .status-time {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    color: #000000;
+  }
+
+  .status-icons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .status-icons svg {
+    fill: #000000;
+  }
+
+  /* Dynamic island */
+  .dynamic-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 36px;
+    background: #000000;
+    border-radius: 20px;
+    z-index: 10;
+  }
+
+  /* Navigation bar */
+  .nav-bar {
+    background: #FFFFFF;
+    padding: 8px 16px 12px 16px;
+    border-bottom: 0.5px solid #E5E5EA;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .nav-left {
+    width: 80px;
+  }
+
+  .nav-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+  }
+
+  .nav-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: #000000;
+    letter-spacing: -0.4px;
+  }
+
+  .nav-subtitle {
+    font-size: 11px;
+    font-weight: 400;
+    color: #8E8E93;
+    letter-spacing: -0.1px;
+    margin-top: 1px;
+  }
+
+  .nav-right {
+    width: 80px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .location-btn {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 0;
+    color: #007AFF;
+  }
+
+  .location-btn span {
+    font-size: 15px;
+    font-weight: 400;
+    color: #007AFF;
+    letter-spacing: -0.2px;
+  }
+
+  .location-btn svg {
+    fill: #007AFF;
+  }
+
+  /* Scrollable content */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    background: #F2F2F7;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .content::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Next prayer banner */
+  .next-banner {
+    background: #FFFFFF;
+    margin: 0;
+    padding: 14px 16px;
+    border-bottom: 0.5px solid #E5E5EA;
+  }
+
+  .next-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #8E8E93;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .next-text {
+    font-size: 17px;
+    font-weight: 400;
+    color: #007AFF;
+    letter-spacing: -0.3px;
+  }
+
+  .next-text strong {
+    font-weight: 600;
+  }
+
+  .next-countdown {
+    display: inline;
+    font-size: 17px;
+    font-weight: 400;
+    color: #007AFF;
+  }
+
+  /* Section */
+  .section {
+    margin-top: 36px;
+  }
+
+  .section-header {
+    font-size: 12px;
+    font-weight: 400;
+    color: #8E8E93;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 0 16px 6px 16px;
+  }
+
+  .section-body {
+    background: #FFFFFF;
+    border-top: 0.5px solid #E5E5EA;
+    border-bottom: 0.5px solid #E5E5EA;
+  }
+
+  /* Prayer row */
+  .prayer-row {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    min-height: 52px;
+    background: #FFFFFF;
+    position: relative;
+  }
+
+  .prayer-row + .prayer-row::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 16px;
+    right: 0;
+    height: 0.5px;
+    background: #E5E5EA;
+  }
+
+  .prayer-row.is-next {
+    background: #FFFFFF;
+  }
+
+  .prayer-indicator {
+    width: 24px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-right: 4px;
+  }
+
+  /* Blue filled circle for next */
+  .dot-next {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #007AFF;
+  }
+
+  /* Completed checkmark */
+  .checkmark {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .prayer-name-block {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 11px 0;
+  }
+
+  .prayer-name {
+    font-size: 17px;
+    font-weight: 400;
+    color: #000000;
+    letter-spacing: -0.3px;
+    line-height: 1.3;
+  }
+
+  .prayer-row.is-next .prayer-name {
+    font-weight: 600;
+    color: #007AFF;
+  }
+
+  .prayer-subtext {
+    font-size: 13px;
+    font-weight: 400;
+    color: #8E8E93;
+    letter-spacing: -0.1px;
+    margin-top: 2px;
+    line-height: 1.3;
+  }
+
+  .prayer-time {
+    font-size: 17px;
+    font-weight: 400;
+    color: #8E8E93;
+    letter-spacing: -0.3px;
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+
+  .prayer-row.is-next .prayer-time {
+    color: #007AFF;
+    font-weight: 500;
+  }
+
+  .prayer-chevron {
+    margin-left: 8px;
+    flex-shrink: 0;
+    opacity: 0.3;
+  }
+
+  /* Bottom padding section */
+  .bottom-pad {
+    height: 48px;
+  }
+
+  /* Home indicator */
+  .home-indicator {
+    height: 34px;
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .home-bar {
+    width: 134px;
+    height: 5px;
+    background: #000000;
+    border-radius: 3px;
+    opacity: 0.18;
+    margin-bottom: 4px;
+  }
+
+  /* Progress bar for next prayer */
+  .progress-section {
+    background: #FFFFFF;
+    padding: 12px 16px 14px 16px;
+    border-bottom: 0.5px solid #E5E5EA;
+  }
+
+  .progress-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .progress-label {
+    font-size: 12px;
+    font-weight: 400;
+    color: #8E8E93;
+    letter-spacing: -0.1px;
+  }
+
+  .progress-pct {
+    font-size: 12px;
+    font-weight: 400;
+    color: #8E8E93;
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 4px;
+    background: #E5E5EA;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 53%;
+    background: #007AFF;
+    border-radius: 2px;
+  }
+
+  /* Hijri inline small */
+  .hijri-inline {
+    font-size: 13px;
+    font-weight: 400;
+    color: #8E8E93;
+    text-align: right;
+    padding: 10px 16px 0 16px;
+    letter-spacing: -0.1px;
+  }
+
+  /* Date strip */
+  .date-strip {
+    background: #FFFFFF;
+    border-bottom: 0.5px solid #E5E5EA;
+    padding: 10px 16px 12px 16px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .gregorian-date {
+    font-size: 15px;
+    font-weight: 400;
+    color: #000000;
+    letter-spacing: -0.2px;
+  }
+
+  .hijri-date {
+    font-size: 13px;
+    font-weight: 400;
+    color: #8E8E93;
+    letter-spacing: -0.1px;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- Dynamic Island -->
+  <div class="dynamic-island"></div>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-time">2:31</span>
+    <div class="status-icons">
+      <!-- Signal bars -->
+      <svg width="17" height="12" viewBox="0 0 17 12">
+        <rect x="0" y="7" width="3" height="5" rx="0.8" opacity="1"/>
+        <rect x="4.5" y="5" width="3" height="7" rx="0.8" opacity="1"/>
+        <rect x="9" y="3" width="3" height="9" rx="0.8" opacity="1"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="0.8" opacity="1"/>
+      </svg>
+      <!-- WiFi -->
+      <svg width="16" height="12" viewBox="0 0 16 12">
+        <path d="M8 9.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/>
+        <path d="M8 6.2A5.5 5.5 0 0 1 12.8 8.4l-1.5 1.5A3.5 3.5 0 0 0 8 8.7a3.5 3.5 0 0 0-3.3 1.2L3.2 8.4A5.5 5.5 0 0 1 8 6.2z"/>
+        <path d="M8 2.8A9.2 9.2 0 0 1 15.2 6l-1.5 1.5A7.2 7.2 0 0 0 8 5.3a7.2 7.2 0 0 0-5.7 2.2L.8 6A9.2 9.2 0 0 1 8 2.8z" opacity="0.5"/>
+      </svg>
+      <!-- Battery -->
+      <svg width="25" height="12" viewBox="0 0 25 12">
+        <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#000" stroke-width="1" fill="none"/>
+        <rect x="2" y="2" width="16" height="8" rx="2" fill="#000"/>
+        <path d="M23 4v4a2 2 0 0 0 0-4z" fill="#000" opacity="0.4"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Navigation Bar -->
+  <div class="nav-bar">
+    <div class="nav-left"></div>
+    <div class="nav-center">
+      <div class="nav-title">Prayer Times</div>
+    </div>
+    <div class="nav-right">
+      <button class="location-btn">
+        <svg width="10" height="12" viewBox="0 0 10 14">
+          <path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5zm0 6.75A1.75 1.75 0 1 1 5 3.25a1.75 1.75 0 0 1 0 3.5z" fill="#007AFF"/>
+        </svg>
+        <span>London ▾</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Scrollable Content -->
+  <div class="content">
+
+    <!-- Date Strip -->
+    <div class="date-strip">
+      <span class="gregorian-date">Friday, 6 June 2025</span>
+      <span class="hijri-date">15 Dhul-Hijjah 1446</span>
+    </div>
+
+    <!-- Next Prayer Banner -->
+    <div class="next-banner">
+      <div class="next-label">Up Next</div>
+      <div class="next-text">
+        <strong>Asr</strong> at <strong>4:45 PM</strong>
+        <span class="next-countdown"> · 2h 14m away</span>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress-section">
+      <div class="progress-row">
+        <span class="progress-label">Dhuhr → Asr</span>
+        <span class="progress-pct">53%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill"></div>
+      </div>
+    </div>
+
+    <!-- Prayer Times Section -->
+    <div class="section">
+      <div class="section-header">Today</div>
+      <div class="section-body">
+
+        <!-- Fajr — past -->
+        <div class="prayer-row">
+          <div class="prayer-indicator">
+            <div class="checkmark">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <circle cx="7" cy="7" r="7" fill="#34C759"/>
+                <path d="M3.5 7l2.5 2.5 4.5-4.5" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+          <div class="prayer-name-block">
+            <span class="prayer-name" style="color:#8E8E93;">Fajr</span>
+          </div>
+          <span class="prayer-time" style="color:#C7C7CC;">3:47 AM</span>
+          <svg class="prayer-chevron" width="7" height="12" viewBox="0 0 7 12" fill="none">
+            <path d="M1 1l5 5-5 5" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <!-- Sunrise — subtle, smaller -->
+        <div class="prayer-row" style="min-height:40px; background:#FAFAFA;">
+          <div class="prayer-indicator"></div>
+          <div class="prayer-name-block" style="padding:8px 0;">
+            <span class="prayer-name" style="font-size:14px; color:#C7C7CC;">Sunrise</span>
+          </div>
+          <span class="prayer-time" style="font-size:14px; color:#C7C7CC;">5:03 AM</span>
+        </div>
+
+        <!-- Dhuhr — past -->
+        <div class="prayer-row">
+          <div class="prayer-indicator">
+            <div class="checkmark">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <circle cx="7" cy="7" r="7" fill="#34C759"/>
+                <path d="M3.5 7l2.5 2.5 4.5-4.5" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+          <div class="prayer-name-block">
+            <span class="prayer-name" style="color:#8E8E93;">Dhuhr</span>
+          </div>
+          <span class="prayer-time" style="color:#C7C7CC;">1:02 PM</span>
+          <svg class="prayer-chevron" width="7" height="12" viewBox="0 0 7 12" fill="none">
+            <path d="M1 1l5 5-5 5" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <!-- Asr — NEXT -->
+        <div class="prayer-row is-next">
+          <div class="prayer-indicator">
+            <div class="dot-next"></div>
+          </div>
+          <div class="prayer-name-block">
+            <span class="prayer-name">Asr</span>
+          </div>
+          <span class="prayer-time">4:45 PM</span>
+          <svg class="prayer-chevron" width="7" height="12" viewBox="0 0 7 12" fill="none">
+            <path d="M1 1l5 5-5 5" stroke="#007AFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <!-- Maghrib — upcoming -->
+        <div class="prayer-row">
+          <div class="prayer-indicator"></div>
+          <div class="prayer-name-block">
+            <span class="prayer-name">Maghrib</span>
+          </div>
+          <span class="prayer-time">9:12 PM</span>
+          <svg class="prayer-chevron" width="7" height="12" viewBox="0 0 7 12" fill="none">
+            <path d="M1 1l5 5-5 5" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <!-- Isha — upcoming with subtext -->
+        <div class="prayer-row">
+          <div class="prayer-indicator"></div>
+          <div class="prayer-name-block">
+            <span class="prayer-name">Isha</span>
+            <span class="prayer-subtext">Ends 12:58 AM · 4h 32m left</span>
+          </div>
+          <span class="prayer-time">10:43 PM</span>
+          <svg class="prayer-chevron" width="7" height="12" viewBox="0 0 7 12" fill="none">
+            <path d="M1 1l5 5-5 5" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Night Prayer Section -->
+    <div class="section">
+      <div class="section-header">Night Prayer</div>
+      <div class="section-body">
+
+        <!-- Tahajjud -->
+        <div class="prayer-row">
+          <div class="prayer-indicator"></div>
+          <div class="prayer-name-block">
+            <span class="prayer-name">Tahajjud</span>
+            <span class="prayer-subtext">Last third of night</span>
+          </div>
+          <span class="prayer-time">12:00 AM</span>
+          <svg class="prayer-chevron" width="7" height="12" viewBox="0 0 7 12" fill="none">
+            <path d="M1 1l5 5-5 5" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <!-- Islamic Midnight -->
+        <div class="prayer-row">
+          <div class="prayer-indicator"></div>
+          <div class="prayer-name-block">
+            <span class="prayer-name">Islamic Midnight</span>
+          </div>
+          <span class="prayer-time">12:58 AM</span>
+          <svg class="prayer-chevron" width="7" height="12" viewBox="0 0 7 12" fill="none">
+            <path d="M1 1l5 5-5 5" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Calculation Method section -->
+    <div class="section">
+      <div class="section-header">Settings</div>
+      <div class="section-body">
+        <div class="prayer-row">
+          <div class="prayer-indicator"></div>
+          <div class="prayer-name-block">
+            <span class="prayer-name">Calculation Method</span>
+            <span class="prayer-subtext">Muslim World League</span>
+          </div>
+          <svg class="prayer-chevron" width="7" height="12" viewBox="0 0 7 12" fill="none">
+            <path d="M1 1l5 5-5 5" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="prayer-row">
+          <div class="prayer-indicator"></div>
+          <div class="prayer-name-block">
+            <span class="prayer-name">Madhab</span>
+            <span class="prayer-subtext">Hanafi</span>
+          </div>
+          <svg class="prayer-chevron" width="7" height="12" viewBox="0 0 7 12" fill="none">
+            <path d="M1 1l5 5-5 5" stroke="#C7C7CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-pad"></div>
+
+  </div>
+
+  <!-- Home Indicator -->
+  <div class="home-indicator">
+    <div class="home-bar"></div>
+  </div>
+
+</div>
+
+</body>
+</html>

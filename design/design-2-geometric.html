@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Islamic Prayer App – Geometric Style</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0d0d0d;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Georgia, 'Times New Roman', serif;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(27,67,50,0.3) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 50%, rgba(107,31,42,0.3) 0%, transparent 60%);
+  }
+
+  /* ── Phone frame ── */
+  .phone {
+    width: 390px;
+    height: 844px;
+    background: #0f1a14;
+    border-radius: 52px;
+    box-shadow:
+      0 0 0 2px #2a2a2a,
+      0 0 0 5px #1a1a1a,
+      0 0 0 7px #333,
+      0 0 60px rgba(0,0,0,0.9),
+      inset 0 0 0 1px rgba(255,255,255,0.05);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Dynamic Island */
+  .dynamic-island {
+    position: absolute;
+    top: 13px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 34px;
+    background: #000;
+    border-radius: 20px;
+    z-index: 100;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 54px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 28px 8px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+  }
+  .status-time {
+    font-size: 15px;
+    font-weight: 600;
+    color: #D4A017;
+    font-family: -apple-system, sans-serif;
+    letter-spacing: 0.3px;
+  }
+  .status-icons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #D4A017;
+  }
+  .status-icons svg { display: block; }
+
+  /* Scrollable screen content */
+  .screen {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    position: relative;
+    background: linear-gradient(180deg, #1B4332 0%, #0d1f18 35%, #0f1a14 100%);
+  }
+  .screen::-webkit-scrollbar { display: none; }
+
+  /* ── Geometric SVG tile background ── */
+  .geo-bg {
+    position: absolute;
+    inset: 0;
+    opacity: 0.07;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Decorative top border strip ── */
+  .top-border-strip {
+    position: relative;
+    z-index: 2;
+    height: 36px;
+    background: linear-gradient(90deg, #6B1F2A 0%, #8B2535 20%, #D4A017 50%, #8B2535 80%, #6B1F2A 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .top-border-strip::before {
+    content: '';
+    position: absolute;
+    inset: 2px 0;
+    border-top: 1px solid rgba(212,160,23,0.5);
+    border-bottom: 1px solid rgba(212,160,23,0.5);
+  }
+  .top-border-strip svg {
+    height: 28px;
+    width: 100%;
+  }
+
+  /* ── Header ── */
+  .header {
+    position: relative;
+    z-index: 2;
+    padding: 18px 24px 14px;
+    text-align: center;
+    border-bottom: 1px solid rgba(212,160,23,0.25);
+  }
+  .header-ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .ornament-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #D4A017, transparent);
+  }
+  .ornament-diamond {
+    width: 8px;
+    height: 8px;
+    background: #D4A017;
+    transform: rotate(45deg);
+    flex-shrink: 0;
+    box-shadow: 0 0 6px rgba(212,160,23,0.6);
+  }
+  .header-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #D4A017;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(212,160,23,0.4), 0 2px 4px rgba(0,0,0,0.5);
+    line-height: 1.1;
+    font-family: Georgia, serif;
+  }
+  .header-title .arabic-subtitle {
+    display: block;
+    font-size: 13px;
+    letter-spacing: 6px;
+    color: rgba(212,160,23,0.7);
+    margin-top: 2px;
+    font-style: italic;
+  }
+  .header-location {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    color: #a8d5b5;
+    font-size: 13px;
+    font-family: Georgia, serif;
+  }
+  .header-location svg {
+    color: #D4A017;
+    flex-shrink: 0;
+  }
+  .hijri-date {
+    margin-top: 5px;
+    font-size: 11.5px;
+    color: rgba(212,160,23,0.65);
+    letter-spacing: 1.5px;
+    font-style: italic;
+  }
+
+  /* ── Next prayer card ── */
+  .next-prayer-wrapper {
+    position: relative;
+    z-index: 2;
+    padding: 16px 20px;
+  }
+  .next-prayer-card {
+    background: linear-gradient(135deg, rgba(27,67,50,0.9) 0%, rgba(15,35,25,0.95) 100%);
+    border: 1px solid #D4A017;
+    border-radius: 4px;
+    padding: 18px 20px;
+    position: relative;
+    box-shadow:
+      0 0 0 3px rgba(212,160,23,0.1),
+      0 8px 32px rgba(0,0,0,0.5),
+      inset 0 0 40px rgba(212,160,23,0.03);
+  }
+  /* Corner ornaments */
+  .next-prayer-card::before,
+  .next-prayer-card::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-color: #D4A017;
+    border-style: solid;
+  }
+  .next-prayer-card::before {
+    top: -3px; left: -3px;
+    border-width: 3px 0 0 3px;
+  }
+  .next-prayer-card::after {
+    bottom: -3px; right: -3px;
+    border-width: 0 3px 3px 0;
+  }
+  .npc-inner-corners {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .npc-inner-corners::before {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: -3px;
+    width: 16px; height: 16px;
+    border: 3px solid #D4A017;
+    border-width: 0 0 3px 3px;
+  }
+  .npc-inner-corners::after {
+    content: '';
+    position: absolute;
+    top: -3px; right: -3px;
+    width: 16px; height: 16px;
+    border: 3px solid #D4A017;
+    border-width: 3px 3px 0 0;
+  }
+  .npc-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(212,160,23,0.65);
+    text-align: center;
+    margin-bottom: 10px;
+    font-family: Georgia, serif;
+  }
+  .npc-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+  }
+  .npc-prayer-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: #D4A017;
+    letter-spacing: 2px;
+    font-family: Georgia, serif;
+    text-shadow: 0 0 15px rgba(212,160,23,0.4);
+  }
+  .npc-sep {
+    color: rgba(212,160,23,0.4);
+    font-size: 18px;
+    margin: 0 10px;
+  }
+  .npc-time {
+    font-size: 22px;
+    font-weight: 600;
+    color: #e8f5ec;
+    font-family: Georgia, serif;
+  }
+  .npc-countdown {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #a8d5b5;
+    letter-spacing: 1px;
+    font-style: italic;
+  }
+  .npc-countdown span {
+    color: #D4A017;
+    font-weight: 600;
+    font-style: normal;
+  }
+  .npc-progress-bar {
+    margin-top: 12px;
+    height: 3px;
+    background: rgba(212,160,23,0.15);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+  .npc-progress-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 62%;
+    background: linear-gradient(90deg, #6B1F2A, #D4A017);
+    border-radius: 2px;
+    box-shadow: 0 0 8px rgba(212,160,23,0.4);
+  }
+
+  /* ── Section label ── */
+  .section-label {
+    position: relative;
+    z-index: 2;
+    padding: 4px 20px 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label span {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(212,160,23,0.55);
+    font-family: Georgia, serif;
+    white-space: nowrap;
+  }
+  .section-label .sl-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(212,160,23,0.3), transparent);
+  }
+
+  /* ── Prayer times list ── */
+  .prayer-list {
+    position: relative;
+    z-index: 2;
+    margin: 0 16px;
+    background: rgba(10,22,15,0.75);
+    border: 1px solid rgba(212,160,23,0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+  }
+
+  .prayer-row {
+    display: flex;
+    align-items: center;
+    padding: 13px 18px;
+    position: relative;
+    transition: background 0.2s;
+  }
+  .prayer-row + .prayer-row {
+    border-top: 1px solid transparent;
+  }
+  .prayer-row + .prayer-row::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 18px; right: 18px;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(212,160,23,0.08) 15%,
+      rgba(212,160,23,0.25) 40%,
+      rgba(212,160,23,0.35) 50%,
+      rgba(212,160,23,0.25) 60%,
+      rgba(212,160,23,0.08) 85%,
+      transparent 100%);
+  }
+  /* Diamond divider accent */
+  .prayer-row + .prayer-row::after {
+    content: '◆';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 7px;
+    color: rgba(212,160,23,0.35);
+    line-height: 1;
+  }
+
+  .prayer-row.active {
+    background: linear-gradient(135deg,
+      rgba(107,31,42,0.35) 0%,
+      rgba(27,67,50,0.2) 100%);
+    box-shadow: inset 0 0 30px rgba(212,160,23,0.03);
+  }
+  .prayer-row.active::before {
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(212,160,23,0.2) 15%,
+      rgba(212,160,23,0.6) 40%,
+      rgba(212,160,23,0.8) 50%,
+      rgba(212,160,23,0.6) 60%,
+      rgba(212,160,23,0.2) 85%,
+      transparent 100%) !important;
+  }
+
+  .pr-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(212,160,23,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 14px;
+    flex-shrink: 0;
+    background: rgba(212,160,23,0.05);
+    font-size: 13px;
+  }
+  .prayer-row.active .pr-icon {
+    border-color: #D4A017;
+    background: rgba(212,160,23,0.12);
+    box-shadow: 0 0 8px rgba(212,160,23,0.2);
+  }
+
+  .pr-name-col {
+    flex: 1;
+  }
+  .pr-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #c8e8d4;
+    font-family: Georgia, serif;
+    letter-spacing: 0.5px;
+  }
+  .prayer-row.active .pr-name {
+    color: #D4A017;
+    text-shadow: 0 0 10px rgba(212,160,23,0.3);
+  }
+  .pr-sub {
+    font-size: 10px;
+    color: rgba(168,213,181,0.5);
+    margin-top: 1px;
+    font-style: italic;
+    letter-spacing: 0.3px;
+  }
+
+  .pr-time {
+    font-size: 15px;
+    font-weight: 600;
+    color: #a8d5b5;
+    font-family: Georgia, serif;
+    letter-spacing: 0.5px;
+  }
+  .prayer-row.active .pr-time {
+    color: #e8f5ec;
+    font-size: 16px;
+  }
+
+  .pr-badge {
+    margin-left: 10px;
+    background: linear-gradient(135deg, #6B1F2A, #8B2535);
+    border: 1px solid rgba(212,160,23,0.4);
+    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: #D4A017;
+    text-transform: uppercase;
+  }
+
+  /* ── Night Prayer card ── */
+  .night-prayer-wrapper {
+    position: relative;
+    z-index: 2;
+    padding: 14px 16px 20px;
+  }
+  .night-prayer-card {
+    background: linear-gradient(135deg,
+      rgba(107,31,42,0.4) 0%,
+      rgba(10,18,14,0.9) 50%,
+      rgba(27,67,50,0.3) 100%);
+    border: 1px solid rgba(212,160,23,0.35);
+    border-radius: 4px;
+    padding: 16px 18px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 4px 24px rgba(0,0,0,0.4),
+      inset 0 0 60px rgba(212,160,23,0.02);
+  }
+  /* Geometric SVG inset background */
+  .night-prayer-card .card-geo {
+    position: absolute;
+    inset: 0;
+    opacity: 0.06;
+    pointer-events: none;
+  }
+  /* Top & bottom border lines */
+  .night-prayer-card::before {
+    content: '';
+    position: absolute;
+    top: 6px; left: 14px; right: 14px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212,160,23,0.5), transparent);
+  }
+  .night-prayer-card::after {
+    content: '';
+    position: absolute;
+    bottom: 6px; left: 14px; right: 14px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212,160,23,0.5), transparent);
+  }
+  .npc2-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 1;
+  }
+  .npc2-header .h-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212,160,23,0.4));
+  }
+  .npc2-header .h-line.r {
+    background: linear-gradient(90deg, rgba(212,160,23,0.4), transparent);
+  }
+  .npc2-title {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #D4A017;
+    font-family: Georgia, serif;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .npc2-title .star { font-size: 8px; }
+
+  .npc2-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+    z-index: 1;
+  }
+  .npc2-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 4px;
+    position: relative;
+  }
+  .npc2-row + .npc2-row::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent,
+      rgba(212,160,23,0.2),
+      rgba(212,160,23,0.4) 50%,
+      rgba(212,160,23,0.2),
+      transparent);
+  }
+  .npc2-icon {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+  .npc2-label {
+    flex: 1;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #c8e8d4;
+    font-family: Georgia, serif;
+    letter-spacing: 0.3px;
+  }
+  .npc2-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(212,160,23,0.9);
+    font-family: Georgia, serif;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Bottom home indicator ── */
+  .home-bar {
+    height: 34px;
+    background: #0d1a10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+  }
+  .home-pill {
+    width: 134px;
+    height: 5px;
+    background: rgba(212,160,23,0.35);
+    border-radius: 3px;
+  }
+
+  /* ── Arabesque header border ── */
+  .arabesque-strip {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <!-- Dynamic Island -->
+  <div class="dynamic-island"></div>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-time">2:31</span>
+    <div class="status-icons">
+      <!-- Signal bars -->
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor">
+        <rect x="0" y="8" width="3" height="4" rx="0.5"/>
+        <rect x="4.5" y="5.5" width="3" height="6.5" rx="0.5"/>
+        <rect x="9" y="3" width="3" height="9" rx="0.5"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="0.5"/>
+      </svg>
+      <!-- WiFi -->
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor">
+        <path d="M8 9.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z"/>
+        <path d="M2.5 5.5C4.1 3.9 5.9 3 8 3s3.9.9 5.5 2.5l1.2-1.2C12.8 2.4 10.5 1.2 8 1.2S3.2 2.4 1.3 4.3l1.2 1.2z"/>
+        <path d="M5 8c.8-.8 1.9-1.3 3-1.3s2.2.5 3 1.3l1.2-1.2C11.1 5.7 9.6 5 8 5S4.9 5.7 3.8 6.8L5 8z"/>
+      </svg>
+      <!-- Battery -->
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+        <rect x="0.5" y="0.5" width="20" height="11" rx="2.5" stroke="currentColor" stroke-opacity="0.35"/>
+        <rect x="21.5" y="3.5" width="2.5" height="5" rx="1" fill="currentColor" fill-opacity="0.4"/>
+        <rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Scrollable Screen -->
+  <div class="screen">
+
+    <!-- Full geometric background -->
+    <svg class="geo-bg" xmlns="http://www.w3.org/2000/svg" width="390" height="100%">
+      <defs>
+        <!-- 8-point star geometric pattern tile -->
+        <pattern id="geo8" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+          <rect width="60" height="60" fill="none"/>
+          <!-- Outer rotated square -->
+          <polygon points="30,2 58,30 30,58 2,30" fill="none" stroke="#D4A017" stroke-width="0.6"/>
+          <!-- Inner square -->
+          <rect x="17" y="17" width="26" height="26" fill="none" stroke="#D4A017" stroke-width="0.6" transform="rotate(45 30 30)"/>
+          <!-- Small 8-point star center -->
+          <polygon points="30,20 32.5,27.5 40,30 32.5,32.5 30,40 27.5,32.5 20,30 27.5,27.5" fill="none" stroke="#D4A017" stroke-width="0.5"/>
+          <!-- Corner small diamonds -->
+          <polygon points="0,0 5,0 0,5" fill="none" stroke="#D4A017" stroke-width="0.4"/>
+          <polygon points="60,0 55,0 60,5" fill="none" stroke="#D4A017" stroke-width="0.4"/>
+          <polygon points="0,60 5,60 0,55" fill="none" stroke="#D4A017" stroke-width="0.4"/>
+          <polygon points="60,60 55,60 60,55" fill="none" stroke="#D4A017" stroke-width="0.4"/>
+          <!-- Connecting lines -->
+          <line x1="30" y1="2" x2="30" y2="20" stroke="#D4A017" stroke-width="0.4"/>
+          <line x1="30" y1="40" x2="30" y2="58" stroke="#D4A017" stroke-width="0.4"/>
+          <line x1="2" y1="30" x2="20" y2="30" stroke="#D4A017" stroke-width="0.4"/>
+          <line x1="40" y1="30" x2="58" y2="30" stroke="#D4A017" stroke-width="0.4"/>
+        </pattern>
+      </defs>
+      <rect width="390" height="100%" fill="url(#geo8)"/>
+    </svg>
+
+    <!-- Decorative top border strip -->
+    <div class="top-border-strip">
+      <svg class="arabesque-strip" viewBox="0 0 390 36" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <defs>
+          <pattern id="strip-pat" x="0" y="0" width="36" height="36" patternUnits="userSpaceOnUse">
+            <!-- 8-point star motif for strip -->
+            <rect width="36" height="36" fill="none"/>
+            <polygon points="18,2 20.5,14 32,9 22,18 32,27 20.5,22 18,34 15.5,22 4,27 14,18 4,9 15.5,14" fill="none" stroke="rgba(212,160,23,0.55)" stroke-width="0.8"/>
+            <polygon points="18,6 19.5,15.5 28,11.5 21.5,18 28,24.5 19.5,20.5 18,30 16.5,20.5 8,24.5 14.5,18 8,11.5 16.5,15.5" fill="none" stroke="rgba(212,160,23,0.3)" stroke-width="0.5"/>
+            <circle cx="18" cy="18" r="2.5" fill="none" stroke="rgba(212,160,23,0.5)" stroke-width="0.6"/>
+          </pattern>
+        </defs>
+        <rect width="390" height="36" fill="url(#strip-pat)"/>
+        <!-- Top/bottom golden rule lines -->
+        <line x1="0" y1="1.5" x2="390" y2="1.5" stroke="rgba(212,160,23,0.7)" stroke-width="1"/>
+        <line x1="0" y1="34.5" x2="390" y2="34.5" stroke="rgba(212,160,23,0.7)" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-ornament">
+        <div class="ornament-line"></div>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="#D4A017" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="9,0 10.8,6.5 17,6.5 12,10.5 13.8,17 9,13 4.2,17 6,10.5 1,6.5 7.2,6.5" opacity="0.8"/>
+        </svg>
+        <div class="ornament-line" style="background: linear-gradient(90deg, #D4A017, transparent);"></div>
+      </div>
+      <div class="header-title">
+        Prayer Times
+        <span class="arabic-subtitle">مواقيت الصلاة</span>
+      </div>
+      <div class="header-location">
+        <svg width="11" height="14" viewBox="0 0 11 14" fill="#D4A017">
+          <path d="M5.5 0C3.02 0 1 2.02 1 4.5c0 3.5 4.5 9.5 4.5 9.5S10 8 10 4.5C10 2.02 7.98 0 5.5 0zm0 6.5a2 2 0 110-4 2 2 0 010 4z"/>
+        </svg>
+        <span>London, United Kingdom</span>
+      </div>
+      <div class="hijri-date">✦ &nbsp; 15 Dhul-Hijjah 1446 AH &nbsp; ✦</div>
+    </div>
+
+    <!-- Next Prayer Card -->
+    <div class="next-prayer-wrapper">
+      <div class="next-prayer-card">
+        <div class="npc-inner-corners"></div>
+        <div class="npc-label">✦ &nbsp; Next Prayer &nbsp; ✦</div>
+        <div class="npc-center">
+          <div class="npc-prayer-name">Asr</div>
+          <div class="npc-sep">·</div>
+          <div class="npc-time">4:45 PM</div>
+        </div>
+        <div class="npc-countdown">in <span>2 hours 14 minutes</span></div>
+        <div class="npc-progress-bar">
+          <div class="npc-progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section label -->
+    <div class="section-label">
+      <span>Today's Prayers</span>
+      <div class="sl-line"></div>
+    </div>
+
+    <!-- Prayer List -->
+    <div class="prayer-list">
+
+      <!-- Fajr -->
+      <div class="prayer-row">
+        <div class="pr-icon">🌙</div>
+        <div class="pr-name-col">
+          <div class="pr-name">Fajr</div>
+          <div class="pr-sub">Dawn prayer</div>
+        </div>
+        <div class="pr-time">3:47 AM</div>
+      </div>
+
+      <!-- Dhuhr -->
+      <div class="prayer-row">
+        <div class="pr-icon">☀️</div>
+        <div class="pr-name-col">
+          <div class="pr-name">Dhuhr</div>
+          <div class="pr-sub">Midday prayer</div>
+        </div>
+        <div class="pr-time">1:02 PM</div>
+      </div>
+
+      <!-- Asr — active/highlighted -->
+      <div class="prayer-row active">
+        <div class="pr-icon">🌤</div>
+        <div class="pr-name-col">
+          <div class="pr-name">Asr</div>
+          <div class="pr-sub">Afternoon prayer</div>
+        </div>
+        <div class="pr-time">4:45 PM</div>
+        <div class="pr-badge">Next</div>
+      </div>
+
+      <!-- Maghrib -->
+      <div class="prayer-row">
+        <div class="pr-icon">🌅</div>
+        <div class="pr-name-col">
+          <div class="pr-name">Maghrib</div>
+          <div class="pr-sub">Sunset prayer</div>
+        </div>
+        <div class="pr-time">9:12 PM</div>
+      </div>
+
+      <!-- Isha -->
+      <div class="prayer-row">
+        <div class="pr-icon">🌃</div>
+        <div class="pr-name-col">
+          <div class="pr-name">Isha</div>
+          <div class="pr-sub" style="color: rgba(212,160,23,0.5);">ends at 12:58 AM</div>
+        </div>
+        <div class="pr-time">10:43 PM</div>
+      </div>
+
+    </div>
+
+    <!-- Section label 2 -->
+    <div class="section-label" style="margin-top: 8px;">
+      <span>Night Devotions</span>
+      <div class="sl-line"></div>
+    </div>
+
+    <!-- Night Prayer Card -->
+    <div class="night-prayer-wrapper">
+      <div class="night-prayer-card">
+        <!-- Geometric background inside card -->
+        <svg class="card-geo" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="card-geo-pat" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+              <polygon points="20,2 22,17 37,12 22,20 37,28 22,23 20,38 18,23 3,28 18,20 3,12 18,17" fill="none" stroke="#D4A017" stroke-width="0.7"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#card-geo-pat)"/>
+        </svg>
+
+        <div class="npc2-header">
+          <div class="h-line"></div>
+          <div class="npc2-title">
+            <span class="star">✦</span>
+            Night Prayer
+            <span class="star">✦</span>
+          </div>
+          <div class="h-line r"></div>
+        </div>
+
+        <div class="npc2-rows">
+          <div class="npc2-row">
+            <div class="npc2-icon">🌟</div>
+            <div class="npc2-label">Tahajjud</div>
+            <div class="npc2-value">12:00 AM</div>
+          </div>
+          <div class="npc2-row">
+            <div class="npc2-icon">🌑</div>
+            <div class="npc2-label">Islamic Midnight</div>
+            <div class="npc2-value">12:58 AM</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Bottom spacer -->
+    <div style="height: 10px; position: relative; z-index: 2;"></div>
+
+  </div><!-- /screen -->
+
+  <!-- Home bar -->
+  <div class="home-bar">
+    <div class="home-pill"></div>
+  </div>
+
+</div><!-- /phone -->
+
+</body>
+</html>

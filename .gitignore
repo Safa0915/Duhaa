@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# React Native / Expo
+.expo/
+dist/
+web-build/
+*.jsbundle
+ios/Pods/
+ios/build/
+android/build/
+android/app/build/
+.gradle/
+
+# Native / Xcode
+*.xcuserstate
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Audio masters / large media (recitation, adhan files) — use Git LFS or keep out of repo
+*.wav
+*.aiff
+*.flac
+# (note: ship-ready compressed audio can be force-added intentionally)
+
+# Env / secrets
+.env
+.env.*
+*.pem
+*.p8
+*.p12
+*.mobileprovision
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# IDE
+.idea/
+.vscode/
