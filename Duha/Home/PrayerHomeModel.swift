@@ -56,22 +56,11 @@ struct HomeDisplay {
 
 // MARK: - Model
 
-/// Drives the Prayer home screen. Holds the (for-now hardcoded) location, ticks a
-/// 1-second clock so the countdown stays live, and asks `PrayerEngine` for times.
+/// Turns engine output + the active location into the home screen's display data.
+/// Ticks a 1-second clock so the countdown stays live. Location-agnostic: the
+/// caller passes in the `ActiveLocation` to render for (see `display(for:)`).
 @Observable
 final class PrayerHomeModel {
-
-    /// Hardcoded location until Slice 3 wires up GPS. New York matches a US-East
-    /// device's time zone, so the hero clock reads the real wall-clock time.
-    struct Place {
-        let name: String
-        let latitude: Double
-        let longitude: Double
-        let timeZoneID: String
-    }
-    let place = Place(name: "New York, USA",
-                      latitude: 40.7128, longitude: -74.0060,
-                      timeZoneID: "America/New_York")
 
     /// Calculation settings — defaults for now; Settings (Slice 4) will own these.
     var config = PrayerConfig()
@@ -89,42 +78,27 @@ final class PrayerHomeModel {
 
     deinit { timer?.invalidate() }
 
-    private var timeZone: TimeZone { TimeZone(identifier: place.timeZoneID) ?? .current }
-
-    // MARK: Engine access
-
-    /// Times for the day `offset` days from now (0 = today), in the location's zone.
-    private func times(dayOffset: Int) -> DuhaPrayerTimes? {
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = timeZone
-        guard let day = calendar.date(byAdding: .day, value: dayOffset, to: now) else { return nil }
-        let comps = calendar.dateComponents([.year, .month, .day], from: day)
-        return PrayerEngine.times(latitude: place.latitude,
-                                  longitude: place.longitude,
-                                  date: comps,
-                                  config: config)
-    }
-
     // MARK: Snapshot the view reads
 
-    var display: HomeDisplay {
+    func display(for location: ActiveLocation) -> HomeDisplay {
+        let tz = location.timeZone
         var d = HomeDisplay()
-        d.locationName = place.name
-        d.hijri = hijri(now)
-        d.gregorian = format("EEEE, d MMMM yyyy", now)
-        d.clock = format("h:mm", now)
-        d.period = format("a", now)
+        d.locationName = location.name
+        d.hijri = hijri(now, tz)
+        d.gregorian = format("EEEE, d MMMM yyyy", now, tz)
+        d.clock = format("h:mm", now, tz)
+        d.period = format("a", now, tz)
 
-        guard let today = times(dayOffset: 0) else { return d } // polar fallback: header only
+        guard let today = times(location, dayOffset: 0) else { return d } // polar fallback: header only
         d.hasData = true
 
         // A timeline spanning yesterday's Isha → today's five → tomorrow's Fajr,
         // so "previous" and "next" resolve correctly at any hour.
         var timeline: [(Prayer, Date)] = []
-        if let y = times(dayOffset: -1) { timeline.append((.isha, y.isha)) }
+        if let y = times(location, dayOffset: -1) { timeline.append((.isha, y.isha)) }
         timeline += [(.fajr, today.fajr), (.dhuhr, today.dhuhr), (.asr, today.asr),
                      (.maghrib, today.maghrib), (.isha, today.isha)]
-        if let t = times(dayOffset: 1) { timeline.append((.fajr, t.fajr)) }
+        if let t = times(location, dayOffset: 1) { timeline.append((.fajr, t.fajr)) }
         timeline.sort { $0.1 < $1.1 }
 
         let next = timeline.first { $0.1 > now }
@@ -133,10 +107,10 @@ final class PrayerHomeModel {
         if let next {
             d.nextName = next.0.rawValue
             d.countdown = countdown(to: next.1)
-            d.nextLabel = "\(next.0.rawValue) \(clock(next.1))"
+            d.nextLabel = "\(next.0.rawValue) \(clock(next.1, tz))"
         }
         if let prev {
-            d.prevLabel = "\(prev.0.rawValue) \(clock(prev.1))"
+            d.prevLabel = "\(prev.0.rawValue) \(clock(prev.1, tz))"
         }
         if let next, let prev {
             let total = next.1.timeIntervalSince(prev.1)
@@ -158,25 +132,39 @@ final class PrayerHomeModel {
                 state = time <= now ? .passed : .upcoming
             }
             return PrayerRowData(prayer: prayer,
-                                 time: clock(time),
+                                 time: clock(time, tz),
                                  state: state,
-                                 sub: prayer == .isha ? ishaSub(today) : nil)
+                                 sub: prayer == .isha ? ishaSub(today, tz) : nil)
         }
 
-        d.tahajjud = clock(today.tahajjud)
-        d.islamicMidnight = clock(today.islamicMidnight)
+        d.tahajjud = clock(today.tahajjud, tz)
+        d.islamicMidnight = clock(today.islamicMidnight, tz)
         return d
+    }
+
+    // MARK: Engine access
+
+    /// Times for the day `offset` days from now (0 = today), in the location's zone.
+    private func times(_ location: ActiveLocation, dayOffset: Int) -> DuhaPrayerTimes? {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = location.timeZone
+        guard let day = calendar.date(byAdding: .day, value: dayOffset, to: now) else { return nil }
+        let comps = calendar.dateComponents([.year, .month, .day], from: day)
+        return PrayerEngine.times(latitude: location.latitude,
+                                  longitude: location.longitude,
+                                  date: comps,
+                                  config: config)
     }
 
     // MARK: Isha "ends at Islamic midnight" sub-line
 
-    private func ishaSub(_ t: DuhaPrayerTimes) -> String {
+    private func ishaSub(_ t: DuhaPrayerTimes, _ tz: TimeZone) -> String {
         // High-latitude anomaly (spec §13): when Isha lands after Islamic midnight,
         // the "ends at midnight" framing breaks down — say so gently instead.
         if t.ishaAfterIslamicMidnight {
             return "approximate at this latitude"
         }
-        var sub = "ends \(clock(t.islamicMidnight))"
+        var sub = "ends \(clock(t.islamicMidnight, tz))"
         if now >= t.isha && now < t.islamicMidnight {
             sub += " · ends in \(countdown(to: t.islamicMidnight))"
         }
@@ -191,21 +179,21 @@ final class PrayerHomeModel {
         return h > 0 ? "\(h)h \(m)m" : "\(m)m"
     }
 
-    private func clock(_ date: Date) -> String { format("h:mm a", date) }
+    private func clock(_ date: Date, _ tz: TimeZone) -> String { format("h:mm a", date, tz) }
 
-    private func format(_ pattern: String, _ date: Date) -> String {
+    private func format(_ pattern: String, _ date: Date, _ tz: TimeZone) -> String {
         let f = DateFormatter()
         f.locale = Locale(identifier: "en_US_POSIX")
-        f.timeZone = timeZone
+        f.timeZone = tz
         f.dateFormat = pattern
         return f.string(from: date)
     }
 
-    private func hijri(_ date: Date) -> String {
+    private func hijri(_ date: Date, _ tz: TimeZone) -> String {
         let f = DateFormatter()
         f.calendar = Calendar(identifier: .islamicUmmAlQura)
         f.locale = Locale(identifier: "en_US_POSIX")
-        f.timeZone = timeZone
+        f.timeZone = tz
         f.dateFormat = "d MMMM yyyy"
         return f.string(from: date)
     }

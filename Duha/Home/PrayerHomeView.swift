@@ -4,10 +4,12 @@ import SwiftUI
 /// prayer with a live countdown, today's five prayers, and the night-prayer card,
 /// all on the locked celestial design (design/design-1-celestial.html).
 struct PrayerHomeView: View {
+    @Environment(LocationProvider.self) private var location
     @State private var model = PrayerHomeModel()
+    @State private var showingLocationPicker = false
 
     var body: some View {
-        let d = model.display
+        let d = model.display(for: location.active)
 
         ZStack {
             CelestialBackground()
@@ -34,20 +36,32 @@ struct PrayerHomeView: View {
             }
         }
         .preferredColorScheme(.dark)
+        .sheet(isPresented: $showingLocationPicker) {
+            LocationPickerView()
+        }
     }
 
     // MARK: Header — location + Hijri date
 
     private func header(_ d: HomeDisplay) -> some View {
         VStack(spacing: 6) {
-            HStack(spacing: 5) {
-                Image(systemName: "location.fill")
-                    .font(.system(size: 10))
-                    .foregroundStyle(Palette.blue.opacity(0.7))
-                Text(d.locationName)
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(Palette.blue)
+            Button {
+                showingLocationPicker = true
+            } label: {
+                HStack(spacing: 5) {
+                    Image(systemName: "location.fill")
+                        .font(.system(size: 10))
+                        .foregroundStyle(Palette.blue.opacity(0.7))
+                    Text(d.locationName)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(Palette.blue)
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 9, weight: .semibold))
+                        .foregroundStyle(Palette.blue.opacity(0.6))
+                }
             }
+            .buttonStyle(.plain)
+
             Text(d.hijri)
                 .font(.system(size: 12))
                 .foregroundStyle(Palette.blue.opacity(0.75))
@@ -90,4 +104,5 @@ struct PrayerHomeView: View {
 
 #Preview {
     PrayerHomeView()
+        .environment(LocationProvider())
 }
