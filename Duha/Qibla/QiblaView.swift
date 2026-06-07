@@ -11,6 +11,10 @@ struct QiblaView: View {
     @Environment(LocationProvider.self) private var location
     @State private var headingProvider = HeadingProvider()
     @State private var wasAligned = false
+    /// Continuous (unwrapped) heading: accumulates shortest-path deltas so the
+    /// dial and needle never whip a full circle when heading crosses 0°/360° (North).
+    @State private var continuousHeading = 0.0
+    @State private var hasHeading = false
 
     private let kaaba = CLLocation(latitude: 21.4225, longitude: 39.8262)
 
@@ -24,12 +28,11 @@ struct QiblaView: View {
         CLLocation(latitude: location.active.latitude, longitude: location.active.longitude)
             .distance(from: kaaba) / 1000
     }
-    private var heading: Double { headingProvider.heading ?? 0 }
     /// On-screen angle of the needle (0 = straight up).
-    private var relativeQibla: Double { qiblaBearing - heading }
+    private var relativeQibla: Double { qiblaBearing - continuousHeading }
     private var aligned: Bool {
         guard headingProvider.heading != nil else { return false }
-        return abs(angleDelta(heading, qiblaBearing)) < 5
+        return abs(angleDelta(continuousHeading, qiblaBearing)) < 5
     }
 
     // MARK: Body
@@ -53,6 +56,16 @@ struct QiblaView: View {
         .preferredColorScheme(.dark)
         .onAppear { headingProvider.start() }
         .onDisappear { headingProvider.stop() }
+        .onChange(of: headingProvider.heading) { _, newValue in
+            guard let newValue else { return }
+            let delta = angleDelta(continuousHeading, newValue) // shortest signed step
+            if hasHeading {
+                withAnimation(.easeOut(duration: 0.18)) { continuousHeading += delta }
+            } else {
+                continuousHeading += delta // snap on the first reading, no spin
+                hasHeading = true
+            }
+        }
         .onChange(of: aligned) { _, now in
             if now && !wasAligned { UINotificationFeedbackGenerator().notificationOccurred(.success) }
             wasAligned = now
@@ -88,8 +101,7 @@ struct QiblaView: View {
                 cardinal("W", 270, r - 32)
             }
             .frame(width: size, height: size)
-            .rotationEffect(.degrees(-heading))
-            .animation(.easeOut(duration: 0.18), value: heading)
+            .rotationEffect(.degrees(-continuousHeading))
 
             // Qibla needle
             QiblaNeedle()
@@ -97,7 +109,6 @@ struct QiblaView: View {
                                      startPoint: .top, endPoint: .center))
                 .frame(width: size, height: size)
                 .rotationEffect(.degrees(relativeQibla))
-                .animation(.easeOut(duration: 0.18), value: relativeQibla)
                 .shadow(color: Palette.gold.opacity(0.5), radius: 6)
 
             // Center hub with Kaaba glyph
