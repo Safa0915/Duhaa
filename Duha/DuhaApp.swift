@@ -7,23 +7,32 @@ struct DuhaApp: App {
     @State private var settings = SettingsStore()
     @State private var notifications = NotificationSettings()
     @State private var tracker = PrayerTracker()
+    @AppStorage("duha.hasOnboarded") private var hasOnboarded = false
 
     var body: some Scene {
         WindowGroup {
-            MainTabView()
-                .environment(location)
-                .environment(settings)
-                .environment(notifications)
-                .environment(tracker)
-                .task {
-                    location.start()
-                    await NotificationScheduler.requestAuthorization()
-                    rescheduleNotifications()
+            Group {
+                if hasOnboarded {
+                    MainTabView()
+                } else {
+                    OnboardingView { hasOnboarded = true }
                 }
-                .onChange(of: scenePhase) { _, phase in
-                    // Re-fill the rolling notification window on every app open (spec §8).
-                    if phase == .active { rescheduleNotifications() }
-                }
+            }
+            .environment(location)
+            .environment(settings)
+            .environment(notifications)
+            .environment(tracker)
+            .task(id: hasOnboarded) {
+                // Start location + notifications only once we're past onboarding.
+                guard hasOnboarded else { return }
+                location.start()
+                await NotificationScheduler.requestAuthorization()
+                rescheduleNotifications()
+            }
+            .onChange(of: scenePhase) { _, phase in
+                // Re-fill the rolling notification window on every app open (spec §8).
+                if phase == .active && hasOnboarded { rescheduleNotifications() }
+            }
         }
     }
 
