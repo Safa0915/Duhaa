@@ -1,0 +1,212 @@
+import Foundation
+import Observation
+
+// MARK: - Supporting types
+
+/// The five daily prayers, in order, with their display names and icons.
+enum Prayer: String, CaseIterable {
+    case fajr = "Fajr"
+    case dhuhr = "Dhuhr"
+    case asr = "Asr"
+    case maghrib = "Maghrib"
+    case isha = "Isha"
+
+    /// SF Symbol used in the prayer list.
+    var icon: String {
+        switch self {
+        case .fajr:    return "sunrise"
+        case .dhuhr:   return "sun.max"
+        case .asr:     return "sun.min"
+        case .maghrib: return "sunset"
+        case .isha:    return "moon.stars"
+        }
+    }
+}
+
+enum RowState { case passed, next, upcoming }
+
+/// One rendered row in the prayer list.
+struct PrayerRowData: Identifiable {
+    let prayer: Prayer
+    let time: String
+    let state: RowState
+    /// Extra line under the name (only Isha uses it: "ends 11:53 PM · …").
+    let sub: String?
+    var id: String { prayer.rawValue }
+}
+
+/// A single immutable snapshot the view renders from. Building it once per render
+/// keeps all the date math in one place (and off the view).
+struct HomeDisplay {
+    var hasData = false
+    var locationName = ""
+    var hijri = ""
+    var gregorian = ""
+    var clock = ""
+    var period = ""
+    var nextName = ""
+    var countdown = ""
+    var progress: Double = 0
+    var prevLabel = ""
+    var nextLabel = ""
+    var rows: [PrayerRowData] = []
+    var tahajjud = ""
+    var islamicMidnight = ""
+}
+
+// MARK: - Model
+
+/// Drives the Prayer home screen. Holds the (for-now hardcoded) location, ticks a
+/// 1-second clock so the countdown stays live, and asks `PrayerEngine` for times.
+@Observable
+final class PrayerHomeModel {
+
+    /// Hardcoded location until Slice 3 wires up GPS. New York matches a US-East
+    /// device's time zone, so the hero clock reads the real wall-clock time.
+    struct Place {
+        let name: String
+        let latitude: Double
+        let longitude: Double
+        let timeZoneID: String
+    }
+    let place = Place(name: "New York, USA",
+                      latitude: 40.7128, longitude: -74.0060,
+                      timeZoneID: "America/New_York")
+
+    /// Calculation settings — defaults for now; Settings (Slice 4) will own these.
+    var config = PrayerConfig()
+
+    /// "Now", refreshed every second to keep the countdown moving.
+    var now = Date()
+
+    @ObservationIgnored private var timer: Timer?
+
+    init() {
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            self?.now = Date()
+        }
+    }
+
+    deinit { timer?.invalidate() }
+
+    private var timeZone: TimeZone { TimeZone(identifier: place.timeZoneID) ?? .current }
+
+    // MARK: Engine access
+
+    /// Times for the day `offset` days from now (0 = today), in the location's zone.
+    private func times(dayOffset: Int) -> DuhaPrayerTimes? {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        guard let day = calendar.date(byAdding: .day, value: dayOffset, to: now) else { return nil }
+        let comps = calendar.dateComponents([.year, .month, .day], from: day)
+        return PrayerEngine.times(latitude: place.latitude,
+                                  longitude: place.longitude,
+                                  date: comps,
+                                  config: config)
+    }
+
+    // MARK: Snapshot the view reads
+
+    var display: HomeDisplay {
+        var d = HomeDisplay()
+        d.locationName = place.name
+        d.hijri = hijri(now)
+        d.gregorian = format("EEEE, d MMMM yyyy", now)
+        d.clock = format("h:mm", now)
+        d.period = format("a", now)
+
+        guard let today = times(dayOffset: 0) else { return d } // polar fallback: header only
+        d.hasData = true
+
+        // A timeline spanning yesterday's Isha → today's five → tomorrow's Fajr,
+        // so "previous" and "next" resolve correctly at any hour.
+        var timeline: [(Prayer, Date)] = []
+        if let y = times(dayOffset: -1) { timeline.append((.isha, y.isha)) }
+        timeline += [(.fajr, today.fajr), (.dhuhr, today.dhuhr), (.asr, today.asr),
+                     (.maghrib, today.maghrib), (.isha, today.isha)]
+        if let t = times(dayOffset: 1) { timeline.append((.fajr, t.fajr)) }
+        timeline.sort { $0.1 < $1.1 }
+
+        let next = timeline.first { $0.1 > now }
+        let prev = timeline.last { $0.1 <= now }
+
+        if let next {
+            d.nextName = next.0.rawValue
+            d.countdown = countdown(to: next.1)
+            d.nextLabel = "\(next.0.rawValue) \(clock(next.1))"
+        }
+        if let prev {
+            d.prevLabel = "\(prev.0.rawValue) \(clock(prev.1))"
+        }
+        if let next, let prev {
+            let total = next.1.timeIntervalSince(prev.1)
+            let elapsed = now.timeIntervalSince(prev.1)
+            d.progress = total > 0 ? min(1, max(0, elapsed / total)) : 0
+        }
+
+        // The five list rows.
+        let byPrayer: [Prayer: Date] = [
+            .fajr: today.fajr, .dhuhr: today.dhuhr, .asr: today.asr,
+            .maghrib: today.maghrib, .isha: today.isha,
+        ]
+        d.rows = Prayer.allCases.map { prayer in
+            let time = byPrayer[prayer]!
+            let state: RowState
+            if prayer.rawValue == next?.0.rawValue {
+                state = .next
+            } else {
+                state = time <= now ? .passed : .upcoming
+            }
+            return PrayerRowData(prayer: prayer,
+                                 time: clock(time),
+                                 state: state,
+                                 sub: prayer == .isha ? ishaSub(today) : nil)
+        }
+
+        d.tahajjud = clock(today.tahajjud)
+        d.islamicMidnight = clock(today.islamicMidnight)
+        return d
+    }
+
+    // MARK: Isha "ends at Islamic midnight" sub-line
+
+    private func ishaSub(_ t: DuhaPrayerTimes) -> String {
+        // High-latitude anomaly (spec §13): when Isha lands after Islamic midnight,
+        // the "ends at midnight" framing breaks down — say so gently instead.
+        if t.ishaAfterIslamicMidnight {
+            return "approximate at this latitude"
+        }
+        var sub = "ends \(clock(t.islamicMidnight))"
+        if now >= t.isha && now < t.islamicMidnight {
+            sub += " · ends in \(countdown(to: t.islamicMidnight))"
+        }
+        return sub
+    }
+
+    // MARK: Formatting helpers
+
+    private func countdown(to date: Date) -> String {
+        let seconds = max(0, Int(date.timeIntervalSince(now)))
+        let h = seconds / 3600, m = (seconds % 3600) / 60
+        return h > 0 ? "\(h)h \(m)m" : "\(m)m"
+    }
+
+    private func clock(_ date: Date) -> String { format("h:mm a", date) }
+
+    private func format(_ pattern: String, _ date: Date) -> String {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = timeZone
+        f.dateFormat = pattern
+        return f.string(from: date)
+    }
+
+    private func hijri(_ date: Date) -> String {
+        let f = DateFormatter()
+        f.calendar = Calendar(identifier: .islamicUmmAlQura)
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = timeZone
+        f.dateFormat = "d MMMM yyyy"
+        return f.string(from: date)
+    }
+}
