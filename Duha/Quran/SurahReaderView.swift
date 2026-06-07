@@ -38,7 +38,7 @@ struct SurahReaderView: View {
     private var header: some View {
         VStack(spacing: 6) {
             Text(surah.arabicName)
-                .font(.system(size: 30, weight: .medium))
+                .font(QuranFont.uthmani(30))
                 .foregroundStyle(Palette.gold)
             Text(surah.englishName)
                 .font(.system(size: 18, weight: .semibold))
@@ -53,7 +53,7 @@ struct SurahReaderView: View {
 
     private var bismillah: some View {
         Text(Quran.shared.bismillah.arabic)
-            .font(.system(size: 22))
+            .font(QuranFont.uthmani(24))
             .foregroundStyle(Palette.gold.opacity(0.9))
             .frame(maxWidth: .infinity)
             .padding(.bottom, 16)
@@ -82,8 +82,8 @@ struct SurahReaderView: View {
             }
 
             Text(ayah.arabic)
-                .font(.system(size: 26))
-                .lineSpacing(12)
+                .font(QuranFont.uthmani(28))
+                .lineSpacing(14)
                 .multilineTextAlignment(.trailing)
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .environment(\.layoutDirection, .rightToLeft)

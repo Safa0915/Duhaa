@@ -65,7 +65,7 @@ struct QuranListView: View {
             }
             Spacer()
             Text(surah.arabicName)
-                .font(.system(size: 19))
+                .font(QuranFont.uthmani(20))
                 .foregroundStyle(Palette.gold)
         }
         .padding(.vertical, 4)

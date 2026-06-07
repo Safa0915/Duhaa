@@ -11,6 +11,8 @@ struct DuhaApp: App {
     @State private var quranBookmarks = QuranBookmarks()
     @AppStorage("duha.hasOnboarded") private var hasOnboarded = false
 
+    init() { QuranFont.register() }
+
     var body: some Scene {
         WindowGroup {
             Group {
