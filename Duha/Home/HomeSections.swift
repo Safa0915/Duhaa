@@ -69,27 +69,37 @@ private enum StarFactory {
 /// occasional gold shooting star streaking across the upper sky. Drawn in a
 /// Canvas (one GPU layer) and driven by `TimelineView(.animation)`.
 private struct StarField: View {
+    /// Honour Reduce Motion: render a single still frame (no animation/battery use).
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
-        TimelineView(.animation) { timeline in
-            Canvas { context, size in
-                let t = timeline.date.timeIntervalSinceReferenceDate
-
-                for star in StarFactory.stars {
-                    let twinkle = 0.5 + 0.5 * sin(t * star.twinkleSpeed + star.phase)
-                    context.opacity = star.baseOpacity * (0.3 + 0.7 * twinkle)
-
-                    var yFrac = star.y - CGFloat((t * star.drift).truncatingRemainder(dividingBy: 1))
-                    if yFrac < 0 { yFrac += 1 }
-                    let c = CGPoint(x: star.x * size.width, y: yFrac * size.height)
-                    let rect = CGRect(x: c.x - star.radius, y: c.y - star.radius,
-                                      width: star.radius * 2, height: star.radius * 2)
-                    context.fill(Path(ellipseIn: rect), with: .color(star.color))
+        Group {
+            if reduceMotion {
+                Canvas { context, size in render(&context, size, time: 0) }
+            } else {
+                TimelineView(.animation) { timeline in
+                    Canvas { context, size in
+                        render(&context, size, time: timeline.date.timeIntervalSinceReferenceDate)
+                    }
                 }
-
-                drawShootingStar(in: context, size: size, time: t)
             }
         }
         .allowsHitTesting(false)
+    }
+
+    private func render(_ context: inout GraphicsContext, _ size: CGSize, time t: Double) {
+        for star in StarFactory.stars {
+            let twinkle = 0.5 + 0.5 * sin(t * star.twinkleSpeed + star.phase)
+            context.opacity = star.baseOpacity * (0.3 + 0.7 * twinkle)
+
+            var yFrac = star.y - CGFloat((t * star.drift).truncatingRemainder(dividingBy: 1))
+            if yFrac < 0 { yFrac += 1 }
+            let c = CGPoint(x: star.x * size.width, y: yFrac * size.height)
+            let rect = CGRect(x: c.x - star.radius, y: c.y - star.radius,
+                              width: star.radius * 2, height: star.radius * 2)
+            context.fill(Path(ellipseIn: rect), with: .color(star.color))
+        }
+        drawShootingStar(in: context, size: size, time: t)
     }
 
     /// One gold meteor every ~11s, streaking down-right and fading in/out.
@@ -259,6 +269,8 @@ private struct PrayerRowView: View {
                     .foregroundStyle(isNext ? Palette.gold : Palette.prayerTime)
             }
             .opacity(contentOpacity)
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("\(row.prayer.rawValue), \(row.time)" + (isPrayed ? ", prayed" : ""))
 
             markButton
         }

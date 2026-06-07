@@ -66,6 +66,9 @@ struct PrayerHomeView: View {
 
                         NightCard(tahajjud: d.tahajjud, islamicMidnight: d.islamicMidnight)
                             .padding(.horizontal, 22).padding(.top, 14)
+                    } else {
+                        emptyState
+                            .padding(.horizontal, 22).padding(.top, 28)
                     }
                 }
                 .padding(.bottom, 40)
@@ -176,6 +179,29 @@ struct PrayerHomeView: View {
                 .foregroundStyle(Palette.blue.opacity(0.75))
         }
         .padding(.top, 16)
+    }
+
+    // MARK: Empty state (extreme latitudes / no solution)
+
+    private var emptyState: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "moon.zzz")
+                .font(.system(size: 30))
+                .foregroundStyle(Palette.blue.opacity(0.6))
+            Text("Prayer times aren't available for this location right now.")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(.white.opacity(0.85))
+                .multilineTextAlignment(.center)
+            Text("This can happen at extreme latitudes. Try a nearby city from the location picker above.")
+                .font(.system(size: 12))
+                .foregroundStyle(Palette.blue.opacity(0.6))
+                .multilineTextAlignment(.center)
+        }
+        .padding(24)
+        .frame(maxWidth: .infinity)
+        .background(Palette.card)
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Palette.cardBorder, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 }
 

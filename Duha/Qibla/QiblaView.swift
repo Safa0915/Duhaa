@@ -158,6 +158,8 @@ struct QiblaView: View {
                 .font(.system(size: 12))
                 .foregroundStyle(Palette.blue.opacity(0.5))
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Qibla \(Int(qiblaBearing.rounded())) degrees \(compassPoint(qiblaBearing)), \(formattedDistance) to Makkah")
     }
 
     @ViewBuilder private var statusLine: some View {
