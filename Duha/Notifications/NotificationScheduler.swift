@@ -18,6 +18,9 @@ extension DuhaPrayerTimes {
 /// iOS only keeps ~64 pending local notifications and prayer times change daily,
 /// so we pre-schedule a window of upcoming days and **re-fill on every app open**.
 /// Each trigger carries the location's IANA time zone, so it's DST-correct.
+///
+/// Copy is warm and rotates (NotificationCopy); the sound is a soft bundled chime;
+/// Fridays get a Jumu'ah prep nudge + a Jumu'ah-flavoured midday notification.
 enum NotificationScheduler {
     private static let center = UNUserNotificationCenter.current()
     /// Stay under iOS's ~64 cap with headroom.
@@ -35,15 +38,16 @@ enum NotificationScheduler {
         let modeMap = Dictionary(uniqueKeysWithValues: Prayer.allCases.map { ($0, notifs.mode(for: $0)) })
         let reminderOn = notifs.preReminderEnabled
         let reminderMin = notifs.preReminderMinutes
+        let jumuahOn = notifs.jumuahReminder
         Task {
-            await rebuild(location: location, config: config,
-                          modeMap: modeMap, reminderOn: reminderOn, reminderMin: reminderMin)
+            await rebuild(location: location, config: config, modeMap: modeMap,
+                          reminderOn: reminderOn, reminderMin: reminderMin, jumuahOn: jumuahOn)
         }
     }
 
     private static func rebuild(location: ActiveLocation, config: PrayerConfig,
                                 modeMap: [Prayer: PrayerNotificationMode],
-                                reminderOn: Bool, reminderMin: Int) async {
+                                reminderOn: Bool, reminderMin: Int, jumuahOn: Bool) async {
         let settings = await center.notificationSettings()
         let allowed = settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional
         center.removeAllPendingNotificationRequests()
@@ -53,11 +57,12 @@ enum NotificationScheduler {
         guard !enabled.isEmpty else { return }
 
         // Fit the window inside the budget: more prayers/reminders → fewer days.
-        let perDay = enabled.count * (reminderOn ? 2 : 1)
+        let perDay = enabled.count * (reminderOn ? 2 : 1) + 1   // +1 leaves room for Jumu'ah
         let days = max(1, min(maxDays, maxPending / max(perDay, 1)))
 
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = location.timeZone
+        let tz = location.timeZone
         let now = Date()
         var scheduled = 0
 
@@ -68,21 +73,45 @@ enum NotificationScheduler {
                                                  longitude: location.longitude,
                                                  date: dayComps, config: config) else { continue }
 
+            let isFriday = calendar.component(.weekday, from: day) == 6   // Gregorian: Sun=1 … Fri=6
+            let dhuhrMode = modeMap[.dhuhr] ?? .adhan
+            let jumuahActive = jumuahOn && isFriday && dhuhrMode != .off
+
             for prayer in enabled {
                 let mode = modeMap[prayer] ?? .adhan
                 let fire = times.time(for: prayer)
-                if fire > now,
-                   let request = makeRequest(prayer: prayer, fire: fire, tz: location.timeZone,
-                                             mode: mode, isReminder: false, lead: 0) {
-                    try? await center.add(request); scheduled += 1
+                let stamp = Int(fire.timeIntervalSince1970)
+
+                if fire > now {
+                    let isJumuah = jumuahActive && prayer == .dhuhr
+                    let title = isJumuah ? NotificationCopy.jumuahTitle : NotificationCopy.title(for: prayer)
+                    let body  = isJumuah ? NotificationCopy.jumuahBody() : NotificationCopy.body(for: prayer)
+                    await add(id: "duha.\(prayer.rawValue).\(stamp)", title: title, body: body,
+                              sound: sound(for: mode), fire: fire, tz: tz)
+                    scheduled += 1
                 }
+
                 if reminderOn {
                     let reminderFire = fire.addingTimeInterval(-Double(reminderMin) * 60)
-                    if reminderFire > now,
-                       let request = makeRequest(prayer: prayer, fire: reminderFire, tz: location.timeZone,
-                                                 mode: mode, isReminder: true, lead: reminderMin) {
-                        try? await center.add(request); scheduled += 1
+                    if reminderFire > now {
+                        await add(id: "duha.reminder.\(prayer.rawValue).\(stamp)",
+                                  title: NotificationCopy.reminderTitle(for: prayer),
+                                  body: NotificationCopy.reminderBody(for: prayer, minutes: reminderMin),
+                                  sound: sound(for: mode), fire: reminderFire, tz: tz)
+                        scheduled += 1
                     }
+                }
+            }
+
+            // Friday morning prep nudge (ghusl, Al-Kahf), a few hours before Jumu'ah.
+            if jumuahActive {
+                var prepComps = calendar.dateComponents([.year, .month, .day], from: day)
+                prepComps.hour = 9; prepComps.minute = 0
+                if let prep = calendar.date(from: prepComps), prep > now {
+                    await add(id: "duha.jumuah.prep.\(Int(prep.timeIntervalSince1970))",
+                              title: NotificationCopy.jumuahPrepTitle, body: NotificationCopy.jumuahPrepBody(),
+                              sound: sound(for: dhuhrMode), fire: prep, tz: tz)
+                    scheduled += 1
                 }
             }
         }
@@ -92,31 +121,28 @@ enum NotificationScheduler {
         #endif
     }
 
-    private static func makeRequest(prayer: Prayer, fire: Date, tz: TimeZone,
-                                    mode: PrayerNotificationMode, isReminder: Bool, lead: Int) -> UNNotificationRequest? {
-        let content = UNMutableNotificationContent()
-        if isReminder {
-            content.title = "\(prayer.rawValue) soon"
-            content.body = "\(prayer.rawValue) is in \(lead) minutes."
-        } else {
-            content.title = prayer.rawValue
-            content.body = "It's time to pray \(prayer.rawValue)."
-        }
+    // MARK: Building blocks
 
+    private static func sound(for mode: PrayerNotificationMode) -> UNNotificationSound? {
         switch mode {
-        case .adhan:  content.sound = .default // TODO (audio drop-in): bundled Makkah/Madinah adhan .caf
-        case .silent: content.sound = nil
+        case .adhan:  return UNNotificationSound(named: UNNotificationSoundName(NotificationCopy.soundFileName))
+        case .silent: return nil
         case .off:    return nil
         }
+    }
+
+    private static func add(id: String, title: String, body: String,
+                            sound: UNNotificationSound?, fire: Date, tz: TimeZone) async {
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        content.sound = sound
 
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = tz
         var comps = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: fire)
-        comps.timeZone = tz // keep it correct across DST and manual cities in other zones
+        comps.timeZone = tz   // keep it correct across DST and manual cities in other zones
         let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)
-
-        let kind = isReminder ? "reminder." : ""
-        let id = "duha.\(kind)\(prayer.rawValue).\(Int(fire.timeIntervalSince1970))"
-        return UNNotificationRequest(identifier: id, content: content, trigger: trigger)
+        try? await center.add(UNNotificationRequest(identifier: id, content: content, trigger: trigger))
     }
 }

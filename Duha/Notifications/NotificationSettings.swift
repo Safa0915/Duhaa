@@ -30,6 +30,10 @@ final class NotificationSettings {
     var preReminderEnabled: Bool { didSet { persist() } }
     var preReminderMinutes: Int { didSet { persist() } }
 
+    /// A special Friday Jumu'ah reminder (a morning prep nudge + Jumu'ah-flavoured
+    /// midday notification). On by default.
+    var jumuahReminder: Bool { didSet { persist() } }
+
     @ObservationIgnored private let defaults = UserDefaults.standard
 
     init() {
@@ -42,6 +46,8 @@ final class NotificationSettings {
         preReminderEnabled = UserDefaults.standard.bool(forKey: Key.reminderOn)
         let savedMinutes = UserDefaults.standard.integer(forKey: Key.reminderMinutes)
         preReminderMinutes = savedMinutes == 0 ? 15 : savedMinutes
+        // Default ON: an absent key reads as true.
+        jumuahReminder = UserDefaults.standard.object(forKey: Key.jumuah) as? Bool ?? true
     }
 
     func mode(for prayer: Prayer) -> PrayerNotificationMode {
@@ -58,10 +64,12 @@ final class NotificationSettings {
         if let data = try? JSONEncoder().encode(raw) { defaults.set(data, forKey: Key.modes) }
         defaults.set(preReminderEnabled, forKey: Key.reminderOn)
         defaults.set(preReminderMinutes, forKey: Key.reminderMinutes)
+        defaults.set(jumuahReminder, forKey: Key.jumuah)
     }
 
     private enum Key {
         static let modes = "duha.notif.modes"
+        static let jumuah = "duha.notif.jumuah"
         static let reminderOn = "duha.notif.reminderOn"
         static let reminderMinutes = "duha.notif.reminderMinutes"
     }

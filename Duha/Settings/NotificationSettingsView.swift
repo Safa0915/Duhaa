@@ -45,7 +45,16 @@ struct NotificationSettingsView: View {
             }
 
             Section {
-                Label("Adhan currently uses the default tone. Bundled Makkah & Madinah recordings come in a later update.",
+                Toggle("Jumu'ah reminder", isOn: $notifs.jumuahReminder)
+                    .onChange(of: notifs.jumuahReminder) { reschedule() }
+            } header: {
+                Text("Friday")
+            } footer: {
+                Text("On Fridays: a gentle morning nudge (ghusl, Surah Al-Kahf) and a Jumu'ah-flavoured midday reminder. 🕌")
+            }
+
+            Section {
+                Label("Sound plays a soft Duha chime. A full Makkah & Madinah adhan recording comes in a later update.",
                       systemImage: "music.note")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
