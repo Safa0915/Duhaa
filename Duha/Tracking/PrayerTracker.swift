@@ -48,6 +48,62 @@ final class PrayerTracker {
 
     func count(dayKey: String) -> Int { marks[dayKey]?.count ?? 0 }
 
+    // MARK: Journey stats (spec §5 — celebrate what's done, never tally misses)
+
+    /// Total prayers ever marked.
+    func totalPrayed() -> Int { marks.values.reduce(0) { $0 + $1.count } }
+
+    /// Days with at least one prayer marked.
+    func daysShownUp() -> Int { marks.values.reduce(0) { $0 + ($1.isEmpty ? 0 : 1) } }
+
+    /// Days where all five were marked.
+    func perfectDays() -> Int { marks.values.reduce(0) { $0 + ($1.count >= 5 ? 1 : 0) } }
+
+    /// Consecutive days (ending today) with at least one prayer. A day that hasn't
+    /// begun yet never breaks the streak — it counts through yesterday until you pray.
+    func currentStreak(asOf date: Date, timeZone: TimeZone) -> Int {
+        let active = activeDayNumbers()
+        guard var n = Self.dayNumber(PrayerTracker.dayKey(date, timeZone)) else { return 0 }
+        if !active.contains(n) { n -= 1 }   // grace for a not-yet-started today
+        var streak = 0
+        while active.contains(n) { streak += 1; n -= 1 }
+        return streak
+    }
+
+    /// The longest run of consecutive active days ever — a badge you can't lose.
+    func bestStreak() -> Int {
+        let days = activeDayNumbers().sorted()
+        guard !days.isEmpty else { return 0 }
+        var best = 1, run = 1
+        for i in 1..<days.count {
+            run = days[i] == days[i - 1] + 1 ? run + 1 : 1
+            best = max(best, run)
+        }
+        return best
+    }
+
+    private func activeDayNumbers() -> Set<Int> {
+        var set = Set<Int>()
+        for (key, prayed) in marks where !prayed.isEmpty {
+            if let n = Self.dayNumber(key) { set.insert(n) }
+        }
+        return set
+    }
+
+    /// A timezone-stable day index (days since 1970) for a "yyyy-MM-dd" key.
+    private static func dayNumber(_ key: String) -> Int? {
+        guard let date = dayParser.date(from: key) else { return nil }
+        return Int((date.timeIntervalSince1970 / 86_400).rounded(.down))
+    }
+
+    private static let dayParser: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = "yyyy-MM-dd"
+        f.timeZone = TimeZone(identifier: "UTC")
+        return f
+    }()
+
     // MARK: Welcome-back
 
     /// Record that the app opened today. Returns the day gap since the previous

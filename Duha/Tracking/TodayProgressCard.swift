@@ -7,6 +7,8 @@ struct TodayProgressCard: View {
     @Environment(PrayerTracker.self) private var tracker
     let dayKey: String
     let week: [DayRef]
+    /// When set, the card becomes tappable and opens the full Prayer Journey.
+    var onOpen: (() -> Void)? = nil
 
     private var prayedCount: Int { tracker.count(dayKey: dayKey) }
 
@@ -21,6 +23,11 @@ struct TodayProgressCard: View {
                 Text("\(prayedCount) / 5")
                     .duhaFont(13, .semibold)
                     .foregroundStyle(prayedCount == 5 ? Palette.gold : .primary.opacity(0.85))
+                if onOpen != nil {
+                    Image(systemName: "chevron.right")
+                        .duhaFont(11, .semibold)
+                        .foregroundStyle(Palette.blue.opacity(0.5))
+                }
             }
 
             HStack(spacing: 10) {
@@ -70,6 +77,8 @@ struct TodayProgressCard: View {
         .background(Palette.card)
         .overlay(RoundedRectangle(cornerRadius: 20).stroke(Palette.cardBorder, lineWidth: 1))
         .clipShape(RoundedRectangle(cornerRadius: 20))
+        .contentShape(Rectangle())
+        .onTapGesture { onOpen?() }
     }
 
     private var message: String {

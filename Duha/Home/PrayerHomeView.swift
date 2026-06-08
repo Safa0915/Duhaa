@@ -15,6 +15,7 @@ struct PrayerHomeView: View {
     @State private var toastToken = 0
     @State private var welcomeBack: String?
     @State private var verseSheet: VerseRef?
+    @State private var showingJourney = false
 
     var body: some View {
         let d = model.display(for: location.active,
@@ -67,8 +68,10 @@ struct PrayerHomeView: View {
                         }
                         .padding(.horizontal, 22).padding(.top, 16)
 
-                        TodayProgressCard(dayKey: d.dayKey, week: d.week)
-                            .padding(.horizontal, 22).padding(.top, 14)
+                        TodayProgressCard(dayKey: d.dayKey, week: d.week) {
+                            showingJourney = true
+                        }
+                        .padding(.horizontal, 22).padding(.top, 14)
 
                         NightCard(tahajjud: d.tahajjud, islamicMidnight: d.islamicMidnight)
                             .padding(.horizontal, 22).padding(.top, 14)
@@ -86,6 +89,9 @@ struct PrayerHomeView: View {
         }
         .sheet(isPresented: $showingSettings) {
             SettingsView()
+        }
+        .sheet(isPresented: $showingJourney) {
+            JourneyView()
         }
         .sheet(item: $verseSheet) { ref in
             if let surah = Quran.surah(ref.surah) {
