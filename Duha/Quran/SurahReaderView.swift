@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// Reads one surah: a header, the Bismillah (where it applies), then each ayah
-/// with Arabic (RTL), the Sahih International English, and a bookmark toggle.
+/// with Arabic (RTL), the Sahih International English, a bookmark toggle, and a
+/// per-ayah play button (streams Mishary Alafasy and auto-advances).
 struct SurahReaderView: View {
     let surah: Surah
     /// If set, scroll to this ayah on appear (used when opening a bookmark).
@@ -9,6 +10,7 @@ struct SurahReaderView: View {
 
     @Environment(QuranBookmarks.self) private var bookmarks
     @State private var furthestAyah = 0
+    @State private var player = AyahPlayer()
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -30,12 +32,30 @@ struct SurahReaderView: View {
             .onAppear {
                 if let scrollTo { proxy.scrollTo(scrollTo, anchor: .top) }
             }
+            .onChange(of: player.playingKey) { _, key in
+                if let key, let ayahNumber = Int(key.split(separator: ":").last ?? "") {
+                    withAnimation(.easeInOut) { proxy.scrollTo(ayahNumber, anchor: .center) }
+                }
+            }
         }
         .scrollIndicators(.hidden)
         .background(Palette.appBg.ignoresSafeArea())
         .navigationTitle(surah.englishName)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    if player.isActive { player.stop() }
+                    else { player.play(in: surah, from: 1) }
+                } label: {
+                    Image(systemName: player.isActive ? "pause.circle.fill" : "play.circle")
+                        .foregroundStyle(Palette.gold)
+                }
+                .accessibilityLabel(player.isActive ? "Stop recitation" : "Play surah")
+            }
+        }
         .onDisappear {
+            player.stop()
             bookmarks.recordRead(surah: surah.number, ayah: max(furthestAyah, scrollTo ?? 1))
         }
     }
@@ -66,7 +86,8 @@ struct SurahReaderView: View {
     }
 
     private func ayahView(_ ayah: Ayah) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        let isPlaying = player.isPlaying(surah.number, ayah.number)
+        return VStack(alignment: .leading, spacing: 12) {
             HStack {
                 ZStack {
                     Circle().stroke(Palette.gold.opacity(0.4), lineWidth: 1.2)
@@ -76,14 +97,18 @@ struct SurahReaderView: View {
                         .foregroundStyle(Palette.gold)
                 }
                 Spacer()
-                Button {
-                    bookmarks.toggle(surah.number, ayah.number)
-                } label: {
-                    Image(systemName: bookmarks.isBookmarked(surah.number, ayah.number) ? "bookmark.fill" : "bookmark")
-                        .duhaFont(16)
-                        .foregroundStyle(Palette.gold)
+                HStack(spacing: 18) {
+                    playButton(ayah, isPlaying: isPlaying)
+                    Button {
+                        bookmarks.toggle(surah.number, ayah.number)
+                    } label: {
+                        Image(systemName: bookmarks.isBookmarked(surah.number, ayah.number) ? "bookmark.fill" : "bookmark")
+                            .duhaFont(16)
+                            .foregroundStyle(Palette.gold)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Bookmark ayah \(ayah.number)")
                 }
-                .buttonStyle(.plain)
             }
 
             Text(ayah.arabic)
@@ -100,6 +125,28 @@ struct SurahReaderView: View {
                 .foregroundStyle(.primary.opacity(0.75))
         }
         .padding(.vertical, 16)
+        .padding(.horizontal, 10)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(isPlaying ? Palette.gold.opacity(0.08) : .clear)
+        )
         .onAppear { furthestAyah = max(furthestAyah, ayah.number) }
+    }
+
+    @ViewBuilder
+    private func playButton(_ ayah: Ayah, isPlaying: Bool) -> some View {
+        Button {
+            player.toggle(in: surah, ayah: ayah)
+        } label: {
+            if isPlaying && player.isBuffering {
+                ProgressView().controlSize(.small).tint(Palette.gold)
+            } else {
+                Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle")
+                    .duhaFont(16)
+                    .foregroundStyle(Palette.gold)
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(isPlaying ? "Pause ayah \(ayah.number)" : "Play ayah \(ayah.number)")
     }
 }
