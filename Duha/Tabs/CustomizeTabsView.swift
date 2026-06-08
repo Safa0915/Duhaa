@@ -27,6 +27,7 @@ struct CustomizeTabsView: View {
         }
         .environment(\.editMode, .constant(.active))
         .scrollContentBackground(.hidden)
+        .scrollIndicators(.hidden)
         .background(Palette.appBg.ignoresSafeArea())
         .navigationTitle("Customize Tabs")
         .navigationBarTitleDisplayMode(.inline)

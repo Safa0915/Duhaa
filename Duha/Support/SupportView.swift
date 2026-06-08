@@ -61,6 +61,7 @@ struct SupportView: View {
             .padding(.bottom, 30)
         }
         .scrollContentBackground(.hidden)
+        .scrollIndicators(.hidden)
         .background(Palette.appBg.ignoresSafeArea())
         .navigationTitle("Support Duha")
         .navigationBarTitleDisplayMode(.inline)

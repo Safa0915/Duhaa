@@ -61,6 +61,7 @@ struct NotificationSettingsView: View {
             }
         }
         .scrollContentBackground(.hidden)
+        .scrollIndicators(.hidden)
         .background(Palette.appBg.ignoresSafeArea())
         .navigationTitle("Notifications")
         .navigationBarTitleDisplayMode(.inline)

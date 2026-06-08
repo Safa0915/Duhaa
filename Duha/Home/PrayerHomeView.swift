@@ -82,6 +82,7 @@ struct PrayerHomeView: View {
                 }
                 .padding(.bottom, 40)
             }
+            .scrollIndicators(.hidden)
         }
         .preferredColorScheme(Palette.active.colorScheme)
         .sheet(isPresented: $showingLocationPicker) {

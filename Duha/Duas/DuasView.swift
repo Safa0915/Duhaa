@@ -17,6 +17,7 @@ struct DuasView: View {
                 }
                 .padding(20)
             }
+            .scrollIndicators(.hidden)
             .background(Palette.appBg.ignoresSafeArea())
             .navigationTitle("Du'as")
         }

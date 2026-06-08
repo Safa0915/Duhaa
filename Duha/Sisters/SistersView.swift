@@ -18,6 +18,7 @@ struct SistersView: View {
                 disclaimerSection
             }
             .scrollContentBackground(.hidden)
+            .scrollIndicators(.hidden)
             .background(Palette.appBg.ignoresSafeArea())
             .navigationTitle("Sisters")
             .tint(Palette.gold)
@@ -194,6 +195,7 @@ struct SistersQAView: View {
             }
         }
         .scrollContentBackground(.hidden)
+        .scrollIndicators(.hidden)
         .background(Palette.appBg.ignoresSafeArea())
         .navigationTitle(topic.name)
         .navigationBarTitleDisplayMode(.inline)

@@ -86,6 +86,7 @@ struct LocationPickerView: View {
             }
         }
         .scrollContentBackground(.hidden)
+        .scrollIndicators(.hidden)
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always),
                     prompt: "Search for a city")
         .onChange(of: query) { _, newValue in scheduleSearch(newValue) }

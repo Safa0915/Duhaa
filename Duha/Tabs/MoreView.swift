@@ -23,6 +23,7 @@ struct MoreView: View {
                 }
             }
             .scrollContentBackground(.hidden)
+            .scrollIndicators(.hidden)
             .background(Palette.appBg.ignoresSafeArea())
             .navigationTitle("More")
             .tint(Palette.gold)

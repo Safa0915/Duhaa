@@ -15,6 +15,7 @@ struct DuaListView: View {
             .padding(.horizontal, 18)
             .padding(.vertical, 20)
         }
+        .scrollIndicators(.hidden)
         .background(Palette.appBg.ignoresSafeArea())
         .navigationTitle(category.name)
         .navigationBarTitleDisplayMode(.inline)

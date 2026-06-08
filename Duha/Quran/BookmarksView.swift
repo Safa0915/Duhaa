@@ -34,6 +34,7 @@ struct BookmarksView: View {
                     }
                 }
                 .scrollContentBackground(.hidden)
+                .scrollIndicators(.hidden)
             }
         }
         .background(Palette.appBg.ignoresSafeArea())

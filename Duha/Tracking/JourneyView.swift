@@ -34,6 +34,7 @@ struct JourneyView: View {
                 .padding(.bottom, 36)
             }
             .scrollContentBackground(.hidden)
+            .scrollIndicators(.hidden)
             .background(Palette.appBg.ignoresSafeArea())
             .navigationTitle("Your Journey")
             .navigationBarTitleDisplayMode(.inline)

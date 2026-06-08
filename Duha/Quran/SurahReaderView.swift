@@ -31,6 +31,7 @@ struct SurahReaderView: View {
                 if let scrollTo { proxy.scrollTo(scrollTo, anchor: .top) }
             }
         }
+        .scrollIndicators(.hidden)
         .background(Palette.appBg.ignoresSafeArea())
         .navigationTitle(surah.englishName)
         .navigationBarTitleDisplayMode(.inline)

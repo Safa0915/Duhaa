@@ -29,6 +29,7 @@ struct QuranListView: View {
                 }
             }
             .scrollContentBackground(.hidden)
+            .scrollIndicators(.hidden)
             .background(Palette.appBg.ignoresSafeArea())
             .navigationTitle("Quran")
             .searchable(text: $query, prompt: "Search surahs or verses")
