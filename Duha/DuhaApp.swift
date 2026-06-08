@@ -9,6 +9,7 @@ struct DuhaApp: App {
     @State private var tracker = PrayerTracker()
     @State private var theme = ThemeStore()
     @State private var quranBookmarks = QuranBookmarks()
+    @State private var tabSettings = TabSettings()
     @AppStorage("duha.hasOnboarded") private var hasOnboarded = false
 
     init() { QuranFont.register() }
@@ -28,6 +29,7 @@ struct DuhaApp: App {
             .environment(tracker)
             .environment(theme)
             .environment(quranBookmarks)
+            .environment(tabSettings)
             .id(theme.theme) // rebuild the tree so the new palette takes effect everywhere
             .task(id: hasOnboarded) {
                 // Start location + notifications only once we're past onboarding.

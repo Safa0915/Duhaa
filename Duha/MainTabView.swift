@@ -1,33 +1,31 @@
 import SwiftUI
 
-/// Root tab bar. v1 ships Prayer + Qibla; Quran, Duas and a Settings tab arrive
-/// later (Settings is reachable from the Prayer screen's gear for now).
+/// Root tab bar. The set, order and visibility of tabs is user-customizable
+/// (Settings → Customize Tabs), driven by `TabSettings`. Up to five tabs show
+/// directly; any overflow lands in a "More" tab.
 struct MainTabView: View {
-    @State private var selection = 0
+    @Environment(TabSettings.self) private var tabs
+    @State private var selection: String = DuhaTab.prayer.rawValue
 
     var body: some View {
         TabView(selection: $selection) {
-            PrayerHomeView()
-                .tag(0)
-                .tabItem { Label("Prayer", systemImage: "moon.stars.fill") }
-
-            QiblaView()
-                .tag(1)
-                .tabItem { Label("Qibla", systemImage: "location.north.line.fill") }
-
-            QuranListView()
-                .tag(2)
-                .tabItem { Label("Quran", systemImage: "book.closed.fill") }
-
-            DuasView()
-                .tag(3)
-                .tabItem { Label("Du'as", systemImage: "hands.sparkles.fill") }
-
-            TasbihView()
-                .tag(4)
-                .tabItem { Label("Tasbih", systemImage: "circle.hexagongrid.fill") }
+            ForEach(tabs.barTabs) { tab in
+                tab.makeView()
+                    .tag(tab.rawValue)
+                    .tabItem { Label(tab.title, systemImage: tab.icon) }
+            }
+            if !tabs.moreTabs.isEmpty {
+                MoreView(tabs: tabs.moreTabs)
+                    .tag("__more__")
+                    .tabItem { Label("More", systemImage: "ellipsis") }
+            }
         }
         .tint(Palette.gold)
         .preferredColorScheme(Palette.active.colorScheme)
+        .onChange(of: tabs.barTabs) { _, bar in
+            // Keep a valid selection if the selected tab was reordered or hidden.
+            let valid = bar.map(\.rawValue) + (tabs.moreTabs.isEmpty ? [] : ["__more__"])
+            if !valid.contains(selection) { selection = bar.first?.rawValue ?? selection }
+        }
     }
 }

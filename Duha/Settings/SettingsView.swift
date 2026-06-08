@@ -34,6 +34,14 @@ struct SettingsView: View {
                     .labelsHidden()
                 }
 
+                Section {
+                    NavigationLink {
+                        CustomizeTabsView()
+                    } label: {
+                        Label("Customize Tabs", systemImage: "square.grid.2x2")
+                    }
+                }
+
                 Section("Calculation Method") {
                     Picker("Method", selection: $store.method) {
                         ForEach(CalcMethod.allCases) { method in
