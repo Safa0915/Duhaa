@@ -262,7 +262,7 @@ private struct SunriseMarker: View {
                     Text("Sunrise")
                         .duhaFont(13, .medium)
                         .foregroundStyle(.primary.opacity(0.75))
-                    Text("Fajr ends · Duha follows")
+                    Text("Fajr ends · Duhaa follows")
                         .duhaFont(10)
                         .foregroundStyle(Palette.gold.opacity(0.6))
                 }
@@ -280,7 +280,7 @@ private struct SunriseMarker: View {
         .padding(.vertical, 10)
         .opacity(passed ? 0.5 : 1)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Sunrise, \(time). End of Fajr, start of Duha.")
+        .accessibilityLabel("Sunrise, \(time). End of Fajr, start of Duhaa.")
     }
 }
 

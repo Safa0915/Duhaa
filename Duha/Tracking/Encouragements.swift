@@ -2,12 +2,12 @@ import Foundation
 
 /// Gentle, hope-not-guilt messages (spec §5). Shown briefly after marking a
 /// prayer, and as a warm welcome when returning after a gap. Never boastful,
-/// never shaming — Duha is built on Ad-Duha: "your Lord has not forsaken you."
+/// never shaming — Duha is built on Ad-Duhaa: "your Lord has not forsaken you."
 enum Encouragements {
 
     /// A short reassurance shown after marking a prayer as prayed.
     static let afterPrayer: [String] = [
-        "“Your Lord has not forsaken you, nor does He despise you.” — Ad-Duha",
+        "“Your Lord has not forsaken you, nor does He despise you.” — Ad-Duhaa",
         "Allah is with those who are patient.",
         "A light added to your day.",
         "Every prayer is a turning toward the dawn.",

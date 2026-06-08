@@ -70,7 +70,7 @@ final class LocationProvider: NSObject, CLLocationManagerDelegate {
         case .authorizedWhenInUse, .authorizedAlways:
             requestFix()
         case .denied, .restricted:
-            errorMessage = "Location is off for Duha. Turn it on in Settings, or search for your city below."
+            errorMessage = "Location is off for Duhaa. Turn it on in Settings, or search for your city below."
         @unknown default:
             break
         }
@@ -119,7 +119,7 @@ final class LocationProvider: NSObject, CLLocationManagerDelegate {
             requestFix()
         } else if authorizationStatus == .denied {
             fetchWhenAuthorized = false
-            errorMessage = "Location is off for Duha. Turn it on in Settings, or search for your city below."
+            errorMessage = "Location is off for Duhaa. Turn it on in Settings, or search for your city below."
         }
     }
 

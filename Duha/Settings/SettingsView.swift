@@ -25,7 +25,7 @@ struct SettingsView: View {
                     NavigationLink {
                         SupportView()
                     } label: {
-                        Label("Support Duha", systemImage: "heart.fill")
+                        Label("Support Duhaa", systemImage: "heart.fill")
                             .foregroundStyle(Palette.gold)
                     }
                 }

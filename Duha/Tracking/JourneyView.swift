@@ -231,7 +231,7 @@ struct JourneyView: View {
     // MARK: Footer
 
     private var footer: some View {
-        Text("Duha counts only what you've prayed — never what you've missed. Every prayer is a fresh beginning.")
+        Text("Duhaa counts only what you've prayed — never what you've missed. Every prayer is a fresh beginning.")
             .duhaFont(12)
             .foregroundStyle(Palette.blue.opacity(0.6))
             .multilineTextAlignment(.center)

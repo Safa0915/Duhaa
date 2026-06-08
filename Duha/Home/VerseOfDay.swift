@@ -7,7 +7,7 @@ struct VerseRef: Identifiable, Equatable {
     var id: String { "\(surah):\(ayah)" }
 }
 
-/// A curated rotation of short, hopeful verses (the Ad-Duha spirit — mercy, ease,
+/// A curated rotation of short, hopeful verses (the Ad-Duhaa spirit — mercy, ease,
 /// nearness, not despairing). One is chosen per calendar day.
 enum VerseOfDay {
     static let verses: [VerseRef] = [

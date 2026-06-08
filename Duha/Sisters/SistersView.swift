@@ -91,7 +91,7 @@ struct SistersView: View {
         } header: {
             Text("Your cycle")
         } footer: {
-            Text("Private and stored only on this device. During logged days, Duha marks your prayers as excused — your streak is never broken.")
+            Text("Private and stored only on this device. During logged days, Duhaa marks your prayers as excused — your streak is never broken.")
         }
     }
 

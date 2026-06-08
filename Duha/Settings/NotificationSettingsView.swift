@@ -54,7 +54,7 @@ struct NotificationSettingsView: View {
             }
 
             Section {
-                Label("Sound plays a soft Duha chime. A full Makkah & Madinah adhan recording comes in a later update.",
+                Label("Sound plays a soft Duhaa chime. A full Makkah & Madinah adhan recording comes in a later update.",
                       systemImage: "music.note")
                     .font(.footnote)
                     .foregroundStyle(.secondary)

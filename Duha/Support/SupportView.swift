@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// "Support Duha" — a gentle, never-pushy invitation to back the app on Patreon.
-/// In the Ad-Duha spirit: an offer, with a warm "and if you can't, that's okay."
+/// "Support Duhaa" — a gentle, never-pushy invitation to back the app on Patreon.
+/// In the Ad-Duhaa spirit: an offer, with a warm "and if you can't, that's okay."
 struct SupportView: View {
     @Environment(\.openURL) private var openURL
 
@@ -13,14 +13,14 @@ struct SupportView: View {
             VStack(spacing: 22) {
                 hero
 
-                Text("Duha is made by one person, kept free, with no ads and nothing locked away. Your support keeps it alive — and helps it grow.")
+                Text("Duhaa is made by one person, kept free, with no ads and nothing locked away. Your support keeps it alive — and helps it grow.")
                     .duhaFont(15)
                     .foregroundStyle(.primary.opacity(0.85))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 4)
 
                 VStack(spacing: 0) {
-                    perk("heart.fill", "Keeps Duha free & ad-free", "For everyone, forever.")
+                    perk("heart.fill", "Keeps Duhaa free & ad-free", "For everyone, forever.")
                     divider
                     perk("sparkles", "Funds new features", "Quran audio, more du'as, and more to come.")
                     divider
@@ -63,7 +63,7 @@ struct SupportView: View {
         .scrollContentBackground(.hidden)
         .scrollIndicators(.hidden)
         .background(Palette.appBg.ignoresSafeArea())
-        .navigationTitle("Support Duha")
+        .navigationTitle("Support Duhaa")
         .navigationBarTitleDisplayMode(.inline)
     }
 
