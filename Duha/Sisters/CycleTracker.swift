@@ -5,7 +5,11 @@ import Observation
 struct CycleEntry: Identifiable, Codable {
     var start: String        // "yyyy-MM-dd"
     var end: String?         // "yyyy-MM-dd" or nil while ongoing
-    var id: String { start }
+    /// Stable unique identity — start dates can repeat, so they can't be the id.
+    /// Not persisted (regenerated on load); CodingKeys excludes it.
+    let id = UUID()
+
+    enum CodingKeys: String, CodingKey { case start, end }
 }
 
 /// Private, on-device-only logging of menstruation days. Used both to inform the
@@ -37,9 +41,10 @@ final class CycleTracker {
 
     // MARK: Logging
 
-    /// Begin a period today (no-op if one is already ongoing).
+    /// Begin a period today (no-op if one is already ongoing, or already logged today).
     func startPeriod(today: String) {
         guard ongoing == nil else { return }
+        guard !entries.contains(where: { $0.start == today }) else { return }
         entries.insert(CycleEntry(start: today, end: nil), at: 0)
         entries.sort { $0.start > $1.start }
         persist()
