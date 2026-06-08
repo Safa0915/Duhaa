@@ -18,6 +18,10 @@ struct MainTabView: View {
             QuranListView()
                 .tag(2)
                 .tabItem { Label("Quran", systemImage: "book.closed.fill") }
+
+            DuasView()
+                .tag(3)
+                .tabItem { Label("Du'as", systemImage: "hands.sparkles.fill") }
         }
         .tint(Palette.gold)
         .preferredColorScheme(Palette.active.colorScheme)
