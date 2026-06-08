@@ -172,6 +172,8 @@ struct PrayerHomeView: View {
                     .duhaFont(22, .light)
                     .foregroundStyle(.primary.opacity(0.7))
             }
+            .lineLimit(1)
+            .minimumScaleFactor(0.5)
 
             Text(d.heroDate.uppercased())
                 .duhaFont(13)

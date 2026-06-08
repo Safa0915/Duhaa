@@ -99,6 +99,8 @@ struct TasbihView: View {
                         .duhaFont(76, .thin)
                         .foregroundStyle(.primary)
                         .contentTransition(.numericText())
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.4)
                     Text("of \(phase.target)")
                         .duhaFont(15)
                         .foregroundStyle(Palette.blue.opacity(0.7))
