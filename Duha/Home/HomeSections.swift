@@ -12,8 +12,6 @@ struct CelestialBackground: View {
             if Palette.active.isDark {
                 RadialGradient(colors: [Palette.gold.opacity(0.18), .clear],
                                center: .top, startRadius: 0, endRadius: 320)
-                RadialGradient(colors: [Palette.blue.opacity(0.12), .clear],
-                               center: .init(x: 0.95, y: 0.32), startRadius: 0, endRadius: 260)
                 StarField()
             } else {
                 // Soft "dawn": a warm glow from the top, a cool hint from below.
