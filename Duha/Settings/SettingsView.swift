@@ -22,6 +22,12 @@ struct SettingsView: View {
                     } label: {
                         Label("Notifications", systemImage: "bell.badge")
                     }
+                    NavigationLink {
+                        SupportView()
+                    } label: {
+                        Label("Support Duha", systemImage: "heart.fill")
+                            .foregroundStyle(Palette.gold)
+                    }
                 }
 
                 Section("Appearance") {
