@@ -156,7 +156,7 @@ final class PrayerTracker {
     }
 
     private enum Key {
-        static let marks = "duha.tracker.marks"
-        static let lastOpened = "duha.tracker.lastOpened"
+        static let marks = "duhaa.tracker.marks"
+        static let lastOpened = "duhaa.tracker.lastOpened"
     }
 }

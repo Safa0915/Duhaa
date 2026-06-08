@@ -34,38 +34,38 @@ struct CustomizeTabsView: View {
         .tint(Palette.gold)
     }
 
-    private func row(_ tab: DuhaTab) -> some View {
+    private func row(_ tab: DuhaaTab) -> some View {
         let enabled = !tabs.isHidden(tab)
         return HStack(spacing: 14) {
             Button {
                 tabs.toggleHidden(tab)
             } label: {
                 Image(systemName: enabled ? "checkmark.circle.fill" : "circle")
-                    .duhaFont(20)
+                    .duhaaFont(20)
                     .foregroundStyle(enabled ? Palette.gold : .secondary)
             }
             .buttonStyle(.plain)
 
             Image(systemName: tab.icon)
-                .duhaFont(16)
+                .duhaaFont(16)
                 .foregroundStyle(enabled ? Palette.blue : .secondary)
                 .frame(width: 26)
 
             Text(tab.title)
-                .duhaFont(16, .medium)
+                .duhaaFont(16, .medium)
                 .foregroundStyle(enabled ? .primary : .secondary)
 
             Spacer()
 
             Text(placementLabel(tab))
-                .duhaFont(12, .semibold)
+                .duhaaFont(12, .semibold)
                 .foregroundStyle(placementColor(tab))
         }
         .padding(.vertical, 2)
         .listRowBackground(Palette.card)
     }
 
-    private func placementLabel(_ tab: DuhaTab) -> String {
+    private func placementLabel(_ tab: DuhaaTab) -> String {
         switch tabs.placement(of: tab) {
         case .bar:    "Tab bar"
         case .more:   "More"
@@ -73,7 +73,7 @@ struct CustomizeTabsView: View {
         }
     }
 
-    private func placementColor(_ tab: DuhaTab) -> Color {
+    private func placementColor(_ tab: DuhaaTab) -> Color {
         switch tabs.placement(of: tab) {
         case .bar:    Palette.gold
         case .more:   Palette.blue.opacity(0.8)

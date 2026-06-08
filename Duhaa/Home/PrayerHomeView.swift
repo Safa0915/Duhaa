@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The Prayer home screen — Duha's home tab. Shows the current time, the next
+/// The Prayer home screen — Duhaa's home tab. Shows the current time, the next
 /// prayer with a live countdown, today's five prayers, and the night-prayer card,
 /// all on the locked celestial design (design/design-1-celestial.html).
 struct PrayerHomeView: View {
@@ -34,7 +34,7 @@ struct PrayerHomeView: View {
                             showingSettings = true
                         } label: {
                             Image(systemName: "gearshape")
-                                .duhaFont(18)
+                                .duhaaFont(18)
                                 .foregroundStyle(Palette.blue.opacity(0.8))
                         }
                         .buttonStyle(.plain)
@@ -118,7 +118,7 @@ struct PrayerHomeView: View {
         .overlay(alignment: .bottom) {
             if let toast {
                 Text(toast)
-                    .duhaFont(14, .medium)
+                    .duhaaFont(14, .medium)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.primary)
                     .padding(.horizontal, 22).padding(.vertical, 14)
@@ -160,20 +160,20 @@ struct PrayerHomeView: View {
             } label: {
                 HStack(spacing: 5) {
                     Image(systemName: "location.fill")
-                        .duhaFont(10)
+                        .duhaaFont(10)
                         .foregroundStyle(Palette.blue.opacity(0.7))
                     Text(d.locationName)
-                        .duhaFont(13, .medium)
+                        .duhaaFont(13, .medium)
                         .foregroundStyle(Palette.blue)
                     Image(systemName: "chevron.down")
-                        .duhaFont(9, .semibold)
+                        .duhaaFont(9, .semibold)
                         .foregroundStyle(Palette.blue.opacity(0.6))
                 }
             }
             .buttonStyle(.plain)
 
             Text(d.headerDate)
-                .duhaFont(12)
+                .duhaaFont(12)
                 .foregroundStyle(Palette.blue.opacity(0.75))
         }
         .padding(.top, 12)
@@ -192,7 +192,7 @@ struct PrayerHomeView: View {
                     .opacity(moonBreath ? 1.0 : 0.72)
                     .animation(.easeInOut(duration: 3.5).repeatForever(autoreverses: true), value: moonBreath)
                 Image(systemName: "moon.stars.fill")
-                    .duhaFont(46)
+                    .duhaaFont(46)
                     .foregroundStyle(Palette.gold)
             }
             .frame(height: 90)
@@ -200,17 +200,17 @@ struct PrayerHomeView: View {
 
             HStack(alignment: .firstTextBaseline, spacing: 6) {
                 Text(d.clock)
-                    .duhaFont(62, .ultraLight)
+                    .duhaaFont(62, .ultraLight)
                     .foregroundStyle(.primary)
                 Text(d.period)
-                    .duhaFont(22, .light)
+                    .duhaaFont(22, .light)
                     .foregroundStyle(.primary.opacity(0.7))
             }
             .lineLimit(1)
             .minimumScaleFactor(0.5)
 
             Text(d.heroDate.uppercased())
-                .duhaFont(13)
+                .duhaaFont(13)
                 .tracking(0.5)
                 .foregroundStyle(Palette.blue.opacity(0.75))
         }
@@ -222,14 +222,14 @@ struct PrayerHomeView: View {
     private var emptyState: some View {
         VStack(spacing: 10) {
             Image(systemName: "moon.zzz")
-                .duhaFont(30)
+                .duhaaFont(30)
                 .foregroundStyle(Palette.blue.opacity(0.6))
             Text("Prayer times aren't available for this location right now.")
-                .duhaFont(14, .medium)
+                .duhaaFont(14, .medium)
                 .foregroundStyle(.primary.opacity(0.85))
                 .multilineTextAlignment(.center)
             Text("This can happen at extreme latitudes. Try a nearby city from the location picker above.")
-                .duhaFont(12)
+                .duhaaFont(12)
                 .foregroundStyle(Palette.blue.opacity(0.6))
                 .multilineTextAlignment(.center)
         }
@@ -256,15 +256,15 @@ private struct WelcomeBackBanner: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: "sun.haze.fill")
-                .duhaFont(18)
+                .duhaaFont(18)
                 .foregroundStyle(Palette.gold)
             Text(message)
-                .duhaFont(13, .medium)
+                .duhaaFont(13, .medium)
                 .foregroundStyle(.primary.opacity(0.92))
             Spacer(minLength: 6)
             Button(action: onDismiss) {
                 Image(systemName: "xmark")
-                    .duhaFont(11, .bold)
+                    .duhaaFont(11, .bold)
                     .foregroundStyle(Palette.blue.opacity(0.7))
             }
             .buttonStyle(.plain)

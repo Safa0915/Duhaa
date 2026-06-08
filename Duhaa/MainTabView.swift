@@ -5,7 +5,7 @@ import SwiftUI
 /// directly; any overflow lands in a "More" tab.
 struct MainTabView: View {
     @Environment(TabSettings.self) private var tabs
-    @State private var selection: String = DuhaTab.prayer.rawValue
+    @State private var selection: String = DuhaaTab.prayer.rawValue
 
     var body: some View {
         TabView(selection: $selection) {

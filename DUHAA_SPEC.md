@@ -1,4 +1,4 @@
-# Duha (ﺿﺤﻰ) — Product Specification
+# Duhaa (ﺿﺤﻰ) — Product Specification
 
 > An iOS prayer app built on hope, not guilt — to gently bring people who don't pray, or barely pray, back to all five daily prayers.
 
@@ -8,31 +8,31 @@
 
 ## 1. Vision & Mission
 
-**Duha** means *"the morning brightness."* Named after Surah Ad-Duha — the surah of hope, revealed when the Prophet ﷺ felt abandoned, with Allah reassuring him *"your Lord has not forsaken you."*
+**Duhaa** means *"the morning brightness."* Named after Surah Ad-Duhaa — the surah of hope, revealed when the Prophet ﷺ felt abandoned, with Allah reassuring him *"your Lord has not forsaken you."*
 
 The app's thesis: the dark celestial theme is the **night**; the whole app is the invitation to the **dawn**. The name, the aesthetic, the mission, and the opening moment all collapse into one idea. Every design choice serves **hope, not guilt** — a struggling person should feel welcomed back, never scolded.
 
 ---
 
-## 2. The Duha Moment (first-launch cinematic) — the emotional heart
+## 2. The Duhaa Moment (first-launch cinematic) — the emotional heart
 
 > Built in its own dedicated session. This is the soul of the app — handle with extreme care, do not cheapen.
 
-Plays on **very first launch only**. Skippable ("Skip" fades in after ~4–5s). Never auto-plays again, but replayable later (dawn icon / Settings → About Duha).
+Plays on **very first launch only**. Skippable ("Skip" fades in after ~4–5s). Never auto-plays again, but replayable later (dawn icon / Settings → About Duhaa).
 
 **Storyboard (revised & locked by user):**
 1. **Tap three times, in the black** — app opens pitch black with a minimal "tap three times" prompt. The user *chooses* the dawn (active participation).
 2. **Pitch black holds** — darkness sustains briefly (the "held breath").
 3. **Basmala (~1.5s after the taps)** — *"Bismillāhi-r-Raḥmāni-r-Raḥīm"* in the dark.
 4. **Light switch sound** — an audio cue marking the light turning on. *(User explicitly wants a "light switch" sound — this overrides the earlier "organic swell only" note.)*
-5. **The recitation begins** — the creator's own recitation of Surah Ad-Duha.
-6. **Lights hit on Surah Ad-Duha** — the light visually floods in as the surah (the word *Duha*) is recited.
+5. **The recitation begins** — the creator's own recitation of Surah Ad-Duhaa.
+6. **Lights hit on Surah Ad-Duhaa** — the light visually floods in as the surah (the word *Duhaa*) is recited.
 
 *Cut for a tighter flow:* the "breathe in/out" beat and the elaborate "When you're ready…" text. (Translation-in-sync and the name resolving out of the light are optional/retained — confirm in the build session.)
 
 **Locked craft rules:**
 - **Light switch sound cue is IN** (user's explicit call — do not re-argue).
-- Light still **visually lands on the recitation of Surah Ad-Duha**.
+- Light still **visually lands on the recitation of Surah Ad-Duhaa**.
 - **Pitch black + silence up front** retained (tension → release = chills).
 - **Haptics** retained as enhancement — on the taps and the light moment.
 
@@ -55,7 +55,7 @@ Plays on **very first launch only**. Skippable ("Skip" fades in after ~4–5s). 
 | Widgets / Haptics / Notifs / Audio | WidgetKit · Core Haptics · UserNotifications · AVFoundation |
 | Tooling | Xcode 26 (Claude as Intelligence provider) and/or Claude Code |
 
-> **Why native, not React Native:** Duha's emotional core and standout features — the first-launch cinematic (Core Haptics + animation), home/lock-screen widgets, and custom adhan notification sounds — are all native work *even in React Native*, which erodes RN's cross-platform benefit. The dev also wants to work in Xcode. Trade-off consciously accepted: iOS-only now; Android would be a future rewrite (Adhan also has Kotlin/JS ports, so the engine logic ports cleanly).
+> **Why native, not React Native:** Duhaa's emotional core and standout features — the first-launch cinematic (Core Haptics + animation), home/lock-screen widgets, and custom adhan notification sounds — are all native work *even in React Native*, which erodes RN's cross-platform benefit. The dev also wants to work in Xcode. Trade-off consciously accepted: iOS-only now; Android would be a future rewrite (Adhan also has Kotlin/JS ports, so the engine logic ports cleanly).
 
 ---
 
@@ -88,7 +88,7 @@ Plays on **very first launch only**. Skippable ("Skip" fades in after ~4–5s). 
 
 ## 5. Features
 
-**v1.0 (MVP):** Prayer Times · Duha cinematic · Notifications · Qibla compass · Gentle prayer tracking · Widgets · Settings · Onboarding
+**v1.0 (MVP):** Prayer Times · Duhaa cinematic · Notifications · Qibla compass · Gentle prayer tracking · Widgets · Settings · Onboarding
 
 **v1.1:** Quran reader · Duas · Light mode · Sisters (pink) theme · Apple Watch complication · (later) monthly-point interpolation, mosque timetables, Jummah custom time
 
@@ -181,7 +181,7 @@ The v1 high-latitude solution is a **stopgap, not a real fix.** Proven with numb
 
 ## 14. Roadmap
 
-**v1.0** — Prayer engine, Duha cinematic, notifications, Qibla, prayer tracking, widgets (small/medium/lock), onboarding, settings, dark theme. *Solo dev.*
+**v1.0** — Prayer engine, Duhaa cinematic, notifications, Qibla, prayer tracking, widgets (small/medium/lock), onboarding, settings, dark theme. *Solo dev.*
 
 **v1.1** — Quran reader, Duas, light mode, Sisters theme, Watch complication.
 

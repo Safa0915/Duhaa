@@ -68,9 +68,9 @@ final class NotificationSettings {
     }
 
     private enum Key {
-        static let modes = "duha.notif.modes"
-        static let jumuah = "duha.notif.jumuah"
-        static let reminderOn = "duha.notif.reminderOn"
-        static let reminderMinutes = "duha.notif.reminderMinutes"
+        static let modes = "duhaa.notif.modes"
+        static let jumuah = "duhaa.notif.jumuah"
+        static let reminderOn = "duhaa.notif.reminderOn"
+        static let reminderMinutes = "duhaa.notif.reminderMinutes"
     }
 }

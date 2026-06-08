@@ -32,10 +32,10 @@ struct SistersView: View {
         Section {
             VStack(alignment: .leading, spacing: 8) {
                 Label("A space for you", systemImage: "leaf.fill")
-                    .duhaFont(15, .semibold)
+                    .duhaaFont(15, .semibold)
                     .foregroundStyle(Palette.gold)
                 Text("Rest when you need to, learn at your own pace, and know your streak is always safe. 🤍")
-                    .duhaFont(13)
+                    .duhaaFont(13)
                     .foregroundStyle(.primary.opacity(0.8))
             }
             .padding(.vertical, 4)
@@ -50,10 +50,10 @@ struct SistersView: View {
             if let ongoing = cycle.ongoing {
                 VStack(alignment: .leading, spacing: 6) {
                     Label("On your period", systemImage: "drop.fill")
-                        .duhaFont(15, .semibold)
+                        .duhaaFont(15, .semibold)
                         .foregroundStyle(Palette.gold)
                     Text("Since \(display(ongoing.start)). Prayer and fasting are lifted now — rest, and your streak stays safe. 🤍")
-                        .duhaFont(13)
+                        .duhaaFont(13)
                         .foregroundStyle(.primary.opacity(0.8))
                 }
                 .padding(.vertical, 4)
@@ -69,11 +69,11 @@ struct SistersView: View {
             } else {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("No period logged right now.")
-                        .duhaFont(14)
+                        .duhaaFont(14)
                         .foregroundStyle(.primary.opacity(0.85))
                     if let next = cycle.predictedNextStart() {
                         Text("Next one around \(display(next)) — just an estimate from your history.")
-                            .duhaFont(12)
+                            .duhaaFont(12)
                             .foregroundStyle(Palette.blue.opacity(0.75))
                     }
                 }
@@ -100,11 +100,11 @@ struct SistersView: View {
             ForEach(cycle.entries) { entry in
                 HStack {
                     Image(systemName: "drop.fill")
-                        .duhaFont(12).foregroundStyle(Palette.gold.opacity(0.8))
-                    Text(rangeText(entry)).duhaFont(14).foregroundStyle(.primary)
+                        .duhaaFont(12).foregroundStyle(Palette.gold.opacity(0.8))
+                    Text(rangeText(entry)).duhaaFont(14).foregroundStyle(.primary)
                     Spacer()
                     if entry.end == nil {
-                        Text("ongoing").duhaFont(12, .semibold).foregroundStyle(Palette.gold)
+                        Text("ongoing").duhaaFont(12, .semibold).foregroundStyle(Palette.gold)
                     }
                 }
                 .listRowBackground(Palette.card)
@@ -124,7 +124,7 @@ struct SistersView: View {
                     SistersQAView(topic: topic)
                 } label: {
                     Label(topic.name, systemImage: topic.icon)
-                        .duhaFont(15)
+                        .duhaaFont(15)
                 }
                 .listRowBackground(Palette.card)
             }
@@ -134,7 +134,7 @@ struct SistersView: View {
     private var disclaimerSection: some View {
         Section {
             Text(SistersContent.disclaimer)
-                .duhaFont(11)
+                .duhaaFont(11)
                 .foregroundStyle(.secondary)
         }
     }
@@ -178,16 +178,16 @@ struct SistersQAView: View {
                 DisclosureGroup {
                     VStack(alignment: .leading, spacing: 10) {
                         Text(item.a)
-                            .duhaFont(14)
+                            .duhaaFont(14)
                             .foregroundStyle(.primary.opacity(0.85))
                         Text(item.source)
-                            .duhaFont(11, italic: true)
+                            .duhaaFont(11, italic: true)
                             .foregroundStyle(Palette.blue.opacity(0.7))
                     }
                     .padding(.vertical, 6)
                 } label: {
                     Text(item.q)
-                        .duhaFont(15, .semibold)
+                        .duhaaFont(15, .semibold)
                         .foregroundStyle(.primary)
                 }
                 .tint(Palette.gold)

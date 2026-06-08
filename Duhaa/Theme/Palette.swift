@@ -71,7 +71,7 @@ final class ThemeStore {
         }
     }
 
-    @ObservationIgnored private static let key = "duha.theme"
+    @ObservationIgnored private static let key = "duhaa.theme"
 
     init() {
         let saved = AppTheme(rawValue: UserDefaults.standard.string(forKey: Self.key) ?? "") ?? .dark

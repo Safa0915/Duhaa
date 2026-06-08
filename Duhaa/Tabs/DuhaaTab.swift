@@ -3,13 +3,13 @@ import SwiftUI
 /// Every feature that can live in the tab bar. Add a case here (and in the three
 /// switches below) and it automatically becomes a customizable tab — existing
 /// users get it appended to the end of their order on next launch.
-enum DuhaTab: String, CaseIterable, Identifiable, Codable {
+enum DuhaaTab: String, CaseIterable, Identifiable, Codable {
     case prayer, qibla, quran, duas, tasbih, sisters
 
     var id: String { rawValue }
 
     /// The default order shipped to a brand-new user.
-    static let defaultOrder: [DuhaTab] = [.prayer, .qibla, .quran, .duas, .tasbih, .sisters]
+    static let defaultOrder: [DuhaaTab] = [.prayer, .qibla, .quran, .duas, .tasbih, .sisters]
 
     var title: String {
         switch self {

@@ -1,6 +1,6 @@
 import Foundation
 
-/// The location Duha is currently showing prayer times for. Persisted to
+/// The location Duhaa is currently showing prayer times for. Persisted to
 /// UserDefaults so the app works offline on next launch (spec §4).
 struct ActiveLocation: Equatable, Codable {
     var name: String          // e.g. "New York, USA"

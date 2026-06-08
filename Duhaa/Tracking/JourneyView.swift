@@ -54,16 +54,16 @@ struct JourneyView: View {
         let streak = tracker.currentStreak(asOf: Date(), timeZone: tz, excused: excused)
         return VStack(spacing: 6) {
             Image(systemName: "flame.fill")
-                .duhaFont(38)
+                .duhaaFont(38)
                 .foregroundStyle(streak > 0 ? Palette.gold : Palette.gold.opacity(0.3))
                 .shadow(color: streak > 0 ? Palette.gold.opacity(0.5) : .clear, radius: 12)
             Text(streak == 0 ? "Begin today" : "\(streak)")
-                .duhaFont(streak == 0 ? 28 : 54, .bold)
+                .duhaaFont(streak == 0 ? 28 : 54, .bold)
                 .foregroundStyle(.primary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
             Text(streakLabel(streak))
-                .duhaFont(14)
+                .duhaaFont(14)
                 .foregroundStyle(Palette.blue.opacity(0.85))
                 .multilineTextAlignment(.center)
         }
@@ -91,10 +91,10 @@ struct JourneyView: View {
 
     private func statTile(_ value: String, _ label: String, _ icon: String) -> some View {
         VStack(spacing: 6) {
-            Image(systemName: icon).duhaFont(15).foregroundStyle(Palette.gold.opacity(0.9))
-            Text(value).duhaFont(22, .bold).foregroundStyle(.primary)
+            Image(systemName: icon).duhaaFont(15).foregroundStyle(Palette.gold.opacity(0.9))
+            Text(value).duhaaFont(22, .bold).foregroundStyle(.primary)
                 .lineLimit(1).minimumScaleFactor(0.5)
-            Text(label).duhaFont(11).foregroundStyle(Palette.blue.opacity(0.7))
+            Text(label).duhaaFont(11).foregroundStyle(Palette.blue.opacity(0.7))
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
@@ -110,14 +110,14 @@ struct JourneyView: View {
         VStack(spacing: 14) {
             HStack {
                 Button { shiftMonth(-1) } label: {
-                    Image(systemName: "chevron.left").duhaFont(15, .semibold)
+                    Image(systemName: "chevron.left").duhaaFont(15, .semibold)
                 }
                 .foregroundStyle(Palette.gold)
                 Spacer()
-                Text(monthTitle).duhaFont(15, .semibold).foregroundStyle(.primary)
+                Text(monthTitle).duhaaFont(15, .semibold).foregroundStyle(.primary)
                 Spacer()
                 Button { shiftMonth(1) } label: {
-                    Image(systemName: "chevron.right").duhaFont(15, .semibold)
+                    Image(systemName: "chevron.right").duhaaFont(15, .semibold)
                 }
                 .foregroundStyle(canGoForward ? Palette.gold : Palette.gold.opacity(0.25))
                 .disabled(!canGoForward)
@@ -126,7 +126,7 @@ struct JourneyView: View {
             HStack(spacing: 6) {
                 ForEach(Array(weekdaySymbols.enumerated()), id: \.offset) { _, letter in
                     Text(letter)
-                        .duhaFont(10, .semibold)
+                        .duhaaFont(10, .semibold)
                         .foregroundStyle(Palette.blue.opacity(0.5))
                         .frame(maxWidth: .infinity)
                 }
@@ -155,7 +155,7 @@ struct JourneyView: View {
                     Circle()
                         .stroke(strokeColor(cell), lineWidth: cell.isToday ? 1.8 : 1)
                     Text("\(day)")
-                        .duhaFont(12, cell.isToday ? .bold : .regular)
+                        .duhaaFont(12, cell.isToday ? .bold : .regular)
                         .foregroundStyle(cell.count >= 3 ? Palette.onAccent : Color.primary.opacity(0.75))
                 }
                 .frame(height: 38)
@@ -178,7 +178,7 @@ struct JourneyView: View {
     private var milestonesCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("MILESTONES")
-                .duhaFont(11, .semibold).tracking(1.2)
+                .duhaaFont(11, .semibold).tracking(1.2)
                 .foregroundStyle(Palette.blue.opacity(0.65))
             LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
                 ForEach(milestones) { milestoneCard($0) }
@@ -191,19 +191,19 @@ struct JourneyView: View {
         return VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Image(systemName: m.icon)
-                    .duhaFont(18)
+                    .duhaaFont(18)
                     .foregroundStyle(earned ? Palette.gold : Color.secondary)
                 Spacer()
                 if earned {
                     Image(systemName: "checkmark.circle.fill")
-                        .duhaFont(14).foregroundStyle(Palette.gold)
+                        .duhaaFont(14).foregroundStyle(Palette.gold)
                 }
             }
             Text(m.title)
-                .duhaFont(14, .semibold)
+                .duhaaFont(14, .semibold)
                 .foregroundStyle(earned ? Color.primary : Color.primary.opacity(0.6))
             Text(earned ? m.detail : "\(min(m.progress, m.goal)) / \(m.goal)")
-                .duhaFont(11)
+                .duhaaFont(11)
                 .foregroundStyle(Palette.blue.opacity(0.7))
         }
         .padding(12)
@@ -232,7 +232,7 @@ struct JourneyView: View {
 
     private var footer: some View {
         Text("Duhaa counts only what you've prayed — never what you've missed. Every prayer is a fresh beginning.")
-            .duhaFont(12)
+            .duhaaFont(12)
             .foregroundStyle(Palette.blue.opacity(0.6))
             .multilineTextAlignment(.center)
             .padding(.horizontal, 12)

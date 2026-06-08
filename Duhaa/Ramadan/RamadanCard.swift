@@ -44,12 +44,12 @@ struct RamadanCard: View {
     private var header: some View {
         HStack {
             Label("RAMADAN", systemImage: "moon.fill")
-                .duhaFont(11, .semibold).tracking(1.2)
+                .duhaaFont(11, .semibold).tracking(1.2)
                 .foregroundStyle(Palette.gold)
             Spacer()
             if ramadanDay > 0 {
                 Text("Day \(ramadanDay)")
-                    .duhaFont(11, .semibold)
+                    .duhaaFont(11, .semibold)
                     .foregroundStyle(Palette.blue.opacity(0.8))
             }
         }
@@ -58,10 +58,10 @@ struct RamadanCard: View {
     private var countdownView: some View {
         VStack(spacing: 2) {
             Text(phase == "Iftar" ? "Iftar in" : "Suhoor ends in")
-                .duhaFont(12)
+                .duhaaFont(12)
                 .foregroundStyle(.primary.opacity(0.7))
             Text(countdown)
-                .duhaFont(34, .bold)
+                .duhaaFont(34, .bold)
                 .foregroundStyle(Palette.gold)
                 .lineLimit(1).minimumScaleFactor(0.5)
         }
@@ -80,10 +80,10 @@ struct RamadanCard: View {
     private func timeBlock(_ title: String, _ time: String, _ icon: String) -> some View {
         VStack(spacing: 3) {
             Label(title, systemImage: icon)
-                .duhaFont(11, .medium)
+                .duhaaFont(11, .medium)
                 .foregroundStyle(Palette.blue.opacity(0.8))
             Text(time)
-                .duhaFont(17, .semibold)
+                .duhaaFont(17, .semibold)
                 .foregroundStyle(.primary)
         }
         .frame(maxWidth: .infinity)
@@ -95,16 +95,16 @@ struct RamadanCard: View {
         } label: {
             HStack(spacing: 10) {
                 Image(systemName: fastedToday ? "checkmark.circle.fill" : "circle")
-                    .duhaFont(20)
+                    .duhaaFont(20)
                     .foregroundStyle(fastedToday ? Palette.gold : Color.primary.opacity(0.3))
                     .symbolEffect(.bounce, value: fastedToday)
                 Text(fastedToday ? "Fasting logged today — taqabbal Allah 🤍" : "I'm fasting today")
-                    .duhaFont(14, .medium)
+                    .duhaaFont(14, .medium)
                     .foregroundStyle(.primary)
                 Spacer()
                 if fastsThisRamadan > 0 {
                     Text("\(fastsThisRamadan)")
-                        .duhaFont(13, .bold)
+                        .duhaaFont(13, .bold)
                         .foregroundStyle(Palette.gold)
                 }
             }

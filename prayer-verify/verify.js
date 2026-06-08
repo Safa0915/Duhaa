@@ -1,4 +1,4 @@
-// Duha — prayer time verification harness
+// Duhaa — prayer time verification harness
 // Computes times with the `adhan` library so you can diff against a trusted
 // source (IslamicFinder / Aladhan / your local mosque).
 //
@@ -30,7 +30,7 @@ function fmt(date, tz) {
   });
 }
 
-console.log(`\n=== Duha prayer-time verification ===`);
+console.log(`\n=== Duhaa prayer-time verification ===`);
 console.log(`Date:   ${DATE.toDateString()}`);
 console.log(`Method: ${METHOD_NAME}   Madhab: ${MADHAB === adhan.Madhab.Hanafi ? 'Hanafi' : 'Shafi/Standard'}`);
 console.log(`HighLat: MiddleOfTheNight`);
@@ -45,7 +45,7 @@ for (const [name, lat, lng, tz] of CITIES) {
   const t = new adhan.PrayerTimes(coords, DATE, params);
 
   // Sunnah times use the library's own night calc (Maghrib -> next Fajr):
-  //   middleOfTheNight = Islamic midnight (= Isha end time in Duha)
+  //   middleOfTheNight = Islamic midnight (= Isha end time in Duhaa)
   //   lastThirdOfTheNight = Tahajjud window start
   const s = new adhan.SunnahTimes(t);
 

@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-/// Sheet for choosing where Duha computes prayer times: use the current GPS
+/// Sheet for choosing where Duhaa computes prayer times: use the current GPS
 /// location, or search for a city by hand. Reached by tapping the header.
 struct LocationPickerView: View {
     @Environment(LocationProvider.self) private var location

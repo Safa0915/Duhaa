@@ -7,7 +7,7 @@ enum NotificationCopy {
 
     /// The custom bundled chime (a soft celestial bell). Falls back to the system
     /// sound automatically if the file isn't found.
-    static let soundFileName = "duha-chime.wav"
+    static let soundFileName = "duhaa-chime.wav"
 
     static func emoji(for prayer: Prayer) -> String {
         switch prayer {

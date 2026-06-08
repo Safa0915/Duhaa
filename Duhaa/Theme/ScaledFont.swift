@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// A system font whose point size scales with the user's Dynamic Type setting.
-/// Drop-in for `.font(.system(size:weight:))` → `.duhaFont(size, weight)`.
+/// Drop-in for `.font(.system(size:weight:))` → `.duhaaFont(size, weight)`.
 private struct ScaledFont: ViewModifier {
     @ScaledMetric private var size: CGFloat
     private let weight: Font.Weight
@@ -21,7 +21,7 @@ private struct ScaledFont: ViewModifier {
 
 extension View {
     /// Dynamic-Type-aware system font (scales relative to the body text style).
-    func duhaFont(_ size: CGFloat, _ weight: Font.Weight = .regular, italic: Bool = false) -> some View {
+    func duhaaFont(_ size: CGFloat, _ weight: Font.Weight = .regular, italic: Bool = false) -> some View {
         modifier(ScaledFont(size: size, weight: weight, italic: italic))
     }
 }

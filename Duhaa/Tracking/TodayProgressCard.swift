@@ -16,16 +16,16 @@ struct TodayProgressCard: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Text("TODAY")
-                    .duhaFont(11, .semibold)
+                    .duhaaFont(11, .semibold)
                     .tracking(1.2)
                     .foregroundStyle(Palette.blue.opacity(0.65))
                 Spacer()
                 Text("\(prayedCount) / 5")
-                    .duhaFont(13, .semibold)
+                    .duhaaFont(13, .semibold)
                     .foregroundStyle(prayedCount == 5 ? Palette.gold : .primary.opacity(0.85))
                 if onOpen != nil {
                     Image(systemName: "chevron.right")
-                        .duhaFont(11, .semibold)
+                        .duhaaFont(11, .semibold)
                         .foregroundStyle(Palette.blue.opacity(0.5))
                 }
             }
@@ -43,7 +43,7 @@ struct TodayProgressCard: View {
             }
 
             Text(message)
-                .duhaFont(13)
+                .duhaaFont(13)
                 .foregroundStyle(Palette.blue.opacity(0.85))
 
             Divider().overlay(Color.primary.opacity(0.06))
@@ -66,7 +66,7 @@ struct TodayProgressCard: View {
                             }
                         }
                         Text(day.letter)
-                            .duhaFont(10, day.isToday ? .semibold : .regular)
+                            .duhaaFont(10, day.isToday ? .semibold : .regular)
                             .foregroundStyle(Palette.blue.opacity(day.isToday ? 0.9 : 0.4))
                     }
                     .frame(maxWidth: .infinity)

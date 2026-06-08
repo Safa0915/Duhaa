@@ -12,7 +12,7 @@ struct DuhaaApp: App {
     @State private var tabSettings = TabSettings()
     @State private var cycleTracker = CycleTracker()
     @State private var fastingTracker = FastingTracker()
-    @AppStorage("duha.hasOnboarded") private var hasOnboarded = false
+    @AppStorage("duhaa.hasOnboarded") private var hasOnboarded = false
 
     init() { QuranFont.register() }
 

@@ -66,10 +66,10 @@ struct SurahReaderView: View {
                 .font(QuranFont.uthmani(30))
                 .foregroundStyle(Palette.gold)
             Text(surah.englishName)
-                .duhaFont(18, .semibold)
+                .duhaaFont(18, .semibold)
                 .foregroundStyle(.primary)
             Text("\(surah.translation) · \(surah.revelation) · \(surah.ayahs.count) ayahs")
-                .duhaFont(12)
+                .duhaaFont(12)
                 .foregroundStyle(Palette.blue.opacity(0.75))
         }
         .frame(maxWidth: .infinity)
@@ -93,7 +93,7 @@ struct SurahReaderView: View {
                     Circle().stroke(Palette.gold.opacity(0.4), lineWidth: 1.2)
                         .frame(width: 30, height: 30)
                     Text("\(ayah.number)")
-                        .duhaFont(12, .semibold)
+                        .duhaaFont(12, .semibold)
                         .foregroundStyle(Palette.gold)
                 }
                 Spacer()
@@ -103,7 +103,7 @@ struct SurahReaderView: View {
                         bookmarks.toggle(surah.number, ayah.number)
                     } label: {
                         Image(systemName: bookmarks.isBookmarked(surah.number, ayah.number) ? "bookmark.fill" : "bookmark")
-                            .duhaFont(16)
+                            .duhaaFont(16)
                             .foregroundStyle(Palette.gold)
                     }
                     .buttonStyle(.plain)
@@ -120,7 +120,7 @@ struct SurahReaderView: View {
                 .foregroundStyle(.primary)
 
             Text(ayah.english)
-                .duhaFont(15)
+                .duhaaFont(15)
                 .lineSpacing(3)
                 .foregroundStyle(.primary.opacity(0.75))
         }
@@ -142,7 +142,7 @@ struct SurahReaderView: View {
                 ProgressView().controlSize(.small).tint(Palette.gold)
             } else {
                 Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle")
-                    .duhaFont(16)
+                    .duhaaFont(16)
                     .foregroundStyle(Palette.gold)
             }
         }

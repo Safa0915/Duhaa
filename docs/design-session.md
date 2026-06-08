@@ -2020,24 +2020,24 @@ Falah means *success, salvation, flourishing* — but here's why it's the one: i
 
 A few other strong ones, depending on the feeling you want:
 
-- **Duha (ﺿﺤﻰ)** — the morning light. Surah Ad-Duha is *the* surah of hope: revealed when the Prophet ﷺ felt abandoned, with Allah reassuring him *"your Lord has not forsaken you."* Pure hope and reassurance, and it ties beautifully to your celestial/Fajr theme.
+- **Duhaa (ﺿﺤﻰ)** — the morning light. Surah Ad-Duhaa is *the* surah of hope: revealed when the Prophet ﷺ felt abandoned, with Allah reassuring him *"your Lord has not forsaken you."* Pure hope and reassurance, and it ties beautifully to your celestial/Fajr theme.
 - **Huda (ﻫﺪﻯ)** — guidance. Soft, warm, effortless to pronounce; the gentle hand guiding someone back to the path.
 - **Sakina (ﺳﻜﻴﻨﺔ)** — the tranquility that descends from Allah into the heart. Calm, soothing, matches the serene aesthetic — though less directly about "returning."
 - **Awba (ﺃﻭﺑﺔ)** — the return to Allah. The most precise meaning for your mission, but more obscure and less instantly recognizable.
 
-My heart says **Falah** — it's the word that *is* the call to prayer. But **Duha** is the strongest if you want the "hope and new dawn" feeling to lead.
+My heart says **Falah** — it's the word that *is* the call to prayer. But **Duhaa** is the strongest if you want the "hope and new dawn" feeling to lead.
 
 Which direction pulls you?
 
 ## User
 
-I'm thinking of choosing Duha (ﺿﺤﻰ). I was thinking when a user gets this app for the first time, when they open the app for the first time, we can put a great Quran reciter reciting this chapter, and maybe on the term Duha (ﺿﺤﻰ) being mentioned, there could be, like, a morning light showing... morning light coming out. Do you know what I'm trying to say?
+I'm thinking of choosing Duhaa (ﺿﺤﻰ). I was thinking when a user gets this app for the first time, when they open the app for the first time, we can put a great Quran reciter reciting this chapter, and maybe on the term Duhaa (ﺿﺤﻰ) being mentioned, there could be, like, a morning light showing... morning light coming out. Do you know what I'm trying to say?
 
 ## Assistant
 
 Yes — I know *exactly* what you're describing, and it gives me chills a little. Let me paint it back to you to make sure we're seeing the same thing:
 
-The user opens Duha for the very first time. The screen is **dark** — the celestial night, deep navy, stars. That darkness isn't just aesthetic; it quietly represents where they are spiritually right now. Then a beautiful voice begins — and the very first words of Surah Ad-Duha are **"وَالضُّحَىٰ"** — *"By the morning brightness."* And right as the reciter says **"Ad-Duhā,"** light breaks. A warm golden dawn blooms up from the horizon line, washing the stars away, and your app's name resolves out of that light: **Duha**.
+The user opens Duhaa for the very first time. The screen is **dark** — the celestial night, deep navy, stars. That darkness isn't just aesthetic; it quietly represents where they are spiritually right now. Then a beautiful voice begins — and the very first words of Surah Ad-Duhaa are **"وَالضُّحَىٰ"** — *"By the morning brightness."* And right as the reciter says **"Ad-Duhā,"** light breaks. A warm golden dawn blooms up from the horizon line, washing the stars away, and your app's name resolves out of that light: **Duhaa**.
 
 What makes this almost too perfect: the surah's first two verses are *"By the morning brightness, and by the night when it grows still."* The night and the dawn are both right there in the opening line. Your dark theme **is** that night — and the whole app is the invitation to the dawn. The name, the aesthetic, the mission, and the opening moment all become the same single idea. And thematically the surah is Allah saying *"your Lord has not forsaken you"* — which is the exact message for someone who feels far from prayer and is opening this app hoping to come back.
 
@@ -2051,7 +2051,7 @@ Now let me grill you on it, because a moment this important has to be handled wi
 
 The risk: if it's a forced 60–90 second recitation every time before they can do anything, a chunk of users will feel trapped and bounce, even if it's beautiful.
 
-**My recommendation: Full-screen cinematic on the *very first launch only*, playing *before* the setup screens — but with a "Skip" that fades in after ~4–5 seconds.** It sets the emotional tone before they get into the practical stuff (location, method). Most people will let it play the first time. Then it never auto-plays again — but you add a small way to replay it (a sun/dawn icon somewhere, or in Settings under "About Duha") so they can return to it whenever they want that feeling again. Respecting the skip option is what keeps it feeling like a gift rather than a hostage situation.
+**My recommendation: Full-screen cinematic on the *very first launch only*, playing *before* the setup screens — but with a "Skip" that fades in after ~4–5 seconds.** It sets the emotional tone before they get into the practical stuff (location, method). Most people will let it play the first time. Then it never auto-plays again — but you add a small way to replay it (a sun/dawn icon somewhere, or in Settings under "About Duhaa") so they can return to it whenever they want that feeling again. Respecting the skip option is what keeps it feeling like a gift rather than a hostage situation.
 
 Do you want it skippable, and should it play before or after the location/method setup?
 
@@ -2059,7 +2059,7 @@ Do you want it skippable, and should it play before or after the location/method
 
 "Yes — I know exactly what you're describing, and it gives me chills a little. Let me paint it back to you to make sure we're seeing the same thing:
 
-The user opens Duha for the very first time. The screen is dark — the celestial night, deep navy, stars. That darkness isn't just aesthetic; it quietly represents where they are spiritually right now. Then a beautiful voice begins — and the very first words of Surah Ad-Duha are "وَالضُّحَىٰ" — "By the morning brightness." And right as the reciter says "Ad-Duhā," light breaks. A warm golden dawn blooms up from the horizon line, washing the stars away, and your app's name resolves out of that light: Duha.
+The user opens Duhaa for the very first time. The screen is dark — the celestial night, deep navy, stars. That darkness isn't just aesthetic; it quietly represents where they are spiritually right now. Then a beautiful voice begins — and the very first words of Surah Ad-Duhaa are "وَالضُّحَىٰ" — "By the morning brightness." And right as the reciter says "Ad-Duhā," light breaks. A warm golden dawn blooms up from the horizon line, washing the stars away, and your app's name resolves out of that light: Duhaa.
 
 What makes this almost too perfect: the surah's first two verses are "By the morning brightness, and by the night when it grows still." The night and the dawn are both right there in the opening line. Your dark theme is that night — and the whole app is the invitation to the dawn. The name, the aesthetic, the mission, and the opening moment all become the same single idea. And thematically the surah is Allah saying "your Lord has not forsaken you" — which is the exact message for someone who feels far from prayer and is opening this app hoping to come back.
 
@@ -2108,13 +2108,13 @@ Let me lay it out as a storyboard so we're seeing the same film, and I'll flag t
 **Beat 4 — The breath.** *"Breathe in…"* (the starfield gently swells) … *"Breathe out…"* (it settles). One slow cycle. Centering.
 **Beat 5 — The dawn.** The reciter opens the surah, and on **"Wad-Duhā"** the light breaks — gold washing up from the horizon, stars dissolving — with a swelling haptic down the spine.
 **Beat 6 — The meaning.** The first four verses' translation rises softly, line by line, in sync.
-**Beat 7 — The name & the breath after.** *Duha* resolves out of the light. Hold. Silence. *Then* the practical stuff begins.
+**Beat 7 — The name & the breath after.** *Duhaa* resolves out of the light. Hold. Silence. *Then* the practical stuff begins.
 
 Here are my two pushes:
 
 **Push 1 — the "light switch" sound.** I'd drop the literal switch *click*. Your whole metaphor is a sunrise — organic, natural, breaking over a horizon — and a mechanical *click* would snap the spell, suddenly making it feel like a room with a lamp instead of the heavens opening. If you want a sonic marker for the light (and you should — sound sells the moment), make it an organic **swell** — a soft rising tone or a warm "whooosh" of dawn — paired with the haptic, *not* a click.
 
-**Push 2 — where the light breaks.** In your order, the light comes *before* the recitation (on the switch). I'd tie it to the word **"Wad-Duhā"** *inside* the recitation instead — so the word and the light are the same event. The reason: that's the one detail that makes this moment uniquely *Duha* and not a generic sunrise intro. The reciter literally says "the morning light," and the morning light obeys.
+**Push 2 — where the light breaks.** In your order, the light comes *before* the recitation (on the switch). I'd tie it to the word **"Wad-Duhā"** *inside* the recitation instead — so the word and the light are the same event. The reason: that's the one detail that makes this moment uniquely *Duhaa* and not a generic sunrise intro. The reciter literally says "the morning light," and the morning light obeys.
 
 ---
 
@@ -2135,34 +2135,34 @@ Good question, and the honest answer is: **the idea doesn't need a new chat — 
 ## Assistant
 
 **Tool: Write**
-Writing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memory\project_duha_first_launch.md`
+Writing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memory\project_duhaa_first_launch.md`
 ```md
 ---
-name: project_duha_first_launch
-description: The first-launch cinematic "Duha moment" — the emotional heart of the prayer app
+name: project_duhaa_first_launch
+description: The first-launch cinematic "Duhaa moment" — the emotional heart of the prayer app
 metadata:
   type: project
 ---
 
-The app is named **Duha (ﺿﺤﻰ)** — "the morning brightness." Named after Surah Ad-Duha, the surah of hope ("your Lord has not forsaken you"). The mission: gently call people who don't pray / barely pray back to praying all 5 daily prayers — hope, not guilt.
+The app is named **Duhaa (ﺿﺤﻰ)** — "the morning brightness." Named after Surah Ad-Duhaa, the surah of hope ("your Lord has not forsaken you"). The mission: gently call people who don't pray / barely pray back to praying all 5 daily prayers — hope, not guilt.
 
-**The first-launch cinematic ("the Duha moment")** — plays on very first launch only. This is the emotional centerpiece. User wants it to give people CHILLS. Storyboard (approved):
+**The first-launch cinematic ("the Duhaa moment")** — plays on very first launch only. This is the emotional centerpiece. User wants it to give people CHILLS. Storyboard (approved):
 
 - **Beat 0 — Black & silence (~2.5s).** Pure dark, no sound. The "held breath." The darkness represents where the user is spiritually.
 - **Beat 1 — The invitation.** Soft text: "When you're ready…" / fainter: "tap three times." No timer — they sit in the dark as long as they need.
 - **Beat 2 — The three taps.** Each tap responds & builds: tap 1 → stars brighten + soft haptic; tap 2 → more stars, horizon glows + haptic; tap 3 → stillness, then the voice begins.
 - **Beat 3 — The basmala** in the dark over the starfield.
 - **Beat 4 — The breath.** "Breathe in…" (starfield swells) → "Breathe out…" (settles). One slow centering cycle.
-- **Beat 5 — The dawn.** Reciter opens Surah Ad-Duha; on the word **"Wad-Duhā"** the light breaks — gold washing up from the horizon, stars dissolving — with a swelling Core Haptics crescendo down the spine. (First ~4 verses recited.)
+- **Beat 5 — The dawn.** Reciter opens Surah Ad-Duhaa; on the word **"Wad-Duhā"** the light breaks — gold washing up from the horizon, stars dissolving — with a swelling Core Haptics crescendo down the spine. (First ~4 verses recited.)
 - **Beat 6 — The meaning.** First four verses' translation rises softly, line by line, in sync (so non-Arabic speakers feel it).
-- **Beat 7 — The name & breath after.** "Duha" resolves out of the light. Hold in silence. THEN onboarding begins.
+- **Beat 7 — The name & breath after.** "Duhaa" resolves out of the light. Hold in silence. THEN onboarding begins.
 
 **Locked craft decisions:**
 - Light breaks ON the spoken word "Wad-Duhā" (word + verse + visual fire on the same instant — the soul of the concept). NOT a separate pre-recitation beat.
 - NO mechanical "light switch" click sound — it breaks the sunrise spell. Use an organic swell / warm rising tone + haptic instead.
 - Silence up front is non-negotiable — it's what creates chills (tension → release).
 - Haptics (Core Haptics soft crescendo on the light break) are the secret ingredient that turns visual into physical chills.
-- Skippable: "Skip" fades in after ~4–5s. Plays before the practical setup screens. Never auto-plays again, but add a way to replay it (dawn icon / Settings → About Duha).
+- Skippable: "Skip" fades in after ~4–5s. Plays before the practical setup screens. Never auto-plays again, but add a way to replay it (dawn icon / Settings → About Duhaa).
 
 **Why:** This moment IS the app's thesis — the dark celestial theme is the "night," the whole app is the invitation to the "dawn." Name + aesthetic + mission + opening all collapse into one idea. Handle with extreme care; do not cheapen it. See [[project_prayer_app]].
 
@@ -2176,15 +2176,15 @@ Editing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memo
 - User is building an Islamic prayer iOS app. Decisions locked in so far:
 - 
 - - **Framework:** React Native (iOS-first, Android-ready later)
-+ User is building an Islamic prayer iOS app named **Duha (ﺿﺤﻰ)** — see [[project_duha_first_launch]] for the first-launch cinematic, the emotional heart of the app. Decisions locked in so far:
++ User is building an Islamic prayer iOS app named **Duhaa (ﺿﺤﻰ)** — see [[project_duhaa_first_launch]] for the first-launch cinematic, the emotional heart of the app. Decisions locked in so far:
 + 
-+ - **App name:** Duha (Arabic for "morning brightness"; mission = hope/motivation to bring people back to all 5 daily prayers)
++ - **App name:** Duhaa (Arabic for "morning brightness"; mission = hope/motivation to bring people back to all 5 daily prayers)
 + - **Framework:** React Native (iOS-first, Android-ready later)
 + - **v1 features:** Prayer Times (home), Qibla compass, Quran reader, Duas, Settings — bottom tab bar in that order
 + - **Quran reader:** Arabic + Sahih International English, bundled offline (SQLite), bookmarks, surah/ayah nav, NO audio in v1
 + - **Duas:** occasion-based categories + dedicated "After Prayer" section, ~50–80 duas, Arabic + transliteration + English
 + - **Hijri date:** Umm al-Qura calendar, user chooses which date (Hijri/Gregorian) is primary/larger — both always shown, ±1–2 day manual adjustment in Settings for moon sighting
-+ - **Onboarding:** 3 screens (welcome → location → calc method+madhab), no account, <60s — but the Duha cinematic plays first
++ - **Onboarding:** 3 screens (welcome → location → calc method+madhab), no account, <60s — but the Duhaa cinematic plays first
 + - **Monetization:** free, voluntary "Support the App" IAP (~$2.99), NO paywalled features
 + - **State/storage:** Zustand + MMKV
 + - **Widgets:** small + medium + lock screen (all celestial theme)
@@ -2201,24 +2201,24 @@ Writing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memo
 ```md
 # Memory Index
 
-- [Duha prayer app — decisions](project_prayer_app.md) — iOS prayer app "Duha", all locked design decisions
-- [Duha first-launch cinematic](project_duha_first_launch.md) — the "chills" moment; emotional heart of the app, handle with care
+- [Duhaa prayer app — decisions](project_prayer_app.md) — iOS prayer app "Duhaa", all locked design decisions
+- [Duhaa first-launch cinematic](project_duhaa_first_launch.md) — the "chills" moment; emotional heart of the app, handle with care
 - [Design previews preference](feedback_design_previews.md) — show colors/swatches, not full mockups, for aesthetic comparisons
 
 ```
 
 ## Assistant
 
-Done — the entire Duha moment storyboard, both pushes, and every decision from this session are saved to memory. They'll surface automatically in any future chat in this project. The idea is safe.
+Done — the entire Duhaa moment storyboard, both pushes, and every decision from this session are saved to memory. They'll surface automatically in any future chat in this project. The idea is safe.
 
 Now, my actual recommendation on the chat question:
 
 - **Stay in this chat to finish the grill** — we're genuinely close (a few questions left: the cinematic's reciter/licensing, then timeline/scope, and one or two loose ends). Switching now would lose the flow.
-- **Spin up a *new, dedicated* chat when it's time to actually *build* the Duha cinematic.** That moment is a specialized engineering chunk — audio-to-visual sync, Core Haptics curves, the dawn animation, reciter licensing. It deserves its own focused session with a clean context window, and now that it's in memory, that session will already know the full vision.
+- **Spin up a *new, dedicated* chat when it's time to actually *build* the Duhaa cinematic.** That moment is a specialized engineering chunk — audio-to-visual sync, Core Haptics curves, the dawn animation, reciter licensing. It deserves its own focused session with a clean context window, and now that it's in memory, that session will already know the full vision.
 
 So: finish designing here, build the cinematic in its own chat later. Sound good?
 
-And whenever you're ready — **Q26: which reciter, and how do we handle the audio licensing for Surah Ad-Duha?** This matters because you're bundling a recitation, and you can't ship just any recording.
+And whenever you're ready — **Q26: which reciter, and how do we handle the audio licensing for Surah Ad-Duhaa?** This matters because you're bundling a recitation, and you can't ship just any recording.
 
 ## User
 
@@ -2234,14 +2234,14 @@ Locked in — finish design here, build the cinematic in its own chat later.
 
 **Q26: Which reciter, and how do you handle the audio licensing?**
 
-You're bundling a recitation of Surah Ad-Duha into the app, which means you can't just rip any recording — you need rights to distribute it. Options:
+You're bundling a recitation of Surah Ad-Duhaa into the app, which means you can't just rip any recording — you need rights to distribute it. Options:
 
 - **Free/openly-licensed recitations** — sites like EveryAyah.com and Quran.com host recitations that are widely used in apps; some reciters' recordings are explicitly free to distribute
 - **Public domain / well-known reciters** — Mishary Alafasy, Abdul Basit, Sudais, Husary — hugely beloved, but licensing varies by recording
 - **Commission your own** — pay a local qari to record it; you own it outright
 - **Reach out for permission** — contact a reciter/their estate directly for written permission
 
-**My recommendation: Use an openly-licensed recitation of Surah Ad-Duha from a trusted source (EveryAyah / Quran.com's verse-by-verse audio), with a reciter whose recordings are confirmed free-to-distribute — Mishary Alafasy and Husary are common safe choices.** Verse-by-verse audio is actually ideal for your cinematic because you get individual ayah files, making it easy to sync the light break precisely to "Wad-Duhā" and time the translation lines. Keep written proof of the license terms.
+**My recommendation: Use an openly-licensed recitation of Surah Ad-Duhaa from a trusted source (EveryAyah / Quran.com's verse-by-verse audio), with a reciter whose recordings are confirmed free-to-distribute — Mishary Alafasy and Husary are common safe choices.** Verse-by-verse audio is actually ideal for your cinematic because you get individual ayah files, making it easy to sync the light break precisely to "Wad-Duhā" and time the translation lines. Keep written proof of the license terms.
 
 One thing to weigh: the *voice* matters enormously for chills. Alafasy is clear and emotionally resonant; Husary is measured and classical. You may want to test the moment with 2–3 reciters before deciding.
 
@@ -2262,10 +2262,10 @@ Let me save the decision first, then ask.
 ## Assistant
 
 **Tool: Edit**
-Editing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memory\project_duha_first_launch.md`
+Editing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memory\project_duhaa_first_launch.md`
 ```diff
 - **Why:** This moment IS the app's thesis
-+ **Reciter:** The creator (user) will record their OWN recitation of Surah Ad-Duha for the cinematic. Solves licensing entirely (owned outright) and makes the app deeply personal — the creator's own voice is the first thing every user hears as the dawn breaks. Needs a clean, well-recorded take (proper mic, silent room) since this recitation carries the whole emotional moment.
++ **Reciter:** The creator (user) will record their OWN recitation of Surah Ad-Duhaa for the cinematic. Solves licensing entirely (owned outright) and makes the app deeply personal — the creator's own voice is the first thing every user hears as the dawn breaks. Needs a clean, well-recorded take (proper mic, silent room) since this recitation carries the whole emotional moment.
 + 
 + **Why:** This moment IS the app's thesis
 ```
@@ -2321,10 +2321,10 @@ Let me note this so it's not lost.
 ## Assistant
 
 **Tool: Edit**
-Editing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memory\project_duha_first_launch.md`
+Editing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memory\project_duhaa_first_launch.md`
 ```diff
-- **Reciter:** The creator (user) will record their OWN recitation of Surah Ad-Duha for the cinematic. Solves licensing entirely (owned outright) and makes the app deeply personal — the creator's own voice is the first thing every user hears as the dawn breaks. Needs a clean, well-recorded take (proper mic, silent room) since this recitation carries the whole emotional moment.
-+ **Reciter:** The creator (user) will record their OWN recitation of Surah Ad-Duha for the cinematic. Solves licensing entirely (owned outright) and makes the app deeply personal — the creator's own voice is the first thing every user hears as the dawn breaks. Recording on a **Blue Yeti** (set to cardioid, side-address into front grille, ~6–8in, pop filter, low gain, treated/soft room to kill echo). Needs a clean, well-recorded take since this recitation carries the whole emotional moment.
+- **Reciter:** The creator (user) will record their OWN recitation of Surah Ad-Duhaa for the cinematic. Solves licensing entirely (owned outright) and makes the app deeply personal — the creator's own voice is the first thing every user hears as the dawn breaks. Needs a clean, well-recorded take (proper mic, silent room) since this recitation carries the whole emotional moment.
++ **Reciter:** The creator (user) will record their OWN recitation of Surah Ad-Duhaa for the cinematic. Solves licensing entirely (owned outright) and makes the app deeply personal — the creator's own voice is the first thing every user hears as the dawn breaks. Recording on a **Blue Yeti** (set to cardioid, side-address into front grille, ~6–8in, pop filter, low gain, treated/soft room to kill echo). Needs a clean, well-recorded take since this recitation carries the whole emotional moment.
 + 
 + **Audio licensing (IMPORTANT):** Only ship audio the user has rights to. User's OWN recitation = default, fully owned. User also has a famous Indonesian reciter's recording — this is COPYRIGHTED; use ONLY as a private dev reference/scratch track for pacing & melody, do NOT ship it. Shippable fallback must be an explicitly open-licensed recitation (e.g. Alafasy/Husary from EveryAyah/Quran.com, confirmed free-to-distribute). Keep written proof of license terms.
 ```
@@ -2341,7 +2341,7 @@ Here's my honest concern: we've specced a genuinely ambitious app — prayer tim
 
 **My recommendation: Split into two releases.**
 
-- **v1.0 (the real MVP):** Prayer times + the Duha cinematic + notifications + Qibla + widgets + Settings. This is a *complete, shippable, special* app on its own. The cinematic + accurate times + your night-prayer features already make it stand out.
+- **v1.0 (the real MVP):** Prayer times + the Duhaa cinematic + notifications + Qibla + widgets + Settings. This is a *complete, shippable, special* app on its own. The cinematic + accurate times + your night-prayer features already make it stand out.
 - **v1.1:** Quran reader + Duas + light/Sisters themes + Watch complication.
 
 The Quran reader and Duas are the heaviest content pieces and the *least* differentiated (every app has them). Shipping without them first gets you to the App Store months sooner, gets real user feedback, and protects the momentum.
@@ -2365,7 +2365,7 @@ Editing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memo
 + - **Testing:** unit tests for ALL calculations (prayer times vs known-good across cities/methods/madhabs, Tahajjud, Islamic midnight, Hijri); manual QA for UI
 + - **Team:** SOLO developer
 + - **Scope split (to actually ship):**
-+   - **v1.0 MVP:** Prayer times engine + Duha cinematic + notifications + Qibla + widgets + Settings + onboarding. Complete & special on its own.
++   - **v1.0 MVP:** Prayer times engine + Duhaa cinematic + notifications + Qibla + widgets + Settings + onboarding. Complete & special on its own.
 +   - **v1.1:** Quran reader + Duas + light mode + Sisters (pink) theme + Watch complication
 +   - Rationale: Quran/Duas are the heaviest content + least differentiated; shipping prayer-first gets to App Store sooner, protects momentum, gets real feedback.
 ```
@@ -2374,7 +2374,7 @@ Editing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memo
 
 **Q29: What actually keeps someone praying — is there a gentle motivation/habit loop?**
 
-This might be the most important question of the whole session, because it goes straight to your mission. The Duha cinematic is the *hook* — it gets a struggling person in the door with hope. But the cinematic plays *once*. Your stated goal is to help people who don't pray start praying all five again — and that's a **retention and habit** problem, not a one-time-moment problem. What brings them back tomorrow, and the day after?
+This might be the most important question of the whole session, because it goes straight to your mission. The Duhaa cinematic is the *hook* — it gets a struggling person in the door with hope. But the cinematic plays *once*. Your stated goal is to help people who don't pray start praying all five again — and that's a **retention and habit** problem, not a one-time-moment problem. What brings them back tomorrow, and the day after?
 
 The options range a lot in tone:
 
@@ -2383,7 +2383,7 @@ The options range a lot in tone:
 - **Streaks + stats** — visible streak counter, monthly completion %, like a habit app
 - **Encouragement layer** — after marking a prayer, a short reassuring verse/hadith; missed prayers never shamed, always "welcome back"
 
-**My recommendation: Gentle prayer tracking + an encouragement layer, with *zero* guilt mechanics.** A struggling person who misses Fajr and opens the app to a broken red streak and "You failed" will *delete it*. So: let them tap to mark each prayer prayed, show a soft, beautiful progress view (not an aggressive streak), and when they return after missing prayers, the app meets them like Surah Ad-Duha does — *"your Lord has not forsaken you,"* never a scold. The whole emotional thesis is **hope, not guilt**, and the habit loop has to embody that or it betrays the cinematic.
+**My recommendation: Gentle prayer tracking + an encouragement layer, with *zero* guilt mechanics.** A struggling person who misses Fajr and opens the app to a broken red streak and "You failed" will *delete it*. So: let them tap to mark each prayer prayed, show a soft, beautiful progress view (not an aggressive streak), and when they return after missing prayers, the app meets them like Surah Ad-Duhaa does — *"your Lord has not forsaken you,"* never a scold. The whole emotional thesis is **hope, not guilt**, and the habit loop has to embody that or it betrays the cinematic.
 
 This is a real fork: do you want prayer tracking in the app at all — and if so, how gentle vs how gamified?
 
@@ -2400,8 +2400,8 @@ Saved — and I'm putting this in **v1.0**, not v1.1, because it *is* the missio
 **Tool: Edit**
 Editing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memory\project_prayer_app.md`
 ```diff
--   - **v1.0 MVP:** Prayer times engine + Duha cinematic + notifications + Qibla + widgets + Settings + onboarding. Complete & special on its own.
-+   - **v1.0 MVP:** Prayer times engine + Duha cinematic + notifications + Qibla + widgets + Settings + onboarding + gentle prayer tracking. Complete & special on its own.
+-   - **v1.0 MVP:** Prayer times engine + Duhaa cinematic + notifications + Qibla + widgets + Settings + onboarding. Complete & special on its own.
++   - **v1.0 MVP:** Prayer times engine + Duhaa cinematic + notifications + Qibla + widgets + Settings + onboarding + gentle prayer tracking. Complete & special on its own.
 ```
 
 ## Assistant
@@ -2410,7 +2410,7 @@ Editing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memo
 Editing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memory\project_prayer_app.md`
 ```diff
 - - **Team:** SOLO developer
-+ - **Motivation/habit loop (CORE to mission, in v1.0):** Gentle prayer tracking — soft "mark as prayed" tap per prayer + a quiet, beautiful progress view. Plus an encouragement layer (short reassuring verse/hadith after marking). ZERO guilt mechanics — NO broken-streak shaming, no "you failed". When a user returns after missing prayers, the app meets them like Surah Ad-Duha: "your Lord has not forsaken you" / "welcome back", never a scold. Hope, not guilt — the habit loop must embody the same thesis as the cinematic.
++ - **Motivation/habit loop (CORE to mission, in v1.0):** Gentle prayer tracking — soft "mark as prayed" tap per prayer + a quiet, beautiful progress view. Plus an encouragement layer (short reassuring verse/hadith after marking). ZERO guilt mechanics — NO broken-streak shaming, no "you failed". When a user returns after missing prayers, the app meets them like Surah Ad-Duhaa: "your Lord has not forsaken you" / "welcome back", never a scold. Hope, not guilt — the habit loop must embody the same thesis as the cinematic.
 + - **Team:** SOLO developer
 ```
 
@@ -2451,10 +2451,10 @@ Editing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memo
 
 That's the whole design tree walked. We've reached shared understanding — here's everything, locked and saved to memory.
 
-## Duha — Final Plan
+## Duhaa — Final Plan
 
 **Identity**
-- **Name:** Duha (ﺿﺤﻰ) — "morning brightness." Mission: hope, not guilt — bringing people back to all 5 prayers.
+- **Name:** Duhaa (ﺿﺤﻰ) — "morning brightness." Mission: hope, not guilt — bringing people back to all 5 prayers.
 - **The cinematic:** first-launch ritual (silence → "tap three times" → basmala → breath → light breaks on *"Wad-Duhā"* + haptic → meaning → name). Your own Yeti-recorded recitation. *Built in its own chat later.*
 
 **Tech**
@@ -2551,7 +2551,7 @@ mkdir -p "C:/Users/Safa/Desktop/claudeTesting/prayer-verify" && cd "C:/Users/Saf
 **Tool: Write**
 Writing `C:\Users\Safa\Desktop\claudeTesting\prayer-verify\verify.js`
 ```js
-// Duha — prayer time verification harness
+// Duhaa — prayer time verification harness
 // Computes times with the `adhan` library so you can diff against a trusted
 // source (IslamicFinder / Aladhan / your local mosque).
 //
@@ -2635,7 +2635,7 @@ That's the sanity check done — and it already earned its keep by catching the 
 
 You've now got a reusable harness sitting at `prayer-verify/verify.js`. Edit the params to match your mosque, drop your city in, run `node verify.js`, and diff. Do that once and you'll *know* your engine is trustworthy before a single screen gets built.
 
-So where things stand: the entire plan is designed, every decision is in memory, and your prayer math is validated and reproducible. You're genuinely ready to start building v1.0 whenever you want — and the Duha cinematic has its own future chat waiting with full context.
+So where things stand: the entire plan is designed, every decision is in memory, and your prayer math is validated and reproducible. You're genuinely ready to start building v1.0 whenever you want — and the Duhaa cinematic has its own future chat waiting with full context.
 
 Want me to leave it here, or turn the plan into a written spec or a v1.0 task breakdown before you go?
 
@@ -2671,7 +2671,7 @@ Tahajjud start = Maghrib + (night × 2/3)
 
 Both match the script's output *exactly* — which confirms the library's `SunnahTimes` is doing precisely this, so you can trust it rather than hand-rolling it.
 
-**One nuance to decide:** scholars differ on what ends the night — most use **Maghrib → Fajr** (what we used, and what `adhan` uses). A minority use **sunset → sunrise**. Maghrib → Fajr is the mainstream choice and the right default for Duha.
+**One nuance to decide:** scholars differ on what ends the night — most use **Maghrib → Fajr** (what we used, and what `adhan` uses). A minority use **sunset → sunrise**. Maghrib → Fajr is the mainstream choice and the right default for Duhaa.
 
 Want me to show you the ~5 lines of code that compute these directly (without `SunnahTimes`), so you fully own the math instead of relying on the library?
 
@@ -2732,7 +2732,7 @@ This is gold — real mosque data is the best possible test. Let me map East Lon
 
 Now diff the **Begins** times against what my script computed (MWL · Shafi · Middle-of-Night):
 
-| Prayer | Mosque | Duha calc | Δ | Verdict |
+| Prayer | Mosque | Duhaa calc | Δ | Verdict |
 |---|---|---|---|---|
 | Fajr | 2:46 AM | 1:00 AM | **−106 min** | ❌ way off |
 | Sunrise | 4:43 AM | 4:46 AM | +3 min | ✅ |
@@ -2747,7 +2747,7 @@ Now diff the **Begins** times against what my script computed (MWL · Shafi · M
 
 2. **Fajr and Isha are convention, not calculation.** At London's latitude in June the sun never reaches the 18°/17° depression that defines Fajr/Isha, so *every* source has to *invent* them. East London Mosque doesn't use "Middle of Night" — they follow the **London Unified Prayer Timetable** (an *aqrab al-ayyām* / nearest-valid-day method). My default high-lat rule guessed differently, so Fajr/Isha are 1–2.5 hours off.
 
-**The product implication:** for high-latitude users, *pure calculation will never match the local mosque*, because the mosque is following a regional fiqh convention, not an algorithm. So Duha needs one of:
+**The product implication:** for high-latitude users, *pure calculation will never match the local mosque*, because the mosque is following a regional fiqh convention, not an algorithm. So Duhaa needs one of:
 
 - **Region presets** — e.g. a "London (Unified Timetable)" option that hardcodes/follows that convention
 - **Manual per-prayer offsets** — let the user nudge Fajr/Isha to match their mosque
@@ -2818,9 +2818,9 @@ Short answer: **partially — they agree on the *principle*, split on the *summe
 
 ---
 
-**What this means for Duha — and it's a real design conclusion, not a footnote:**
+**What this means for Duhaa — and it's a real design conclusion, not a footnote:**
 
-1. **There is no single "correct" high-latitude Fajr/Isha you can compute.** If Duha prints one number and calls it authoritative, you'll be *wrong* for a large chunk of users no matter what you pick — and at the cost of someone's **fast validity** (Fajr = suhoor cutoff). This is the highest-stakes number in the whole app.
+1. **There is no single "correct" high-latitude Fajr/Isha you can compute.** If Duhaa prints one number and calls it authoritative, you'll be *wrong* for a large chunk of users no matter what you pick — and at the cost of someone's **fast validity** (Fajr = suhoor cutoff). This is the highest-stakes number in the whole app.
 
 2. **The app must be humble and configurable at high latitude.** Concretely that means offering:
    - Multiple high-lat conventions: **angle-based (18°)**, **middle/half of night**, **one-seventh**, and ideally **aqrab al-ayyām**
@@ -2850,7 +2850,7 @@ Editing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memo
 
 ## Assistant
 
-Saved. So to directly answer your question — **no, they're not in full agreement, and that disagreement is the whole point:** they share the *principle* (18°, calculate-don't-observe) but diverge on the summer fallback, and they don't even agree that ELM's method is valid. The scholars haven't resolved it, so **Duha shouldn't pretend to.** Its job is to *respect* the disagreement by being configurable, not to pick a winner.
+Saved. So to directly answer your question — **no, they're not in full agreement, and that disagreement is the whole point:** they share the *principle* (18°, calculate-don't-observe) but diverge on the summer fallback, and they don't even agree that ELM's method is valid. The scholars haven't resolved it, so **Duhaa shouldn't pretend to.** Its job is to *respect* the disagreement by being configurable, not to pick a winner.
 
 That turns into two concrete decisions for v1:
 
@@ -2867,7 +2867,7 @@ genuinly I dont understand what's happening but tbh let's play the safer route
 
 Totally fair — and honestly, **you not understanding it isn't a you problem.** Scholars with decades of training disagree on this one. The whole reason it's confusing is that there *is no clean answer*. So let me translate "the safe route" into plain English and just lock it in for you. You don't need to hold any of the fiqh in your head.
 
-**Here's the safe route, in one sentence:** *Duha never claims to be the authority — it shows solid mainstream times by default, and for the rare tricky cases it quietly says "check with your local mosque" instead of pretending it knows best.*
+**Here's the safe route, in one sentence:** *Duhaa never claims to be the authority — it shows solid mainstream times by default, and for the rare tricky cases it quietly says "check with your local mosque" instead of pretending it knows best.*
 
 That breaks down into four calm, conservative decisions:
 
@@ -2889,7 +2889,7 @@ Let me lock it.
 Editing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memory\project_prayer_app.md`
 ```diff
 - - **Manual per-prayer time offsets:** ESSENTIAL for v1 (not optional) for a UK-facing app
-+ - **"SAFE ROUTE" — locked guiding principle (user chose this when overwhelmed by the fiqh dispute):** Duha NEVER claims to be the timing authority. (1) Normal latitudes: user-selected mainstream method → accurate times automatically. (2) High latitudes: NEUTRAL mainstream default + one gentle disclaimer ("Fajr & Isha estimated at your location, scholars differ — follow your local mosque"); do NOT silently pick a side. (3) Manual offsets are the universal safety net for any mismatch. (4) Do NOT hardcode any single UK timetable (e.g. ELM) — that takes a contested side; stay neutral & defer to the user's mosque. Default high-lat method stays "Middle of Night" (neutral), NOT a specific UK convention.
++ - **"SAFE ROUTE" — locked guiding principle (user chose this when overwhelmed by the fiqh dispute):** Duhaa NEVER claims to be the timing authority. (1) Normal latitudes: user-selected mainstream method → accurate times automatically. (2) High latitudes: NEUTRAL mainstream default + one gentle disclaimer ("Fajr & Isha estimated at your location, scholars differ — follow your local mosque"); do NOT silently pick a side. (3) Manual offsets are the universal safety net for any mismatch. (4) Do NOT hardcode any single UK timetable (e.g. ELM) — that takes a contested side; stay neutral & defer to the user's mosque. Default high-lat method stays "Middle of Night" (neutral), NOT a specific UK convention.
 + - **Manual per-prayer time offsets:** ESSENTIAL for v1 (not optional) for a UK-facing app
 ```
 
@@ -2905,7 +2905,7 @@ So where we are now:
 - **Whole app designed**, every decision saved to memory
 - **Prayer math validated** against a real mosque
 - **The hardest fiqh edge case** handled the safe, humble way
-- **The Duha cinematic** waiting in memory for its own build session
+- **The Duhaa cinematic** waiting in memory for its own build session
 
 You're in genuinely good shape. Want me to wrap everything into a single written spec document you can keep and refer back to — or leave it all in memory and call it here for today?
 
@@ -2915,7 +2915,7 @@ Why dont we do something like "Dont pray too close to the ending times of fajr a
 
 ## Assistant
 
-I really like where your head's at — and here's *why* it's better than what I proposed: a cold "scholars differ, consult references" disclaimer makes people anxious. Your version turns the same uncertainty into **caring, actionable guidance** — "here's how to stay safe." That's much more in the spirit of Duha. Protective, not preachy.
+I really like where your head's at — and here's *why* it's better than what I proposed: a cold "scholars differ, consult references" disclaimer makes people anxious. Your version turns the same uncertainty into **caring, actionable guidance** — "here's how to stay safe." That's much more in the spirit of Duhaa. Protective, not preachy.
 
 Let me just sharpen one fiqh detail so the advice is *correct*, because the boundaries that are fuzzy aren't quite the ones you named:
 
@@ -3195,7 +3195,7 @@ We've gone *deep* — and that last test was the payoff. You came in wanting acc
 **Where everything stands:**
 
 - ✅ **Full app designed** — every decision from framework to monetization, saved to memory
-- ✅ **The Duha cinematic** — storyboarded and preserved for its own build session
+- ✅ **The Duhaa cinematic** — storyboarded and preserved for its own build session
 - ✅ **Colors locked** — the bright celestial palette you approved
 - ✅ **Engine validated** — Asr matched East London Mosque to the *minute*
 - ✅ **The hard fiqh edge case** — researched across 4 sources, handled the safe/humble way, proven with numbers
@@ -3205,7 +3205,7 @@ You genuinely understand your own app's hardest problem now — even the part th
 
 Two clean ways to close out:
 
-1. **I write the whole thing into a single spec document** (`DUHA_SPEC.md`) — every locked decision in one file you can hand to yourself (or me) on day one of the build.
+1. **I write the whole thing into a single spec document** (`DUHAA_SPEC.md`) — every locked decision in one file you can hand to yourself (or me) on day one of the build.
 2. **We call it here** — it's all in memory and will surface in any future chat, especially the cinematic build.
 
 My recommendation: **let me write the spec doc.** Memory is great for *me*, but a spec is something *you* can read, share, and check off while building. Want it?
@@ -3286,10 +3286,10 @@ Locking it — and flagging it loud as known debt, not a clean solution.
 **Tool: Edit**
 Editing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memory\project_prayer_app.md`
 ```diff
-- User is building an Islamic prayer iOS app named **Duha (ﺿﺤﻰ)**
+- User is building an Islamic prayer iOS app named **Duhaa (ﺿﺤﻰ)**
 + > 🚨 **EMERGENCY / KNOWN DEBT — HIGH-LATITUDE PRAYER TIMES (MUST FIX LATER):** The v1 solution for high-latitude (UK/N.Europe) Fajr/Isha is a STOPGAP, not a real fix. Proven with numbers that NO calculation/angle reproduces a real local mosque (even ELM's claimed 15° lands ~1hr off; the gap is seasonal). v1 ships: manual per-prayer OFFSET + a seasonal re-check reminder for high-lat users (absolute-time typing deliberately avoided — it drifts within weeks). This shifts setup burden onto the user and can still drift between seasonal rechecks. MUST revisit post-v1 with a proper fix: monthly-reference-point interpolation (Option B) and/or a reliable mosque-timetable source (Mawaqit was rejected as too shaky/gated — find/own an alternative). Treat as a real outstanding problem, not "done."
 + 
-+ User is building an Islamic prayer iOS app named **Duha (ﺿﺤﻰ)**
++ User is building an Islamic prayer iOS app named **Duhaa (ﺿﺤﻰ)**
 ```
 
 ## Assistant
@@ -3314,7 +3314,7 @@ So it ships, but it'll never quietly pass as "solved" — the next time anyone o
 
 That's a clean stopping point. You've got: the full app designed, the cinematic preserved, colors locked, the engine validated against a real mosque, the hardest fiqh problem handled the safe way *and* honestly flagged as debt.
 
-When you're ready to pick back up, the highest-value next step is the one I'd still recommend: **let me write the whole thing into a `DUHA_SPEC.md`** so you have a single readable document to build from — not just my memory, but *yours*. Want it now, or save it for the next session?
+When you're ready to pick back up, the highest-value next step is the one I'd still recommend: **let me write the whole thing into a `DUHAA_SPEC.md`** so you have a single readable document to build from — not just my memory, but *yours*. Want it now, or save it for the next session?
 
 ## User
 
@@ -3327,9 +3327,9 @@ Writing the full spec now — every locked decision in one readable document.
 ## Assistant
 
 **Tool: Write**
-Writing `C:\Users\Safa\Desktop\claudeTesting\DUHA_SPEC.md`
+Writing `C:\Users\Safa\Desktop\claudeTesting\DUHAA_SPEC.md`
 ```md
-# Duha (ﺿﺤﻰ) — Product Specification
+# Duhaa (ﺿﺤﻰ) — Product Specification
 
 > An iOS prayer app built on hope, not guilt — to gently bring people who don't pray, or barely pray, back to all five daily prayers.
 
@@ -3339,7 +3339,7 @@ Writing `C:\Users\Safa\Desktop\claudeTesting\DUHA_SPEC.md`
 
 ## 1. Vision & Mission
 
-**Duha** means *"the morning brightness."* Named after Surah Ad-Duha — the surah of hope, revealed when the Prophet ﷺ felt abandoned, with Allah reassuring him *"your Lord has not forsaken you."*
+**Duhaa** means *"the morning brightness."* Named after Surah Ad-Duhaa — the surah of hope, revealed when the Prophet ﷺ felt abandoned, with Allah reassuring him *"your Lord has not forsaken you."*
 
 The app's thesis: the dark celestial theme is the **night**; the whole app is the invitation to the **dawn**. The name, the aesthetic, the mission, and the opening moment all collapse into one idea. Every design choice serves **hope, not guilt** — a struggling person should feel welcomed back, never scolded.
 
@@ -3349,7 +3349,7 @@ The app's thesis: the dark celestial theme is the **night**; the whole app is th
 
 ## 14. Roadmap
 
-**v1.0** — Prayer engine, Duha cinematic, notifications, Qibla, prayer tracking, widgets (small/medium/lock), onboarding, settings, dark theme. *Solo dev.*
+**v1.0** — Prayer engine, Duhaa cinematic, notifications, Qibla, prayer tracking, widgets (small/medium/lock), onboarding, settings, dark theme. *Solo dev.*
 
 **v1.1** — Quran reader, Duas, light mode, Sisters theme, Watch complication.
 
@@ -3366,10 +3366,10 @@ The app's thesis: the dark celestial theme is the **night**; the whole app is th
 
 ## Assistant
 
-Done — [DUHA_SPEC.md](DUHA_SPEC.md) is written. It's the complete blueprint, 14 sections:
+Done — [DUHAA_SPEC.md](DUHAA_SPEC.md) is written. It's the complete blueprint, 14 sections:
 
 1. **Vision & Mission** — the hope-not-guilt thesis
-2. **The Duha Moment** — full cinematic storyboard, craft rules, reciter/licensing
+2. **The Duhaa Moment** — full cinematic storyboard, craft rules, reciter/licensing
 3. **Tech Stack** — RN, adhan, Zustand, MMKV, SQLite
 4. **Prayer Engine** — methods, madhab, night math, high-lat handling
 5. **Features** — v1.0 vs v1.1 split
@@ -3389,7 +3389,7 @@ You're set. When you're ready to start building — or to record and build the c
 
 ## User
 
-Btw for the duha cinematic, I think we'll do tap 3 times, everything is pitch black, basmallah sound after like 1.5 seconds and light switch sound and my reciting duha
+Btw for the duhaa cinematic, I think we'll do tap 3 times, everything is pitch black, basmallah sound after like 1.5 seconds and light switch sound and my reciting duhaa
 
 ## Assistant
 
@@ -3399,13 +3399,13 @@ Love that you're tightening it — the leaner cut is probably stronger. Let me r
 2. **Pitch black** holds
 3. **~1.5s** → basmala
 4. **Light switch sound** → light
-5. **Your recitation** of Ad-Duha
+5. **Your recitation** of Ad-Duhaa
 
 That's tighter than the locked version — looks like you're cutting the "breathe in/out" beat and the "when you're ready" text. Good instinct if so (fewer elements = more focus); just confirm that's intentional.
 
 But I have to be your honest grilling partner on **two things you're reversing from what we locked** — totally fine if it's deliberate, I just want it to be a *choice*, not a slip:
 
-**1. The "light switch sound."** Earlier you agreed to drop the mechanical *click* because your whole metaphor is a **sunrise** — and a sunrise doesn't get *switched on*, it *breaks*. A literal switch-click risks making it feel like flicking a lamp in a room instead of the heavens opening. There's a real metaphor clash: *Duha = dawn = natural*; a switch = artificial/indoor.
+**1. The "light switch sound."** Earlier you agreed to drop the mechanical *click* because your whole metaphor is a **sunrise** — and a sunrise doesn't get *switched on*, it *breaks*. A literal switch-click risks making it feel like flicking a lamp in a room instead of the heavens opening. There's a real metaphor clash: *Duhaa = dawn = natural*; a switch = artificial/indoor.
    - **But** — if you mean it as "a *sound cue* marking the instant light floods in" (not literally a wall-switch click), that's different and can be beautiful. So: **what do you actually picture for that sound — a crisp click, or a warm swell/whoosh that just *marks* the light?**
 
 **2. The light now lands *before* the recitation (at step 4), not on the word "Wad-Duhā."** That word-and-light-on-the-same-instant was the single most special detail — the reciter literally says "the morning light" and the light obeys. In the new order, the light's already on before you start reciting, so that magic is spent early.
@@ -3420,8 +3420,8 @@ Do what I say. Tap three times (in the black)
 Pitch black holds
 ~1.5s → basmala
 Light switch sound
-Your recitation of Ad-Duha
-Lights hitting surah duha
+Your recitation of Ad-Duhaa
+Lights hitting surah duhaa
 
 ## Assistant
 
@@ -3430,48 +3430,48 @@ Understood — locking it exactly as you want it, no more pushback. You've heard
 ## Assistant
 
 **Tool: Read**
-Reading `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memory\project_duha_first_launch.md`
+Reading `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memory\project_duhaa_first_launch.md`
 
 ## Assistant
 
 **Tool: Edit**
-Editing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memory\project_duha_first_launch.md`
+Editing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memory\project_duhaa_first_launch.md`
 ```diff
-- **The first-launch cinematic ("the Duha moment")** — plays on very first launch only. This is the emotional centerpiece. User wants it to give people CHILLS. Storyboard (approved):
+- **The first-launch cinematic ("the Duhaa moment")** — plays on very first launch only. This is the emotional centerpiece. User wants it to give people CHILLS. Storyboard (approved):
 - 
 - - **Beat 0 — Black & silence (~2.5s).** Pure dark, no sound. The "held breath." The darkness represents where the user is spiritually.
 - - **Beat 1 — The invitation.** Soft text: "When you're ready…" / fainter: "tap three times." No timer — they sit in the dark as long as they need.
 - - **Beat 2 — The three taps.** Each tap responds & builds: tap 1 → stars brighten + soft haptic; tap 2 → more stars, horizon glows + haptic; tap 3 → stillness, then the voice begins.
 - - **Beat 3 — The basmala** in the dark over the starfield.
 - - **Beat 4 — The breath.** "Breathe in…" (starfield swells) → "Breathe out…" (settles). One slow centering cycle.
-- - **Beat 5 — The dawn.** Reciter opens Surah Ad-Duha; on the word **"Wad-Duhā"** the light breaks — gold washing up from the horizon, stars dissolving — with a swelling Core Haptics crescendo down the spine. (First ~4 verses recited.)
+- - **Beat 5 — The dawn.** Reciter opens Surah Ad-Duhaa; on the word **"Wad-Duhā"** the light breaks — gold washing up from the horizon, stars dissolving — with a swelling Core Haptics crescendo down the spine. (First ~4 verses recited.)
 - - **Beat 6 — The meaning.** First four verses' translation rises softly, line by line, in sync (so non-Arabic speakers feel it).
-- - **Beat 7 — The name & breath after.** "Duha" resolves out of the light. Hold in silence. THEN onboarding begins.
+- - **Beat 7 — The name & breath after.** "Duhaa" resolves out of the light. Hold in silence. THEN onboarding begins.
 - 
 - **Locked craft decisions:**
 - - Light breaks ON the spoken word "Wad-Duhā" (word + verse + visual fire on the same instant — the soul of the concept). NOT a separate pre-recitation beat.
 - - NO mechanical "light switch" click sound — it breaks the sunrise spell. Use an organic swell / warm rising tone + haptic instead.
 - - Silence up front is non-negotiable — it's what creates chills (tension → release).
 - - Haptics (Core Haptics soft crescendo on the light break) are the secret ingredient that turns visual into physical chills.
-- - Skippable: "Skip" fades in after ~4–5s. Plays before the practical setup screens. Never auto-plays again, but add a way to replay it (dawn icon / Settings → About Duha).
-+ **The first-launch cinematic ("the Duha moment")** — plays on very first launch only. This is the emotional centerpiece. User wants it to give people CHILLS.
+- - Skippable: "Skip" fades in after ~4–5s. Plays before the practical setup screens. Never auto-plays again, but add a way to replay it (dawn icon / Settings → About Duhaa).
++ **The first-launch cinematic ("the Duhaa moment")** — plays on very first launch only. This is the emotional centerpiece. User wants it to give people CHILLS.
 + 
 + **FINAL storyboard (REVISED & LOCKED by user — supersedes the earlier draft below):**
 + - **Beat 1 — Tap three times, in the black.** App opens pitch black with a minimal "tap three times" prompt. User taps 3× to begin (active participation — they *choose* the dawn).
 + - **Beat 2 — Pitch black holds.** Darkness sustains briefly (the "held breath"; where they are spiritually).
 + - **Beat 3 — Basmala (~1.5s after the taps).** "Bismillāhi-r-Raḥmāni-r-Raḥīm" in the dark.
 + - **Beat 4 — Light switch sound.** An audio cue marking the light turning on. ⚠️ User EXPLICITLY wants a "light switch" sound — this OVERRIDES my earlier push for an organic-swell-only / no-click. Honor the user's call.
-+ - **Beat 5 — The recitation begins** — user's OWN recitation of Surah Ad-Duha.
-+ - **Beat 6 — Lights hit on Surah Ad-Duha.** The light visually floods in as the surah (the word Duha) is recited — light still lands on the recitation of Duha.
++ - **Beat 5 — The recitation begins** — user's OWN recitation of Surah Ad-Duhaa.
++ - **Beat 6 — Lights hit on Surah Ad-Duhaa.** The light visually floods in as the surah (the word Duhaa) is recited — light still lands on the recitation of Duhaa.
 + 
 + **Cut in this revision (were in the earlier draft):** the "breathe in/out" centering beat, and the elaborate "When you're ready…" framing — user wants a tighter flow. (Translation-in-sync and the name resolving out of the light were NOT re-specified by the user; treat as optional/retained-if-desired, confirm in the build session.)
 + 
 + **Locked craft decisions:**
 + - ⚠️ Light switch SOUND cue is IN, per user's explicit instruction (reverses my earlier "no mechanical click" note — do not re-argue it).
-+ - Light still VISUALLY lands on the recitation of Surah Ad-Duha ("lights hitting surah duha").
++ - Light still VISUALLY lands on the recitation of Surah Ad-Duhaa ("lights hitting surah duhaa").
 + - Pitch black + silence up front retained — it's what creates chills (tension → release).
 + - Haptics (Core Haptics) retained as an enhancement on the taps and the light moment (turns visual into physical chills).
-+ - Skippable: "Skip" fades in after ~4–5s. Plays before the practical setup screens. Never auto-plays again, but add a way to replay it (dawn icon / Settings → About Duha).
++ - Skippable: "Skip" fades in after ~4–5s. Plays before the practical setup screens. Never auto-plays again, but add a way to replay it (dawn icon / Settings → About Duhaa).
 ```
 
 ## Assistant
@@ -3481,7 +3481,7 @@ Now updating the spec doc so it matches.
 ## Assistant
 
 **Tool: Edit**
-Editing `C:\Users\Safa\Desktop\claudeTesting\DUHA_SPEC.md`
+Editing `C:\Users\Safa\Desktop\claudeTesting\DUHAA_SPEC.md`
 ```diff
 - **Storyboard:**
 - 1. **Black & silence (~2.5s)** — pure dark, no sound. The "held breath." Represents where the user is spiritually.
@@ -3489,9 +3489,9 @@ Editing `C:\Users\Safa\Desktop\claudeTesting\DUHA_SPEC.md`
 - 3. **The three taps** — each builds: tap 1 → stars brighten + soft haptic; tap 2 → more stars, horizon glows + haptic; tap 3 → stillness, then the voice.
 - 4. **The basmala** in the dark over the starfield.
 - 5. **The breath** — *"Breathe in…"* (starfield swells) → *"Breathe out…"* (settles). One centering cycle.
-- 6. **The dawn** — the reciter opens Surah Ad-Duha; on the word **"Wad-Duhā"** light breaks from the horizon, gold washing up over navy, stars dissolving, with a swelling Core Haptics crescendo. (First ~4 verses.)
+- 6. **The dawn** — the reciter opens Surah Ad-Duhaa; on the word **"Wad-Duhā"** light breaks from the horizon, gold washing up over navy, stars dissolving, with a swelling Core Haptics crescendo. (First ~4 verses.)
 - 7. **The meaning** — first four verses' translation rises softly, line by line, in sync (so non-Arabic speakers *feel* it).
-- 8. **The name & breath after** — *Duha* resolves out of the light. Hold in silence. *Then* onboarding begins.
+- 8. **The name & breath after** — *Duhaa* resolves out of the light. Hold in silence. *Then* onboarding begins.
 - 
 - **Locked craft rules:**
 - - Light breaks **on the spoken word "Wad-Duhā"** — word + verse + visual on the same instant. Not a separate beat.
@@ -3503,14 +3503,14 @@ Editing `C:\Users\Safa\Desktop\claudeTesting\DUHA_SPEC.md`
 + 2. **Pitch black holds** — darkness sustains briefly (the "held breath").
 + 3. **Basmala (~1.5s after the taps)** — *"Bismillāhi-r-Raḥmāni-r-Raḥīm"* in the dark.
 + 4. **Light switch sound** — an audio cue marking the light turning on. *(User explicitly wants a "light switch" sound — this overrides the earlier "organic swell only" note.)*
-+ 5. **The recitation begins** — the creator's own recitation of Surah Ad-Duha.
-+ 6. **Lights hit on Surah Ad-Duha** — the light visually floods in as the surah (the word *Duha*) is recited.
++ 5. **The recitation begins** — the creator's own recitation of Surah Ad-Duhaa.
++ 6. **Lights hit on Surah Ad-Duhaa** — the light visually floods in as the surah (the word *Duhaa*) is recited.
 + 
 + *Cut for a tighter flow:* the "breathe in/out" beat and the elaborate "When you're ready…" text. (Translation-in-sync and the name resolving out of the light are optional/retained — confirm in the build session.)
 + 
 + **Locked craft rules:**
 + - **Light switch sound cue is IN** (user's explicit call — do not re-argue).
-+ - Light still **visually lands on the recitation of Surah Ad-Duha**.
++ - Light still **visually lands on the recitation of Surah Ad-Duhaa**.
 + - **Pitch black + silence up front** retained (tension → release = chills).
 + - **Haptics** retained as enhancement — on the taps and the light moment.
 ```
@@ -3523,10 +3523,10 @@ Locked your way, in both memory and the spec. The final cinematic is now:
 2. **Pitch black holds**
 3. **~1.5s → basmala**
 4. **Light switch sound**
-5. **Your recitation** of Ad-Duha
-6. **Light hits** on Surah Duha
+5. **Your recitation** of Ad-Duhaa
+6. **Light hits** on Surah Duhaa
 
-The earlier notes that contradicted this (the "no click" rule, the breathing beat) are explicitly marked as **overridden by your call** — so when we build it in its own session, no one re-litigates it. The light switch sound is in, and the light still lands visually on your recitation of Duha. Your vision, recorded exactly.
+The earlier notes that contradicted this (the "no click" rule, the breathing beat) are explicitly marked as **overridden by your call** — so when we build it in its own session, no one re-litigates it. The light switch sound is in, and the light still lands visually on your recitation of Duhaa. Your vision, recorded exactly.
 
 That's everything — design, spec, and the cinematic all aligned. Ready whenever you are to start building. 🌅
 
@@ -3544,7 +3544,7 @@ Here's the good news — **the single most important and riskiest piece doesn't 
 
 **What I need from you — one decision before I scaffold the app shell, plus two quick checks:**
 
-**1. (The real decision) Expo or bare React Native?** This matters because Duha needs deep native features — **home/lock-screen widgets, Core Haptics, custom adhan notification sounds, background refresh.**
+**1. (The real decision) Expo or bare React Native?** This matters because Duhaa needs deep native features — **home/lock-screen widgets, Core Haptics, custom adhan notification sounds, background refresh.**
    - **My recommendation: Expo with *prebuild* (config plugins + dev client).** You get Expo's vastly easier tooling *and* full native access — EAS can even build iOS for you, and you drop to native code for the widget target. Pure "managed" Expo can't do widgets, and bare RN makes everything harder than it needs to be for a solo dev. Prebuild is the modern sweet spot.
 
 **2. (Quick check) Apple Developer account?** Free Apple ID is enough to run on the simulator and your own device for a while. The paid one ($99/yr) is only needed for sustained device testing, push, and App Store submission. Do you have either?
@@ -3577,7 +3577,7 @@ Here's the tooling picture: **git is installed ✓, but the GitHub CLI (`gh`) is
 
 First, the nuance on **"even the chat history"** — raw chat logs are messy and unreliable to hand off. The *better* version of what you want: I bake the **curated context** into the repo so any Claude session on your Mac auto-loads it the moment you clone:
 - `CLAUDE.md` at the root (Claude Code reads this automatically on the Mac — it's the "catch up" file)
-- `DUHA_SPEC.md` (the full spec)
+- `DUHAA_SPEC.md` (the full spec)
 - the **memory docs** copied in (every decision we locked)
 
 That's *more* useful than a transcript — it's the distilled truth, not 60 messages of back-and-forth.
@@ -3594,26 +3594,26 @@ cd "C:/Users/Safa/Desktop/claudeTesting" && echo "=== folder contents ===" && ls
 
 ## Assistant
 
-Looking at the folder, I see some testing-harness files mixed in (`.agents`, `AGENTS.md`, `skills-lock.json`) that aren't part of Duha. So rather than push this scratch folder, I'll create a **clean `duha/` repo** with only the real project assets. Let me set it up.
+Looking at the folder, I see some testing-harness files mixed in (`.agents`, `AGENTS.md`, `skills-lock.json`) that aren't part of Duhaa. So rather than push this scratch folder, I'll create a **clean `duhaa/` repo** with only the real project assets. Let me set it up.
 
 ## Assistant
 
 **Tool: Bash**
-*Create clean duha repo folder and copy project assets*
+*Create clean duhaa repo folder and copy project assets*
 ```bash
-cd "C:/Users/Safa/Desktop" && mkdir -p duha/context duha/prayer-verify duha/design && \
-cp claudeTesting/DUHA_SPEC.md duha/ && \
-cp claudeTesting/design-1-celestial.html duha/design/ && \
-cp claudeTesting/design-2-geometric.html duha/design/ && \
-cp claudeTesting/design-3-utilitarian.html duha/design/ && \
-cp claudeTesting/prayer-verify/verify.js duha/prayer-verify/ && \
-cp claudeTesting/prayer-verify/test-london-angles.js duha/prayer-verify/ && \
-cp claudeTesting/prayer-verify/package.json duha/prayer-verify/ 2>/dev/null; \
-cp claudeTesting/prayer-verify/package-lock.json duha/prayer-verify/ 2>/dev/null; \
-cp "C:/Users/Safa/.claude/projects/C--Users-Safa-Desktop-claudeTesting/memory/project_prayer_app.md" duha/context/ && \
-cp "C:/Users/Safa/.claude/projects/C--Users-Safa-Desktop-claudeTesting/memory/project_duha_first_launch.md" duha/context/ && \
-cp "C:/Users/Safa/.claude/projects/C--Users-Safa-Desktop-claudeTesting/memory/feedback_design_previews.md" duha/context/ && \
-echo "=== duha repo prepared ===" && find duha -type f -not -path "*/node_modules/*" | sort
+cd "C:/Users/Safa/Desktop" && mkdir -p duhaa/context duhaa/prayer-verify duhaa/design && \
+cp claudeTesting/DUHAA_SPEC.md duhaa/ && \
+cp claudeTesting/design-1-celestial.html duhaa/design/ && \
+cp claudeTesting/design-2-geometric.html duhaa/design/ && \
+cp claudeTesting/design-3-utilitarian.html duhaa/design/ && \
+cp claudeTesting/prayer-verify/verify.js duhaa/prayer-verify/ && \
+cp claudeTesting/prayer-verify/test-london-angles.js duhaa/prayer-verify/ && \
+cp claudeTesting/prayer-verify/package.json duhaa/prayer-verify/ 2>/dev/null; \
+cp claudeTesting/prayer-verify/package-lock.json duhaa/prayer-verify/ 2>/dev/null; \
+cp "C:/Users/Safa/.claude/projects/C--Users-Safa-Desktop-claudeTesting/memory/project_prayer_app.md" duhaa/context/ && \
+cp "C:/Users/Safa/.claude/projects/C--Users-Safa-Desktop-claudeTesting/memory/project_duhaa_first_launch.md" duhaa/context/ && \
+cp "C:/Users/Safa/.claude/projects/C--Users-Safa-Desktop-claudeTesting/memory/feedback_design_previews.md" duhaa/context/ && \
+echo "=== duhaa repo prepared ===" && find duhaa -type f -not -path "*/node_modules/*" | sort
 ```
 
 ## Assistant
@@ -3623,16 +3623,16 @@ Now the key files: `CLAUDE.md` (auto-loaded by Claude Code on your Mac), `.gitig
 ## Assistant
 
 **Tool: Write**
-Writing `C:\Users\Safa\Desktop\duha\CLAUDE.md`
+Writing `C:\Users\Safa\Desktop\duhaa\CLAUDE.md`
 ```md
-# Duha (ﺿﺤﻰ) — project context for Claude Code
+# Duhaa (ﺿﺤﻰ) — project context for Claude Code
 
-> An iOS prayer app built on **hope, not guilt** — to gently bring people who don't pray, or barely pray, back to all five daily prayers. Named after Surah Ad-Duha ("the morning brightness" / "your Lord has not forsaken you").
+> An iOS prayer app built on **hope, not guilt** — to gently bring people who don't pray, or barely pray, back to all five daily prayers. Named after Surah Ad-Duhaa ("the morning brightness" / "your Lord has not forsaken you").
 
-**If you are a fresh Claude session: read `DUHA_SPEC.md` first — it is the full, authoritative spec.** The `context/` folder holds the original locked decision docs from the design session.
+**If you are a fresh Claude session: read `DUHAA_SPEC.md` first — it is the full, authoritative spec.** The `context/` folder holds the original locked decision docs from the design session.
 
 ## Current status
-- **Design: complete & locked.** Every decision is in `DUHA_SPEC.md`.
+- **Design: complete & locked.** Every decision is in `DUHAA_SPEC.md`.
 - **Engine: not yet built.** The prayer-time logic (adhan + Tahajjud/Islamic-midnight + offsets + Hijri) is the next thing to build — pure TypeScript, fully unit-testable, the riskiest/most important piece.
 - **App shell: not started.** React Native, to be built/run on macOS + Xcode.
 
@@ -3642,10 +3642,10 @@ Writing `C:\Users\Safa\Desktop\duha\CLAUDE.md`
 - **Verification harness:** `prayer-verify/` — Node scripts that compute times with `adhan` and were validated against East London Mosque. Run `cd prayer-verify && npm install && node verify.js`.
 
 ## 🚨 Read before touching prayer-time logic
-High-latitude (UK/N.Europe) **Fajr & Isha are a KNOWN EMERGENCY / unsolved debt** — see the banner at the top of `context/project_prayer_app.md` and §13 of `DUHA_SPEC.md`. No calculation reproduces a real local mosque (proven with numbers). v1 ships a stopgap (manual offsets + seasonal re-check); it must be properly fixed later. Do NOT present any high-lat number as authoritative.
+High-latitude (UK/N.Europe) **Fajr & Isha are a KNOWN EMERGENCY / unsolved debt** — see the banner at the top of `context/project_prayer_app.md` and §13 of `DUHAA_SPEC.md`. No calculation reproduces a real local mosque (proven with numbers). v1 ships a stopgap (manual offsets + seasonal re-check); it must be properly fixed later. Do NOT present any high-lat number as authoritative.
 
-## The "Duha moment" (first-launch cinematic)
-The emotional heart of the app, to be built in its own focused session. Full storyboard in `context/project_duha_first_launch.md` and §2 of `DUHA_SPEC.md`. Handle with care; do not cheapen it.
+## The "Duhaa moment" (first-launch cinematic)
+The emotional heart of the app, to be built in its own focused session. Full storyboard in `context/project_duhaa_first_launch.md` and §2 of `DUHAA_SPEC.md`. Handle with care; do not cheapen it.
 
 ## Design / palette (LOCKED — do not change)
 Dark celestial. bg `#0D1628`, gold `#F0C040`, blue `#8ECFE8`, card `rgba(255,255,255,0.07)`. Reference mockup: `design/design-1-celestial.html`.
@@ -3655,7 +3655,7 @@ Dark celestial. bg `#0D1628`, gold `#F0C040`, blue `#8ECFE8`, card `rgba(255,255
 ## Assistant
 
 **Tool: Write**
-Writing `C:\Users\Safa\Desktop\duha\.gitignore`
+Writing `C:\Users\Safa\Desktop\duhaa\.gitignore`
 ```
 # Dependencies
 node_modules/
@@ -3695,14 +3695,14 @@ yarn-error.*
 ## Assistant
 
 **Tool: Write**
-Writing `C:\Users\Safa\Desktop\duha\README.md`
+Writing `C:\Users\Safa\Desktop\duhaa\README.md`
 ```md
-# Duha (ﺿﺤﻰ)
+# Duhaa (ﺿﺤﻰ)
 
-An iOS prayer app built on **hope, not guilt** — to gently bring people who don't pray, or barely pray, back to all five daily prayers. Named after Surah Ad-Duha.
+An iOS prayer app built on **hope, not guilt** — to gently bring people who don't pray, or barely pray, back to all five daily prayers. Named after Surah Ad-Duhaa.
 
 ## What's here
-- **`DUHA_SPEC.md`** — the full product specification (start here)
+- **`DUHAA_SPEC.md`** — the full product specification (start here)
 - **`CLAUDE.md`** — context for Claude Code sessions
 - **`context/`** — original locked decision docs from the design session
 - **`design/`** — UI mockups (`design-1-celestial.html` is the approved direction)
@@ -3736,12 +3736,12 @@ Now initialize the repo and make the first commit.
 **Tool: Bash**
 *Initialize git repo and create first commit*
 ```bash
-cd "C:/Users/Safa/Desktop/duha" && git init -q && \
+cd "C:/Users/Safa/Desktop/duhaa" && git init -q && \
 ( git config user.name >/dev/null 2>&1 || git config user.name "Safa" ) && \
 ( git config user.email >/dev/null 2>&1 || git config user.email "safa@example.com" ) && \
-git add -A && git commit -q -m "Initial commit: Duha spec, locked decisions, design mockups, prayer-verify harness
+git add -A && git commit -q -m "Initial commit: Duhaa spec, locked decisions, design mockups, prayer-verify harness
 
-Design phase complete. Includes full product spec (DUHA_SPEC.md), the
+Design phase complete. Includes full product spec (DUHAA_SPEC.md), the
 locked decision docs (context/), approved UI mockups (design/), and the
 prayer-time verification harness validated against East London Mosque.
 
@@ -3756,10 +3756,10 @@ echo "=== committed ===" && git log --oneline && echo "=== tracked files ===" &&
 Local repo is built and committed cleanly — **14 files, no `node_modules`, no junk:**
 
 ```
-duha/
+duhaa/
 ├── CLAUDE.md          ← Mac's Claude auto-reads this
 ├── README.md
-├── DUHA_SPEC.md       ← full spec
+├── DUHAA_SPEC.md       ← full spec
 ├── .gitignore
 ├── context/           ← the 3 locked decision docs
 ├── design/            ← 3 UI mockups
@@ -3795,11 +3795,11 @@ Private repo, and you'll create it — got it. Here's exactly what to do so it p
 
 **Create the empty repo:**
 1. Go to **github.com/new**
-2. **Repository name:** `duha` (or whatever you like)
+2. **Repository name:** `duhaa` (or whatever you like)
 3. Set it to **Private** 🔒
 4. ⚠️ **Leave everything else unchecked** — do **NOT** add a README, .gitignore, or license. The repo must be **empty**, or it'll conflict with the commit we already made.
 5. Click **Create repository**
-6. On the next page, copy the **HTTPS URL** — it looks like `https://github.com/YOUR_USERNAME/duha.git`
+6. On the next page, copy the **HTTPS URL** — it looks like `https://github.com/YOUR_USERNAME/duhaa.git`
 
 **Then paste that URL here**, and I'll wire up the remote and push everything.
 
@@ -3820,7 +3820,7 @@ Got it. Wiring up the remote and pushing now — if a GitHub sign-in window pops
 **Tool: Bash**
 *Add remote and push to GitHub*
 ```bash
-cd "C:/Users/Safa/Desktop/duha" && git remote add origin "https://github.com/Safa0915/Duhaa.git" && git branch -M main && git push -u origin main 2>&1
+cd "C:/Users/Safa/Desktop/duhaa" && git remote add origin "https://github.com/Safa0915/Duhaa.git" && git branch -M main && git push -u origin main 2>&1
 ```
 
 ## Assistant
@@ -3843,7 +3843,7 @@ Everything's there — spec, locked decisions, design mockups, and the validated
 
 3. **First thing to build:** the prayer engine (pure TypeScript — adhan + Tahajjud/Islamic-midnight + offsets + Hijri), then the Expo-prebuild app shell, then wire in widgets/haptics/notifications on the Mac.
 
-4. **For the cinematic:** start a *separate* Claude session on the Mac when you're ready — `context/project_duha_first_launch.md` has the full storyboard waiting.
+4. **For the cinematic:** start a *separate* Claude session on the Mac when you're ready — `context/project_duhaa_first_launch.md` has the full storyboard waiting.
 
 ---
 
@@ -3891,13 +3891,13 @@ That's everything we need — git, and Node 22 (same as what I tested the engine
 
 **Step 2 — Clone your repo.**
 
-This downloads your Duha project to your Desktop. Paste this in:
+This downloads your Duhaa project to your Desktop. Paste this in:
 
 ```bash
 cd ~/Desktop && git clone https://github.com/Safa0915/Duhaa.git && cd Duhaa && ls
 ```
 
-**One heads-up:** because the repo is **private**, GitHub may ask you to **sign in** the first time — either a browser window pops up, or the Terminal asks for a username/token. If it just works, you'll see a list of files (`CLAUDE.md`, `DUHA_SPEC.md`, `context`, `design`, `prayer-verify`).
+**One heads-up:** because the repo is **private**, GitHub may ask you to **sign in** the first time — either a browser window pops up, or the Terminal asks for a username/token. If it just works, you'll see a list of files (`CLAUDE.md`, `DUHAA_SPEC.md`, `context`, `design`, `prayer-verify`).
 
 **Paste me the result** — whether it's the file list (success) or any sign-in prompt or error. If it asks for authentication, don't worry, I'll walk you through it.
 
@@ -3915,7 +3915,7 @@ You got it — here's the whole path, top to bottom. Run each block, and the inl
 ```bash
 cd ~/Desktop && git clone https://github.com/Safa0915/Duhaa.git && cd Duhaa && ls
 ```
-*Private repo → it may pop a **GitHub sign-in** in your browser, or ask for a username + token. Approve it. Success = you see `CLAUDE.md  DUHA_SPEC.md  context  design  prayer-verify`.*
+*Private repo → it may pop a **GitHub sign-in** in your browser, or ask for a username + token. Approve it. Success = you see `CLAUDE.md  DUHAA_SPEC.md  context  design  prayer-verify`.*
 
 ## Phase 2 — Prove the prayer engine works (the important part)
 ```bash
@@ -3929,7 +3929,7 @@ cd ~/Desktop/Duhaa && npx create-expo-app@latest app --template blank-typescript
 ```
 *Creates the React Native app in an `app/` subfolder. The `rm -rf app/.git` is important — it stops Expo from making a *nested* git repo so your one repo tracks everything. Say "y" if it asks to install.*
 
-## Phase 4 — Install Duha's core libraries
+## Phase 4 — Install Duhaa's core libraries
 ```bash
 cd ~/Desktop/Duhaa/app && npx expo install adhan zustand react-native-mmkv
 ```
@@ -3958,7 +3958,7 @@ Once you see the blank app running in the Simulator, **open Claude Code *on your
 
 Your first ask to it should be:
 
-> "Read DUHA_SPEC.md and CLAUDE.md, then build the prayer engine as a tested TypeScript module in `app/src/engine/` — prayer times via adhan, plus Tahajjud, Islamic midnight, and manual offsets. Mind the high-latitude emergency note. Write unit tests and validate against East London Mosque."
+> "Read DUHAA_SPEC.md and CLAUDE.md, then build the prayer engine as a tested TypeScript module in `app/src/engine/` — prayer times via adhan, plus Tahajjud, Islamic midnight, and manual offsets. Mind the high-latitude emergency note. Write unit tests and validate against East London Mosque."
 
 That hands the baton from *planning* (what we did here) to *building* (where the Mac shines).
 
@@ -3968,7 +3968,7 @@ Paste me your **Phase 1 & 2** output when you've run them, and I'll confirm you'
 
 I ran these:
 
-safagokdemir@MacBookAir Desktop % cat ~/.ssh/id_ed25519.pub ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB5HAw2jmgVw2FOctikHYZWdUr+xLfmOQm0cdpTrhYGc safa.gokdemir@rutgers.edu safagokdemir@MacBookAir Desktop % ssh -T git@github.com Hi Safa0915! You've successfully authenticated, but GitHub does not provide shell access. safagokdemir@MacBookAir Desktop % cd ~/Desktop && git clone git@github.com:Safa0915/Duhaa.git && cd Duhaa && ls Cloning into 'Duhaa'... remote: Enumerating objects: 19, done. remote: Counting objects: 100% (19/19), done. remote: Compressing objects: 100% (19/19), done. remote: Total 19 (delta 0), reused 19 (delta 0), pack-reused 0 (from 0) Receiving objects: 100% (19/19), 33.15 KiB | 4.14 MiB/s, done. CLAUDE.md design prayer-verify context DUHA_SPEC.md README.md safagokdemir@MacBookAir Duhaa %
+safagokdemir@MacBookAir Desktop % cat ~/.ssh/id_ed25519.pub ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB5HAw2jmgVw2FOctikHYZWdUr+xLfmOQm0cdpTrhYGc safa.gokdemir@rutgers.edu safagokdemir@MacBookAir Desktop % ssh -T git@github.com Hi Safa0915! You've successfully authenticated, but GitHub does not provide shell access. safagokdemir@MacBookAir Desktop % cd ~/Desktop && git clone git@github.com:Safa0915/Duhaa.git && cd Duhaa && ls Cloning into 'Duhaa'... remote: Enumerating objects: 19, done. remote: Counting objects: 100% (19/19), done. remote: Compressing objects: 100% (19/19), done. remote: Total 19 (delta 0), reused 19 (delta 0), pack-reused 0 (from 0) Receiving objects: 100% (19/19), 33.15 KiB | 4.14 MiB/s, done. CLAUDE.md design prayer-verify context DUHAA_SPEC.md README.md safagokdemir@MacBookAir Duhaa %
 Show more
 11:42 PM
 
@@ -3986,10 +3986,10 @@ cd ~/Desktop/Duhaa/prayer-verify && npm install && node verify.js
 
 
 You said: safagokdemir@MacBookAir Desktop % cat ~/.
-safagokdemir@MacBookAir Desktop % cat ~/.ssh/id_ed25519.pub ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB5HAw2jmgVw2FOctikHYZWdUr+xLfmOQm0cdpTrhYGc safa.gokdemir@rutgers.edu safagokdemir@MacBookAir Desktop % ssh -T git@github.com Hi Safa0915! You've successfully authenticated, but GitHub does not provide shell access. safagokdemir@MacBookAir Desktop % cd ~/Desktop && git clone git@github.com:Safa0915/Duhaa.git && cd Duhaa && ls Cloning into 'Duhaa'... remote: Enumerating objects: 19, done. remote: Counting objects: 100% (19/19), done. remote: Compressing objects: 100% (19/19), done. remote: Total 19 (delta 0), reused 19 (delta 0), pack-reused 0 (from 0) Receiving objects: 100% (19/19), 33.15 KiB | 4.14 MiB/s, done. CLAUDE.md design prayer-verify context DUHA_SPEC.md README.md safagokdemir@MacBookAir Duhaa % cd ~/Desktop/Duhaa/prayer-verify && npm install && node verify.js
+safagokdemir@MacBookAir Desktop % cat ~/.ssh/id_ed25519.pub ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB5HAw2jmgVw2FOctikHYZWdUr+xLfmOQm0cdpTrhYGc safa.gokdemir@rutgers.edu safagokdemir@MacBookAir Desktop % ssh -T git@github.com Hi Safa0915! You've successfully authenticated, but GitHub does not provide shell access. safagokdemir@MacBookAir Desktop % cd ~/Desktop && git clone git@github.com:Safa0915/Duhaa.git && cd Duhaa && ls Cloning into 'Duhaa'... remote: Enumerating objects: 19, done. remote: Counting objects: 100% (19/19), done. remote: Compressing objects: 100% (19/19), done. remote: Total 19 (delta 0), reused 19 (delta 0), pack-reused 0 (from 0) Receiving objects: 100% (19/19), 33.15 KiB | 4.14 MiB/s, done. CLAUDE.md design prayer-verify context DUHAA_SPEC.md README.md safagokdemir@MacBookAir Duhaa % cd ~/Desktop/Duhaa/prayer-verify && npm install && node verify.js
 added 1 package, and audited 2 packages in 501ms
 found 0 vulnerabilities npm notice npm notice New major version of npm available! 10.9.3 -> 11.16.0 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.16.0 npm notice To update run: npm install -g npm@11.16.0 npm notice
-=== Duha prayer-time verification === Date: Sat Jun 06 2026 Method: MuslimWorldLeague Madhab: Shafi/Standard HighLat: MiddleOfTheNight (Match these exact params on your reference source before diffing.)
+=== Duhaa prayer-time verification === Date: Sat Jun 06 2026 Method: MuslimWorldLeague Madhab: Shafi/Standard HighLat: MiddleOfTheNight (Match these exact params on your reference source before diffing.)
 ── Mecca (21.4225, 39.8262) Asia/Riyadh Fajr 04:13 AM Sunrise 05:38 AM Dhuhr 12:20 PM Asr 03:37 PM Maghrib 07:01 PM Isha 08:21 PM · Islamic midnight (Isha ends) 11:37 PM · Tahajjud (last third begins) 01:09 AM
 ── London (51.5074, -0.1278) Europe/London Fajr 01:00 AM Sunrise 04:46 AM Dhuhr 01:00 PM Asr 05:21 PM Maghrib 09:13 PM Isha 12:59 AM · Islamic midnight (Isha ends) 11:07 PM · Tahajjud (last third begins) 11:44 PM
 ── New York (40.7128, -74.006) America/New_York Fajr 03:22 AM Sunrise 05:25 AM Dhuhr 12:56 PM Asr 04:55 PM Maghrib 08:25 PM Isha 10:20 PM · Islamic midnight (Isha ends) 11:53 PM · Tahajjud (last third begins) 01:02 AM
@@ -4054,7 +4054,7 @@ Ah — important clarification, and I'm glad you flagged it before we built anyt
 | Android later | ✅ ~85% reusable | ❌ full rewrite |
 | The cinematic (Core Haptics, animations), widgets, custom adhan sounds | Doable, but these are the *friction* areas in RN | **Native's home turf — smoothest path to the "chills"** |
 
-Here's the honest part I owe you: when we picked React Native, I weighted "Android later." But looking at Duha's actual soul — **the cinematic chills (haptics + animation), home/lock-screen widgets, custom notification sounds** — *those are all native work even in React Native.* So a big chunk of RN's cross-platform advantage gets eaten by how iOS-native-heavy this specific app is. And you clearly pictured working *in Xcode.*
+Here's the honest part I owe you: when we picked React Native, I weighted "Android later." But looking at Duhaa's actual soul — **the cinematic chills (haptics + animation), home/lock-screen widgets, custom notification sounds** — *those are all native work even in React Native.* So a big chunk of RN's cross-platform advantage gets eaten by how iOS-native-heavy this specific app is. And you clearly pictured working *in Xcode.*
 
 So the real question isn't "Claude in Xcode yes/no" — it's **which framework**, because that decides everything downstream:
 
@@ -4065,7 +4065,7 @@ So the real question isn't "Claude in Xcode yes/no" — it's **which framework**
 {
   "questions": [
     {
-      "question": "Which framework do you want to build Duha in? (Nothing's built yet, so switching now is free.)",
+      "question": "Which framework do you want to build Duhaa in? (Nothing's built yet, so switching now is free.)",
       "header": "Framework",
       "multiSelect": false,
       "options": [
@@ -4104,7 +4104,7 @@ Editing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memo
 Editing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memory\project_prayer_app.md`
 ```diff
 - - **Framework:** React Native (iOS-first, Android-ready later)
-+ - **Framework:** **Native SwiftUI (Xcode)** — iOS-only for now; Android = future rewrite if ever. ⚠️ REVERSED the earlier React Native choice on 2026-06-07. Reasons: Duha is iOS-native-heavy (the cinematic's Core Haptics + animations, WidgetKit widgets, custom adhan notification sounds are all native work even in RN, eroding RN's cross-platform benefit), and the user wants to work IN Xcode with Claude. Tooling: Xcode 26 with Claude added as an Intelligence provider, and/or Claude Code in the repo. Min deployment target iOS 17+ (for @Observable / modern SwiftUI).
++ - **Framework:** **Native SwiftUI (Xcode)** — iOS-only for now; Android = future rewrite if ever. ⚠️ REVERSED the earlier React Native choice on 2026-06-07. Reasons: Duhaa is iOS-native-heavy (the cinematic's Core Haptics + animations, WidgetKit widgets, custom adhan notification sounds are all native work even in RN, eroding RN's cross-platform benefit), and the user wants to work IN Xcode with Claude. Tooling: Xcode 26 with Claude added as an Intelligence provider, and/or Claude Code in the repo. Min deployment target iOS 17+ (for @Observable / modern SwiftUI).
 ```
 
 ## Assistant
@@ -4127,15 +4127,15 @@ Editing `C:\Users\Safa\.claude\projects\C--Users-Safa-Desktop-claudeTesting\memo
 
 ## Assistant
 
-Now the repo docs — `CLAUDE.md` and `DUHA_SPEC.md` (the ones the Mac reads).
+Now the repo docs — `CLAUDE.md` and `DUHAA_SPEC.md` (the ones the Mac reads).
 
 ## Assistant
 
 **Tool: Edit**
-Editing `C:\Users\Safa\Desktop\duha\CLAUDE.md`
+Editing `C:\Users\Safa\Desktop\duhaa\CLAUDE.md`
 ```diff
 - ## Current status
-- - **Design: complete & locked.** Every decision is in `DUHA_SPEC.md`.
+- - **Design: complete & locked.** Every decision is in `DUHAA_SPEC.md`.
 - - **Engine: not yet built.** The prayer-time logic (adhan + Tahajjud/Islamic-midnight + offsets + Hijri) is the next thing to build — pure TypeScript, fully unit-testable, the riskiest/most important piece.
 - - **App shell: not started.** React Native, to be built/run on macOS + Xcode.
 - 
@@ -4144,8 +4144,8 @@ Editing `C:\Users\Safa\Desktop\duha\CLAUDE.md`
 - - **Stack:** React Native (recommend **Expo prebuild** — config plugins + dev client, for native access to widgets/haptics/notifications), `adhan` library, Zustand, MMKV, bundled SQLite (offline).
 - - **Verification harness:** `prayer-verify/` — Node scripts that compute times with `adhan` and were validated against East London Mosque. Run `cd prayer-verify && npm install && node verify.js`.
 + ## Current status
-+ - **Design: complete & locked.** Every decision is in `DUHA_SPEC.md`.
-+ - **Framework: NATIVE SwiftUI (Xcode).** Switched from React Native on 2026-06-07 — Duha is iOS-native-heavy (cinematic Core Haptics, WidgetKit, custom sounds) and the dev wants to work in Xcode. iOS-only for now; Android = future rewrite if ever.
++ - **Design: complete & locked.** Every decision is in `DUHAA_SPEC.md`.
++ - **Framework: NATIVE SwiftUI (Xcode).** Switched from React Native on 2026-06-07 — Duhaa is iOS-native-heavy (cinematic Core Haptics, WidgetKit, custom sounds) and the dev wants to work in Xcode. iOS-only for now; Android = future rewrite if ever.
 + - **Engine: not yet built.** The prayer-time logic (Adhan Swift + Tahajjud/Islamic-midnight + offsets + Hijri) is the next thing to build — as a Swift module with unit tests, the riskiest/most important piece.
 + - **App shell: not started.** SwiftUI app, built/run in Xcode on macOS.
 + 
@@ -4158,7 +4158,7 @@ Editing `C:\Users\Safa\Desktop\duha\CLAUDE.md`
 ## Assistant
 
 **Tool: Edit**
-Editing `C:\Users\Safa\Desktop\duha\DUHA_SPEC.md`
+Editing `C:\Users\Safa\Desktop\duhaa\DUHAA_SPEC.md`
 ```diff
 - | Area | Choice |
 - |---|---|
@@ -4178,18 +4178,18 @@ Editing `C:\Users\Safa\Desktop\duha\DUHA_SPEC.md`
 + | Widgets / Haptics / Notifs / Audio | WidgetKit · Core Haptics · UserNotifications · AVFoundation |
 + | Tooling | Xcode 26 (Claude as Intelligence provider) and/or Claude Code |
 + 
-+ > **Why native, not React Native:** Duha's emotional core and standout features — the first-launch cinematic (Core Haptics + animation), home/lock-screen widgets, and custom adhan notification sounds — are all native work *even in React Native*, which erodes RN's cross-platform benefit. The dev also wants to work in Xcode. Trade-off consciously accepted: iOS-only now; Android would be a future rewrite (Adhan also has Kotlin/JS ports, so the engine logic ports cleanly).
++ > **Why native, not React Native:** Duhaa's emotional core and standout features — the first-launch cinematic (Core Haptics + animation), home/lock-screen widgets, and custom adhan notification sounds — are all native work *even in React Native*, which erodes RN's cross-platform benefit. The dev also wants to work in Xcode. Trade-off consciously accepted: iOS-only now; Android would be a future rewrite (Adhan also has Kotlin/JS ports, so the engine logic ports cleanly).
 ```
 
 ## Assistant
 
 **Tool: Read**
-Reading `C:\Users\Safa\Desktop\duha\DUHA_SPEC.md`
+Reading `C:\Users\Safa\Desktop\duhaa\DUHAA_SPEC.md`
 
 ## Assistant
 
 **Tool: Edit**
-Editing `C:\Users\Safa\Desktop\duha\DUHA_SPEC.md`
+Editing `C:\Users\Safa\Desktop\duhaa\DUHAA_SPEC.md`
 ```diff
 - | Area | Choice |
 - |---|---|
@@ -4209,7 +4209,7 @@ Editing `C:\Users\Safa\Desktop\duha\DUHA_SPEC.md`
 + | Widgets / Haptics / Notifs / Audio | WidgetKit · Core Haptics · UserNotifications · AVFoundation |
 + | Tooling | Xcode 26 (Claude as Intelligence provider) and/or Claude Code |
 + 
-+ > **Why native, not React Native:** Duha's emotional core and standout features — the first-launch cinematic (Core Haptics + animation), home/lock-screen widgets, and custom adhan notification sounds — are all native work *even in React Native*, which erodes RN's cross-platform benefit. The dev also wants to work in Xcode. Trade-off consciously accepted: iOS-only now; Android would be a future rewrite (Adhan also has Kotlin/JS ports, so the engine logic ports cleanly).
++ > **Why native, not React Native:** Duhaa's emotional core and standout features — the first-launch cinematic (Core Haptics + animation), home/lock-screen widgets, and custom adhan notification sounds — are all native work *even in React Native*, which erodes RN's cross-platform benefit. The dev also wants to work in Xcode. Trade-off consciously accepted: iOS-only now; Android would be a future rewrite (Adhan also has Kotlin/JS ports, so the engine logic ports cleanly).
 ```
 
 ## Assistant
@@ -4219,12 +4219,12 @@ Let me check for any leftover React Native / Expo references in the repo docs.
 ## Assistant
 
 **Tool: Grep**
-Searching for `React Native|Expo|Zustand|MMKV|TypeScript|prebuild` in `C:\Users\Safa\Desktop\duha`
+Searching for `React Native|Expo|Zustand|MMKV|TypeScript|prebuild` in `C:\Users\Safa\Desktop\duhaa`
 
 ## Assistant
 
 **Tool: Edit**
-Editing `C:\Users\Safa\Desktop\duha\README.md`
+Editing `C:\Users\Safa\Desktop\duhaa\README.md`
 ```diff
 - ## Build
 - iOS-first React Native app (recommend Expo prebuild). Requires macOS + Xcode for the app shell, widgets, Core Haptics, simulator, and signing.
@@ -4237,11 +4237,11 @@ Editing `C:\Users\Safa\Desktop\duha\README.md`
 **Tool: Bash**
 *Sync context doc, commit and push framework change*
 ```bash
-cp "C:/Users/Safa/.claude/projects/C--Users-Safa-Desktop-claudeTesting/memory/project_prayer_app.md" "C:/Users/Safa/Desktop/duha/context/project_prayer_app.md" && cd "C:/Users/Safa/Desktop/duha" && git add -A && git commit -q -m "Switch framework: React Native -> Native SwiftUI
+cp "C:/Users/Safa/.claude/projects/C--Users-Safa-Desktop-claudeTesting/memory/project_prayer_app.md" "C:/Users/Safa/Desktop/duhaa/context/project_prayer_app.md" && cd "C:/Users/Safa/Desktop/duhaa" && git add -A && git commit -q -m "Switch framework: React Native -> Native SwiftUI
 
-Duha is iOS-native-heavy (cinematic Core Haptics, WidgetKit widgets,
+Duhaa is iOS-native-heavy (cinematic Core Haptics, WidgetKit widgets,
 custom adhan sounds) and the build happens in Xcode. iOS-only for now;
-Android = future rewrite. Updates CLAUDE.md, DUHA_SPEC.md, README.md,
+Android = future rewrite. Updates CLAUDE.md, DUHAA_SPEC.md, README.md,
 and the context decision doc. Engine library is now Adhan Swift (SPM).
 
 Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>" && git push -q && echo "=== pushed ===" && git log --oneline -2
@@ -4257,13 +4257,13 @@ Done — repo's now corrected and pushed (commit `0040eed`). The Mac's Claude wi
 ```bash
 cd ~/Desktop/Duhaa && git pull
 ```
-*Gets the SwiftUI-corrected `CLAUDE.md` / `DUHA_SPEC.md` so any Claude session here builds the right thing.*
+*Gets the SwiftUI-corrected `CLAUDE.md` / `DUHAA_SPEC.md` so any Claude session here builds the right thing.*
 
 ## Phase 4 — Create the Xcode project (this is GUI, in Xcode)
 1. Open **Xcode** → **Create New Project** (or File → New → Project)
 2. **iOS** tab → **App** → **Next**
 3. Fill in:
-   - **Product Name:** `Duha`
+   - **Product Name:** `Duhaa`
    - **Organization Identifier:** `com.safa` (or your own reverse-domain)
    - **Interface:** **SwiftUI** · **Language:** **Swift**
    - **Storage:** None · ✅ leave **"Include Tests"** checked (we want unit tests for the engine)
@@ -4276,7 +4276,7 @@ In Xcode: **File → Add Package Dependencies…** → paste this URL in the top
 ```
 https://github.com/batoulapps/adhan-swift
 ```
-→ **Add Package** → when it asks, add the **Adhan** library to your **Duha** target.
+→ **Add Package** → when it asks, add the **Adhan** library to your **Duhaa** target.
 
 ## Phase 6 — Run it (Cmd + R)
 Pick an iPhone simulator at the top, press **Cmd + R**. First build takes a minute; you should see "Hello, world!" in the Simulator. **That means your toolchain works.**
@@ -4292,7 +4292,7 @@ Pick an iPhone simulator at the top, press **Cmd + R**. First build takes a minu
 
 Your first real build ask (to either one):
 
-> "Read DUHA_SPEC.md and CLAUDE.md. Build the prayer engine as a Swift module with unit tests — prayer times via Adhan Swift, plus Tahajjud, Islamic midnight, and manual per-prayer offsets. Mind the high-latitude emergency note. Validate the output matches the numbers in prayer-verify (London Fajr 1:00 AM, Mecca Maghrib 7:01 PM, etc.)."
+> "Read DUHAA_SPEC.md and CLAUDE.md. Build the prayer engine as a Swift module with unit tests — prayer times via Adhan Swift, plus Tahajjud, Islamic midnight, and manual per-prayer offsets. Mind the high-latitude emergency note. Validate the output matches the numbers in prayer-verify (London Fajr 1:00 AM, Mecca Maghrib 7:01 PM, etc.)."
 
 ---
 
@@ -4353,7 +4353,7 @@ Ah, sorry — I muddied that. **You 100% need Xcode. There's no version of this 
 | **Xcode** (required) | The only thing that can **compile** Swift, run the **Simulator**, show **SwiftUI previews**, **debug**, run on your **real iPhone**, and **submit to the App Store**. Unavoidable for any native iOS app. |
 | **Claude** (the helper) | **Writes the Swift code** for you — the engine, the views, the tests. It does *not* compile or run anything on its own. |
 
-Think of it like this: **Claude is the coder who writes the files; Xcode is the workshop that builds, runs, and ships them.** They work on the *same* project — the `Duha.xcodeproj` you're creating in Phase 4. Claude edits the `.swift` files inside it; you hit **Cmd+R in Xcode** to see the result.
+Think of it like this: **Claude is the coder who writes the files; Xcode is the workshop that builds, runs, and ships them.** They work on the *same* project — the `Duhaa.xcodeproj` you're creating in Phase 4. Claude edits the `.swift` files inside it; you hit **Cmd+R in Xcode** to see the result.
 
 The actual day-to-day loop looks like:
 
@@ -4378,11 +4378,11 @@ You've got the Mac and Claude there — perfect. This is the handoff moment. Fro
 ## Assistant
 
 **Tool: Write**
-Writing `C:\Users\Safa\Desktop\duha\BUILD_PLAN.md`
+Writing `C:\Users\Safa\Desktop\duhaa\BUILD_PLAN.md`
 ```md
-# Duha — Build Plan (execute in order)
+# Duhaa — Build Plan (execute in order)
 
-> Read alongside `CLAUDE.md` and `DUHA_SPEC.md`. Build **engine-first, in thin vertical slices.** Do ONE slice at a time. Each slice: build → review → test/verify → **commit + push** before starting the next. The cinematic is LAST. Ship to TestFlight as soon as Slice 5 works.
+> Read alongside `CLAUDE.md` and `DUHAA_SPEC.md`. Build **engine-first, in thin vertical slices.** Do ONE slice at a time. Each slice: build → review → test/verify → **commit + push** before starting the next. The cinematic is LAST. Ship to TestFlight as soon as Slice 5 works.
 
 ## Working rules
 - **The dev reviews and understands every slice.** Claude writes the code; the dev makes the decisions and must be able to debug it. No 1,000-line dumps.
@@ -4400,9 +4400,9 @@ Writing `C:\Users\Safa\Desktop\duha\BUILD_PLAN.md`
 
 **Prompt:** *"Build the 3-screen onboarding (welcome → location → method+madhab), no account, under 60s, leading into the app."*
 
-## Slice 10 — The Duha cinematic (LAST, its own track) 🌅
+## Slice 10 — The Duhaa cinematic (LAST, its own track) 🌅
 **Goal:** The first-launch chills moment. **The app already works without it.**
-**Done when:** Matches the storyboard in `context/project_duha_first_launch.md` (tap ×3 → pitch black → basmala → light-switch sound → recitation → light hits on "Wad-Duhā"), skippable, plays once, replayable from Settings.
+**Done when:** Matches the storyboard in `context/project_duhaa_first_launch.md` (tap ×3 → pitch black → basmala → light-switch sound → recitation → light hits on "Wad-Duhā"), skippable, plays once, replayable from Settings.
 **Note:** Do this in a dedicated Claude session. Needs the dev's own recitation recorded first.
 
 ## Slice 11 — Polish & ship
@@ -4420,7 +4420,7 @@ Accessibility (VoiceOver, Dynamic Type, RTL), DST regression tests (late-Mar / l
 **Tool: Bash**
 *Commit and push BUILD_PLAN.md*
 ```bash
-cd "C:/Users/Safa/Desktop/duha" && git add -A && git commit -q -m "Add BUILD_PLAN.md — ordered vertical-slice build plan
+cd "C:/Users/Safa/Desktop/duhaa" && git add -A && git commit -q -m "Add BUILD_PLAN.md — ordered vertical-slice build plan
 
 Engine-first, slice-by-slice plan with definition-of-done and a
 ready-to-paste Claude prompt per slice. Cinematic last; TestFlight
@@ -4446,7 +4446,7 @@ claude
 
 **3. Paste this exact kickoff message to it:**
 
-> Read `CLAUDE.md`, `DUHA_SPEC.md`, and `BUILD_PLAN.md`. We're building Duha, a native SwiftUI iOS app, one vertical slice at a time. Start with **Slice 0** — guide me through the Xcode GUI steps you can't do yourself (creating the project, adding the Adhan Swift package), and do everything you can directly. Once "Hello world" runs, we move to Slice 1 (the prayer engine with tests). Go one slice at a time and wait for me to confirm each works before the next.
+> Read `CLAUDE.md`, `DUHAA_SPEC.md`, and `BUILD_PLAN.md`. We're building Duhaa, a native SwiftUI iOS app, one vertical slice at a time. Start with **Slice 0** — guide me through the Xcode GUI steps you can't do yourself (creating the project, adding the Adhan Swift package), and do everything you can directly. Once "Hello world" runs, we move to Slice 1 (the prayer engine with tests). Go one slice at a time and wait for me to confirm each works before the next.
 
 ---
 
@@ -4579,7 +4579,7 @@ You're in Claude Code on the Mac — perfect. Paste this exact message in and hi
 ---
 
 ```
-Read CLAUDE.md, DUHA_SPEC.md, and BUILD_PLAN.md in this repo. We're building Duha, a native SwiftUI iOS app, one vertical slice at a time. Start with Slice 0 — guide me through the Xcode GUI steps you can't do yourself (creating the project, adding the Adhan Swift package), and do everything you can directly in the repo. Once "Hello world" runs in the Simulator, we move to Slice 1 (the prayer engine with tests). Go ONE slice at a time and wait for me to confirm each works before starting the next.
+Read CLAUDE.md, DUHAA_SPEC.md, and BUILD_PLAN.md in this repo. We're building Duhaa, a native SwiftUI iOS app, one vertical slice at a time. Start with Slice 0 — guide me through the Xcode GUI steps you can't do yourself (creating the project, adding the Adhan Swift package), and do everything you can directly in the repo. Once "Hello world" runs in the Simulator, we move to Slice 1 (the prayer engine with tests). Go ONE slice at a time and wait for me to confirm each works before starting the next.
 ```
 
 ---
@@ -4615,7 +4615,7 @@ We'll work down the `BUILD_PLAN.md` slice by slice, exactly the same plan — ju
 2. Choose **Create New Project** (or File → New → Project).
 3. **iOS** tab at the top → click **App** → click **Next**.
 4. Fill the form exactly like this:
-   - **Product Name:** `Duha`
+   - **Product Name:** `Duhaa`
    - **Team:** whichever Apple ID is signed in (or "None" — fine for now)
    - **Organization Identifier:** `com.safa` (or anything reverse-domain you like)
    - **Interface:** **SwiftUI**
@@ -4640,7 +4640,7 @@ You're right — I overcomplicated it. You're already in Claude Code on the Mac,
 ---
 
 ```
-Read CLAUDE.md, DUHA_SPEC.md, and BUILD_PLAN.md in this repo. We're building Duha, a native SwiftUI iOS app, one vertical slice at a time. Start with Slice 0 — guide me through the Xcode GUI steps you can't do yourself (creating the project, adding the Adhan Swift package), and do everything you can directly in the repo. Once "Hello world" runs in the Simulator, we move to Slice 1 (the prayer engine with tests). Go ONE slice at a time and wait for me to confirm each works before starting the next.
+Read CLAUDE.md, DUHAA_SPEC.md, and BUILD_PLAN.md in this repo. We're building Duhaa, a native SwiftUI iOS app, one vertical slice at a time. Start with Slice 0 — guide me through the Xcode GUI steps you can't do yourself (creating the project, adding the Adhan Swift package), and do everything you can directly in the repo. Once "Hello world" runs in the Simulator, we move to Slice 1 (the prayer engine with tests). Go ONE slice at a time and wait for me to confirm each works before starting the next.
 ```
 
 ---
@@ -4713,7 +4713,7 @@ Honest answer: **no — there's no way to open this exact chat on your Mac.** Cl
 
 This is exactly why we pushed everything to GitHub. When you open Claude Code on the Mac inside the `Duhaa` folder, it reads:
 - **`CLAUDE.md`** — the full project context (auto-loaded)
-- **`DUHA_SPEC.md`** — every locked decision
+- **`DUHAA_SPEC.md`** — every locked decision
 - **`BUILD_PLAN.md`** — the exact ordered steps to build
 - **`context/`** — the original decision docs, including the cinematic
 
@@ -4745,7 +4745,7 @@ Let me look at what that tool actually does before we rely on it.
 Good find — and I checked it: **this tool does exactly what you want.** It reads Claude Code's local session files (the `.jsonl` transcripts) and converts them into clean Markdown — code blocks, collapsible tool results, the whole conversation. And our current session is sitting right here on this Windows machine, so I can run it *now* and commit the transcript into the repo.
 
 Here's how it fits — and it's a *complement*, not a replacement:
-- **`CLAUDE.md` / `DUHA_SPEC.md` / `BUILD_PLAN.md`** = the distilled decisions (what the Mac Claude works from day-to-day — low noise).
+- **`CLAUDE.md` / `DUHAA_SPEC.md` / `BUILD_PLAN.md`** = the distilled decisions (what the Mac Claude works from day-to-day — low noise).
 - **The full transcript** = the complete story/reasoning, as an archive you can scroll or have Claude reference when it wants the "why" behind a decision.
 
 Let me check the environment and generate it.
@@ -4779,15 +4779,15 @@ Installed and working. Let me convert our session (the `d5d52f45` one) into the 
 **Tool: Bash**
 *Convert session to markdown (full and trimmed versions)*
 ```bash
-mkdir -p "C:/Users/Safa/Desktop/duha/docs" && \
+mkdir -p "C:/Users/Safa/Desktop/duhaa/docs" && \
 SCRIPT="C:/Users/Safa/AppData/Local/Programs/Python/Python312/Scripts/claude-chat-to-md.exe" && \
 echo "=== FULL version ===" && \
-"$SCRIPT" d5d52f45 -o "C:/Users/Safa/Desktop/duha/docs/design-session-full.md" 2>&1 | tail -n 3 && \
+"$SCRIPT" d5d52f45 -o "C:/Users/Safa/Desktop/duhaa/docs/design-session-full.md" 2>&1 | tail -n 3 && \
 echo "=== TRIMMED version (no tool results) ===" && \
-"$SCRIPT" d5d52f45 --no-tool-results -o "C:/Users/Safa/Desktop/duha/docs/design-session.md" 2>&1 | tail -n 3 && \
+"$SCRIPT" d5d52f45 --no-tool-results -o "C:/Users/Safa/Desktop/duhaa/docs/design-session.md" 2>&1 | tail -n 3 && \
 echo "=== sizes / line counts ===" && \
-wc -l "C:/Users/Safa/Desktop/duha/docs/design-session.md" "C:/Users/Safa/Desktop/duha/docs/design-session-full.md" && \
-ls -la "C:/Users/Safa/Desktop/duha/docs/"
+wc -l "C:/Users/Safa/Desktop/duhaa/docs/design-session.md" "C:/Users/Safa/Desktop/duhaa/docs/design-session-full.md" && \
+ls -la "C:/Users/Safa/Desktop/duhaa/docs/"
 ```
 
 ## Assistant
@@ -4801,7 +4801,7 @@ Classic Windows Python encoding bug — the tool reads the file as cp1252 and ch
 ```bash
 export PYTHONUTF8=1 && \
 SCRIPT="C:/Users/Safa/AppData/Local/Programs/Python/Python312/Scripts/claude-chat-to-md.exe" && \
-echo "=== FULL ===" && "$SCRIPT" d5d52f45 -o "C:/Users/Safa/Desktop/duha/docs/design-session-full.md" 2>&1 | tail -n 2 && \
-echo "=== TRIMMED ===" && "$SCRIPT" d5d52f45 --no-tool-results -o "C:/Users/Safa/Desktop/duha/docs/design-session.md" 2>&1 | tail -n 2 && \
-echo "=== sizes ===" && wc -l "C:/Users/Safa/Desktop/duha/docs/design-session.md" "C:/Users/Safa/Desktop/duha/docs/design-session-full.md"
+echo "=== FULL ===" && "$SCRIPT" d5d52f45 -o "C:/Users/Safa/Desktop/duhaa/docs/design-session-full.md" 2>&1 | tail -n 2 && \
+echo "=== TRIMMED ===" && "$SCRIPT" d5d52f45 --no-tool-results -o "C:/Users/Safa/Desktop/duhaa/docs/design-session.md" 2>&1 | tail -n 2 && \
+echo "=== sizes ===" && wc -l "C:/Users/Safa/Desktop/duhaa/docs/design-session.md" "C:/Users/Safa/Desktop/duhaa/docs/design-session-full.md"
 ```

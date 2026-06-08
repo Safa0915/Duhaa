@@ -6,50 +6,50 @@ import Observation
 ///
 /// Layout rule: up to `maxBarSlots` enabled tabs show directly in the bar. If the
 /// user enables more than that, the last slot becomes a "More" menu holding the
-/// overflow. With Duha's current five features everything fits, so "More" stays
+/// overflow. With Duhaa's current five features everything fits, so "More" stays
 /// dormant until a sixth feature (or the user) pushes past the limit.
 @Observable
 final class TabSettings {
     static let maxBarSlots = 5
 
     /// Every tab, in the user's chosen order (includes hidden ones).
-    private(set) var order: [DuhaTab]
+    private(set) var order: [DuhaaTab]
     /// Tabs the user has switched off entirely.
-    private(set) var hidden: Set<DuhaTab>
+    private(set) var hidden: Set<DuhaaTab>
 
-    @ObservationIgnored private let orderKey = "duha.tabs.order"
-    @ObservationIgnored private let hiddenKey = "duha.tabs.hidden"
+    @ObservationIgnored private let orderKey = "duhaa.tabs.order"
+    @ObservationIgnored private let hiddenKey = "duhaa.tabs.hidden"
     @ObservationIgnored private let defaults: UserDefaults
 
     /// `defaults` is injectable so tests can use an isolated suite.
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         let saved = (defaults.stringArray(forKey: orderKey) ?? [])
-            .compactMap(DuhaTab.init(rawValue:))
+            .compactMap(DuhaaTab.init(rawValue:))
         // Start from the saved order, then append any tabs it doesn't mention yet
         // (e.g. a feature added in a later app version) so nothing ever disappears.
         var merged = saved
-        for tab in DuhaTab.defaultOrder where !merged.contains(tab) { merged.append(tab) }
-        order = merged.isEmpty ? DuhaTab.defaultOrder : merged
+        for tab in DuhaaTab.defaultOrder where !merged.contains(tab) { merged.append(tab) }
+        order = merged.isEmpty ? DuhaaTab.defaultOrder : merged
 
         hidden = Set((defaults.stringArray(forKey: hiddenKey) ?? [])
-            .compactMap(DuhaTab.init(rawValue:)))
+            .compactMap(DuhaaTab.init(rawValue:)))
     }
 
     // MARK: Derived layout
 
     /// Enabled tabs, in order — what the user actually sees.
-    var enabled: [DuhaTab] { order.filter { !hidden.contains($0) } }
+    var enabled: [DuhaaTab] { order.filter { !hidden.contains($0) } }
 
     /// Tabs shown directly in the bar.
-    var barTabs: [DuhaTab] {
+    var barTabs: [DuhaaTab] {
         let e = enabled
         guard e.count > Self.maxBarSlots else { return e }
         return Array(e.prefix(Self.maxBarSlots - 1))
     }
 
     /// Tabs tucked under the "More" menu (empty unless there are too many).
-    var moreTabs: [DuhaTab] {
+    var moreTabs: [DuhaaTab] {
         let e = enabled
         guard e.count > Self.maxBarSlots else { return [] }
         return Array(e.dropFirst(Self.maxBarSlots - 1))
@@ -57,7 +57,7 @@ final class TabSettings {
 
     /// Where a tab currently lives — used by the customize screen.
     enum Placement { case bar, more, hidden }
-    func placement(of tab: DuhaTab) -> Placement {
+    func placement(of tab: DuhaaTab) -> Placement {
         if hidden.contains(tab) { return .hidden }
         return barTabs.contains(tab) ? .bar : .more
     }
@@ -69,10 +69,10 @@ final class TabSettings {
         persist()
     }
 
-    func isHidden(_ tab: DuhaTab) -> Bool { hidden.contains(tab) }
+    func isHidden(_ tab: DuhaaTab) -> Bool { hidden.contains(tab) }
 
     /// Show/hide a tab. Refuses to hide the last visible tab.
-    func toggleHidden(_ tab: DuhaTab) {
+    func toggleHidden(_ tab: DuhaaTab) {
         if hidden.contains(tab) {
             hidden.remove(tab)
         } else {
@@ -83,7 +83,7 @@ final class TabSettings {
     }
 
     func resetToDefault() {
-        order = DuhaTab.defaultOrder
+        order = DuhaaTab.defaultOrder
         hidden = []
         persist()
     }

@@ -62,7 +62,7 @@ struct HomeDisplay {
     var prevLabel = ""
     var nextLabel = ""
     var rows: [PrayerRowData] = []
-    /// Sunrise — shown as a slim boundary in the list (end of Fajr / start of Duha),
+    /// Sunrise — shown as a slim boundary in the list (end of Fajr / start of Duhaa),
     /// never as a sixth obligatory prayer.
     var sunrise = ""
     var sunrisePassed = false
@@ -196,7 +196,7 @@ final class PrayerHomeModel {
     // MARK: Engine access
 
     /// Times for the day `offset` days from now (0 = today), in the location's zone.
-    private func times(_ location: ActiveLocation, _ config: PrayerConfig, dayOffset: Int) -> DuhaPrayerTimes? {
+    private func times(_ location: ActiveLocation, _ config: PrayerConfig, dayOffset: Int) -> DuhaaPrayerTimes? {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = location.timeZone
         guard let day = calendar.date(byAdding: .day, value: dayOffset, to: now) else { return nil }
@@ -209,7 +209,7 @@ final class PrayerHomeModel {
 
     // MARK: Isha "ends at Islamic midnight" sub-line
 
-    private func ishaSub(_ t: DuhaPrayerTimes, _ tz: TimeZone) -> String {
+    private func ishaSub(_ t: DuhaaPrayerTimes, _ tz: TimeZone) -> String {
         // High-latitude anomaly (spec §13): when Isha lands after Islamic midnight,
         // the "ends at midnight" framing breaks down — say so gently instead.
         if t.ishaAfterIslamicMidnight {

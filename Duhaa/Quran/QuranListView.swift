@@ -54,16 +54,16 @@ struct QuranListView: View {
                 } label: {
                     HStack(spacing: 14) {
                         Image(systemName: "book.fill")
-                            .duhaFont(17).foregroundStyle(Palette.gold).frame(width: 34)
+                            .duhaaFont(17).foregroundStyle(Palette.gold).frame(width: 34)
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Continue Reading")
-                                .duhaFont(12, .semibold).foregroundStyle(Palette.gold)
+                                .duhaaFont(12, .semibold).foregroundStyle(Palette.gold)
                             Text("\(surah.englishName) · Ayah \(bookmarks.lastReadAyah)")
-                                .duhaFont(14).foregroundStyle(.primary)
+                                .duhaaFont(14).foregroundStyle(.primary)
                         }
                         Spacer()
                         Image(systemName: "arrow.right.circle.fill")
-                            .duhaFont(20).foregroundStyle(Palette.gold.opacity(0.7))
+                            .duhaaFont(20).foregroundStyle(Palette.gold.opacity(0.7))
                     }
                     .padding(.vertical, 4)
                 }
@@ -88,9 +88,9 @@ struct QuranListView: View {
                     } label: {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("\(match.surah.englishName) · \(match.surah.number):\(match.ayah.number)")
-                                .duhaFont(13, .semibold).foregroundStyle(Palette.gold)
+                                .duhaaFont(13, .semibold).foregroundStyle(Palette.gold)
                             Text(match.ayah.english)
-                                .duhaFont(13).foregroundStyle(.primary.opacity(0.8))
+                                .duhaaFont(13).foregroundStyle(.primary.opacity(0.8))
                                 .lineLimit(2)
                         }
                         .padding(.vertical, 3)
@@ -144,15 +144,15 @@ struct QuranListView: View {
                 Circle().stroke(Palette.gold.opacity(0.4), lineWidth: 1.2)
                     .frame(width: 34, height: 34)
                 Text("\(surah.number)")
-                    .duhaFont(12, .semibold)
+                    .duhaaFont(12, .semibold)
                     .foregroundStyle(Palette.gold)
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text(surah.englishName)
-                    .duhaFont(16, .medium)
+                    .duhaaFont(16, .medium)
                     .foregroundStyle(.primary)
                 Text("\(surah.translation) · \(surah.revelation) · \(surah.ayahs.count) ayahs")
-                    .duhaFont(12)
+                    .duhaaFont(12)
                     .foregroundStyle(Palette.blue.opacity(0.7))
             }
             Spacer()

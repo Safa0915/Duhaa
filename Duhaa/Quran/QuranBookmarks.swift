@@ -16,13 +16,13 @@ final class QuranBookmarks {
     private(set) var lastReadSurah: Int?
     private(set) var lastReadAyah: Int = 1
 
-    @ObservationIgnored private let defaultsKey = "duha.quran.bookmarks"
+    @ObservationIgnored private let defaultsKey = "duhaa.quran.bookmarks"
 
     init() {
         keys = Set(UserDefaults.standard.stringArray(forKey: defaultsKey) ?? [])
-        let surah = UserDefaults.standard.integer(forKey: "duha.quran.lastSurah")
+        let surah = UserDefaults.standard.integer(forKey: "duhaa.quran.lastSurah")
         lastReadSurah = surah == 0 ? nil : surah
-        let ayah = UserDefaults.standard.integer(forKey: "duha.quran.lastAyah")
+        let ayah = UserDefaults.standard.integer(forKey: "duhaa.quran.lastAyah")
         lastReadAyah = ayah == 0 ? 1 : ayah
     }
 
@@ -30,8 +30,8 @@ final class QuranBookmarks {
     func recordRead(surah: Int, ayah: Int) {
         lastReadSurah = surah
         lastReadAyah = max(1, ayah)
-        UserDefaults.standard.set(surah, forKey: "duha.quran.lastSurah")
-        UserDefaults.standard.set(lastReadAyah, forKey: "duha.quran.lastAyah")
+        UserDefaults.standard.set(surah, forKey: "duhaa.quran.lastSurah")
+        UserDefaults.standard.set(lastReadAyah, forKey: "duhaa.quran.lastAyah")
     }
 
     func isBookmarked(_ surah: Int, _ ayah: Int) -> Bool { keys.contains(key(surah, ayah)) }

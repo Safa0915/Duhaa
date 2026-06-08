@@ -1,9 +1,9 @@
-# Duha (ﺿﺤﻰ)
+# Duhaa (ﺿﺤﻰ)
 
-An iOS prayer app built on **hope, not guilt** — to gently bring people who don't pray, or barely pray, back to all five daily prayers. Named after Surah Ad-Duha.
+An iOS prayer app built on **hope, not guilt** — to gently bring people who don't pray, or barely pray, back to all five daily prayers. Named after Surah Ad-Duhaa.
 
 ## What's here
-- **`DUHA_SPEC.md`** — the full product specification (start here)
+- **`DUHAA_SPEC.md`** — the full product specification (start here)
 - **`CLAUDE.md`** — context for Claude Code sessions
 - **`context/`** — original locked decision docs from the design session
 - **`design/`** — UI mockups (`design-1-celestial.html` is the approved direction)

@@ -2,7 +2,7 @@ import Foundation
 import CoreLocation
 import Observation
 
-/// Owns Duha's location: GPS auto-detect (While-Using), reverse-geocoding to a
+/// Owns Duhaa's location: GPS auto-detect (While-Using), reverse-geocoding to a
 /// city name + time zone, offline caching, and manual city search/override.
 ///
 /// Created once at app launch and shared via the SwiftUI environment.
@@ -23,7 +23,7 @@ final class LocationProvider: NSObject, CLLocationManagerDelegate {
 
     @ObservationIgnored private let manager = CLLocationManager()
     @ObservationIgnored private let geocoder = CLGeocoder()
-    @ObservationIgnored private let cacheKey = "duha.activeLocation.v1"
+    @ObservationIgnored private let cacheKey = "duhaa.activeLocation.v1"
     /// Set when the user asked for current location before permission resolved.
     @ObservationIgnored private var fetchWhenAuthorized = false
 

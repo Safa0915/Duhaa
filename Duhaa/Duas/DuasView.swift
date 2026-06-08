@@ -28,20 +28,20 @@ struct DuasView: View {
     private func card(_ category: DuaCategory) -> some View {
         HStack(spacing: 14) {
             Image(systemName: category.icon)
-                .duhaFont(20)
+                .duhaaFont(20)
                 .foregroundStyle(Palette.gold)
                 .frame(width: 34)
             VStack(alignment: .leading, spacing: 2) {
                 Text(category.name)
-                    .duhaFont(17, .semibold)
+                    .duhaaFont(17, .semibold)
                     .foregroundStyle(.primary)
                 Text("\(category.duas.count) du'as")
-                    .duhaFont(12)
+                    .duhaaFont(12)
                     .foregroundStyle(Palette.blue.opacity(0.7))
             }
             Spacer()
             Image(systemName: "chevron.right")
-                .duhaFont(13, .semibold)
+                .duhaaFont(13, .semibold)
                 .foregroundStyle(Palette.blue.opacity(0.5))
         }
         .padding(16)

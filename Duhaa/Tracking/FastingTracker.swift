@@ -8,7 +8,7 @@ final class FastingTracker {
     private var fasted: Set<String>   // dayKeys ("yyyy-MM-dd")
 
     @ObservationIgnored private let defaults: UserDefaults
-    @ObservationIgnored private let key = "duha.fasting.days"
+    @ObservationIgnored private let key = "duhaa.fasting.days"
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults

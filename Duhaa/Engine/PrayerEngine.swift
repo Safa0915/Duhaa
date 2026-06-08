@@ -39,7 +39,7 @@ struct PrayerOffsets: Equatable, Codable {
 
 /// The computed times for one day at one location. All values are absolute
 /// `Date` instants — format them in the location's time zone for display.
-struct DuhaPrayerTimes: Equatable {
+struct DuhaaPrayerTimes: Equatable {
     let fajr: Date
     let sunrise: Date
     let dhuhr: Date
@@ -78,7 +78,7 @@ enum PrayerEngine {
     static func times(latitude: Double,
                       longitude: Double,
                       date: DateComponents,
-                      config: PrayerConfig = PrayerConfig()) -> DuhaPrayerTimes? {
+                      config: PrayerConfig = PrayerConfig()) -> DuhaaPrayerTimes? {
 
         let coordinates = Coordinates(latitude: latitude, longitude: longitude)
 
@@ -101,7 +101,7 @@ enum PrayerEngine {
             return nil
         }
 
-        return DuhaPrayerTimes(
+        return DuhaaPrayerTimes(
             fajr: prayers.fajr,
             sunrise: prayers.sunrise,
             dhuhr: prayers.dhuhr,

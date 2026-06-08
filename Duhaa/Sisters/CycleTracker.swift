@@ -21,7 +21,7 @@ final class CycleTracker {
     private(set) var entries: [CycleEntry]
 
     @ObservationIgnored private let defaults: UserDefaults
-    @ObservationIgnored private let key = "duha.cycle.entries"
+    @ObservationIgnored private let key = "duhaa.cycle.entries"
 
     /// `defaults` is injectable so tests can use an isolated suite.
     init(defaults: UserDefaults = .standard) {

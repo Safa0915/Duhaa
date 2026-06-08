@@ -6,7 +6,7 @@ struct SupportView: View {
     @Environment(\.openURL) private var openURL
 
     /// ⚠️ TODO (dev): replace with the real Patreon page URL once it's created.
-    private let patreonURL = URL(string: "https://www.patreon.com/duha")!
+    private let patreonURL = URL(string: "https://www.patreon.com/duhaa")!
 
     var body: some View {
         ScrollView {
@@ -14,7 +14,7 @@ struct SupportView: View {
                 hero
 
                 Text("Duhaa is made by one person, kept free, with no ads and nothing locked away. Your support keeps it alive — and helps it grow.")
-                    .duhaFont(15)
+                    .duhaaFont(15)
                     .foregroundStyle(.primary.opacity(0.85))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 4)
@@ -37,7 +37,7 @@ struct SupportView: View {
                         Image(systemName: "hand.raised.fill")
                         Text("Become a Supporter")
                     }
-                    .duhaFont(16, .semibold)
+                    .duhaaFont(16, .semibold)
                     .foregroundStyle(Palette.onAccent)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
@@ -51,7 +51,7 @@ struct SupportView: View {
                 .buttonStyle(.plain)
 
                 Text("And if you can't right now, that's completely okay — a quiet du'a for this work means just as much. 🤍")
-                    .duhaFont(13)
+                    .duhaaFont(13)
                     .foregroundStyle(Palette.blue.opacity(0.7))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 8)
@@ -74,7 +74,7 @@ struct SupportView: View {
                                      center: .center, startRadius: 0, endRadius: 60))
                 .frame(width: 130, height: 130)
             Image(systemName: "heart.fill")
-                .duhaFont(46)
+                .duhaaFont(46)
                 .foregroundStyle(Palette.gold)
                 .shadow(color: Palette.gold.opacity(0.5), radius: 14)
         }
@@ -85,12 +85,12 @@ struct SupportView: View {
     private func perk(_ icon: String, _ title: String, _ subtitle: String) -> some View {
         HStack(spacing: 14) {
             Image(systemName: icon)
-                .duhaFont(18)
+                .duhaaFont(18)
                 .foregroundStyle(Palette.gold)
                 .frame(width: 30)
             VStack(alignment: .leading, spacing: 2) {
-                Text(title).duhaFont(15, .semibold).foregroundStyle(.primary)
-                Text(subtitle).duhaFont(12).foregroundStyle(Palette.blue.opacity(0.75))
+                Text(title).duhaaFont(15, .semibold).foregroundStyle(.primary)
+                Text(subtitle).duhaaFont(12).foregroundStyle(Palette.blue.opacity(0.75))
             }
             Spacer()
         }

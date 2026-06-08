@@ -1,6 +1,6 @@
-# Duha — Build Plan (execute in order)
+# Duhaa — Build Plan (execute in order)
 
-> Read alongside `CLAUDE.md` and `DUHA_SPEC.md`. Build **engine-first, in thin vertical slices.** Do ONE slice at a time. Each slice: build → review → test/verify → **commit + push** before starting the next. The cinematic is LAST. Ship to TestFlight as soon as Slice 5 works.
+> Read alongside `CLAUDE.md` and `DUHAA_SPEC.md`. Build **engine-first, in thin vertical slices.** Do ONE slice at a time. Each slice: build → review → test/verify → **commit + push** before starting the next. The cinematic is LAST. Ship to TestFlight as soon as Slice 5 works.
 
 ## Working rules
 - **The dev reviews and understands every slice.** Claude writes the code; the dev makes the decisions and must be able to debug it. No 1,000-line dumps.
@@ -13,13 +13,13 @@
 
 ## Slice 0 — Project setup
 **Goal:** A running "Hello world" SwiftUI app inside the repo, with Adhan Swift added.
-**Done when:** `Duha.xcodeproj` exists under `~/Desktop/Duhaa`, Adhan Swift package resolves, app runs in the Simulator, no nested git repo.
-**Prompt:** *"Guide me through creating the Duha Xcode project (SwiftUI, iOS 17+, Include Tests, save in ~/Desktop/Duhaa, DON'T create a git repo). Then walk me through adding the Adhan Swift package (github.com/batoulapps/adhan-swift). Confirm it builds and runs."*
+**Done when:** `Duhaa.xcodeproj` exists under `~/Desktop/Duhaa`, Adhan Swift package resolves, app runs in the Simulator, no nested git repo.
+**Prompt:** *"Guide me through creating the Duhaa Xcode project (SwiftUI, iOS 17+, Include Tests, save in ~/Desktop/Duhaa, DON'T create a git repo). Then walk me through adding the Adhan Swift package (github.com/batoulapps/adhan-swift). Confirm it builds and runs."*
 
 ## Slice 1 — Prayer engine (the foundation) ⭐
 **Goal:** A tested Swift engine: 5 prayers + Tahajjud + Islamic midnight + per-prayer manual offsets + method/madhab/high-lat config.
 **Done when:** Unit tests pass and reproduce the `prayer-verify` numbers for Mecca, London, New York, Jakarta, Karachi. High-lat Isha>midnight edge case handled gracefully (see spec §13).
-**Prompt:** *"Build the prayer engine as a Swift module in the Duha target with unit tests, using Adhan Swift. Include 5 daily prayers, SunnahTimes (Tahajjud = lastThirdOfTheNight, Islamic midnight = middleOfTheNight), method + madhab + high-latitude config, and manual per-prayer offsets. Write XCTest cases asserting the exact times from prayer-verify. Mind the high-latitude emergency note in the spec."*
+**Prompt:** *"Build the prayer engine as a Swift module in the Duhaa target with unit tests, using Adhan Swift. Include 5 daily prayers, SunnahTimes (Tahajjud = lastThirdOfTheNight, Islamic midnight = middleOfTheNight), method + madhab + high-latitude config, and manual per-prayer offsets. Write XCTest cases asserting the exact times from prayer-verify. Mind the high-latitude emergency note in the spec."*
 
 ## Slice 2 — Prayer home screen
 **Goal:** The celestial main screen showing today's times, next-prayer highlight, Isha "ends at Islamic midnight", and the Night Prayer card.
@@ -55,9 +55,9 @@
 ## Slice 9 — Onboarding
 **Prompt:** *"Build the 3-screen onboarding (welcome → location → method+madhab), no account, under 60s, leading into the app."*
 
-## Slice 10 — The Duha cinematic (LAST, its own track) 🌅
+## Slice 10 — The Duhaa cinematic (LAST, its own track) 🌅
 **Goal:** The first-launch chills moment. **The app already works without it.**
-**Done when:** Matches the storyboard in `context/project_duha_first_launch.md` (tap ×3 → pitch black → basmala → light-switch sound → recitation → light hits on "Wad-Duhā"), skippable, plays once, replayable from Settings.
+**Done when:** Matches the storyboard in `context/project_duhaa_first_launch.md` (tap ×3 → pitch black → basmala → light-switch sound → recitation → light hits on "Wad-Duhā"), skippable, plays once, replayable from Settings.
 **Note:** Do this in a dedicated Claude session. Needs the dev's own recitation recorded first.
 
 ## Slice 11 — Polish & ship

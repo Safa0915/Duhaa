@@ -4,7 +4,7 @@ import Observation
 
 // MARK: - User-facing choices
 
-/// Calculation methods Duha exposes, with display names. Maps to Adhan internally.
+/// Calculation methods Duhaa exposes, with display names. Maps to Adhan internally.
 enum CalcMethod: String, CaseIterable, Identifiable {
     case muslimWorldLeague, northAmerica, egyptian, ummAlQura, karachi
     case dubai, qatar, kuwait, singapore, tehran, turkey, moonsighting
@@ -107,10 +107,10 @@ final class SettingsStore {
     }
 
     private enum Key {
-        static let method = "duha.settings.method"
-        static let madhab = "duha.settings.madhab"
-        static let hijriOffset = "duha.settings.hijriOffsetDays"
-        static let hijriPrimary = "duha.settings.hijriIsPrimary"
-        static let offsets = "duha.settings.offsets"
+        static let method = "duhaa.settings.method"
+        static let madhab = "duhaa.settings.madhab"
+        static let hijriOffset = "duhaa.settings.hijriOffsetDays"
+        static let hijriPrimary = "duhaa.settings.hijriIsPrimary"
+        static let offsets = "duhaa.settings.offsets"
     }
 }

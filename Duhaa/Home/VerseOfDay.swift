@@ -42,11 +42,11 @@ struct VerseOfDayCard: View {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Label("VERSE OF THE DAY", systemImage: "sparkles")
-                            .duhaFont(11, .semibold).tracking(1)
+                            .duhaaFont(11, .semibold).tracking(1)
                             .foregroundStyle(Palette.gold.opacity(0.9))
                         Spacer()
                         Text("\(surah.englishName) · \(ref.surah):\(ref.ayah)")
-                            .duhaFont(11)
+                            .duhaaFont(11)
                             .foregroundStyle(Palette.blue.opacity(0.7))
                     }
                     Text(ayah.arabic)
@@ -56,7 +56,7 @@ struct VerseOfDayCard: View {
                         .environment(\.layoutDirection, .rightToLeft)
                         .foregroundStyle(.primary)
                     Text(ayah.english)
-                        .duhaFont(14)
+                        .duhaaFont(14)
                         .foregroundStyle(.primary.opacity(0.82))
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }

@@ -21,17 +21,17 @@ final class TabSettingsTests: XCTestCase {
 
     func testFreshUsesDefaultOrder() {
         let tabs = TabSettings(defaults: defaults)
-        XCTAssertEqual(tabs.order, DuhaTab.defaultOrder)
+        XCTAssertEqual(tabs.order, DuhaaTab.defaultOrder)
         XCTAssertTrue(tabs.hidden.isEmpty)
     }
 
     func testMergesInNewlyShippedTabs() {
         // Simulate an older user who only had the first three tabs saved.
-        defaults.set([DuhaTab.prayer, .qibla, .quran].map(\.rawValue), forKey: "duha.tabs.order")
+        defaults.set([DuhaaTab.prayer, .qibla, .quran].map(\.rawValue), forKey: "duhaa.tabs.order")
         let tabs = TabSettings(defaults: defaults)
         // The saved three stay first; everything else is appended (nothing disappears).
         XCTAssertEqual(Array(tabs.order.prefix(3)), [.prayer, .qibla, .quran])
-        for t in DuhaTab.allCases { XCTAssertTrue(tabs.order.contains(t)) }
+        for t in DuhaaTab.allCases { XCTAssertTrue(tabs.order.contains(t)) }
     }
 
     func testBarAndMoreSplitWhenOverflowing() {
@@ -53,7 +53,7 @@ final class TabSettingsTests: XCTestCase {
 
     func testCannotHideTheLastVisibleTab() {
         let tabs = TabSettings(defaults: defaults)
-        for t in DuhaTab.allCases where t != .prayer { tabs.toggleHidden(t) }
+        for t in DuhaaTab.allCases where t != .prayer { tabs.toggleHidden(t) }
         XCTAssertEqual(tabs.enabled, [.prayer])
         tabs.toggleHidden(.prayer)   // refused — must keep at least one
         XCTAssertEqual(tabs.enabled, [.prayer])
@@ -71,7 +71,7 @@ final class TabSettingsTests: XCTestCase {
         tabs.toggleHidden(.tasbih)
         tabs.move(from: IndexSet(integer: 0), to: 3)
         tabs.resetToDefault()
-        XCTAssertEqual(tabs.order, DuhaTab.defaultOrder)
+        XCTAssertEqual(tabs.order, DuhaaTab.defaultOrder)
         XCTAssertTrue(tabs.hidden.isEmpty)
     }
 }

@@ -1,7 +1,7 @@
 import Foundation
 import UserNotifications
 
-extension DuhaPrayerTimes {
+extension DuhaaPrayerTimes {
     /// The instant for a given daily prayer.
     func time(for prayer: Prayer) -> Date {
         switch prayer {
@@ -86,7 +86,7 @@ enum NotificationScheduler {
                     let isJumuah = jumuahActive && prayer == .dhuhr
                     let title = isJumuah ? NotificationCopy.jumuahTitle : NotificationCopy.title(for: prayer)
                     let body  = isJumuah ? NotificationCopy.jumuahBody() : NotificationCopy.body(for: prayer)
-                    await add(id: "duha.\(prayer.rawValue).\(stamp)", title: title, body: body,
+                    await add(id: "duhaa.\(prayer.rawValue).\(stamp)", title: title, body: body,
                               sound: sound(for: mode), fire: fire, tz: tz)
                     scheduled += 1
                 }
@@ -94,7 +94,7 @@ enum NotificationScheduler {
                 if reminderOn {
                     let reminderFire = fire.addingTimeInterval(-Double(reminderMin) * 60)
                     if reminderFire > now {
-                        await add(id: "duha.reminder.\(prayer.rawValue).\(stamp)",
+                        await add(id: "duhaa.reminder.\(prayer.rawValue).\(stamp)",
                                   title: NotificationCopy.reminderTitle(for: prayer),
                                   body: NotificationCopy.reminderBody(for: prayer, minutes: reminderMin),
                                   sound: sound(for: mode), fire: reminderFire, tz: tz)
@@ -108,7 +108,7 @@ enum NotificationScheduler {
                 var prepComps = calendar.dateComponents([.year, .month, .day], from: day)
                 prepComps.hour = 9; prepComps.minute = 0
                 if let prep = calendar.date(from: prepComps), prep > now {
-                    await add(id: "duha.jumuah.prep.\(Int(prep.timeIntervalSince1970))",
+                    await add(id: "duhaa.jumuah.prep.\(Int(prep.timeIntervalSince1970))",
                               title: NotificationCopy.jumuahPrepTitle, body: NotificationCopy.jumuahPrepBody(),
                               sound: sound(for: dhuhrMode), fire: prep, tz: tz)
                     scheduled += 1

@@ -160,14 +160,14 @@ struct NextPrayerBanner: View {
                         .frame(width: 7, height: 7)
                         .shadow(color: Palette.gold.opacity(0.8), radius: 4)
                     Text("NEXT PRAYER")
-                        .duhaFont(12, .medium)
+                        .duhaaFont(12, .medium)
                         .tracking(0.8)
                         .foregroundStyle(Palette.gold.opacity(0.8))
                 }
                 Spacer()
                 (Text("\(nextName) in ").foregroundStyle(.primary)
                  + Text(countdown).foregroundStyle(Palette.gold))
-                    .duhaFont(18, .semibold)
+                    .duhaaFont(18, .semibold)
             }
 
             GeometryReader { geo in
@@ -187,7 +187,7 @@ struct NextPrayerBanner: View {
                 Spacer()
                 Text(nextLabel)
             }
-            .duhaFont(10)
+            .duhaaFont(10)
             .foregroundStyle(Palette.blue.opacity(0.4))
         }
         .padding(.horizontal, 18)
@@ -207,7 +207,7 @@ struct NextPrayerBanner: View {
 struct PrayersCard: View {
     let rows: [PrayerRowData]
     let dayKey: String
-    /// Sunrise time (end of Fajr / start of Duha) — shown as a slim boundary, not a prayer.
+    /// Sunrise time (end of Fajr / start of Duhaa) — shown as a slim boundary, not a prayer.
     var sunrise: String = ""
     var sunrisePassed: Bool = false
     /// Fires when a prayer is tapped to mark/unmark; Bool = now prayed.
@@ -216,7 +216,7 @@ struct PrayersCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("PRAYER TIMES")
-                .duhaFont(11, .semibold)
+                .duhaaFont(11, .semibold)
                 .tracking(1.2)
                 .foregroundStyle(Palette.blue.opacity(0.65))
                 .padding(.horizontal, 6)
@@ -240,7 +240,7 @@ struct PrayersCard: View {
 }
 
 /// A delicate, non-obligatory marker for sunrise — the end of Fajr's time and the
-/// threshold of the Duha prayer (the app's namesake). Deliberately slimmer than a
+/// threshold of the Duhaa prayer (the app's namesake). Deliberately slimmer than a
 /// prayer row, with no number, no checkbox and no "NEXT" badge, so the five remain
 /// the only prayers you track.
 private struct SunriseMarker: View {
@@ -251,7 +251,7 @@ private struct SunriseMarker: View {
         HStack(spacing: 13) {
             HStack(spacing: 13) {
                 Image(systemName: "sun.horizon.fill")
-                    .duhaFont(15)
+                    .duhaaFont(15)
                     .foregroundStyle(
                         LinearGradient(colors: [Palette.gold, Palette.gold.opacity(0.6)],
                                        startPoint: .top, endPoint: .bottom)
@@ -260,17 +260,17 @@ private struct SunriseMarker: View {
 
                 VStack(alignment: .leading, spacing: 1) {
                     Text("Sunrise")
-                        .duhaFont(13, .medium)
+                        .duhaaFont(13, .medium)
                         .foregroundStyle(.primary.opacity(0.75))
                     Text("Fajr ends · Duhaa follows")
-                        .duhaFont(10)
+                        .duhaaFont(10)
                         .foregroundStyle(Palette.gold.opacity(0.6))
                 }
 
                 Spacer()
 
                 Text(time)
-                    .duhaFont(13, .medium)
+                    .duhaaFont(13, .medium)
                     .foregroundStyle(Palette.gold.opacity(0.8))
             }
             // Reserve the mark-button column so the time aligns with the prayer rows.
@@ -303,20 +303,20 @@ private struct PrayerRowView: View {
                     .frame(width: 34, height: 34)
                     .overlay(
                         Image(systemName: row.prayer.icon)
-                            .duhaFont(15)
+                            .duhaaFont(15)
                             .foregroundStyle(isNext ? Palette.gold : Palette.blue)
                     )
 
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 6) {
                         Text(row.prayer.rawValue)
-                            .duhaFont(15, .medium)
+                            .duhaaFont(15, .medium)
                             .foregroundStyle(.primary)
                         if isNext { nextBadge }
                     }
                     if let sub = row.sub {
                         Text(sub)
-                            .duhaFont(11)
+                            .duhaaFont(11)
                             .foregroundStyle(Palette.blue.opacity(0.45))
                     }
                 }
@@ -324,7 +324,7 @@ private struct PrayerRowView: View {
                 Spacer()
 
                 Text(row.time)
-                    .duhaFont(isNext ? 16 : 15, isNext ? .semibold : .medium)
+                    .duhaaFont(isNext ? 16 : 15, isNext ? .semibold : .medium)
                     .foregroundStyle(isNext ? Palette.gold : Palette.prayerTime)
             }
             .opacity(contentOpacity)
@@ -351,7 +351,7 @@ private struct PrayerRowView: View {
             onMark(row.prayer, nowPrayed)
         } label: {
             Image(systemName: isPrayed ? "checkmark.circle.fill" : "circle")
-                .duhaFont(22)
+                .duhaaFont(22)
                 .foregroundStyle(isPrayed ? Palette.gold : Color.primary.opacity(0.22))
                 .symbolEffect(.bounce, value: isPrayed)
         }
@@ -361,7 +361,7 @@ private struct PrayerRowView: View {
 
     private var nextBadge: some View {
         Text("NEXT")
-            .duhaFont(10, .semibold)
+            .duhaaFont(10, .semibold)
             .tracking(0.5)
             .foregroundStyle(Palette.gold)
             .padding(.horizontal, 7).padding(.vertical, 2)
@@ -381,10 +381,10 @@ struct NightCard: View {
         VStack(spacing: 0) {
             HStack(spacing: 8) {
                 Image(systemName: "sparkles")
-                    .duhaFont(12)
+                    .duhaaFont(12)
                     .foregroundStyle(Palette.blue.opacity(0.7))
                 Text("NIGHT PRAYER")
-                    .duhaFont(11, .semibold)
+                    .duhaaFont(11, .semibold)
                     .tracking(1)
                     .foregroundStyle(Palette.blue.opacity(0.5))
                 Spacer()
@@ -411,13 +411,13 @@ struct NightCard: View {
             RoundedRectangle(cornerRadius: 10)
                 .fill(Palette.blue.opacity(0.07))
                 .frame(width: 34, height: 34)
-                .overlay(Image(systemName: icon).duhaFont(15).foregroundStyle(Palette.blue))
+                .overlay(Image(systemName: icon).duhaaFont(15).foregroundStyle(Palette.blue))
             VStack(alignment: .leading, spacing: 1) {
-                Text(name).duhaFont(14, .medium).foregroundStyle(.primary)
-                Text(sub).duhaFont(11).foregroundStyle(Palette.blue.opacity(0.4))
+                Text(name).duhaaFont(14, .medium).foregroundStyle(.primary)
+                Text(sub).duhaaFont(11).foregroundStyle(Palette.blue.opacity(0.4))
             }
             Spacer()
-            Text(time).duhaFont(14, .medium).foregroundStyle(Palette.blue.opacity(0.7))
+            Text(time).duhaaFont(14, .medium).foregroundStyle(Palette.blue.opacity(0.7))
         }
         .padding(.horizontal, 18).padding(.vertical, 13)
     }

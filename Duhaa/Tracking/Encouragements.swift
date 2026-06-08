@@ -2,7 +2,7 @@ import Foundation
 
 /// Gentle, hope-not-guilt messages (spec §5). Shown briefly after marking a
 /// prayer, and as a warm welcome when returning after a gap. Never boastful,
-/// never shaming — Duha is built on Ad-Duhaa: "your Lord has not forsaken you."
+/// never shaming — Duhaa is built on Ad-Duhaa: "your Lord has not forsaken you."
 enum Encouragements {
 
     /// A short reassurance shown after marking a prayer as prayed.
