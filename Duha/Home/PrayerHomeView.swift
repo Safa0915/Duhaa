@@ -14,6 +14,7 @@ struct PrayerHomeView: View {
     @State private var toast: String?
     @State private var toastToken = 0
     @State private var welcomeBack: String?
+    @State private var verseSheet: VerseRef?
 
     var body: some View {
         let d = model.display(for: location.active,
@@ -56,6 +57,11 @@ struct PrayerHomeView: View {
                                          nextLabel: d.nextLabel)
                             .padding(.horizontal, 22).padding(.top, 20)
 
+                        VerseOfDayCard(ref: VerseOfDay.today()) {
+                            verseSheet = VerseOfDay.today()
+                        }
+                        .padding(.horizontal, 22).padding(.top, 16)
+
                         PrayersCard(rows: d.rows, dayKey: d.dayKey) { _, nowPrayed in
                             if nowPrayed { showToast(Encouragements.afterPrayerMessage()) }
                         }
@@ -80,6 +86,19 @@ struct PrayerHomeView: View {
         }
         .sheet(isPresented: $showingSettings) {
             SettingsView()
+        }
+        .sheet(item: $verseSheet) { ref in
+            if let surah = Quran.surah(ref.surah) {
+                NavigationStack {
+                    SurahReaderView(surah: surah, scrollTo: ref.ayah)
+                        .toolbar {
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Done") { verseSheet = nil }.foregroundStyle(Palette.gold)
+                            }
+                        }
+                }
+                .preferredColorScheme(Palette.active.colorScheme)
+            }
         }
         .overlay(alignment: .bottom) {
             if let toast {
