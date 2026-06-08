@@ -22,6 +22,10 @@ struct MainTabView: View {
             DuasView()
                 .tag(3)
                 .tabItem { Label("Du'as", systemImage: "hands.sparkles.fill") }
+
+            TasbihView()
+                .tag(4)
+                .tabItem { Label("Tasbih", systemImage: "circle.hexagongrid.fill") }
         }
         .tint(Palette.gold)
         .preferredColorScheme(Palette.active.colorScheme)
