@@ -24,12 +24,12 @@ struct DuaListView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top) {
                 Text(dua.title)
-                    .font(.system(size: 15, weight: .semibold))
+                    .duhaFont(15, .semibold)
                     .foregroundStyle(Palette.gold)
                 Spacer()
                 if !dua.note.isEmpty {
                     Text(dua.note)
-                        .font(.system(size: 11, weight: .medium))
+                        .duhaFont(11, .medium)
                         .foregroundStyle(Palette.blue)
                         .padding(.horizontal, 8).padding(.vertical, 3)
                         .background(Palette.blue.opacity(0.12))
@@ -48,19 +48,19 @@ struct DuaListView: View {
 
             if !dua.latin.isEmpty {
                 Text(dua.latin)
-                    .font(.system(size: 13.5).italic())
+                    .duhaFont(13.5, italic: true)
                     .foregroundStyle(Palette.blue.opacity(0.9))
             }
 
             if !dua.en.isEmpty {
                 Text(dua.en)
-                    .font(.system(size: 14.5))
+                    .duhaFont(14.5)
                     .foregroundStyle(.primary.opacity(0.85))
             }
 
             if !dua.source.isEmpty {
                 Text(dua.source)
-                    .font(.system(size: 12, weight: .medium))
+                    .duhaFont(12, .medium)
                     .foregroundStyle(Palette.blue.opacity(0.65))
             }
         }

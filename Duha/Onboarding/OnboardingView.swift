@@ -47,17 +47,17 @@ struct OnboardingView: View {
                                          center: .center, startRadius: 0, endRadius: 75))
                     .frame(width: 150, height: 150)
                 Image(systemName: "moon.stars.fill")
-                    .font(.system(size: 58))
+                    .duhaFont(58)
                     .foregroundStyle(Palette.gold)
             }
             Text("ضحى")
-                .font(.system(size: 60))
+                .duhaFont(60)
                 .foregroundStyle(Palette.gold)
             Text("Welcome to Duha")
-                .font(.system(size: 26, weight: .semibold))
+                .duhaFont(26, .semibold)
                 .foregroundStyle(.primary)
             Text("Duha means “the morning brightness.”\nA gentle return to prayer — built on hope, never guilt.")
-                .font(.system(size: 15))
+                .duhaFont(15)
                 .foregroundStyle(Palette.blue.opacity(0.85))
                 .multilineTextAlignment(.center)
                 .lineSpacing(3)
@@ -70,13 +70,13 @@ struct OnboardingView: View {
         VStack(spacing: 18) {
             Spacer()
             Image(systemName: "location.circle.fill")
-                .font(.system(size: 54))
+                .duhaFont(54)
                 .foregroundStyle(Palette.blue)
             Text("Where are you?")
-                .font(.system(size: 24, weight: .semibold))
+                .duhaFont(24, .semibold)
                 .foregroundStyle(.primary)
             Text("So Duha can show accurate prayer times for your place.")
-                .font(.system(size: 14))
+                .duhaFont(14)
                 .foregroundStyle(Palette.blue.opacity(0.8))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 44)
@@ -87,7 +87,7 @@ struct OnboardingView: View {
                 Text(location.active.name).foregroundStyle(.primary)
                 if location.isLocating { ProgressView().tint(Palette.gold).scaleEffect(0.8) }
             }
-            .font(.system(size: 14, weight: .medium))
+            .duhaFont(14, .medium)
             .padding(.horizontal, 16).padding(.vertical, 10)
             .background(Palette.card).clipShape(Capsule())
             .padding(.top, 4)
@@ -109,13 +109,13 @@ struct OnboardingView: View {
         VStack(spacing: 16) {
             Spacer()
             Image(systemName: "slider.horizontal.3")
-                .font(.system(size: 46))
+                .duhaFont(46)
                 .foregroundStyle(Palette.gold)
             Text("Calculation")
-                .font(.system(size: 24, weight: .semibold))
+                .duhaFont(24, .semibold)
                 .foregroundStyle(.primary)
             Text("You can change these anytime in Settings.")
-                .font(.system(size: 13))
+                .duhaFont(13)
                 .foregroundStyle(Palette.blue.opacity(0.7))
 
             VStack(alignment: .leading, spacing: 8) {
@@ -129,7 +129,7 @@ struct OnboardingView: View {
                         Text(settings.method.displayName).foregroundStyle(.primary)
                         Spacer()
                         Image(systemName: "chevron.up.chevron.down")
-                            .font(.system(size: 12)).foregroundStyle(Palette.blue)
+                            .duhaFont(12).foregroundStyle(Palette.blue)
                     }
                     .padding(.horizontal, 16).padding(.vertical, 14)
                     .background(Palette.card)
@@ -166,7 +166,7 @@ struct OnboardingView: View {
             if step < 2 { withAnimation { step += 1 } } else { onFinish() }
         } label: {
             Text(step < 2 ? "Continue" : "Get Started")
-                .font(.system(size: 17, weight: .semibold))
+                .duhaFont(17, .semibold)
                 .foregroundStyle(Palette.onAccent)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
@@ -179,7 +179,7 @@ struct OnboardingView: View {
     private func pillButton(_ title: String, _ icon: String, color: Color, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Label(title, systemImage: icon)
-                .font(.system(size: 15, weight: .medium))
+                .duhaFont(15, .medium)
                 .foregroundStyle(color)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
@@ -189,7 +189,7 @@ struct OnboardingView: View {
 
     private func fieldLabel(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 11, weight: .semibold)).tracking(1)
+            .duhaFont(11, .semibold).tracking(1)
             .foregroundStyle(Palette.blue.opacity(0.6))
     }
 

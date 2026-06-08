@@ -14,5 +14,5 @@ enum QuranFont {
 
     /// The Uthmani font at a given point size (falls back to the system font if
     /// registration ever fails).
-    static func uthmani(_ size: CGFloat) -> Font { .custom(family, size: size) }
+    static func uthmani(_ size: CGFloat) -> Font { .custom(family, size: size, relativeTo: .body) }
 }

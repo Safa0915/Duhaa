@@ -20,10 +20,10 @@ struct BookmarksView: View {
                             } label: {
                                 VStack(alignment: .leading, spacing: 3) {
                                     Text("\(surah.englishName) · \(ref.surah):\(ref.ayah)")
-                                        .font(.system(size: 14, weight: .semibold))
+                                        .duhaFont(14, .semibold)
                                         .foregroundStyle(Palette.gold)
                                     Text(ayah.english)
-                                        .font(.system(size: 13))
+                                        .duhaFont(13)
                                         .foregroundStyle(.primary.opacity(0.75))
                                         .lineLimit(2)
                                 }

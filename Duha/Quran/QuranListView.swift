@@ -52,15 +52,15 @@ struct QuranListView: View {
                 Circle().stroke(Palette.gold.opacity(0.4), lineWidth: 1.2)
                     .frame(width: 34, height: 34)
                 Text("\(surah.number)")
-                    .font(.system(size: 12, weight: .semibold))
+                    .duhaFont(12, .semibold)
                     .foregroundStyle(Palette.gold)
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text(surah.englishName)
-                    .font(.system(size: 16, weight: .medium))
+                    .duhaFont(16, .medium)
                     .foregroundStyle(.primary)
                 Text("\(surah.translation) · \(surah.revelation) · \(surah.ayahs.count) ayahs")
-                    .font(.system(size: 12))
+                    .duhaFont(12)
                     .foregroundStyle(Palette.blue.opacity(0.7))
             }
             Spacer()

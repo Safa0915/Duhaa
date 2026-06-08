@@ -14,12 +14,12 @@ struct TodayProgressCard: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Text("TODAY")
-                    .font(.system(size: 11, weight: .semibold))
+                    .duhaFont(11, .semibold)
                     .tracking(1.2)
                     .foregroundStyle(Palette.blue.opacity(0.65))
                 Spacer()
                 Text("\(prayedCount) / 5")
-                    .font(.system(size: 13, weight: .semibold))
+                    .duhaFont(13, .semibold)
                     .foregroundStyle(prayedCount == 5 ? Palette.gold : .primary.opacity(0.85))
             }
 
@@ -36,7 +36,7 @@ struct TodayProgressCard: View {
             }
 
             Text(message)
-                .font(.system(size: 13))
+                .duhaFont(13)
                 .foregroundStyle(Palette.blue.opacity(0.85))
 
             Divider().overlay(Color.primary.opacity(0.06))
@@ -59,7 +59,7 @@ struct TodayProgressCard: View {
                             }
                         }
                         Text(day.letter)
-                            .font(.system(size: 10, weight: day.isToday ? .semibold : .regular))
+                            .duhaFont(10, day.isToday ? .semibold : .regular)
                             .foregroundStyle(Palette.blue.opacity(day.isToday ? 0.9 : 0.4))
                     }
                     .frame(maxWidth: .infinity)

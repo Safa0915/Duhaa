@@ -32,7 +32,7 @@ struct PrayerHomeView: View {
                             showingSettings = true
                         } label: {
                             Image(systemName: "gearshape")
-                                .font(.system(size: 18))
+                                .duhaFont(18)
                                 .foregroundStyle(Palette.blue.opacity(0.8))
                         }
                         .buttonStyle(.plain)
@@ -84,7 +84,7 @@ struct PrayerHomeView: View {
         .overlay(alignment: .bottom) {
             if let toast {
                 Text(toast)
-                    .font(.system(size: 14, weight: .medium))
+                    .duhaFont(14, .medium)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.primary)
                     .padding(.horizontal, 22).padding(.vertical, 14)
@@ -126,20 +126,20 @@ struct PrayerHomeView: View {
             } label: {
                 HStack(spacing: 5) {
                     Image(systemName: "location.fill")
-                        .font(.system(size: 10))
+                        .duhaFont(10)
                         .foregroundStyle(Palette.blue.opacity(0.7))
                     Text(d.locationName)
-                        .font(.system(size: 13, weight: .medium))
+                        .duhaFont(13, .medium)
                         .foregroundStyle(Palette.blue)
                     Image(systemName: "chevron.down")
-                        .font(.system(size: 9, weight: .semibold))
+                        .duhaFont(9, .semibold)
                         .foregroundStyle(Palette.blue.opacity(0.6))
                 }
             }
             .buttonStyle(.plain)
 
             Text(d.headerDate)
-                .font(.system(size: 12))
+                .duhaFont(12)
                 .foregroundStyle(Palette.blue.opacity(0.75))
         }
         .padding(.top, 12)
@@ -158,7 +158,7 @@ struct PrayerHomeView: View {
                     .opacity(moonBreath ? 1.0 : 0.72)
                     .animation(.easeInOut(duration: 3.5).repeatForever(autoreverses: true), value: moonBreath)
                 Image(systemName: "moon.stars.fill")
-                    .font(.system(size: 46))
+                    .duhaFont(46)
                     .foregroundStyle(Palette.gold)
             }
             .frame(height: 90)
@@ -166,15 +166,15 @@ struct PrayerHomeView: View {
 
             HStack(alignment: .firstTextBaseline, spacing: 6) {
                 Text(d.clock)
-                    .font(.system(size: 62, weight: .ultraLight))
+                    .duhaFont(62, .ultraLight)
                     .foregroundStyle(.primary)
                 Text(d.period)
-                    .font(.system(size: 22, weight: .light))
+                    .duhaFont(22, .light)
                     .foregroundStyle(.primary.opacity(0.7))
             }
 
             Text(d.heroDate.uppercased())
-                .font(.system(size: 13))
+                .duhaFont(13)
                 .tracking(0.5)
                 .foregroundStyle(Palette.blue.opacity(0.75))
         }
@@ -186,14 +186,14 @@ struct PrayerHomeView: View {
     private var emptyState: some View {
         VStack(spacing: 10) {
             Image(systemName: "moon.zzz")
-                .font(.system(size: 30))
+                .duhaFont(30)
                 .foregroundStyle(Palette.blue.opacity(0.6))
             Text("Prayer times aren't available for this location right now.")
-                .font(.system(size: 14, weight: .medium))
+                .duhaFont(14, .medium)
                 .foregroundStyle(.primary.opacity(0.85))
                 .multilineTextAlignment(.center)
             Text("This can happen at extreme latitudes. Try a nearby city from the location picker above.")
-                .font(.system(size: 12))
+                .duhaFont(12)
                 .foregroundStyle(Palette.blue.opacity(0.6))
                 .multilineTextAlignment(.center)
         }
@@ -220,15 +220,15 @@ private struct WelcomeBackBanner: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: "sun.haze.fill")
-                .font(.system(size: 18))
+                .duhaFont(18)
                 .foregroundStyle(Palette.gold)
             Text(message)
-                .font(.system(size: 13, weight: .medium))
+                .duhaFont(13, .medium)
                 .foregroundStyle(.primary.opacity(0.92))
             Spacer(minLength: 6)
             Button(action: onDismiss) {
                 Image(systemName: "xmark")
-                    .font(.system(size: 11, weight: .bold))
+                    .duhaFont(11, .bold)
                     .foregroundStyle(Palette.blue.opacity(0.7))
             }
             .buttonStyle(.plain)

@@ -162,14 +162,14 @@ struct NextPrayerBanner: View {
                         .frame(width: 7, height: 7)
                         .shadow(color: Palette.gold.opacity(0.8), radius: 4)
                     Text("NEXT PRAYER")
-                        .font(.system(size: 12, weight: .medium))
+                        .duhaFont(12, .medium)
                         .tracking(0.8)
                         .foregroundStyle(Palette.gold.opacity(0.8))
                 }
                 Spacer()
                 (Text("\(nextName) in ").foregroundStyle(.primary)
                  + Text(countdown).foregroundStyle(Palette.gold))
-                    .font(.system(size: 18, weight: .semibold))
+                    .duhaFont(18, .semibold)
             }
 
             GeometryReader { geo in
@@ -189,7 +189,7 @@ struct NextPrayerBanner: View {
                 Spacer()
                 Text(nextLabel)
             }
-            .font(.system(size: 10))
+            .duhaFont(10)
             .foregroundStyle(Palette.blue.opacity(0.4))
         }
         .padding(.horizontal, 18)
@@ -215,7 +215,7 @@ struct PrayersCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("PRAYER TIMES")
-                .font(.system(size: 11, weight: .semibold))
+                .duhaFont(11, .semibold)
                 .tracking(1.2)
                 .foregroundStyle(Palette.blue.opacity(0.65))
                 .padding(.horizontal, 6)
@@ -252,20 +252,20 @@ private struct PrayerRowView: View {
                     .frame(width: 34, height: 34)
                     .overlay(
                         Image(systemName: row.prayer.icon)
-                            .font(.system(size: 15))
+                            .duhaFont(15)
                             .foregroundStyle(isNext ? Palette.gold : Palette.blue)
                     )
 
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 6) {
                         Text(row.prayer.rawValue)
-                            .font(.system(size: 15, weight: .medium))
+                            .duhaFont(15, .medium)
                             .foregroundStyle(.primary)
                         if isNext { nextBadge }
                     }
                     if let sub = row.sub {
                         Text(sub)
-                            .font(.system(size: 11))
+                            .duhaFont(11)
                             .foregroundStyle(Palette.blue.opacity(0.45))
                     }
                 }
@@ -273,7 +273,7 @@ private struct PrayerRowView: View {
                 Spacer()
 
                 Text(row.time)
-                    .font(.system(size: isNext ? 16 : 15, weight: isNext ? .semibold : .medium))
+                    .duhaFont(isNext ? 16 : 15, isNext ? .semibold : .medium)
                     .foregroundStyle(isNext ? Palette.gold : Palette.prayerTime)
             }
             .opacity(contentOpacity)
@@ -300,7 +300,7 @@ private struct PrayerRowView: View {
             onMark(row.prayer, nowPrayed)
         } label: {
             Image(systemName: isPrayed ? "checkmark.circle.fill" : "circle")
-                .font(.system(size: 22))
+                .duhaFont(22)
                 .foregroundStyle(isPrayed ? Palette.gold : Color.primary.opacity(0.22))
                 .symbolEffect(.bounce, value: isPrayed)
         }
@@ -310,7 +310,7 @@ private struct PrayerRowView: View {
 
     private var nextBadge: some View {
         Text("NEXT")
-            .font(.system(size: 10, weight: .semibold))
+            .duhaFont(10, .semibold)
             .tracking(0.5)
             .foregroundStyle(Palette.gold)
             .padding(.horizontal, 7).padding(.vertical, 2)
@@ -330,10 +330,10 @@ struct NightCard: View {
         VStack(spacing: 0) {
             HStack(spacing: 8) {
                 Image(systemName: "sparkles")
-                    .font(.system(size: 12))
+                    .duhaFont(12)
                     .foregroundStyle(Palette.blue.opacity(0.7))
                 Text("NIGHT PRAYER")
-                    .font(.system(size: 11, weight: .semibold))
+                    .duhaFont(11, .semibold)
                     .tracking(1)
                     .foregroundStyle(Palette.blue.opacity(0.5))
                 Spacer()
@@ -360,13 +360,13 @@ struct NightCard: View {
             RoundedRectangle(cornerRadius: 10)
                 .fill(Palette.blue.opacity(0.07))
                 .frame(width: 34, height: 34)
-                .overlay(Image(systemName: icon).font(.system(size: 15)).foregroundStyle(Palette.blue))
+                .overlay(Image(systemName: icon).duhaFont(15).foregroundStyle(Palette.blue))
             VStack(alignment: .leading, spacing: 1) {
-                Text(name).font(.system(size: 14, weight: .medium)).foregroundStyle(.primary)
-                Text(sub).font(.system(size: 11)).foregroundStyle(Palette.blue.opacity(0.4))
+                Text(name).duhaFont(14, .medium).foregroundStyle(.primary)
+                Text(sub).duhaFont(11).foregroundStyle(Palette.blue.opacity(0.4))
             }
             Spacer()
-            Text(time).font(.system(size: 14, weight: .medium)).foregroundStyle(Palette.blue.opacity(0.7))
+            Text(time).duhaFont(14, .medium).foregroundStyle(Palette.blue.opacity(0.7))
         }
         .padding(.horizontal, 18).padding(.vertical, 13)
     }

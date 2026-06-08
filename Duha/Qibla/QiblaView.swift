@@ -43,7 +43,7 @@ struct QiblaView: View {
 
             VStack(spacing: 24) {
                 Text("QIBLA")
-                    .font(.system(size: 13, weight: .semibold)).tracking(3)
+                    .duhaFont(13, .semibold).tracking(3)
                     .foregroundStyle(Palette.blue.opacity(0.7))
                     .padding(.top, 20)
 
@@ -117,10 +117,10 @@ struct QiblaView: View {
                 Circle().stroke(Color.primary.opacity(0.12), lineWidth: 1).frame(width: 66, height: 66)
                 VStack(spacing: 1) {
                     Image(systemName: "cube.fill")
-                        .font(.system(size: 22))
+                        .duhaFont(22)
                         .foregroundStyle(aligned ? Palette.gold : Palette.blue)
                     Text("\(Int(qiblaBearing.rounded()))°")
-                        .font(.system(size: 11, weight: .medium))
+                        .duhaFont(11, .medium)
                         .foregroundStyle(.primary.opacity(0.6))
                 }
             }
@@ -137,7 +137,7 @@ struct QiblaView: View {
 
     private func cardinal(_ text: String, _ angle: Double, _ radius: CGFloat, gold: Bool = false) -> some View {
         Text(text)
-            .font(.system(size: gold ? 17 : 13, weight: .semibold))
+            .duhaFont(gold ? 17 : 13, .semibold)
             .foregroundStyle(gold ? Palette.gold : .primary.opacity(0.55))
             .rotationEffect(.degrees(-angle))   // keep upright relative to the dial
             .offset(y: -radius)
@@ -149,13 +149,13 @@ struct QiblaView: View {
     private var readout: some View {
         VStack(spacing: 6) {
             Text("\(Int(qiblaBearing.rounded()))° \(compassPoint(qiblaBearing))")
-                .font(.system(size: 24, weight: .semibold))
+                .duhaFont(24, .semibold)
                 .foregroundStyle(.primary)
             Text("\(formattedDistance) to Makkah")
-                .font(.system(size: 14))
+                .duhaFont(14)
                 .foregroundStyle(Palette.blue.opacity(0.8))
             Text(location.active.name)
-                .font(.system(size: 12))
+                .duhaFont(12)
                 .foregroundStyle(Palette.blue.opacity(0.5))
         }
         .accessibilityElement(children: .combine)
@@ -167,7 +167,7 @@ struct QiblaView: View {
             note("Live compass needs a real device.\nShowing Qibla relative to North.")
         } else if aligned {
             Label("Facing the Qibla", systemImage: "checkmark.circle.fill")
-                .font(.system(size: 15, weight: .semibold))
+                .duhaFont(15, .semibold)
                 .foregroundStyle(Palette.gold)
         } else {
             note("Turn until the gold arrow points up.")
@@ -176,7 +176,7 @@ struct QiblaView: View {
 
     private func note(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 12))
+            .duhaFont(12)
             .multilineTextAlignment(.center)
             .foregroundStyle(Palette.blue.opacity(0.6))
             .padding(.horizontal, 40)

@@ -41,10 +41,10 @@ struct SurahReaderView: View {
                 .font(QuranFont.uthmani(30))
                 .foregroundStyle(Palette.gold)
             Text(surah.englishName)
-                .font(.system(size: 18, weight: .semibold))
+                .duhaFont(18, .semibold)
                 .foregroundStyle(.primary)
             Text("\(surah.translation) · \(surah.revelation) · \(surah.ayahs.count) ayahs")
-                .font(.system(size: 12))
+                .duhaFont(12)
                 .foregroundStyle(Palette.blue.opacity(0.75))
         }
         .frame(maxWidth: .infinity)
@@ -67,7 +67,7 @@ struct SurahReaderView: View {
                     Circle().stroke(Palette.gold.opacity(0.4), lineWidth: 1.2)
                         .frame(width: 30, height: 30)
                     Text("\(ayah.number)")
-                        .font(.system(size: 12, weight: .semibold))
+                        .duhaFont(12, .semibold)
                         .foregroundStyle(Palette.gold)
                 }
                 Spacer()
@@ -75,7 +75,7 @@ struct SurahReaderView: View {
                     bookmarks.toggle(surah.number, ayah.number)
                 } label: {
                     Image(systemName: bookmarks.isBookmarked(surah.number, ayah.number) ? "bookmark.fill" : "bookmark")
-                        .font(.system(size: 16))
+                        .duhaFont(16)
                         .foregroundStyle(Palette.gold)
                 }
                 .buttonStyle(.plain)
@@ -90,7 +90,7 @@ struct SurahReaderView: View {
                 .foregroundStyle(.primary)
 
             Text(ayah.english)
-                .font(.system(size: 15))
+                .duhaFont(15)
                 .lineSpacing(3)
                 .foregroundStyle(.primary.opacity(0.75))
         }

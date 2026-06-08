@@ -32,7 +32,7 @@ struct TasbihView: View {
 
             VStack(spacing: 22) {
                 Text("TASBIH")
-                    .font(.system(size: 13, weight: .semibold)).tracking(3)
+                    .duhaFont(13, .semibold).tracking(3)
                     .foregroundStyle(Palette.blue.opacity(0.7))
                     .padding(.top, 20)
 
@@ -66,10 +66,10 @@ struct TasbihView: View {
                 .font(QuranFont.uthmani(40))
                 .foregroundStyle(Palette.gold)
             Text(phase.latin)
-                .font(.system(size: 17, weight: .medium))
+                .duhaFont(17, .medium)
                 .foregroundStyle(.primary)
             Text(phase.meaning)
-                .font(.system(size: 13))
+                .duhaFont(13)
                 .foregroundStyle(Palette.blue.opacity(0.8))
         }
         .frame(height: 110)
@@ -90,17 +90,17 @@ struct TasbihView: View {
 
             if completed {
                 VStack(spacing: 2) {
-                    Image(systemName: "checkmark").font(.system(size: 44, weight: .light)).foregroundStyle(Palette.gold)
-                    Text("100").font(.system(size: 20, weight: .medium)).foregroundStyle(.primary)
+                    Image(systemName: "checkmark").duhaFont(44, .light).foregroundStyle(Palette.gold)
+                    Text("100").duhaFont(20, .medium).foregroundStyle(.primary)
                 }
             } else {
                 VStack(spacing: 2) {
                     Text("\(count)")
-                        .font(.system(size: 76, weight: .thin))
+                        .duhaFont(76, .thin)
                         .foregroundStyle(.primary)
                         .contentTransition(.numericText())
                     Text("of \(phase.target)")
-                        .font(.system(size: 15))
+                        .duhaFont(15)
                         .foregroundStyle(Palette.blue.opacity(0.7))
                 }
             }
@@ -113,20 +113,20 @@ struct TasbihView: View {
         VStack(spacing: 14) {
             if completed {
                 Text("Tasbih complete — alhamdulillah.")
-                    .font(.system(size: 14, weight: .medium))
+                    .duhaFont(14, .medium)
                     .foregroundStyle(Palette.gold)
             } else {
                 Text("Total \(total) / 100")
-                    .font(.system(size: 14))
+                    .duhaFont(14)
                     .foregroundStyle(Palette.blue.opacity(0.8))
                 Text("Tap the circle to count")
-                    .font(.system(size: 12))
+                    .duhaFont(12)
                     .foregroundStyle(Palette.blue.opacity(0.5))
             }
 
             Button(action: reset) {
                 Label("Reset", systemImage: "arrow.counterclockwise")
-                    .font(.system(size: 14, weight: .medium))
+                    .duhaFont(14, .medium)
                     .foregroundStyle(Palette.blue)
                     .padding(.horizontal, 20).padding(.vertical, 10)
                     .overlay(Capsule().stroke(Palette.blue.opacity(0.4), lineWidth: 1))
