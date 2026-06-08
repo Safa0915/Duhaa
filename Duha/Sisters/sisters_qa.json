@@ -1,0 +1,88 @@
+{
+  "disclaimer": "This is gentle, general guidance drawn from the Qur'an and Sunnah. Schools of fiqh differ on some details — for your own situation, lean on what you've learned in your madhhab or ask a trusted local scholar. Never let uncertainty keep you from turning to Allah.",
+  "categories": [
+    {
+      "name": "Wudu (Ablution)",
+      "icon": "drop.fill",
+      "items": [
+        {
+          "q": "How do I make wudu, step by step?",
+          "a": "Begin with the intention in your heart and say Bismillah. Wash your hands three times, then rinse the mouth and nose three times. Wash your face three times, then your arms up to and including the elbows (right then left) three times. Wipe over your head once, including the ears. Finally wash your feet up to and including the ankles (right then left) three times.",
+          "source": "Described in the Sunnah (Bukhari & Muslim); cf. Qur'an 5:6"
+        },
+        {
+          "q": "What breaks my wudu?",
+          "a": "Wudu is nullified by relieving yourself (urine, stool, or passing wind), by deep sleep, and by loss of consciousness. The madhhabs differ on some matters (for example flowing blood, or touching the private part), so follow what you've learned in your school.",
+          "source": "Qur'an 5:6; Sunnah"
+        },
+        {
+          "q": "Do I need fresh wudu for every prayer?",
+          "a": "No. One wudu remains valid until something nullifies it, and you may pray as many prayers as you wish with it. Renewing wudu for each prayer is encouraged when easy, but it is not required.",
+          "source": "Sunnah (Bukhari)"
+        },
+        {
+          "q": "I'm not sure my wudu is still valid — what do I do?",
+          "a": "Certainty is not removed by doubt. If you made wudu and only doubt whether it broke, treat it as still valid. Don't let waswasa (whispering doubts) burden you — Allah does not want hardship for you.",
+          "source": "Principle of fiqh; Qur'an 2:185"
+        }
+      ]
+    },
+    {
+      "name": "Salah (Prayer)",
+      "icon": "figure.stand",
+      "items": [
+        {
+          "q": "I missed a prayer. What should I do?",
+          "a": "Pray it as soon as you remember (this is called qada), then keep moving forward. Don't despair and don't drown in guilt — returning is beloved to Allah. The Prophet ﷺ said: \"Whoever forgets a prayer, let him pray it when he remembers it.\"",
+          "source": "Bukhari & Muslim"
+        },
+        {
+          "q": "Can I pray sitting down if I'm unwell or in pain?",
+          "a": "Yes. Pray standing if you can; if not, sitting; and if not, lying down. Allah does not burden a soul beyond what it can bear, and your prayer is fully accepted.",
+          "source": "Bukhari; Qur'an 2:286"
+        },
+        {
+          "q": "What should I wear to pray?",
+          "a": "Clean clothing that covers the awrah, in a clean place, facing the qibla. For women this is generally everything except the face and hands, worn loosely enough not to define the body. Sincerity and modesty matter more than perfection.",
+          "source": "Qur'an 7:31; Sunnah"
+        },
+        {
+          "q": "I worry I'm not praying correctly. How do I learn?",
+          "a": "Learn gently and gradually — the Prophet ﷺ said: \"Pray as you have seen me praying.\" Perfectionism is not a condition for prayer. Begin, keep going, and your prayer will grow more beautiful with time.",
+          "source": "Bukhari"
+        }
+      ]
+    },
+    {
+      "name": "Menstruation & Prayer",
+      "icon": "moon.fill",
+      "items": [
+        {
+          "q": "Do I pray during my period?",
+          "a": "No — and this is a mercy, not a shortcoming. During menstruation the five daily prayers are lifted from you entirely. You are not sinning by not praying; you are doing exactly what Allah asks. Rest, make dhikr and du'a, and let your heart stay connected.",
+          "source": "Aisha (RA), Bukhari & Muslim"
+        },
+        {
+          "q": "Do I make up the missed prayers afterward?",
+          "a": "No. Prayers missed during menstruation are not made up — this is agreed upon. (Fasts missed in Ramadan, however, are made up later.) Aisha (RA) said they were commanded to make up the fasts and not the prayers.",
+          "source": "Aisha (RA), Bukhari & Muslim"
+        },
+        {
+          "q": "When do I start praying again?",
+          "a": "When the bleeding has clearly stopped, perform ghusl (a full purifying bath), and then resume your prayers with the next prayer time. Duha will gently welcome you back.",
+          "source": "Sunnah"
+        },
+        {
+          "q": "Can I read or touch the Qur'an during my period?",
+          "a": "Scholars differ. Many allow reciting from memory, making dhikr, and reading from a phone or behind a barrier; some restrict touching the Arabic mushaf directly. Follow your madhhab, and know that du'a and dhikr remain open to you at all times.",
+          "source": "Difference of opinion among the schools"
+        },
+        {
+          "q": "My bleeding is irregular — how do I know what counts?",
+          "a": "Irregular or prolonged bleeding (istihada) has its own gentle rulings that differ from menstruation, and a woman in that state still prays. Because it depends on your specific pattern, it's best to ask a knowledgeable, trustworthy scholar so you can have peace of mind.",
+          "source": "Sunnah; consult a scholar"
+        }
+      ]
+    }
+  ]
+}

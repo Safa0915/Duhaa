@@ -61,23 +61,33 @@ final class PrayerTracker {
 
     /// Consecutive days (ending today) with at least one prayer. A day that hasn't
     /// begun yet never breaks the streak — it counts through yesterday until you pray.
-    func currentStreak(asOf date: Date, timeZone: TimeZone) -> Int {
+    /// `excused` days (e.g. menstruation) bridge the streak: they neither break it
+    /// nor count toward it — prayer is lifted, so it's never a miss.
+    func currentStreak(asOf date: Date, timeZone: TimeZone, excused: Set<Int> = []) -> Int {
         let active = activeDayNumbers()
         guard var n = Self.dayNumber(PrayerTracker.dayKey(date, timeZone)) else { return 0 }
-        if !active.contains(n) { n -= 1 }   // grace for a not-yet-started today
+        if !active.contains(n) && !excused.contains(n) { n -= 1 }   // grace for today
         var streak = 0
-        while active.contains(n) { streak += 1; n -= 1 }
+        while true {
+            if active.contains(n) { streak += 1; n -= 1 }
+            else if excused.contains(n) { n -= 1 }   // bridge over excused days
+            else { break }
+        }
         return streak
     }
 
     /// The longest run of consecutive active days ever — a badge you can't lose.
-    func bestStreak() -> Int {
-        let days = activeDayNumbers().sorted()
-        guard !days.isEmpty else { return 0 }
-        var best = 1, run = 1
-        for i in 1..<days.count {
-            run = days[i] == days[i - 1] + 1 ? run + 1 : 1
-            best = max(best, run)
+    /// `excused` days bridge runs without counting (see `currentStreak`).
+    func bestStreak(excused: Set<Int> = []) -> Int {
+        let active = activeDayNumbers()
+        guard let lo = active.min(), let hi = active.max() else { return 0 }
+        var best = 0, run = 0
+        var n = lo
+        while n <= hi {
+            if active.contains(n) { run += 1; best = max(best, run) }
+            else if excused.contains(n) { /* bridge: keep the run alive */ }
+            else { run = 0 }
+            n += 1
         }
         return best
     }

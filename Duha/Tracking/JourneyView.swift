@@ -7,11 +7,17 @@ struct JourneyView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(PrayerTracker.self) private var tracker
     @Environment(LocationProvider.self) private var location
+    @Environment(CycleTracker.self) private var cycle
 
     /// Any day inside the month currently shown in the calendar.
     @State private var monthAnchor = Date()
 
     private var tz: TimeZone { location.active.timeZone }
+
+    /// Menstruation days are excused — they bridge the streak and never count as missed.
+    private var excused: Set<Int> {
+        cycle.excusedDayNumbers(today: PrayerTracker.dayKey(Date(), tz))
+    }
 
     var body: some View {
         NavigationStack {
@@ -44,7 +50,7 @@ struct JourneyView: View {
     // MARK: Streak hero
 
     private var streakHero: some View {
-        let streak = tracker.currentStreak(asOf: Date(), timeZone: tz)
+        let streak = tracker.currentStreak(asOf: Date(), timeZone: tz, excused: excused)
         return VStack(spacing: 6) {
             Image(systemName: "flame.fill")
                 .duhaFont(38)
@@ -76,7 +82,7 @@ struct JourneyView: View {
 
     private var statsRow: some View {
         HStack(spacing: 12) {
-            statTile("\(tracker.bestStreak())", "Best streak", "flame")
+            statTile("\(tracker.bestStreak(excused: excused))", "Best streak", "flame")
             statTile("\(tracker.daysShownUp())", "Days prayed", "calendar")
             statTile("\(tracker.totalPrayed())", "Prayers", "checkmark.seal")
         }
@@ -139,12 +145,14 @@ struct JourneyView: View {
         Group {
             if let day = cell.day {
                 let frac = Double(cell.count) / 5.0
+                // Excused (menses) days with no prayers get a soft rose tint, not an empty "missed" circle.
+                let isExcusedEmpty = cell.isExcused && cell.count == 0
                 ZStack {
                     Circle()
-                        .fill(cell.count == 0 ? Color.clear : Palette.gold.opacity(0.25 + 0.75 * frac))
+                        .fill(cell.count > 0 ? Palette.gold.opacity(0.25 + 0.75 * frac)
+                              : isExcusedEmpty ? Palette.blue.opacity(0.16) : Color.clear)
                     Circle()
-                        .stroke(cell.isToday ? Palette.gold : Color.primary.opacity(cell.count == 0 ? 0.12 : 0),
-                                lineWidth: cell.isToday ? 1.8 : 1)
+                        .stroke(strokeColor(cell), lineWidth: cell.isToday ? 1.8 : 1)
                     Text("\(day)")
                         .duhaFont(12, cell.isToday ? .bold : .regular)
                         .foregroundStyle(cell.count >= 3 ? Palette.onAccent : Color.primary.opacity(0.75))
@@ -155,6 +163,13 @@ struct JourneyView: View {
                 Color.clear.frame(height: 38)
             }
         }
+    }
+
+    private func strokeColor(_ cell: DayCell) -> Color {
+        if cell.isToday { return Palette.gold }
+        if cell.isExcused && cell.count == 0 { return Palette.blue.opacity(0.3) }
+        if cell.count == 0 { return Color.primary.opacity(0.12) }
+        return .clear
     }
 
     // MARK: Milestones
@@ -200,7 +215,7 @@ struct JourneyView: View {
 
     private var milestones: [Milestone] {
         let total = tracker.totalPrayed()
-        let best = tracker.bestStreak()
+        let best = tracker.bestStreak(excused: excused)
         let perfect = tracker.perfectDays()
         return [
             Milestone(id: "first",   title: "First Step",  detail: "Your first prayer",       icon: "sparkles",          progress: total,   goal: 1),
@@ -267,14 +282,16 @@ struct JourneyView: View {
         var cells: [DayCell] = []
         var idx = 0
         for _ in 0..<leading {
-            cells.append(DayCell(id: idx, day: nil, count: 0, isToday: false, isFuture: false)); idx += 1
+            cells.append(DayCell(id: idx, day: nil, count: 0, isToday: false, isFuture: false, isExcused: false)); idx += 1
         }
+        let excusedDays = excused
         for d in range {
             guard let date = cal.date(byAdding: .day, value: d - 1, to: first) else { continue }
             let key = PrayerTracker.dayKey(date, tz)
             let isToday = key == todayKey
+            let isExcused = CycleTracker.dayNumber(key).map(excusedDays.contains) ?? false
             cells.append(DayCell(id: idx, day: d, count: tracker.count(dayKey: key),
-                                 isToday: isToday, isFuture: date > Date() && !isToday))
+                                 isToday: isToday, isFuture: date > Date() && !isToday, isExcused: isExcused))
             idx += 1
         }
         return cells
@@ -287,6 +304,7 @@ private struct DayCell: Identifiable {
     let count: Int
     let isToday: Bool
     let isFuture: Bool
+    let isExcused: Bool
 }
 
 private struct Milestone: Identifiable {
