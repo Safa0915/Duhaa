@@ -1,6 +1,6 @@
 import XCTest
 import Adhan
-@testable import Duha
+@testable import Duhaa
 
 /// Slice 1 — proves the Swift engine reproduces the `prayer-verify` Node harness
 /// to the minute, for 2026-06-07 (MWL · Shafi · middle-of-the-night). That harness

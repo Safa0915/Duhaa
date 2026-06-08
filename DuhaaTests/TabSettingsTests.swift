@@ -1,5 +1,5 @@
 import XCTest
-@testable import Duha
+@testable import Duhaa
 
 /// Covers the customizable tab bar: defaults, the merge-in of newly-shipped tabs,
 /// the bar/More split, hide/show, and reset.

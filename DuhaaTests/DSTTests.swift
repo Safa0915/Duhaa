@@ -1,6 +1,6 @@
 import XCTest
 import Foundation
-@testable import Duha
+@testable import Duhaa
 
 /// DST regression tests (spec §8): prayer times must always format in the
 /// location's IANA time zone, never a fixed offset — so the displayed times

@@ -1,5 +1,5 @@
 import XCTest
-@testable import Duha
+@testable import Duhaa
 
 /// Covers the Ramadan fasting log: toggling, totals, the Hijri-month count, and
 /// persistence. Uses an isolated UserDefaults suite per test.

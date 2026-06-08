@@ -16,18 +16,18 @@
 			containerPortal = DA0000000000000000000001 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = DA0000000000000000000010;
-			remoteInfo = Duha;
+			remoteInfo = Duhaa;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		DA0000000000000000000020 /* Duha.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Duha.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		DA0000000000000000000021 /* DuhaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DuhaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DA0000000000000000000020 /* Duhaa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Duhaa.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DA0000000000000000000021 /* DuhaaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DuhaaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		DA0000000000000000000030 /* Duha */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Duha; sourceTree = "<group>"; };
-		DA0000000000000000000031 /* DuhaTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = DuhaTests; sourceTree = "<group>"; };
+		DA0000000000000000000030 /* Duhaa */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Duhaa; sourceTree = "<group>"; };
+		DA0000000000000000000031 /* DuhaaTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = DuhaaTests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,8 +52,8 @@
 		DA0000000000000000000002 = {
 			isa = PBXGroup;
 			children = (
-				DA0000000000000000000030 /* Duha */,
-				DA0000000000000000000031 /* DuhaTests */,
+				DA0000000000000000000030 /* Duhaa */,
+				DA0000000000000000000031 /* DuhaaTests */,
 				DA0000000000000000000003 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -61,8 +61,8 @@
 		DA0000000000000000000003 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DA0000000000000000000020 /* Duha.app */,
-				DA0000000000000000000021 /* DuhaTests.xctest */,
+				DA0000000000000000000020 /* Duhaa.app */,
+				DA0000000000000000000021 /* DuhaaTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -70,9 +70,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		DA0000000000000000000010 /* Duha */ = {
+		DA0000000000000000000010 /* Duhaa */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DA0000000000000000000061 /* Build configuration list for PBXNativeTarget "Duha" */;
+			buildConfigurationList = DA0000000000000000000061 /* Build configuration list for PBXNativeTarget "Duhaa" */;
 			buildPhases = (
 				DA0000000000000000000040 /* Sources */,
 				DA0000000000000000000041 /* Frameworks */,
@@ -83,19 +83,19 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				DA0000000000000000000030 /* Duha */,
+				DA0000000000000000000030 /* Duhaa */,
 			);
-			name = Duha;
+			name = Duhaa;
 			packageProductDependencies = (
 				DA0000000000000000000081 /* Adhan */,
 			);
-			productName = Duha;
-			productReference = DA0000000000000000000020 /* Duha.app */;
+			productName = Duhaa;
+			productReference = DA0000000000000000000020 /* Duhaa.app */;
 			productType = "com.apple.product-type.application";
 		};
-		DA0000000000000000000011 /* DuhaTests */ = {
+		DA0000000000000000000011 /* DuhaaTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DA0000000000000000000062 /* Build configuration list for PBXNativeTarget "DuhaTests" */;
+			buildConfigurationList = DA0000000000000000000062 /* Build configuration list for PBXNativeTarget "DuhaaTests" */;
 			buildPhases = (
 				DA0000000000000000000043 /* Sources */,
 				DA0000000000000000000044 /* Frameworks */,
@@ -107,13 +107,13 @@
 				DA0000000000000000000051 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				DA0000000000000000000031 /* DuhaTests */,
+				DA0000000000000000000031 /* DuhaaTests */,
 			);
-			name = DuhaTests;
+			name = DuhaaTests;
 			packageProductDependencies = (
 			);
-			productName = DuhaTests;
-			productReference = DA0000000000000000000021 /* DuhaTests.xctest */;
+			productName = DuhaaTests;
+			productReference = DA0000000000000000000021 /* DuhaaTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -135,7 +135,7 @@
 					};
 				};
 			};
-			buildConfigurationList = DA0000000000000000000060 /* Build configuration list for PBXProject "Duha" */;
+			buildConfigurationList = DA0000000000000000000060 /* Build configuration list for PBXProject "Duhaa" */;
 			compatibilityVersion = "Xcode 16.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -152,8 +152,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				DA0000000000000000000010 /* Duha */,
-				DA0000000000000000000011 /* DuhaTests */,
+				DA0000000000000000000010 /* Duhaa */,
+				DA0000000000000000000011 /* DuhaaTests */,
 			);
 		};
 /* End PBXProject section */
@@ -195,7 +195,7 @@
 /* Begin PBXTargetDependency section */
 		DA0000000000000000000051 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DA0000000000000000000010 /* Duha */;
+			target = DA0000000000000000000010 /* Duhaa */;
 			targetProxy = DA0000000000000000000050 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -345,7 +345,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.duha.Duha;
+				PRODUCT_BUNDLE_IDENTIFIER = com.duhaa.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -376,7 +376,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.duha.Duha;
+				PRODUCT_BUNDLE_IDENTIFIER = com.duhaa.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -394,12 +394,12 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.duha.DuhaTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.duhaa.app.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Duha.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Duha";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Duhaa.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Duhaa";
 			};
 			name = Debug;
 		};
@@ -413,19 +413,19 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.duha.DuhaTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.duhaa.app.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Duha.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Duha";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Duhaa.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Duhaa";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		DA0000000000000000000060 /* Build configuration list for PBXProject "Duha" */ = {
+		DA0000000000000000000060 /* Build configuration list for PBXProject "Duhaa" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DA0000000000000000000070 /* Debug */,
@@ -434,7 +434,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DA0000000000000000000061 /* Build configuration list for PBXNativeTarget "Duha" */ = {
+		DA0000000000000000000061 /* Build configuration list for PBXNativeTarget "Duhaa" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DA0000000000000000000072 /* Debug */,
@@ -443,7 +443,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DA0000000000000000000062 /* Build configuration list for PBXNativeTarget "DuhaTests" */ = {
+		DA0000000000000000000062 /* Build configuration list for PBXNativeTarget "DuhaaTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DA0000000000000000000074 /* Debug */,

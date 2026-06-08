@@ -1,5 +1,5 @@
 import XCTest
-@testable import Duha
+@testable import Duhaa
 
 /// Covers the private cycle logging + the excused-day math it feeds to the streak.
 final class CycleTrackerTests: XCTestCase {

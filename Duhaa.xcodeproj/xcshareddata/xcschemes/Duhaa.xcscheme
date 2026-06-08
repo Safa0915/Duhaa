@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "DA0000000000000000000010"
-               BuildableName = "Duha.app"
-               BlueprintName = "Duha"
-               ReferencedContainer = "container:Duha.xcodeproj">
+               BuildableName = "Duhaa.app"
+               BlueprintName = "Duhaa"
+               ReferencedContainer = "container:Duhaa.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "DA0000000000000000000011"
-               BuildableName = "DuhaTests.xctest"
-               BlueprintName = "DuhaTests"
-               ReferencedContainer = "container:Duha.xcodeproj">
+               BuildableName = "DuhaaTests.xctest"
+               BlueprintName = "DuhaaTests"
+               ReferencedContainer = "container:Duhaa.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "DA0000000000000000000010"
-            BuildableName = "Duha.app"
-            BlueprintName = "Duha"
-            ReferencedContainer = "container:Duha.xcodeproj">
+            BuildableName = "Duhaa.app"
+            BlueprintName = "Duhaa"
+            ReferencedContainer = "container:Duhaa.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "DA0000000000000000000010"
-            BuildableName = "Duha.app"
-            BlueprintName = "Duha"
-            ReferencedContainer = "container:Duha.xcodeproj">
+            BuildableName = "Duhaa.app"
+            BlueprintName = "Duhaa"
+            ReferencedContainer = "container:Duhaa.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

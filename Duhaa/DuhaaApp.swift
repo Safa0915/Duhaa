@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct DuhaApp: App {
+struct DuhaaApp: App {
     @Environment(\.scenePhase) private var scenePhase
     @State private var location = LocationProvider()
     @State private var settings = SettingsStore()

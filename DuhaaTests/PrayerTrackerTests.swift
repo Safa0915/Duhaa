@@ -1,5 +1,5 @@
 import XCTest
-@testable import Duha
+@testable import Duhaa
 
 /// Covers the "hope, not guilt" tracking math: totals, streaks, the grace for a
 /// not-yet-started today, and the crucial menses-excused bridging (spec §5 + the
