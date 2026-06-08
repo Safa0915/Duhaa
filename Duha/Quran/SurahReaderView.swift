@@ -8,6 +8,7 @@ struct SurahReaderView: View {
     var scrollTo: Int? = nil
 
     @Environment(QuranBookmarks.self) private var bookmarks
+    @State private var furthestAyah = 0
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -33,6 +34,9 @@ struct SurahReaderView: View {
         .background(Palette.appBg.ignoresSafeArea())
         .navigationTitle(surah.englishName)
         .navigationBarTitleDisplayMode(.inline)
+        .onDisappear {
+            bookmarks.recordRead(surah: surah.number, ayah: max(furthestAyah, scrollTo ?? 1))
+        }
     }
 
     private var header: some View {
@@ -95,5 +99,6 @@ struct SurahReaderView: View {
                 .foregroundStyle(.primary.opacity(0.75))
         }
         .padding(.vertical, 16)
+        .onAppear { furthestAyah = max(furthestAyah, ayah.number) }
     }
 }
