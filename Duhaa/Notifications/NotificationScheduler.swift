@@ -117,7 +117,7 @@ enum NotificationScheduler {
         }
 
         #if DEBUG
-        print("🔔 Duha scheduled \(scheduled) notifications across \(days) day(s) for \(location.name)")
+        print("🔔 Duhaa scheduled \(scheduled) notifications across \(days) day(s) for \(location.name)")
         #endif
     }
 
