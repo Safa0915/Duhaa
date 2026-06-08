@@ -68,6 +68,14 @@ struct HomeDisplay {
     var sunrisePassed = false
     var tahajjud = ""
     var islamicMidnight = ""
+    // Ramadan (auto-detected from the Hijri month). The card shows only when isRamadan.
+    var isRamadan = false
+    var ramadanDay = 0
+    var hijriYear = 0
+    var suhoor = ""          // Fajr (when suhoor ends)
+    var iftar = ""           // Maghrib (when the fast opens)
+    var ramadanPhase = ""    // "Iftar" or "Suhoor ends"
+    var ramadanCountdown = ""
 }
 
 // MARK: - Model
@@ -162,6 +170,26 @@ final class PrayerHomeModel {
         d.sunrisePassed = today.sunrise <= now
         d.tahajjud = clock(today.tahajjud, tz)
         d.islamicMidnight = clock(today.islamicMidnight, tz)
+
+        // Ramadan: auto-detected from the (offset-adjusted) Hijri month.
+        let h = hijriComponents(now, tz, offsetDays: hijriOffsetDays)
+        d.hijriYear = h.year ?? 0
+        d.ramadanDay = h.day ?? 0
+        d.isRamadan = (h.month == 9)
+        d.suhoor = clock(today.fajr, tz)
+        d.iftar = clock(today.maghrib, tz)
+        if now < today.fajr {
+            d.ramadanPhase = "Suhoor ends"
+            d.ramadanCountdown = countdown(to: today.fajr)
+        } else if now < today.maghrib {
+            d.ramadanPhase = "Iftar"
+            d.ramadanCountdown = countdown(to: today.maghrib)
+        } else {
+            d.ramadanPhase = "Suhoor ends"
+            if let tomorrow = times(location, config, dayOffset: 1) {
+                d.ramadanCountdown = countdown(to: tomorrow.fajr)
+            }
+        }
         return d
     }
 
@@ -228,6 +256,14 @@ final class PrayerHomeModel {
         f.timeZone = tz
         f.dateFormat = "EEEEE"
         return f.string(from: date)
+    }
+
+    /// Offset-adjusted Hijri year/month/day components (UmmAlQura), for Ramadan detection.
+    private func hijriComponents(_ date: Date, _ tz: TimeZone, offsetDays: Int) -> DateComponents {
+        var calendar = Calendar(identifier: .islamicUmmAlQura)
+        calendar.timeZone = tz
+        let adjusted = calendar.date(byAdding: .day, value: offsetDays, to: date) ?? date
+        return calendar.dateComponents([.year, .month, .day], from: adjusted)
     }
 
     private func hijri(_ date: Date, _ tz: TimeZone, offsetDays: Int) -> String {

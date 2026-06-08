@@ -58,6 +58,13 @@ struct PrayerHomeView: View {
                                          nextLabel: d.nextLabel)
                             .padding(.horizontal, 22).padding(.top, 20)
 
+                        if d.isRamadan {
+                            RamadanCard(dayKey: d.dayKey, ramadanDay: d.ramadanDay,
+                                        hijriYear: d.hijriYear, suhoor: d.suhoor, iftar: d.iftar,
+                                        phase: d.ramadanPhase, countdown: d.ramadanCountdown)
+                                .padding(.horizontal, 22).padding(.top, 16)
+                        }
+
                         VerseOfDayCard(ref: VerseOfDay.today()) {
                             verseSheet = VerseOfDay.today()
                         }
