@@ -20,11 +20,13 @@ struct CycleEntry: Identifiable, Codable {
 final class CycleTracker {
     private(set) var entries: [CycleEntry]
 
-    @ObservationIgnored private let defaults = UserDefaults.standard
+    @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private let key = "duha.cycle.entries"
 
-    init() {
-        if let data = UserDefaults.standard.data(forKey: key),
+    /// `defaults` is injectable so tests can use an isolated suite.
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+        if let data = defaults.data(forKey: key),
            let decoded = try? JSONDecoder().decode([CycleEntry].self, from: data) {
             entries = decoded.sorted { $0.start > $1.start }
         } else {

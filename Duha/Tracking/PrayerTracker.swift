@@ -11,16 +11,18 @@ final class PrayerTracker {
     /// The last day the app recorded being opened, for the gentle welcome-back.
     private var lastOpenedDay: String?
 
-    @ObservationIgnored private let defaults = UserDefaults.standard
+    @ObservationIgnored private let defaults: UserDefaults
 
-    init() {
-        if let data = UserDefaults.standard.data(forKey: Key.marks),
+    /// `defaults` is injectable so tests can use an isolated suite.
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+        if let data = defaults.data(forKey: Key.marks),
            let decoded = try? JSONDecoder().decode([String: [String]].self, from: data) {
             marks = decoded.mapValues { Set($0) }
         } else {
             marks = [:]
         }
-        lastOpenedDay = UserDefaults.standard.string(forKey: Key.lastOpened)
+        lastOpenedDay = defaults.string(forKey: Key.lastOpened)
     }
 
     // MARK: Marking

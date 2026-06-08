@@ -19,9 +19,12 @@ final class TabSettings {
 
     @ObservationIgnored private let orderKey = "duha.tabs.order"
     @ObservationIgnored private let hiddenKey = "duha.tabs.hidden"
+    @ObservationIgnored private let defaults: UserDefaults
 
-    init() {
-        let saved = (UserDefaults.standard.stringArray(forKey: orderKey) ?? [])
+    /// `defaults` is injectable so tests can use an isolated suite.
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+        let saved = (defaults.stringArray(forKey: orderKey) ?? [])
             .compactMap(DuhaTab.init(rawValue:))
         // Start from the saved order, then append any tabs it doesn't mention yet
         // (e.g. a feature added in a later app version) so nothing ever disappears.
@@ -29,7 +32,7 @@ final class TabSettings {
         for tab in DuhaTab.defaultOrder where !merged.contains(tab) { merged.append(tab) }
         order = merged.isEmpty ? DuhaTab.defaultOrder : merged
 
-        hidden = Set((UserDefaults.standard.stringArray(forKey: hiddenKey) ?? [])
+        hidden = Set((defaults.stringArray(forKey: hiddenKey) ?? [])
             .compactMap(DuhaTab.init(rawValue:)))
     }
 
@@ -86,7 +89,7 @@ final class TabSettings {
     }
 
     private func persist() {
-        UserDefaults.standard.set(order.map(\.rawValue), forKey: orderKey)
-        UserDefaults.standard.set(Array(hidden).map(\.rawValue), forKey: hiddenKey)
+        defaults.set(order.map(\.rawValue), forKey: orderKey)
+        defaults.set(Array(hidden).map(\.rawValue), forKey: hiddenKey)
     }
 }
