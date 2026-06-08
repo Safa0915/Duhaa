@@ -209,6 +209,9 @@ struct NextPrayerBanner: View {
 struct PrayersCard: View {
     let rows: [PrayerRowData]
     let dayKey: String
+    /// Sunrise time (end of Fajr / start of Duha) — shown as a slim boundary, not a prayer.
+    var sunrise: String = ""
+    var sunrisePassed: Bool = false
     /// Fires when a prayer is tapped to mark/unmark; Bool = now prayed.
     let onMark: (Prayer, Bool) -> Void
 
@@ -224,12 +227,62 @@ struct PrayersCard: View {
                 ForEach(Array(rows.enumerated()), id: \.element.id) { index, row in
                     if index > 0 { Divider().overlay(Color.primary.opacity(0.09)) }
                     PrayerRowView(row: row, dayKey: dayKey, onMark: onMark)
+                    // Sunrise sits between Fajr and Dhuhr — its true place in the day.
+                    if row.prayer == .fajr && !sunrise.isEmpty {
+                        Divider().overlay(Color.primary.opacity(0.09))
+                        SunriseMarker(time: sunrise, passed: sunrisePassed)
+                    }
                 }
             }
             .background(Palette.card)
             .overlay(RoundedRectangle(cornerRadius: 20).stroke(Palette.cardBorder, lineWidth: 1))
             .clipShape(RoundedRectangle(cornerRadius: 20))
         }
+    }
+}
+
+/// A delicate, non-obligatory marker for sunrise — the end of Fajr's time and the
+/// threshold of the Duha prayer (the app's namesake). Deliberately slimmer than a
+/// prayer row, with no number, no checkbox and no "NEXT" badge, so the five remain
+/// the only prayers you track.
+private struct SunriseMarker: View {
+    let time: String
+    let passed: Bool
+
+    var body: some View {
+        HStack(spacing: 13) {
+            HStack(spacing: 13) {
+                Image(systemName: "sun.horizon.fill")
+                    .duhaFont(15)
+                    .foregroundStyle(
+                        LinearGradient(colors: [Palette.gold, Palette.gold.opacity(0.6)],
+                                       startPoint: .top, endPoint: .bottom)
+                    )
+                    .frame(width: 34)
+
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("Sunrise")
+                        .duhaFont(13, .medium)
+                        .foregroundStyle(.primary.opacity(0.75))
+                    Text("Fajr ends · Duha follows")
+                        .duhaFont(10)
+                        .foregroundStyle(Palette.gold.opacity(0.6))
+                }
+
+                Spacer()
+
+                Text(time)
+                    .duhaFont(13, .medium)
+                    .foregroundStyle(Palette.gold.opacity(0.8))
+            }
+            // Reserve the mark-button column so the time aligns with the prayer rows.
+            Color.clear.frame(width: 22, height: 1)
+        }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 10)
+        .opacity(passed ? 0.5 : 1)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Sunrise, \(time). End of Fajr, start of Duha.")
     }
 }
 

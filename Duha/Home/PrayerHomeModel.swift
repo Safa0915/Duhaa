@@ -62,6 +62,10 @@ struct HomeDisplay {
     var prevLabel = ""
     var nextLabel = ""
     var rows: [PrayerRowData] = []
+    /// Sunrise — shown as a slim boundary in the list (end of Fajr / start of Duha),
+    /// never as a sixth obligatory prayer.
+    var sunrise = ""
+    var sunrisePassed = false
     var tahajjud = ""
     var islamicMidnight = ""
 }
@@ -154,6 +158,8 @@ final class PrayerHomeModel {
                                  sub: prayer == .isha ? ishaSub(today, tz) : nil)
         }
 
+        d.sunrise = clock(today.sunrise, tz)
+        d.sunrisePassed = today.sunrise <= now
         d.tahajjud = clock(today.tahajjud, tz)
         d.islamicMidnight = clock(today.islamicMidnight, tz)
         return d

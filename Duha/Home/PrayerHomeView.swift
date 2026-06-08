@@ -63,7 +63,8 @@ struct PrayerHomeView: View {
                         }
                         .padding(.horizontal, 22).padding(.top, 16)
 
-                        PrayersCard(rows: d.rows, dayKey: d.dayKey) { _, nowPrayed in
+                        PrayersCard(rows: d.rows, dayKey: d.dayKey,
+                                    sunrise: d.sunrise, sunrisePassed: d.sunrisePassed) { _, nowPrayed in
                             if nowPrayed { showToast(Encouragements.afterPrayerMessage()) }
                         }
                         .padding(.horizontal, 22).padding(.top, 16)
