@@ -332,7 +332,7 @@
 				DEVELOPMENT_TEAM = 4C2H9C2ZKY;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Duhaa;
+				INFOPLIST_KEY_CFBundleDisplayName = "Duhaa ضحى";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Duhaa uses your location to calculate accurate prayer times for where you are.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -363,7 +363,7 @@
 				DEVELOPMENT_TEAM = 4C2H9C2ZKY;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Duhaa;
+				INFOPLIST_KEY_CFBundleDisplayName = "Duhaa ضحى";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Duhaa uses your location to calculate accurate prayer times for where you are.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
