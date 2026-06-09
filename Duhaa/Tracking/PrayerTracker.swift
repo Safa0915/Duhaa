@@ -8,6 +8,9 @@ import Observation
 final class PrayerTracker {
     /// dayKey ("yyyy-MM-dd") → set of prayed prayer raw values.
     private var marks: [String: Set<String>]
+    /// dayKey → subset of prayed prayers that were marked *late* (after the prayer's
+    /// window). Always a subset of `marks`. Used only by the opt-in insights view.
+    private var lateMarks: [String: Set<String>]
     /// The last day the app recorded being opened, for the gentle welcome-back.
     private var lastOpenedDay: String?
 
@@ -16,13 +19,16 @@ final class PrayerTracker {
     /// `defaults` is injectable so tests can use an isolated suite.
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
-        if let data = defaults.data(forKey: Key.marks),
-           let decoded = try? JSONDecoder().decode([String: [String]].self, from: data) {
-            marks = decoded.mapValues { Set($0) }
-        } else {
-            marks = [:]
-        }
+        marks = Self.decodeMarks(defaults.data(forKey: Key.marks))
+        lateMarks = Self.decodeMarks(defaults.data(forKey: Key.lateMarks))
         lastOpenedDay = defaults.string(forKey: Key.lastOpened)
+    }
+
+    private static func decodeMarks(_ data: Data?) -> [String: Set<String>] {
+        guard let data,
+              let decoded = try? JSONDecoder().decode([String: [String]].self, from: data)
+        else { return [:] }
+        return decoded.mapValues { Set($0) }
     }
 
     // MARK: Marking
@@ -32,18 +38,25 @@ final class PrayerTracker {
     }
 
     /// Toggle a prayer's prayed state; returns the new state (true = now prayed).
+    /// `onTime` records whether it was prayed within its window (for the opt-in
+    /// insights view). It is harmless metadata — nothing surfaces it unless the
+    /// user has turned insights on.
     @discardableResult
-    func toggle(_ prayer: Prayer, dayKey: String) -> Bool {
+    func toggle(_ prayer: Prayer, dayKey: String, onTime: Bool = true) -> Bool {
         var set = marks[dayKey] ?? []
+        var late = lateMarks[dayKey] ?? []
         let nowPrayed: Bool
         if set.contains(prayer.rawValue) {
             set.remove(prayer.rawValue)
+            late.remove(prayer.rawValue)
             nowPrayed = false
         } else {
             set.insert(prayer.rawValue)
+            if onTime { late.remove(prayer.rawValue) } else { late.insert(prayer.rawValue) }
             nowPrayed = true
         }
         marks[dayKey] = set.isEmpty ? nil : set
+        lateMarks[dayKey] = late.isEmpty ? nil : late
         persist()
         return nowPrayed
     }
@@ -60,6 +73,29 @@ final class PrayerTracker {
 
     /// Days where all five were marked.
     func perfectDays() -> Int { marks.values.reduce(0) { $0 + ($1.count >= 5 ? 1 : 0) } }
+
+    // MARK: Insights (opt-in only — on-time / late / missed)
+
+    /// On-time / late / missed across the COMPLETED days from `startDay` through
+    /// yesterday. Today is in progress, so it's never judged. Excused days (e.g.
+    /// menstruation) are skipped entirely — prayer is lifted, so it's never a miss.
+    func insights(startDay: String, todayKey: String, excused: Set<Int> = []) -> PrayerInsights {
+        guard let start = Self.dayNumber(startDay),
+              let today = Self.dayNumber(todayKey),
+              today > start else { return PrayerInsights(onTime: 0, late: 0, missed: 0) }
+
+        var onTime = 0, late = 0, missed = 0
+        for n in start..<today {                       // completed days only
+            if excused.contains(n) { continue }
+            let key = Self.keyFromDayNumber(n)
+            let prayed = marks[key] ?? []
+            let lateCount = (lateMarks[key] ?? []).intersection(prayed).count
+            onTime += prayed.count - lateCount
+            late += lateCount
+            missed += max(0, 5 - prayed.count)
+        }
+        return PrayerInsights(onTime: onTime, late: late, missed: missed)
+    }
 
     /// Consecutive days (ending today) with at least one prayer. A day that hasn't
     /// begun yet never breaks the streak — it counts through yesterday until you pray.
@@ -108,6 +144,11 @@ final class PrayerTracker {
         return Int((date.timeIntervalSince1970 / 86_400).rounded(.down))
     }
 
+    /// Inverse of `dayNumber` — the "yyyy-MM-dd" key for a day index.
+    private static func keyFromDayNumber(_ n: Int) -> String {
+        dayParser.string(from: Date(timeIntervalSince1970: TimeInterval(n) * 86_400))
+    }
+
     private static let dayParser: DateFormatter = {
         let f = DateFormatter()
         f.locale = Locale(identifier: "en_US_POSIX")
@@ -149,14 +190,33 @@ final class PrayerTracker {
     }()
 
     private func persist() {
-        let encodable = marks.mapValues { Array($0) }
-        if let data = try? JSONEncoder().encode(encodable) {
+        if let data = try? JSONEncoder().encode(marks.mapValues { Array($0) }) {
             defaults.set(data, forKey: Key.marks)
+        }
+        if let data = try? JSONEncoder().encode(lateMarks.mapValues { Array($0) }) {
+            defaults.set(data, forKey: Key.lateMarks)
         }
     }
 
     private enum Key {
         static let marks = "duhaa.tracker.marks"
+        static let lateMarks = "duhaa.tracker.lateMarks"
         static let lastOpened = "duhaa.tracker.lastOpened"
     }
+}
+
+/// A tally of how the five daily prayers were kept over a span of days — the basis
+/// of the opt-in insights view. Percentages always sum to 100.
+struct PrayerInsights {
+    let onTime: Int
+    let late: Int
+    let missed: Int
+
+    var total: Int { onTime + late + missed }
+    var hasData: Bool { total > 0 }
+    var onTimePct: Int { pct(onTime) }
+    var latePct: Int { pct(late) }
+    /// Missed takes the remainder so the three always add up to exactly 100%.
+    var missedPct: Int { hasData ? max(0, 100 - onTimePct - latePct) : 0 }
+    private func pct(_ n: Int) -> Int { total > 0 ? Int((Double(n) / Double(total) * 100).rounded()) : 0 }
 }

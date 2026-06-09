@@ -6,6 +6,7 @@ struct SettingsView: View {
     @Environment(SettingsStore.self) private var store
     @Environment(LocationProvider.self) private var location
     @Environment(ThemeStore.self) private var themeStore
+    @Environment(InsightsStore.self) private var insights
     @Environment(\.dismiss) private var dismiss
 
     /// High latitudes (≈ above 48°) get the gentle Fajr/Isha precaution copy.
@@ -46,6 +47,17 @@ struct SettingsView: View {
                     } label: {
                         Label("Customize Tabs", systemImage: "square.grid.2x2")
                     }
+                }
+
+                Section {
+                    Toggle(isOn: insightsBinding) {
+                        Label("Prayer insights", systemImage: "chart.line.uptrend.xyaxis")
+                    }
+                    .tint(Palette.gold)
+                } header: {
+                    Text("Insights")
+                } footer: {
+                    Text("Shows how many prayers you've kept on time, prayed late, or missed in your Journey — a gentle nudge to grow. Turning it on starts fresh from today.")
                 }
 
                 Section("Calculation Method") {
@@ -157,5 +169,12 @@ struct SettingsView: View {
 
     private var themeBinding: Binding<AppTheme> {
         Binding(get: { themeStore.theme }, set: { themeStore.theme = $0 })
+    }
+
+    private var insightsBinding: Binding<Bool> {
+        Binding(
+            get: { insights.enabled },
+            set: { insights.setEnabled($0, today: PrayerTracker.dayKey(Date(), location.active.timeZone)) }
+        )
     }
 }

@@ -347,7 +347,7 @@ private struct PrayerRowView: View {
 
     private var markButton: some View {
         Button {
-            let nowPrayed = tracker.toggle(row.prayer, dayKey: dayKey)
+            let nowPrayed = tracker.toggle(row.prayer, dayKey: dayKey, onTime: row.onTime)
             onMark(row.prayer, nowPrayed)
         } label: {
             Image(systemName: isPrayed ? "checkmark.circle.fill" : "circle")

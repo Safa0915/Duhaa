@@ -32,6 +32,9 @@ struct PrayerRowData: Identifiable {
     let state: RowState
     /// Extra line under the name (only Isha uses it: "ends 11:53 PM · …").
     let sub: String?
+    /// Whether marking this prayer *right now* counts as on time (logged before the
+    /// next prayer begins). Used only by the opt-in insights tracker.
+    let onTime: Bool
     var id: String { prayer.rawValue }
 }
 
@@ -152,6 +155,13 @@ final class PrayerHomeModel {
             .fajr: today.fajr, .dhuhr: today.dhuhr, .asr: today.asr,
             .maghrib: today.maghrib, .isha: today.isha,
         ]
+        // Each prayer is "on time" until the next prayer begins (gentle, hope-framed:
+        // grace over strictness). Isha runs to tomorrow's Fajr.
+        let tomorrowFajr = times(location, config, dayOffset: 1)?.fajr
+        let windowEnd: [Prayer: Date] = [
+            .fajr: today.dhuhr, .dhuhr: today.asr, .asr: today.maghrib,
+            .maghrib: today.isha, .isha: tomorrowFajr ?? today.isha.addingTimeInterval(6 * 3600),
+        ]
         d.rows = Prayer.allCases.map { prayer in
             let time = byPrayer[prayer]!
             let state: RowState
@@ -163,7 +173,8 @@ final class PrayerHomeModel {
             return PrayerRowData(prayer: prayer,
                                  time: clock(time, tz),
                                  state: state,
-                                 sub: prayer == .isha ? ishaSub(today, tz) : nil)
+                                 sub: prayer == .isha ? ishaSub(today, tz) : nil,
+                                 onTime: now < (windowEnd[prayer] ?? time))
         }
 
         d.sunrise = clock(today.sunrise, tz)

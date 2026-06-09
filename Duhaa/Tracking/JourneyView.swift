@@ -8,6 +8,7 @@ struct JourneyView: View {
     @Environment(PrayerTracker.self) private var tracker
     @Environment(LocationProvider.self) private var location
     @Environment(CycleTracker.self) private var cycle
+    @Environment(InsightsStore.self) private var insights
 
     /// Any day inside the month currently shown in the calendar.
     @State private var monthAnchor = Date()
@@ -25,6 +26,7 @@ struct JourneyView: View {
                 VStack(spacing: 18) {
                     streakHero
                     statsRow
+                    if insights.enabled { insightsCard }
                     monthCard
                     milestonesCard
                     footer
@@ -228,10 +230,75 @@ struct JourneyView: View {
         ]
     }
 
+    // MARK: Insights (opt-in — on-time / late / missed)
+
+    private var insightsCard: some View {
+        let data = tracker.insights(startDay: insights.startDay,
+                                    todayKey: PrayerTracker.dayKey(Date(), tz),
+                                    excused: excused)
+        return VStack(alignment: .leading, spacing: 14) {
+            Label("PRAYER INSIGHTS", systemImage: "chart.line.uptrend.xyaxis")
+                .duhaaFont(11, .semibold).tracking(1.2)
+                .foregroundStyle(Palette.blue.opacity(0.65))
+
+            if data.hasData {
+                GeometryReader { geo in
+                    HStack(spacing: 0) {
+                        Palette.gold
+                            .frame(width: geo.size.width * frac(data.onTime, data.total))
+                        Palette.blue.opacity(0.85)
+                            .frame(width: geo.size.width * frac(data.late, data.total))
+                        Color.primary.opacity(0.16)   // missed takes the remainder
+                    }
+                }
+                .frame(height: 12)
+                .clipShape(Capsule())
+
+                insightLine("On time", pct: data.onTimePct, count: data.onTime, tint: Palette.gold)
+                insightLine("Late", pct: data.latePct, count: data.late, tint: Palette.blue)
+                insightLine("Missed", pct: data.missedPct, count: data.missed, tint: .primary.opacity(0.45))
+
+                Text("A gentle mirror over the days you've been tracking — not a scorecard. Every prayer ahead is a fresh start. 🤍")
+                    .duhaaFont(11)
+                    .foregroundStyle(Palette.blue.opacity(0.55))
+                    .padding(.top, 2)
+            } else {
+                Text("Your insights begin after today. From now on, every prayer you log builds the picture — in shaa Allah. 🤍")
+                    .duhaaFont(13)
+                    .foregroundStyle(.primary.opacity(0.7))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Palette.card)
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Palette.cardBorder, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+    }
+
+    private func insightLine(_ label: String, pct: Int, count: Int, tint: Color) -> some View {
+        HStack(spacing: 10) {
+            Circle().fill(tint).frame(width: 8, height: 8)
+            Text(label).duhaaFont(13, .medium).foregroundStyle(.primary.opacity(0.85))
+            Spacer()
+            Text("\(count) prayer\(count == 1 ? "" : "s")")
+                .duhaaFont(11).foregroundStyle(Palette.blue.opacity(0.5))
+            Text("\(pct)%")
+                .duhaaFont(15, .semibold).foregroundStyle(tint)
+                .frame(width: 46, alignment: .trailing)
+        }
+    }
+
+    private func frac(_ n: Int, _ total: Int) -> Double {
+        total > 0 ? Double(n) / Double(total) : 0
+    }
+
     // MARK: Footer
 
     private var footer: some View {
-        Text("Duhaa counts only what you've prayed — never what you've missed. Every prayer is a fresh beginning.")
+        Text(insights.enabled
+             ? "Insights are a private mirror to help you grow — never a judgement. Every prayer is a fresh beginning. 🤍"
+             : "Duhaa counts only what you've prayed — never what you've missed. Every prayer is a fresh beginning.")
             .duhaaFont(12)
             .foregroundStyle(Palette.blue.opacity(0.6))
             .multilineTextAlignment(.center)

@@ -6,6 +6,7 @@ import SwiftUI
 struct OnboardingView: View {
     @Environment(LocationProvider.self) private var location
     @Environment(SettingsStore.self) private var settings
+    @Environment(InsightsStore.self) private var insights
     let onFinish: () -> Void
 
     @State private var step = 0
@@ -20,7 +21,8 @@ struct OnboardingView: View {
                     switch step {
                     case 0:  welcome
                     case 1:  locationStep
-                    default: methodStep
+                    case 2:  methodStep
+                    default: insightsStep
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -149,9 +151,51 @@ struct OnboardingView: View {
 
     // MARK: Pieces
 
+    private var insightsStep: some View {
+        VStack(spacing: 16) {
+            Spacer()
+            Image(systemName: "chart.line.uptrend.xyaxis")
+                .duhaaFont(46)
+                .foregroundStyle(Palette.gold)
+            Text("See your progress?")
+                .duhaaFont(24, .semibold)
+                .foregroundStyle(.primary)
+            Text("Duhaa can gently show how many prayers you've kept on time, prayed late, or missed — a quiet mirror to help you grow. It only ever encourages, never shames.")
+                .duhaaFont(14)
+                .foregroundStyle(Palette.blue.opacity(0.85))
+                .multilineTextAlignment(.center)
+                .lineSpacing(3)
+                .padding(.horizontal, 36)
+
+            Toggle(isOn: insightsBinding) {
+                Text("Show prayer insights")
+                    .duhaaFont(15, .medium)
+                    .foregroundStyle(.primary)
+            }
+            .tint(Palette.gold)
+            .padding(.horizontal, 18).padding(.vertical, 14)
+            .background(Palette.card)
+            .overlay(RoundedRectangle(cornerRadius: 16).stroke(Palette.cardBorder, lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .padding(.horizontal, 36).padding(.top, 6)
+
+            Text("Off by default · change it anytime in Settings.")
+                .duhaaFont(12)
+                .foregroundStyle(Palette.blue.opacity(0.6))
+            Spacer()
+        }
+    }
+
+    private var insightsBinding: Binding<Bool> {
+        Binding(
+            get: { insights.enabled },
+            set: { insights.setEnabled($0, today: PrayerTracker.dayKey(Date(), location.active.timeZone)) }
+        )
+    }
+
     private var stepDots: some View {
         HStack(spacing: 8) {
-            ForEach(0..<3, id: \.self) { i in
+            ForEach(0..<4, id: \.self) { i in
                 Capsule()
                     .fill(i == step ? Palette.gold : Color.primary.opacity(0.2))
                     .frame(width: i == step ? 22 : 7, height: 7)
@@ -163,9 +207,9 @@ struct OnboardingView: View {
 
     private var continueButton: some View {
         Button {
-            if step < 2 { withAnimation { step += 1 } } else { onFinish() }
+            if step < 3 { withAnimation { step += 1 } } else { onFinish() }
         } label: {
-            Text(step < 2 ? "Continue" : "Get Started")
+            Text(step < 3 ? "Continue" : "Get Started")
                 .duhaaFont(17, .semibold)
                 .foregroundStyle(Palette.onAccent)
                 .frame(maxWidth: .infinity)
@@ -205,4 +249,5 @@ struct OnboardingView: View {
     OnboardingView(onFinish: {})
         .environment(LocationProvider())
         .environment(SettingsStore())
+        .environment(InsightsStore())
 }
