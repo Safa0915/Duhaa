@@ -33,6 +33,16 @@ enum DuhaaTab: String, CaseIterable, Identifiable, Codable {
         }
     }
 
+    /// Full-bleed tabs provide their own top chrome and want no nav bar. The rest
+    /// rely on a NavigationStack from their host (MainTabView for direct tabs,
+    /// MoreView for overflow) — which also gives them a "‹ More" back button.
+    var isFullBleed: Bool {
+        switch self {
+        case .prayer, .qibla, .tasbih: true
+        default: false
+        }
+    }
+
     @ViewBuilder
     func makeView() -> some View {
         switch self {

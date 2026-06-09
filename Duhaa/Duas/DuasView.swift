@@ -3,24 +3,23 @@ import SwiftUI
 /// The Du'as tab: occasion-based categories (After Prayer, Morning, Evening, …).
 struct DuasView: View {
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 14) {
-                    ForEach(Duas.categories) { category in
-                        NavigationLink {
-                            DuaListView(category: category)
-                        } label: {
-                            card(category)
-                        }
-                        .buttonStyle(.plain)
+        // Host provides the NavigationStack (see MainTabView / MoreView).
+        ScrollView {
+            VStack(spacing: 14) {
+                ForEach(Duas.categories) { category in
+                    NavigationLink {
+                        DuaListView(category: category)
+                    } label: {
+                        card(category)
                     }
+                    .buttonStyle(.plain)
                 }
-                .padding(20)
             }
-            .scrollIndicators(.hidden)
-            .background(Palette.appBg.ignoresSafeArea())
-            .navigationTitle("Du'as")
+            .padding(20)
         }
+        .scrollIndicators(.hidden)
+        .background(Palette.appBg.ignoresSafeArea())
+        .navigationTitle("Du'as")
         .preferredColorScheme(Palette.active.colorScheme)
         .tint(Palette.gold)
     }

@@ -9,20 +9,20 @@ struct SistersView: View {
     private var today: String { PrayerTracker.dayKey(Date(), location.active.timeZone) }
 
     var body: some View {
-        NavigationStack {
-            List {
-                introSection
-                cycleSection
-                if !cycle.entries.isEmpty { historySection }
-                learnSection
-                disclaimerSection
-            }
-            .scrollContentBackground(.hidden)
-            .scrollIndicators(.hidden)
-            .background(Palette.appBg.ignoresSafeArea())
-            .navigationTitle("Sisters")
-            .tint(Palette.gold)
+        // No NavigationStack here — the host (MainTabView or MoreView) provides one,
+        // so opening Sisters from "More" gets a proper "‹ More" back button.
+        List {
+            introSection
+            cycleSection
+            if !cycle.entries.isEmpty { historySection }
+            learnSection
+            disclaimerSection
         }
+        .scrollContentBackground(.hidden)
+        .scrollIndicators(.hidden)
+        .background(Palette.appBg.ignoresSafeArea())
+        .navigationTitle("Sisters")
+        .tint(Palette.gold)
         .preferredColorScheme(Palette.active.colorScheme)
     }
 

@@ -10,7 +10,7 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $selection) {
             ForEach(tabs.barTabs) { tab in
-                tab.makeView()
+                tabRoot(tab)
                     .tag(tab.rawValue)
                     .tabItem { Label(tab.title, systemImage: tab.icon) }
             }
@@ -26,6 +26,17 @@ struct MainTabView: View {
             // Keep a valid selection if the selected tab was reordered or hidden.
             let valid = bar.map(\.rawValue) + (tabs.moreTabs.isEmpty ? [] : ["__more__"])
             if !valid.contains(selection) { selection = bar.first?.rawValue ?? selection }
+        }
+    }
+
+    /// Full-bleed tabs render as-is; the rest get their own NavigationStack so they
+    /// can navigate internally (and so MoreView's stack stays single-bar).
+    @ViewBuilder
+    private func tabRoot(_ tab: DuhaaTab) -> some View {
+        if tab.isFullBleed {
+            tab.makeView()
+        } else {
+            NavigationStack { tab.makeView() }
         }
     }
 }

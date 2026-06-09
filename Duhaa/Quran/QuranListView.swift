@@ -17,27 +17,26 @@ struct QuranListView: View {
     private var isSearching: Bool { !trimmed.isEmpty }
 
     var body: some View {
-        NavigationStack {
-            List {
-                if isSearching {
-                    searchResults
-                } else {
-                    continueReadingSection
-                    Section {
-                        ForEach(Quran.shared.surahs) { surahLink($0) }
-                    }
+        // Host provides the NavigationStack (see MainTabView / MoreView).
+        List {
+            if isSearching {
+                searchResults
+            } else {
+                continueReadingSection
+                Section {
+                    ForEach(Quran.shared.surahs) { surahLink($0) }
                 }
             }
-            .scrollContentBackground(.hidden)
-            .scrollIndicators(.hidden)
-            .background(Palette.appBg.ignoresSafeArea())
-            .navigationTitle("Quran")
-            .searchable(text: $query, prompt: "Search surahs or verses")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink { BookmarksView() } label: { Image(systemName: "bookmark") }
-                        .tint(Palette.gold)
-                }
+        }
+        .scrollContentBackground(.hidden)
+        .scrollIndicators(.hidden)
+        .background(Palette.appBg.ignoresSafeArea())
+        .navigationTitle("Quran")
+        .searchable(text: $query, prompt: "Search surahs or verses")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink { BookmarksView() } label: { Image(systemName: "bookmark") }
+                    .tint(Palette.gold)
             }
         }
         .preferredColorScheme(Palette.active.colorScheme)
