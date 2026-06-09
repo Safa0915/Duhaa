@@ -34,7 +34,7 @@ struct DuasView: View {
                 Text(category.name)
                     .duhaaFont(17, .semibold)
                     .foregroundStyle(.primary)
-                Text("\(category.duas.count) du'as")
+                Text(category.subtitle ?? "\(category.duas.count) du'as")
                     .duhaaFont(12)
                     .foregroundStyle(Palette.blue.opacity(0.7))
             }
