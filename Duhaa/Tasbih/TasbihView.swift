@@ -5,7 +5,11 @@ import UIKit
 /// • Adhkar — the after-prayer flow, SubhanAllah ×33 → Alhamdulillah ×33 →
 ///   Allahu Akbar ×34, celebrating at 100.
 /// • Custom — count to any target you choose (presets or a stepper); it loops in
-///   rounds so you can keep going. The chosen mode and target are remembered.
+///   rounds so you can keep going.
+///
+/// All progress is persisted (each mode separately) and only ever cleared by the
+/// Reset button — leaving the tab, switching modes, changing the target, or
+/// relaunching the app never resets the count.
 struct TasbihView: View {
     private struct Dhikr {
         let arabic: String
@@ -25,18 +29,25 @@ struct TasbihView: View {
     @AppStorage("duhaa.tasbih.mode") private var modeRaw = Mode.adhkar.rawValue
     @AppStorage("duhaa.tasbih.target") private var customTarget = 33
 
-    @State private var phaseIndex = 0
-    @State private var count = 0
-    @State private var total = 0
-    @State private var rounds = 0
-    @State private var completed = false   // Adhkar mode: finished 100
+    // Adhkar progress (persisted, kept separate from Custom).
+    @AppStorage("duhaa.tasbih.adhkar.phase") private var aPhase = 0
+    @AppStorage("duhaa.tasbih.adhkar.count") private var aCount = 0
+    @AppStorage("duhaa.tasbih.adhkar.total") private var aTotal = 0
+    @AppStorage("duhaa.tasbih.adhkar.completed") private var aCompleted = false
+
+    // Custom progress (persisted, kept separate from Adhkar).
+    @AppStorage("duhaa.tasbih.custom.count") private var cCount = 0
+    @AppStorage("duhaa.tasbih.custom.total") private var cTotal = 0
+    @AppStorage("duhaa.tasbih.custom.rounds") private var cRounds = 0
 
     private var mode: Mode { Mode(rawValue: modeRaw) ?? .adhkar }
-    private var phase: Dhikr { phases[min(phaseIndex, phases.count - 1)] }
+    private var phase: Dhikr { phases[min(aPhase, phases.count - 1)] }
     /// The number the current circle counts to.
     private var target: Int { mode == .adhkar ? phase.target : max(1, customTarget) }
+    /// The beads counted in the current circle.
+    private var count: Int { mode == .adhkar ? aCount : cCount }
     private var progress: Double {
-        if mode == .adhkar && completed { return 1 }
+        if mode == .adhkar && aCompleted { return 1 }
         return min(1, Double(count) / Double(target))
     }
 
@@ -75,10 +86,8 @@ struct TasbihView: View {
     private func toggleButton(_ title: String, _ m: Mode) -> some View {
         let selected = mode == m
         return Button {
-            withAnimation(.spring(duration: 0.3)) {
-                modeRaw = m.rawValue
-                reset()
-            }
+            // Switching modes never resets — each mode keeps its own saved count.
+            withAnimation(.spring(duration: 0.3)) { modeRaw = m.rawValue }
         } label: {
             Text(title)
                 .duhaaFont(13, .semibold)
@@ -108,15 +117,15 @@ struct TasbihView: View {
     private var phaseDots: some View {
         HStack(spacing: 10) {
             ForEach(0..<phases.count, id: \.self) { i in
-                let isCurrent = (i == phaseIndex) && !completed
-                let isDone = completed || i < phaseIndex
+                let isCurrent = (i == aPhase) && !aCompleted
+                let isDone = aCompleted || i < aPhase
                 Capsule()
                     .fill(isDone || isCurrent ? Palette.gold : Color.primary.opacity(0.2))
                     .frame(width: isCurrent ? 22 : 7, height: 7)
             }
         }
-        .animation(.spring(duration: 0.3), value: phaseIndex)
-        .animation(.spring(duration: 0.3), value: completed)
+        .animation(.spring(duration: 0.3), value: aPhase)
+        .animation(.spring(duration: 0.3), value: aCompleted)
     }
 
     private var dhikrText: some View {
@@ -201,7 +210,7 @@ struct TasbihView: View {
                 .shadow(color: Palette.gold.opacity(0.4), radius: 8)
                 .animation(.easeOut(duration: 0.25), value: progress)
 
-            if mode == .adhkar && completed {
+            if mode == .adhkar && aCompleted {
                 VStack(spacing: 2) {
                     Image(systemName: "checkmark").duhaaFont(44, .light).foregroundStyle(Palette.gold)
                     Text("100").duhaaFont(20, .medium).foregroundStyle(.primary)
@@ -228,19 +237,19 @@ struct TasbihView: View {
 
     private var footer: some View {
         VStack(spacing: 14) {
-            if mode == .adhkar && completed {
+            if mode == .adhkar && aCompleted {
                 Text("Tasbih complete — alhamdulillah.")
                     .duhaaFont(14, .medium)
                     .foregroundStyle(Palette.gold)
             } else if mode == .adhkar {
-                Text("Total \(total) / 100")
+                Text("Total \(aTotal) / 100")
                     .duhaaFont(14)
                     .foregroundStyle(Palette.blue.opacity(0.8))
                 Text("Tap the circle to count")
                     .duhaaFont(12)
                     .foregroundStyle(Palette.blue.opacity(0.5))
             } else {
-                Text("Round \(rounds + 1)  ·  \(total) total")
+                Text("Round \(cRounds + 1)  ·  \(cTotal) total")
                     .duhaaFont(14)
                     .foregroundStyle(Palette.blue.opacity(0.8))
                 Text("Tap the circle to count")
@@ -262,45 +271,51 @@ struct TasbihView: View {
     // MARK: Actions
 
     private func tap() {
-        if mode == .adhkar && completed { reset(); return }
-        withAnimation { count += 1 }
-        total += 1
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-
-        guard count >= target else { return }
-        UINotificationFeedbackGenerator().notificationOccurred(.success)
-
-        if mode == .adhkar {
-            if phaseIndex < phases.count - 1 {
-                phaseIndex += 1
-                count = 0
+        switch mode {
+        case .adhkar:
+            // A finished tasbih stays finished until Reset — tapping does nothing.
+            guard !aCompleted else { return }
+            withAnimation { aCount += 1 }
+            aTotal += 1
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            guard aCount >= phase.target else { return }
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+            if aPhase < phases.count - 1 {
+                aPhase += 1
+                aCount = 0
             } else {
-                completed = true
+                aCompleted = true
             }
-        } else {
-            // Custom: finish a round and loop so dhikr can continue.
-            rounds += 1
-            count = 0
+
+        case .custom:
+            withAnimation { cCount += 1 }
+            cTotal += 1
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            guard cCount >= target else { return }
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+            cRounds += 1
+            cCount = 0          // loop so dhikr can continue
         }
     }
 
+    /// Changing the target does NOT reset the count (only the Reset button does).
     private func setTarget(_ value: Int) {
         let clamped = min(max(value, 1), 9999)
         guard clamped != customTarget else { return }
-        withAnimation {
-            customTarget = clamped
-            count = 0          // start the round fresh against the new target
-        }
+        withAnimation { customTarget = clamped }
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
 
+    /// The only thing that clears the count — and only for the mode in view.
     private func reset() {
         withAnimation {
-            phaseIndex = 0
-            count = 0
-            total = 0
-            rounds = 0
-            completed = false
+            switch mode {
+            case .adhkar:
+                aPhase = 0; aCount = 0; aTotal = 0; aCompleted = false
+            case .custom:
+                cCount = 0; cTotal = 0; cRounds = 0
+            }
         }
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
     }
 }
