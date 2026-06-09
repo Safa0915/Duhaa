@@ -4,8 +4,8 @@ import UIKit
 /// The Tasbih tab: a dhikr counter for remembrance. Two modes:
 /// • Adhkar — the after-prayer flow, SubhanAllah ×33 → Alhamdulillah ×33 →
 ///   Allahu Akbar ×34, celebrating at 100.
-/// • Custom — count to any target you choose (presets or a stepper); it loops in
-///   rounds so you can keep going.
+/// • Custom — count toward any goal you choose (presets or a stepper). It's a plain
+///   running tally that never loops back to zero; only Reset clears it.
 ///
 /// All progress is persisted (each mode separately) and only ever cleared by the
 /// Reset button — leaving the tab, switching modes, changing the target, or
@@ -35,10 +35,9 @@ struct TasbihView: View {
     @AppStorage("duhaa.tasbih.adhkar.total") private var aTotal = 0
     @AppStorage("duhaa.tasbih.adhkar.completed") private var aCompleted = false
 
-    // Custom progress (persisted, kept separate from Adhkar).
+    // Custom progress — a single running tally (persisted). Counts up freely and is
+    // only ever cleared by Reset (no looping back to zero at the target).
     @AppStorage("duhaa.tasbih.custom.count") private var cCount = 0
-    @AppStorage("duhaa.tasbih.custom.total") private var cTotal = 0
-    @AppStorage("duhaa.tasbih.custom.rounds") private var cRounds = 0
 
     private var mode: Mode { Mode(rawValue: modeRaw) ?? .adhkar }
     private var phase: Dhikr { phases[min(aPhase, phases.count - 1)] }
@@ -223,7 +222,7 @@ struct TasbihView: View {
                         .contentTransition(.numericText())
                         .lineLimit(1)
                         .minimumScaleFactor(0.4)
-                    Text("of \(target)")
+                    Text(mode == .custom && count >= target ? "goal \(target) ✓" : "of \(target)")
                         .duhaaFont(15)
                         .foregroundStyle(Palette.blue.opacity(0.7))
                 }
@@ -249,9 +248,11 @@ struct TasbihView: View {
                     .duhaaFont(12)
                     .foregroundStyle(Palette.blue.opacity(0.5))
             } else {
-                Text("Round \(cRounds + 1)  ·  \(cTotal) total")
-                    .duhaaFont(14)
-                    .foregroundStyle(Palette.blue.opacity(0.8))
+                if cCount >= target {
+                    Text("Goal of \(target) reached 🤍")
+                        .duhaaFont(14, .medium)
+                        .foregroundStyle(Palette.gold)
+                }
                 Text("Tap the circle to count")
                     .duhaaFont(12)
                     .foregroundStyle(Palette.blue.opacity(0.5))
@@ -288,13 +289,13 @@ struct TasbihView: View {
             }
 
         case .custom:
+            // A plain running tally: counts up and never loops back to zero.
             withAnimation { cCount += 1 }
-            cTotal += 1
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            guard cCount >= target else { return }
-            UINotificationFeedbackGenerator().notificationOccurred(.success)
-            cRounds += 1
-            cCount = 0          // loop so dhikr can continue
+            // Gentle celebration the moment you reach your goal — but keep counting.
+            if cCount == target {
+                UINotificationFeedbackGenerator().notificationOccurred(.success)
+            }
         }
     }
 
@@ -313,7 +314,7 @@ struct TasbihView: View {
             case .adhkar:
                 aPhase = 0; aCount = 0; aTotal = 0; aCompleted = false
             case .custom:
-                cCount = 0; cTotal = 0; cRounds = 0
+                cCount = 0
             }
         }
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
