@@ -41,3 +41,6 @@ build/
 # IDE
 .idea/
 .vscode/
+
+# App assets: bundled sounds ARE tracked (the *.wav rule was for generated artifacts)
+!Duhaa/Sounds/*.wav
