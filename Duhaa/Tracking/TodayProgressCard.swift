@@ -38,6 +38,7 @@ struct TodayProgressCard: View {
                         .frame(width: 13, height: 13)
                         .overlay(Circle().stroke(done ? .clear : Color.primary.opacity(0.18), lineWidth: 1))
                         .shadow(color: done ? Palette.gold.opacity(0.5) : .clear, radius: 4)
+                        .accessibilityLabel("\(prayer.rawValue) \(done ? "prayed" : "not prayed")")
                 }
                 Spacer()
             }

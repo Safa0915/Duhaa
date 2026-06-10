@@ -40,7 +40,7 @@ struct TasbihView: View {
     @AppStorage("duhaa.tasbih.custom.count") private var cCount = 0
 
     private var mode: Mode { Mode(rawValue: modeRaw) ?? .adhkar }
-    private var phase: Dhikr { phases[min(aPhase, phases.count - 1)] }
+    private var phase: Dhikr { phases[max(0, min(aPhase, phases.count - 1))] }
     /// The number the current circle counts to.
     private var target: Int { mode == .adhkar ? phase.target : max(1, customTarget) }
     /// The beads counted in the current circle.
@@ -95,6 +95,8 @@ struct TasbihView: View {
                 .background(selected ? Palette.gold : Color.clear, in: Capsule())
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("\(title) mode")
+        .accessibilityValue(selected ? "Selected" : "Not selected")
     }
 
     // MARK: Middle — dhikr (Adhkar) or target picker (Custom)
@@ -197,39 +199,53 @@ struct TasbihView: View {
     // MARK: Dial
 
     private var dial: some View {
-        ZStack {
-            Circle()
-                .stroke(Palette.gold.opacity(0.12), lineWidth: 16)
-                .frame(width: 250, height: 250)
-            Circle()
-                .trim(from: 0, to: progress)
-                .stroke(Palette.gold, style: StrokeStyle(lineWidth: 16, lineCap: .round))
-                .rotationEffect(.degrees(-90))
-                .frame(width: 250, height: 250)
-                .shadow(color: Palette.gold.opacity(0.4), radius: 8)
-                .animation(.easeOut(duration: 0.25), value: progress)
+        Button(action: tap) {
+            ZStack {
+                Circle()
+                    .stroke(Palette.gold.opacity(0.12), lineWidth: 16)
+                    .frame(width: 250, height: 250)
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(Palette.gold, style: StrokeStyle(lineWidth: 16, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                    .frame(width: 250, height: 250)
+                    .shadow(color: Palette.gold.opacity(0.4), radius: 8)
+                    .animation(.easeOut(duration: 0.25), value: progress)
 
-            if mode == .adhkar && aCompleted {
-                VStack(spacing: 2) {
-                    Image(systemName: "checkmark").duhaaFont(44, .light).foregroundStyle(Palette.gold)
-                    Text("100").duhaaFont(20, .medium).foregroundStyle(.primary)
-                }
-            } else {
-                VStack(spacing: 2) {
-                    Text("\(count)")
-                        .duhaaFont(76, .thin)
-                        .foregroundStyle(.primary)
-                        .contentTransition(.numericText())
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.4)
-                    Text(mode == .custom && count >= target ? "goal \(target) ✓" : "of \(target)")
-                        .duhaaFont(15)
-                        .foregroundStyle(Palette.blue.opacity(0.7))
+                if mode == .adhkar && aCompleted {
+                    VStack(spacing: 2) {
+                        Image(systemName: "checkmark").duhaaFont(44, .light).foregroundStyle(Palette.gold)
+                        Text("100").duhaaFont(20, .medium).foregroundStyle(.primary)
+                    }
+                } else {
+                    VStack(spacing: 2) {
+                        Text("\(count)")
+                            .duhaaFont(76, .thin)
+                            .foregroundStyle(.primary)
+                            .contentTransition(.numericText())
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.4)
+                        Text(mode == .custom && count >= target ? "goal \(target) ✓" : "of \(target)")
+                            .duhaaFont(15)
+                            .foregroundStyle(Palette.blue.opacity(0.7))
+                    }
                 }
             }
         }
-        .contentShape(Circle())
-        .onTapGesture { tap() }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Tasbih counter")
+        .accessibilityValue(dialAccessibilityValue)
+        .accessibilityHint("Double-tap to count")
+    }
+
+    private var dialAccessibilityValue: String {
+        switch mode {
+        case .adhkar:
+            let value = "\(phase.latin), \(count) of \(target)"
+            return aCompleted ? "\(value), complete" : value
+        case .custom:
+            return "Custom, \(count) of \(target)"
+        }
     }
 
     // MARK: Footer
@@ -266,6 +282,7 @@ struct TasbihView: View {
                     .overlay(Capsule().stroke(Palette.blue.opacity(0.4), lineWidth: 1))
             }
             .padding(.top, 4)
+            .accessibilityLabel("Reset tasbih counter")
         }
     }
 

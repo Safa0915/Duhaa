@@ -39,8 +39,11 @@ final class AyahPlayer {
     func stop() {
         player?.pause()
         cleanupObservers()
+        player?.replaceCurrentItem(with: nil)
+        player = nil
         playingKey = nil
         isBuffering = false
+        deactivateSession()
     }
 
     // MARK: Internals
@@ -96,6 +99,10 @@ final class AyahPlayer {
         // Play through the silent switch, like a media app, and duck other audio.
         try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
         try? AVAudioSession.sharedInstance().setActive(true)
+    }
+
+    private func deactivateSession() {
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 
     private func key(_ s: Int, _ a: Int) -> String { "\(s):\(a)" }

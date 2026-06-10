@@ -88,7 +88,7 @@ enum NotificationCopy {
                    "Whoever prays Fajr is under Allah's protection all day."],
         .dhuhr:   ["A still point in the middle of the day. Time for Dhuhr. ☀️",
                    "Step away from the noise for a moment of Dhuhr."],
-        .asr:     ["The light is softening — don't let Asr slip by. 🌇",
+        .asr:     ["The light is softening — a quiet moment for Asr awaits. 🌇",
                    "Guard the middle prayer. Time for Asr."],
         .maghrib: ["The sun is setting — time for Maghrib. 🌆",
                    "As the day closes, turn to Him for Maghrib."],

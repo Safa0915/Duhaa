@@ -51,7 +51,7 @@ struct SurahReaderView: View {
                     Image(systemName: player.isActive ? "pause.circle.fill" : "play.circle")
                         .foregroundStyle(Palette.gold)
                 }
-                .accessibilityLabel(player.isActive ? "Stop recitation" : "Play surah")
+                .accessibilityLabel(player.isActive ? "Pause surah" : "Play surah")
             }
         }
         .onDisappear {
@@ -87,6 +87,7 @@ struct SurahReaderView: View {
 
     private func ayahView(_ ayah: Ayah) -> some View {
         let isPlaying = player.isPlaying(surah.number, ayah.number)
+        let isBookmarked = bookmarks.isBookmarked(surah.number, ayah.number)
         return VStack(alignment: .leading, spacing: 12) {
             HStack {
                 ZStack {
@@ -102,12 +103,12 @@ struct SurahReaderView: View {
                     Button {
                         bookmarks.toggle(surah.number, ayah.number)
                     } label: {
-                        Image(systemName: bookmarks.isBookmarked(surah.number, ayah.number) ? "bookmark.fill" : "bookmark")
+                        Image(systemName: isBookmarked ? "bookmark.fill" : "bookmark")
                             .duhaaFont(16)
                             .foregroundStyle(Palette.gold)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Bookmark ayah \(ayah.number)")
+                    .accessibilityLabel(isBookmarked ? "Remove bookmark for ayah \(ayah.number)" : "Bookmark ayah \(ayah.number)")
                 }
             }
 
