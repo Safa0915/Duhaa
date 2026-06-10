@@ -35,6 +35,9 @@ struct PrayerRowData: Identifiable {
     /// Whether marking this prayer *right now* counts as on time (logged before the
     /// next prayer begins). Used only by the opt-in insights tracker.
     let onTime: Bool
+    /// The day this row's mark belongs to. Usually today — except Isha between
+    /// midnight and Fajr, which is still *yesterday's* Isha.
+    let dayKey: String
     var id: String { prayer.rawValue }
 }
 
@@ -156,12 +159,21 @@ final class PrayerHomeModel {
             .maghrib: today.maghrib, .isha: today.isha,
         ]
         // Each prayer is "on time" until the next prayer begins (gentle, hope-framed:
-        // grace over strictness). Isha runs to tomorrow's Fajr.
+        // grace over strictness). Two fiqh boundaries are firm: Fajr ends at sunrise
+        // (consensus), and Isha runs to tomorrow's Fajr (the lenient/Hanafi reading).
         let tomorrowFajr = times(location, config, dayOffset: 1)?.fajr
         let windowEnd: [Prayer: Date] = [
-            .fajr: today.dhuhr, .dhuhr: today.asr, .asr: today.maghrib,
+            .fajr: today.sunrise, .dhuhr: today.asr, .asr: today.maghrib,
             .maghrib: today.isha, .isha: tomorrowFajr ?? today.isha.addingTimeInterval(6 * 3600),
         ]
+        // Between midnight and Fajr, "Isha" can only mean last night's — route its
+        // mark to yesterday so streaks and insights land on the correct day. (It is
+        // also still on time then: yesterday's Isha runs until today's Fajr.)
+        var cal = Calendar(identifier: .gregorian)
+        cal.timeZone = tz
+        let yesterdayKey = cal.date(byAdding: .day, value: -1, to: now)
+            .map { PrayerTracker.dayKey($0, tz) } ?? d.dayKey
+        let preFajr = now < today.fajr
         d.rows = Prayer.allCases.map { prayer in
             let time = byPrayer[prayer]!
             let state: RowState
@@ -170,11 +182,13 @@ final class PrayerHomeModel {
             } else {
                 state = time <= now ? .passed : .upcoming
             }
+            let isLastNightsIsha = prayer == .isha && preFajr
             return PrayerRowData(prayer: prayer,
                                  time: clock(time, tz),
                                  state: state,
                                  sub: prayer == .isha ? ishaSub(today, tz) : nil,
-                                 onTime: now < (windowEnd[prayer] ?? time))
+                                 onTime: isLastNightsIsha || now < (windowEnd[prayer] ?? time),
+                                 dayKey: isLastNightsIsha ? yesterdayKey : d.dayKey)
         }
 
         d.sunrise = clock(today.sunrise, tz)

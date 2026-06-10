@@ -206,7 +206,6 @@ struct NextPrayerBanner: View {
 
 struct PrayersCard: View {
     let rows: [PrayerRowData]
-    let dayKey: String
     /// Sunrise time (end of Fajr / start of Duhaa) — shown as a slim boundary, not a prayer.
     var sunrise: String = ""
     var sunrisePassed: Bool = false
@@ -224,7 +223,7 @@ struct PrayersCard: View {
             VStack(spacing: 0) {
                 ForEach(Array(rows.enumerated()), id: \.element.id) { index, row in
                     if index > 0 { Divider().overlay(Color.primary.opacity(0.09)) }
-                    PrayerRowView(row: row, dayKey: dayKey, onMark: onMark)
+                    PrayerRowView(row: row, onMark: onMark)
                     // Sunrise sits between Fajr and Dhuhr — its true place in the day.
                     if row.prayer == .fajr && !sunrise.isEmpty {
                         Divider().overlay(Color.primary.opacity(0.09))
@@ -287,11 +286,10 @@ private struct SunriseMarker: View {
 private struct PrayerRowView: View {
     @Environment(PrayerTracker.self) private var tracker
     let row: PrayerRowData
-    let dayKey: String
     let onMark: (Prayer, Bool) -> Void
 
     private var isNext: Bool { row.state == .next }
-    private var isPrayed: Bool { tracker.isMarked(row.prayer, dayKey: dayKey) }
+    private var isPrayed: Bool { tracker.isMarked(row.prayer, dayKey: row.dayKey) }
     /// Softly de-emphasise a passed-and-unmarked prayer — gentle, never a scold.
     private var contentOpacity: Double { isPrayed ? 1 : (row.state == .passed ? 0.5 : 1) }
 
@@ -347,7 +345,7 @@ private struct PrayerRowView: View {
 
     private var markButton: some View {
         Button {
-            let nowPrayed = tracker.toggle(row.prayer, dayKey: dayKey, onTime: row.onTime)
+            let nowPrayed = tracker.toggle(row.prayer, dayKey: row.dayKey, onTime: row.onTime)
             onMark(row.prayer, nowPrayed)
         } label: {
             Image(systemName: isPrayed ? "checkmark.circle.fill" : "circle")

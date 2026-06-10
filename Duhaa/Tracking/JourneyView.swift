@@ -165,7 +165,9 @@ struct JourneyView: View {
                 .frame(height: 38)
                 .opacity(cell.isFuture ? 0.3 : 1)
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel("\(accessibilityDay(date)), \(cell.count) of 5 prayers")
+                .accessibilityLabel(cell.isExcused && cell.count == 0
+                                    ? "\(accessibilityDay(date)), excused"
+                                    : "\(accessibilityDay(date)), \(cell.count) of 5 prayers")
             } else {
                 Color.clear.frame(height: 38)
             }
@@ -262,7 +264,7 @@ struct JourneyView: View {
                 insightLine("Late", pct: data.latePct, count: data.late, tint: Palette.blue)
                 insightLine("Missed", pct: data.missedPct, count: data.missed, tint: .primary.opacity(0.45))
 
-                Text("A gentle mirror over the days you've been tracking — not a scorecard. Every prayer ahead is a fresh start. 🤍")
+                Text("On time means marked before the next prayer began (Fajr: before sunrise). A gentle mirror, not a scorecard — every prayer ahead is a fresh start. 🤍")
                     .duhaaFont(11)
                     .foregroundStyle(Palette.blue.opacity(0.55))
                     .padding(.top, 2)
