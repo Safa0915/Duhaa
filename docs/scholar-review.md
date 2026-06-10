@@ -156,9 +156,10 @@ that assert something religious.
   rendered in the KFGQPC HAFS Uthmanic font (King Fahd Complex, Madinah).
 - [ ] **4.2 English translation:** Saheeh International.
 - [ ] **4.3 Recitation:** Sheikh Mishary Rashid Alafasy (streamed, EveryAyah.com).
-- [ ] **4.4 Du'as:** Hisnul Muslim ("Fortress of the Muslim", Sa'id al-Qahtani)
-  for the Morning / Evening / Daily / Selected categories, with transliteration
-  and English. Two categories are hand-curated instead (see 4.6).
+- [ ] **4.4 Du'as:** the app currently ships ONLY the two hand-curated
+  categories in 4.6. The bulk Hisnul Muslim set (Morning / Evening / Daily /
+  Selected) was removed pending curation and will return category by category
+  after review.
 - [ ] **4.5 Verse of the Day:** ~25 curated short hopeful verses (e.g. 93:3-5,
   94:5-6, 2:152, 39:53) shown one per day with translation.
 - [ ] **4.6 Curated adhkar categories — please verify each citation.**
