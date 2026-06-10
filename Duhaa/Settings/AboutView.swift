@@ -37,7 +37,7 @@ struct AboutView: View {
                 credit("Arabic text",
                        "The Uthmani text of the Qur'an (public heritage of the ummah), via the Quran.com API.")
                 credit("English translation",
-                       "Saheeh International, © Dar Abul-Qasim. Used with gratitude.")
+                       "ClearQuran by Talal Itani (Allah edition), used under its Creative Commons license (BY-NC-ND). ClearQuran.com.")
                 credit("Uthmani script font",
                        "KFGQPC HAFS Uthmanic Script — King Fahd Glorious Qur'an Printing Complex, Madinah.")
                 credit("Recitation",

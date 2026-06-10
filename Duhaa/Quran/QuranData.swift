@@ -1,8 +1,8 @@
 import Foundation
 
-/// The bundled Quran (Arabic Uthmani + Sahih International English).
-/// NOTE before App Store submission: verify the Sahih International translation's
-/// licensing/permission — the Arabic text is public domain, the translation is not.
+/// The bundled Quran (Arabic Uthmani + English: ClearQuran by Talal Itani,
+/// the "Allah" edition — CC BY-NC-ND, free for this free app with attribution,
+/// credited in About).
 struct QuranData: Decodable {
     let bismillah: Bismillah
     let surahs: [Surah]

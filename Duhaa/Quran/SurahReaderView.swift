@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Reads one surah: a header, the Bismillah (where it applies), then each ayah
-/// with Arabic (RTL), the Sahih International English, a bookmark toggle, and a
+/// with Arabic (RTL), the ClearQuran English, a bookmark toggle, and a
 /// per-ayah play button (streams Mishary Alafasy and auto-advances).
 struct SurahReaderView: View {
     let surah: Surah

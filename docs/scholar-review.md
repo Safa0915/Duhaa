@@ -154,7 +154,10 @@ that assert something religious.
 
 - [ ] **4.1 Qur'an Arabic text:** Uthmani script, sourced from the Quran.com API,
   rendered in the KFGQPC HAFS Uthmanic font (King Fahd Complex, Madinah).
-- [ ] **4.2 English translation:** Saheeh International.
+- [ ] **4.2 English translation:** ClearQuran by Talal Itani, the "Allah"
+  edition (the translator publishes two official editions; this one renders
+  the divine name as Allah). Licensed CC BY-NC-ND — free for this free app
+  with attribution, no permission required.
 - [ ] **4.3 Recitation:** Sheikh Mishary Rashid Alafasy (streamed, EveryAyah.com).
 - [ ] **4.4 Du'as:** the app currently ships ONLY the two hand-curated
   categories in 4.6. The bulk Hisnul Muslim set (Morning / Evening / Daily /
