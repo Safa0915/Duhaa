@@ -23,12 +23,9 @@ struct SettingsView: View {
                     } label: {
                         Label("Notifications", systemImage: "bell.badge")
                     }
-                    NavigationLink {
-                        SupportView()
-                    } label: {
-                        Label("Support Duhaa", systemImage: "heart.fill")
-                            .foregroundStyle(Palette.gold)
-                    }
+                    // Support Duhaa (SupportView) is hidden for the v1 App Store
+                    // submission: external donation links risk rejection under
+                    // guideline 3.1.1. Returns in v1.1 as a StoreKit tip jar.
                 }
 
                 Section("Appearance") {
@@ -113,6 +110,14 @@ struct SettingsView: View {
 
                 if isHighLatitude {
                     highLatitudeSection
+                }
+
+                Section {
+                    NavigationLink {
+                        AboutView()
+                    } label: {
+                        Label("About & Acknowledgements", systemImage: "info.circle")
+                    }
                 }
             }
             .scrollContentBackground(.hidden)

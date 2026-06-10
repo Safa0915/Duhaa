@@ -1,4 +1,5 @@
 import SwiftUI
+import UserNotifications
 
 /// Per-prayer notification controls (spec §8). Changing anything reschedules the
 /// rolling window immediately.
@@ -59,6 +60,18 @@ struct NotificationSettingsView: View {
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
+
+            #if DEBUG
+            // Dev-only: verify the chime + banner on a real device (simulators
+            // don't play custom notification sounds). Lock the phone after tapping.
+            Section("Developer") {
+                Button {
+                    sendTestNotification()
+                } label: {
+                    Label("Test notification in 5 seconds", systemImage: "bell.and.waves.left.and.right")
+                }
+            }
+            #endif
         }
         .scrollContentBackground(.hidden)
         .scrollIndicators(.hidden)
@@ -79,4 +92,16 @@ struct NotificationSettingsView: View {
                                          config: calc.prayerConfig,
                                          notifs: notifs)
     }
+
+    #if DEBUG
+    private func sendTestNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = "Time for Maghrib 🌆"
+        content.body = "This is a test — you should hear the soft Duhaa chime."
+        content.sound = UNNotificationSound(named: UNNotificationSoundName(NotificationCopy.soundFileName))
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        let request = UNNotificationRequest(identifier: "duhaa.test", content: content, trigger: trigger)
+        UNUserNotificationCenter.current().add(request)
+    }
+    #endif
 }

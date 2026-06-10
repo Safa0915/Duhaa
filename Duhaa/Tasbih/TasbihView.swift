@@ -235,7 +235,6 @@ struct TasbihView: View {
         .buttonStyle(.plain)
         .accessibilityLabel("Tasbih counter")
         .accessibilityValue(dialAccessibilityValue)
-        .accessibilityHint("Double-tap to count")
     }
 
     private var dialAccessibilityValue: String {

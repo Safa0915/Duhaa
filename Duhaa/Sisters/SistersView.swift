@@ -193,6 +193,15 @@ struct SistersQAView: View {
                 .tint(Palette.gold)
                 .listRowBackground(Palette.card)
             }
+
+            // The rulings live on this screen, so the reader sees the caveat
+            // here too — not only back on the Sisters page.
+            Section {
+                Text(SistersContent.disclaimer)
+                    .duhaaFont(11)
+                    .foregroundStyle(.secondary)
+                    .listRowBackground(Color.clear)
+            }
         }
         .scrollContentBackground(.hidden)
         .scrollIndicators(.hidden)
