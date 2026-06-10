@@ -48,6 +48,22 @@ final class PrayerHomeModelTests: XCTestCase {
         XCTAssertFalse(row(.fajr, at: after).onTime)
     }
 
+    // MARK: Isha on-time window (ends at Islamic midnight)
+
+    func testIshaOnTimeBeforeIslamicMidnight() {
+        let t = engineTimes()
+        let evening = t.isha.addingTimeInterval(60)
+        XCTAssertTrue(row(.isha, at: evening).onTime)
+    }
+
+    func testIshaLateAfterIslamicMidnight() {
+        let t = engineTimes()
+        // Just past June 9's Islamic midnight (early hours of June 10): the row
+        // routes to yesterday (June 9) and is no longer on time.
+        let lateNight = t.islamicMidnight.addingTimeInterval(300)
+        XCTAssertFalse(row(.isha, at: lateNight).onTime)
+    }
+
     // MARK: Midnight rule (pre-Fajr Isha is yesterday's)
 
     func testIshaBeforeFajrBelongsToYesterday() {
@@ -56,7 +72,7 @@ final class PrayerHomeModelTests: XCTestCase {
         let isha = row(.isha, at: night)
         let yesterday = Calendar(identifier: .gregorian).date(byAdding: .day, value: -1, to: night)!
         XCTAssertEqual(isha.dayKey, dayKey(yesterday))
-        XCTAssertTrue(isha.onTime)   // yesterday's Isha runs until today's Fajr
+        XCTAssertFalse(isha.onTime)   // well past yesterday's Islamic midnight
     }
 
     func testOtherRowsKeepTodayKeyBeforeFajr() {

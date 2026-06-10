@@ -129,8 +129,9 @@ final class PrayerHomeModel {
 
         // A timeline spanning yesterday's Isha → today's five → tomorrow's Fajr,
         // so "previous" and "next" resolve correctly at any hour.
+        let yesterday = times(location, config, dayOffset: -1)
         var timeline: [(Prayer, Date)] = []
-        if let y = times(location, config, dayOffset: -1) { timeline.append((.isha, y.isha)) }
+        if let y = yesterday { timeline.append((.isha, y.isha)) }
         timeline += [(.fajr, today.fajr), (.dhuhr, today.dhuhr), (.asr, today.asr),
                      (.maghrib, today.maghrib), (.isha, today.isha)]
         if let t = times(location, config, dayOffset: 1) { timeline.append((.fajr, t.fajr)) }
@@ -160,19 +161,27 @@ final class PrayerHomeModel {
         ]
         // Each prayer is "on time" until the next prayer begins (gentle, hope-framed:
         // grace over strictness). Two fiqh boundaries are firm: Fajr ends at sunrise
-        // (consensus), and Isha runs to tomorrow's Fajr (the lenient/Hanafi reading).
+        // (consensus), and Isha ends at Islamic midnight — matching the "ends ..."
+        // note the row itself shows. At extreme latitudes where Isha begins after
+        // Islamic midnight, fall back to Fajr so it isn't "late" the moment it starts.
         let tomorrowFajr = times(location, config, dayOffset: 1)?.fajr
+        let ishaEnd = today.ishaAfterIslamicMidnight
+            ? (tomorrowFajr ?? today.isha.addingTimeInterval(6 * 3600))
+            : today.islamicMidnight
         let windowEnd: [Prayer: Date] = [
             .fajr: today.sunrise, .dhuhr: today.asr, .asr: today.maghrib,
-            .maghrib: today.isha, .isha: tomorrowFajr ?? today.isha.addingTimeInterval(6 * 3600),
+            .maghrib: today.isha, .isha: ishaEnd,
         ]
         // Between midnight and Fajr, "Isha" can only mean last night's — route its
-        // mark to yesterday so streaks and insights land on the correct day. (It is
-        // also still on time then: yesterday's Isha runs until today's Fajr.)
+        // mark to yesterday so streaks and insights land on the correct day. It is
+        // on time only until *yesterday's* Islamic midnight (same anomaly fallback).
         var cal = Calendar(identifier: .gregorian)
         cal.timeZone = tz
         let yesterdayKey = cal.date(byAdding: .day, value: -1, to: now)
             .map { PrayerTracker.dayKey($0, tz) } ?? d.dayKey
+        let lastNightIshaEnd = yesterday.map { y in
+            y.ishaAfterIslamicMidnight ? today.fajr : y.islamicMidnight
+        } ?? today.fajr
         let preFajr = now < today.fajr
         d.rows = Prayer.allCases.map { prayer in
             let time = byPrayer[prayer]!
@@ -183,11 +192,12 @@ final class PrayerHomeModel {
                 state = time <= now ? .passed : .upcoming
             }
             let isLastNightsIsha = prayer == .isha && preFajr
+            let end = isLastNightsIsha ? lastNightIshaEnd : (windowEnd[prayer] ?? time)
             return PrayerRowData(prayer: prayer,
                                  time: clock(time, tz),
                                  state: state,
                                  sub: prayer == .isha ? ishaSub(today, tz) : nil,
-                                 onTime: isLastNightsIsha || now < (windowEnd[prayer] ?? time),
+                                 onTime: now < end,
                                  dayKey: isLastNightsIsha ? yesterdayKey : d.dayKey)
         }
 

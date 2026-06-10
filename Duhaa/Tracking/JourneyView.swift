@@ -264,7 +264,7 @@ struct JourneyView: View {
                 insightLine("Late", pct: data.latePct, count: data.late, tint: Palette.blue)
                 insightLine("Missed", pct: data.missedPct, count: data.missed, tint: .primary.opacity(0.45))
 
-                Text("On time means marked before the next prayer began (Fajr: before sunrise). A gentle mirror, not a scorecard — every prayer ahead is a fresh start. 🤍")
+                Text("On time means marked before the next prayer began (Fajr: before sunrise · Isha: before Islamic midnight). A gentle mirror, not a scorecard — every prayer ahead is a fresh start. 🤍")
                     .duhaaFont(11)
                     .foregroundStyle(Palette.blue.opacity(0.55))
                     .padding(.top, 2)

@@ -25,13 +25,16 @@ These are not display text; they are how the app behaves.
   Standard (Shafi'i/Maliki/Hanbali) and Hanafi shadow rules.
 - [ ] **1.2 "On time" (opt-in statistics):** a prayer marked before the next
   prayer begins counts as on time, with two firm boundaries — **Fajr only until
-  sunrise**, and **Isha until the next Fajr** (the lenient reading, chosen
-  deliberately to encourage rather than judge). Later marks count as "late,"
-  shown gently. Is this defensible as a tracking convention?
-- [ ] **1.3 Isha note:** the app displays "Isha ends at Islamic midnight"
-  (midpoint of Maghrib→Fajr) as information, while accepting Isha up to Fajr.
+  sunrise**, and **Isha only until Islamic midnight** (midpoint of
+  Maghrib→Fajr). Later marks count as "late," shown gently. Is this defensible
+  as a tracking convention?
+- [ ] **1.3 Isha note:** the app displays "Isha ends at Islamic midnight" on the
+  prayer row, consistent with the on-time boundary above. At extreme latitudes
+  where Isha begins after Islamic midnight, the boundary falls back to Fajr so
+  the prayer is never "late" the moment it begins.
 - [ ] **1.4 After civil midnight, before Fajr:** marking Isha records it for the
-  *previous* day (tonight's Isha hasn't begun yet).
+  *previous* day (tonight's Isha hasn't begun yet); past Islamic midnight it
+  counts as prayed-late, never as missed.
 - [ ] **1.5 Menstruation:** days logged as menses are excused — they never break
   a prayer streak and are never counted as missed in statistics.
 - [ ] **1.6 Sunrise** is shown as a slim divider ("Fajr ends · Duha follows"),
