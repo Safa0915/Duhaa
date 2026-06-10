@@ -68,10 +68,6 @@ struct HomeDisplay {
     var prevLabel = ""
     var nextLabel = ""
     var rows: [PrayerRowData] = []
-    /// Sunrise — shown as a slim boundary in the list (end of Fajr / start of Duhaa),
-    /// never as a sixth obligatory prayer.
-    var sunrise = ""
-    var sunrisePassed = false
     var tahajjud = ""
     var islamicMidnight = ""
     // Ramadan (auto-detected from the Hijri month). The card shows only when isRamadan.
@@ -193,16 +189,19 @@ final class PrayerHomeModel {
             }
             let isLastNightsIsha = prayer == .isha && preFajr
             let end = isLastNightsIsha ? lastNightIshaEnd : (windowEnd[prayer] ?? time)
+            let sub: String? = switch prayer {
+            case .isha: ishaSub(today, tz)
+            case .fajr: fajrSub(today, tz)
+            default: nil
+            }
             return PrayerRowData(prayer: prayer,
                                  time: clock(time, tz),
                                  state: state,
-                                 sub: prayer == .isha ? ishaSub(today, tz) : nil,
+                                 sub: sub,
                                  onTime: now < end,
                                  dayKey: isLastNightsIsha ? yesterdayKey : d.dayKey)
         }
 
-        d.sunrise = clock(today.sunrise, tz)
-        d.sunrisePassed = today.sunrise <= now
         d.tahajjud = clock(today.tahajjud, tz)
         d.islamicMidnight = clock(today.islamicMidnight, tz)
 
@@ -240,6 +239,19 @@ final class PrayerHomeModel {
                                   longitude: location.longitude,
                                   date: comps,
                                   config: config)
+    }
+
+    // MARK: Fajr "ends at sunrise" sub-line
+
+    /// Sunrise — the end of Fajr and the threshold of the Duhaa prayer (the app's
+    /// namesake) — lives inside the Fajr row, never as a sixth prayer. The newline
+    /// keeps the namesake nod on its own tidy line instead of an awkward mid-wrap.
+    private func fajrSub(_ t: DuhaaPrayerTimes, _ tz: TimeZone) -> String {
+        var first = "ends at sunrise \(clock(t.sunrise, tz))"
+        if now >= t.fajr && now < t.sunrise {
+            first += " · in \(countdown(to: t.sunrise))"
+        }
+        return first + "\nDuhaa follows"
     }
 
     // MARK: Isha "ends at Islamic midnight" sub-line

@@ -37,8 +37,8 @@ These are not display text; they are how the app behaves.
   counts as prayed-late, never as missed.
 - [ ] **1.5 Menstruation:** days logged as menses are excused — they never break
   a prayer streak and are never counted as missed in statistics.
-- [ ] **1.6 Sunrise** is shown as a slim divider ("Fajr ends · Duha follows"),
-  explicitly not a sixth tracked prayer.
+- [ ] **1.6 Sunrise** appears as a note inside the Fajr row ("ends at sunrise
+  5:47 AM · Duhaa follows"), explicitly not a sixth tracked prayer.
 - [ ] **1.7 Tasbih default:** SubhanAllah ×33, Alhamdulillah ×33, Allahu Akbar
   ×34 (= 100).
 - [ ] **1.8 High latitudes (UK / N. Europe):** computed Fajr/Isha are unreliable
