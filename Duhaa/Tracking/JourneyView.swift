@@ -115,6 +115,7 @@ struct JourneyView: View {
                     Image(systemName: "chevron.left").duhaaFont(15, .semibold)
                 }
                 .foregroundStyle(Palette.gold)
+                .accessibilityLabel("Previous month")
                 Spacer()
                 Text(monthTitle).duhaaFont(15, .semibold).foregroundStyle(.primary)
                 Spacer()
@@ -123,6 +124,7 @@ struct JourneyView: View {
                 }
                 .foregroundStyle(canGoForward ? Palette.gold : Palette.gold.opacity(0.25))
                 .disabled(!canGoForward)
+                .accessibilityLabel("Next month")
             }
 
             HStack(spacing: 6) {
@@ -146,7 +148,7 @@ struct JourneyView: View {
 
     private func dayCell(_ cell: DayCell) -> some View {
         Group {
-            if let day = cell.day {
+            if let day = cell.day, let date = cell.date {
                 let frac = Double(cell.count) / 5.0
                 // Excused (menses) days with no prayers get a soft rose tint, not an empty "missed" circle.
                 let isExcusedEmpty = cell.isExcused && cell.count == 0
@@ -162,6 +164,8 @@ struct JourneyView: View {
                 }
                 .frame(height: 38)
                 .opacity(cell.isFuture ? 0.3 : 1)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("\(accessibilityDay(date)), \(cell.count) of 5 prayers")
             } else {
                 Color.clear.frame(height: 38)
             }
@@ -293,6 +297,15 @@ struct JourneyView: View {
         total > 0 ? Double(n) / Double(total) : 0
     }
 
+    private func accessibilityDay(_ date: Date) -> String {
+        let f = DateFormatter()
+        f.calendar = calendar
+        f.timeZone = tz
+        f.locale = Locale(identifier: "en_US")
+        f.dateFormat = "MMMM d"
+        return f.string(from: date)
+    }
+
     // MARK: Footer
 
     private var footer: some View {
@@ -350,7 +363,7 @@ struct JourneyView: View {
         var cells: [DayCell] = []
         var idx = 0
         for _ in 0..<leading {
-            cells.append(DayCell(id: idx, day: nil, count: 0, isToday: false, isFuture: false, isExcused: false)); idx += 1
+            cells.append(DayCell(id: idx, day: nil, date: nil, count: 0, isToday: false, isFuture: false, isExcused: false)); idx += 1
         }
         let excusedDays = excused
         for d in range {
@@ -358,7 +371,7 @@ struct JourneyView: View {
             let key = PrayerTracker.dayKey(date, tz)
             let isToday = key == todayKey
             let isExcused = CycleTracker.dayNumber(key).map(excusedDays.contains) ?? false
-            cells.append(DayCell(id: idx, day: d, count: tracker.count(dayKey: key),
+            cells.append(DayCell(id: idx, day: d, date: date, count: tracker.count(dayKey: key),
                                  isToday: isToday, isFuture: date > Date() && !isToday, isExcused: isExcused))
             idx += 1
         }
@@ -369,6 +382,7 @@ struct JourneyView: View {
 private struct DayCell: Identifiable {
     let id: Int
     let day: Int?
+    let date: Date?
     let count: Int
     let isToday: Bool
     let isFuture: Bool

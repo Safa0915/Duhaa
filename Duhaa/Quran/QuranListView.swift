@@ -37,6 +37,7 @@ struct QuranListView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink { BookmarksView() } label: { Image(systemName: "bookmark") }
                     .tint(Palette.gold)
+                    .accessibilityLabel("Bookmarks")
             }
         }
         .preferredColorScheme(Palette.active.colorScheme)

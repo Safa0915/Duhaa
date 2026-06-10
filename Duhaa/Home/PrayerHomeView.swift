@@ -38,6 +38,7 @@ struct PrayerHomeView: View {
                                 .foregroundStyle(Palette.blue.opacity(0.8))
                         }
                         .buttonStyle(.plain)
+                        .accessibilityLabel("Settings")
                     }
                     .padding(.horizontal, 22)
                     .padding(.top, 4)
