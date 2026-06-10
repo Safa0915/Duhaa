@@ -17,17 +17,22 @@ struct OnboardingView: View {
             CelestialBackground()
 
             VStack(spacing: 0) {
-                Group {
-                    switch step {
-                    case 0:  welcome
-                    case 1:  locationStep
-                    case 2:  methodStep
-                    default: insightsStep
+                GeometryReader { proxy in
+                    ScrollView {
+                        Group {
+                            switch step {
+                            case 0:  welcome
+                            case 1:  locationStep
+                            case 2:  methodStep
+                            default: insightsStep
+                            }
+                        }
+                        .frame(maxWidth: .infinity, minHeight: proxy.size.height)
+                        .transition(.opacity)
+                        .id(step)
                     }
+                    .scrollIndicators(.hidden)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .transition(.opacity)
-                .id(step)
 
                 stepDots
                 continueButton
