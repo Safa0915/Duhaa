@@ -56,8 +56,7 @@ struct DuaListView: View {
             }
 
             if !dua.arabic.isEmpty {
-                Text(dua.arabic)
-                    .font(QuranFont.uthmani(26))
+                Text(arabicText(dua.arabic))
                     .lineSpacing(12)
                     .frame(maxWidth: .infinity, alignment: .trailing)
                     .environment(\.layoutDirection, .rightToLeft)
@@ -122,6 +121,24 @@ struct DuaListView: View {
         .background(Palette.card)
         .overlay(RoundedRectangle(cornerRadius: 18).stroke(Palette.cardBorder, lineWidth: 1))
         .clipShape(RoundedRectangle(cornerRadius: 18))
+    }
+
+    /// Du'a Arabic in the Uthmani font — except punctuation. The KFGQPC mushaf
+    /// font draws the Arabic comma/semicolon as Quranic stop ornaments (circles),
+    /// which look wrong mid-du'a; those characters fall back to the system font
+    /// so they read as ordinary «،» and «؛».
+    private func arabicText(_ s: String) -> AttributedString {
+        var attr = AttributedString(s)
+        attr.font = QuranFont.uthmani(26)
+        for punctuation in ["،", "؛"] {
+            var search = attr.startIndex
+            while search < attr.endIndex,
+                  let r = attr[search...].range(of: punctuation) {
+                attr[r].font = .system(size: 22)
+                search = r.upperBound
+            }
+        }
+        return attr
     }
 
     /// Top-right badge, by priority: repetition text ("Read 3x") → structured
