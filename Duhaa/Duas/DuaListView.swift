@@ -41,6 +41,20 @@ struct DuaListView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
 
+            // Conditional counts (e.g. "Fajr/Maghrib: 3× each") — too long for the
+            // capsule, so a compact line of its own.
+            if let counts = dua.countNote, !counts.isEmpty {
+                HStack(alignment: .top, spacing: 6) {
+                    Image(systemName: "repeat")
+                        .duhaaFont(11)
+                        .foregroundStyle(Palette.blue.opacity(0.7))
+                    Text(counts)
+                        .duhaaFont(12, .medium)
+                        .foregroundStyle(Palette.blue.opacity(0.9))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+
             if !dua.arabic.isEmpty {
                 Text(dua.arabic)
                     .font(QuranFont.uthmani(26))
@@ -68,6 +82,26 @@ struct DuaListView: View {
                     .foregroundStyle(Palette.blue.opacity(0.65))
             }
 
+            // Alternate Sunnah counts stay folded away — present, never pushy.
+            if let variations = dua.variations, !variations.isEmpty {
+                DisclosureGroup {
+                    VStack(alignment: .leading, spacing: 6) {
+                        ForEach(variations, id: \.self) { v in
+                            Text("· \(v)")
+                                .duhaaFont(12)
+                                .foregroundStyle(.primary.opacity(0.7))
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                    .padding(.top, 6)
+                } label: {
+                    Text("Sunnah count variations")
+                        .duhaaFont(12, .medium)
+                        .foregroundStyle(Palette.gold.opacity(0.85))
+                }
+                .tint(Palette.gold)
+            }
+
             // Optional fiqh note — deliberately small and secondary (foot of the card)
             // so it never dominates, per the Before-Wudu requirement.
             if let fiqh = dua.fiqhNote, !fiqh.isEmpty {
@@ -90,12 +124,21 @@ struct DuaListView: View {
         .clipShape(RoundedRectangle(cornerRadius: 18))
     }
 
-    /// Top-right badge: the repetition count ("Read 3x") when present (existing look),
-    /// otherwise an authenticity status ("Verified"). Renders nothing if neither.
+    /// Top-right badge, by priority: repetition text ("Read 3x") → structured
+    /// count/prayer-scope ("10× · Fajr & Maghrib"; a bare "1×" is noise, so count
+    /// shows only when > 1) → authenticity status. Renders nothing if none apply.
     @ViewBuilder
     private func topBadge(_ dua: Dua) -> some View {
         if dua.noteIsRepetition {
             Text(dua.note)
+                .duhaaFont(11, .medium)
+                .foregroundStyle(Palette.blue)
+                .padding(.horizontal, 8).padding(.vertical, 3)
+                .background(Palette.blue.opacity(0.12))
+                .clipShape(Capsule())
+        } else if (dua.count ?? 1) > 1 || dua.prayerScope != nil {
+            Text([(dua.count ?? 1) > 1 ? "\(dua.count!)×" : nil, dua.prayerScope]
+                .compactMap(\.self).joined(separator: " · "))
                 .duhaaFont(11, .medium)
                 .foregroundStyle(Palette.blue)
                 .padding(.horizontal, 8).padding(.vertical, 3)

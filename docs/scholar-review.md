@@ -156,11 +156,27 @@ that assert something religious.
   rendered in the KFGQPC HAFS Uthmanic font (King Fahd Complex, Madinah).
 - [ ] **4.2 English translation:** Saheeh International.
 - [ ] **4.3 Recitation:** Sheikh Mishary Rashid Alafasy (streamed, EveryAyah.com).
-- [ ] **4.4 Du'as:** Hisnul Muslim ("Fortress of the Muslim", Sa'id al-Qahtani),
-  97 du'as across 5 categories incl. after-prayer adhkar, with transliteration
-  and English.
+- [ ] **4.4 Du'as:** Hisnul Muslim ("Fortress of the Muslim", Sa'id al-Qahtani)
+  for the Morning / Evening / Daily / Selected categories, with transliteration
+  and English. Two categories are hand-curated instead (see 4.6).
 - [ ] **4.5 Verse of the Day:** ~25 curated short hopeful verses (e.g. 93:3-5,
   94:5-6, 2:152, 39:53) shown one per day with translation.
+- [ ] **4.6 Curated adhkar categories — please verify each citation.**
+  *Wudu & Purification* (4 cards): Sahih al-Bukhari 142 and companions.
+  *After Prayer Adhkar* (8 cards, in app order):
+  1. Istighfar ×3 & Allāhumma antas-Salām — Sahih Muslim 591
+  2. Tawhid & Allāhumma lā māniʿa — Sahih al-Bukhari 844
+  3. Lā ḥawla… / lā ilāha illallāh… mukhliṣīna — Sahih Muslim 594a
+  4. 10× tawhid after Fajr & Maghrib — Jami' at-Tirmidhi 3474 (Fajr) and 3534
+     (Maghrib)
+  5. Tasbih/Tahmid/Takbir 33/33/33 + completion — Sahih Muslim 597a (plus six
+     alternate Sunnah count variations shown collapsed)
+  6. Ayat al-Kursi after every prayer — an-Nasa'i, al-Sunan al-Kubrā 9848
+  7. The three Quls after every prayer (3× after Fajr/Maghrib per Ibn Baz /
+     Permanent Committee guidance) — Sunan Abi Dawud 1523
+  8. Optional: Rabbi qinī ʿadhābak / Allāhummaghfir lī mā qaddamtu / Allāhumma
+     aʿinnī ʿalā dhikrik — Sahih Muslim 709; Sahih Muslim 771; Sunan Abi
+     Dawud 1522
 
 ---
 

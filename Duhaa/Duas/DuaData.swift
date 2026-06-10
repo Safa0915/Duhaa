@@ -21,10 +21,15 @@ struct Dua: Decodable, Identifiable {
     let source: String
     let status: String?      // e.g. "Verified" — shown as a small badge when present
     let fiqhNote: String?    // small, secondary scholarly note shown at the card's foot
+    let count: Int?          // Sunnah repetition count — badge "10×" (hidden when 1)
+    let prayerScope: String? // e.g. "Fajr & Maghrib" when a dhikr isn't for all five
+    let countNote: String?   // conditional counts, e.g. "Fajr/Maghrib: 3× each"
+    let variations: [String]? // alternate Sunnah counts, collapsed behind a disclosure
     let id = UUID()
 
     enum CodingKeys: String, CodingKey {
         case title, arabic, latin, en, note, source, status, fiqhNote
+        case count, prayerScope, countNote, variations
     }
 
     /// True when `note` is a repetition count (e.g. "Read 3x") rather than an
@@ -39,9 +44,12 @@ enum Duas {
     static let categories: [DuaCategory] = load()
 
     private struct File: Decodable { let categories: [DuaCategory] }
+    /// Anchors the lookup to the app module's bundle (not Bundle.main), so unit
+    /// tests resolve the same duas.json the app ships.
+    private final class BundleToken {}
 
     private static func load() -> [DuaCategory] {
-        guard let url = Bundle.main.url(forResource: "duas", withExtension: "json"),
+        guard let url = Bundle(for: BundleToken.self).url(forResource: "duas", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let decoded = try? JSONDecoder().decode(File.self, from: data) else {
             return []
