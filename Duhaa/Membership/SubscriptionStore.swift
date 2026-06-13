@@ -56,11 +56,11 @@ enum MembershipTier: String, CaseIterable, Identifiable {
         case .fajr:
             ["Everything in Hilal",
              "Offline Quran audio downloads",
-             "Advanced cycle predictions & analytics",
+             "Expanded reciter library",
              "Early access to new features"]
         case .duhaa:
             ["Everything in Fajr",
-             "Cycle history PDF export",
+             "Custom adhan voices",
              "Priority support, direct to the founder",
              "Your name among Duhaa's founding supporters"]
         }

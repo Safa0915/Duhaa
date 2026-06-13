@@ -44,27 +44,11 @@ final class TabSettingsTests: XCTestCase {
 
     func testHidingEnoughRemovesTheMoreOverflow() {
         let tabs = TabSettings(defaults: defaults)
-        tabs.toggleHidden(.sisters)
-        tabs.toggleHidden(.tasbih)    // down to 5 enabled -> all fit, no More
+        tabs.toggleHidden(.tasbih)    // 6 -> 5 enabled, all fit, no More
         XCTAssertEqual(tabs.enabled.count, 5)
         XCTAssertEqual(tabs.barTabs.count, 5)
         XCTAssertTrue(tabs.moreTabs.isEmpty)
-        XCTAssertEqual(tabs.placement(of: .sisters), .hidden)
         XCTAssertEqual(tabs.placement(of: .tasbih), .hidden)
-    }
-
-    func testBrotherProfileDoesNotSeeSistersTab() {
-        let tabs = TabSettings(defaults: defaults)
-        XCTAssertTrue(tabs.enabled.contains(.sisters))
-        XCTAssertFalse(tabs.enabled(for: .brother).contains(.sisters))
-        XCTAssertFalse(tabs.barTabs(for: .brother).contains(.sisters))
-        XCTAssertFalse(tabs.moreTabs(for: .brother).contains(.sisters))
-        XCTAssertEqual(tabs.placement(of: .sisters, for: .brother), .hidden)
-    }
-
-    func testSisterProfileCanSeeSistersTab() {
-        let tabs = TabSettings(defaults: defaults)
-        XCTAssertTrue(tabs.enabled(for: .sister).contains(.sisters))
     }
 
     func testCannotHideTheLastVisibleTab() {

@@ -4,23 +4,16 @@ import UserNotifications
 
 struct ProfileSettingsView: View {
     @AppStorage("duhaa.profile.name") private var profileName = ""
-    @AppStorage("duhaa.profile.gender") private var profileGender = UserProfileGender.notSet.rawValue
 
     var body: some View {
         Form {
             Section {
                 TextField("Name", text: $profileName)
                     .textInputAutocapitalization(.words)
-
-                Picker("Profile", selection: $profileGender) {
-                    ForEach(UserProfileGender.allCases) { gender in
-                        Text(gender.displayName).tag(gender.rawValue)
-                    }
-                }
             } header: {
                 Text("Local Profile")
             } footer: {
-                Text("This stays on your device. Choosing Brother hides the Sisters space and cycle controls.")
+                Text("This stays on your device — no account required.")
             }
         }
         .settingsDetailStyle(title: "Identity")
@@ -46,7 +39,7 @@ struct ThemeSettingsView: View {
             } header: {
                 Text("Theme")
             } footer: {
-                Text("The locked celestial palette stays the default. Light and Sisters themes are v1.1 additions.")
+                Text("The locked celestial palette stays the default. Dawn (Light) and Rose are v1.1 additions.")
             }
         }
         .settingsDetailStyle(title: "Appearance")
@@ -543,7 +536,7 @@ struct DeleteLocalDataView: View {
                     Label("This only clears this device", systemImage: "trash.fill")
                         .duhaaFont(15, .semibold)
                         .foregroundStyle(.orange)
-                    Text("It removes Duhaa's local preferences, prayer marks, Quran bookmarks, cycle entries, tab layout, and onboarding flag from UserDefaults.")
+                    Text("It removes Duhaa's local preferences, prayer marks, Quran bookmarks, tab layout, and onboarding flag from UserDefaults.")
                         .duhaaFont(13)
                         .foregroundStyle(.primary.opacity(0.74))
                 }
@@ -619,7 +612,7 @@ enum LegalDocument {
         switch self {
         case .privacy:
             [
-                LegalSection("Local First", "Duhaa is designed to work without an account. Your prayer marks, Quran bookmarks, settings, and cycle entries are stored on this device unless you choose to export them."),
+                LegalSection("Local First", "Duhaa is designed to work without an account. Your prayer marks, Quran bookmarks, and settings are stored on this device unless you choose to export them."),
                 LegalSection("Location", "Prayer times need a location. Duhaa stores your selected location locally and uses it to calculate times on device. The app does not sell or share your location."),
                 LegalSection("Notifications", "Prayer reminders are scheduled through iOS notifications. You can turn them off per prayer or from system Settings at any time."),
                 LegalSection("Support", "If you email a bug report or support request, your message is handled by your mail app and whatever details you choose to include."),

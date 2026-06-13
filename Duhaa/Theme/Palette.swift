@@ -26,7 +26,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
         switch self {
         case .dark:    return "Celestial"
         case .light:   return "Dawn (Light)"
-        case .sisters: return "Sisters (Rose)"
+        case .sisters: return "Rose"   // theme kept; the Sisters section is parked
         }
     }
 

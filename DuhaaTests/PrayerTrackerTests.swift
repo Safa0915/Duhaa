@@ -34,8 +34,16 @@ final class PrayerTrackerTests: XCTestCase {
         return f.date(from: "\(s) 12:00")!
     }
 
-    /// The day-index (matches PrayerTracker/CycleTracker) for a key.
-    private func dayNum(_ s: String) -> Int { CycleTracker.dayNumber(s)! }
+    /// The day-index matching PrayerTracker's UTC days-since-1970 scheme. (Used
+    /// to build `excused` sets — the streak-bridge hook outlives the parked
+    /// cycle feature, so these tests still guard it.)
+    private func dayNum(_ s: String) -> Int {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = TimeZone(identifier: "UTC")
+        f.dateFormat = "yyyy-MM-dd"
+        return Int((f.date(from: s)!.timeIntervalSince1970 / 86_400).rounded(.down))
+    }
 
     /// Mark `n` prayers on a day (Fajr first).
     private func mark(_ n: Int, on key: String) {

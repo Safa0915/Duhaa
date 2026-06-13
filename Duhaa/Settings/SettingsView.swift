@@ -15,15 +15,8 @@ struct SettingsView: View {
     @Environment(\.openURL) private var openURL
 
     @AppStorage("duhaa.profile.name") private var profileName = ""
-    @AppStorage("duhaa.profile.gender") private var profileGender = UserProfileGender.notSet.rawValue
     @AppStorage("duhaa.quran.reciter") private var quranReciterID = Reciters.defaultID
     @AppStorage("duhaa.quran.showTranslation") private var quranShowTranslation = true
-    @AppStorage("duhaa.cycle.periodTrackingEnabled") private var periodTrackingEnabled = true
-    @AppStorage("duhaa.cycle.periodPredictionEnabled") private var periodPredictionEnabled = true
-    @AppStorage("duhaa.cycle.ghuslReminderEnabled") private var ghuslReminderEnabled = true
-    @AppStorage("duhaa.cycle.missedFastReminderEnabled") private var missedFastReminderEnabled = false
-    @AppStorage("duhaa.cycle.fertileWindowEnabled") private var fertileWindowEnabled = false
-    @AppStorage("duhaa.cycle.phaseChangeEnabled") private var phaseChangeEnabled = false
     @AppStorage(AdhanSoundPreference.key) private var adhanSoundRaw = AdhanSoundPreference.duhaaChime.rawValue
 
     @State private var showingLocationPicker = false
@@ -33,10 +26,6 @@ struct SettingsView: View {
     private var displayName: String {
         let trimmed = profileName.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? "Duhaa friend" : trimmed
-    }
-
-    private var profile: UserProfileGender {
-        UserProfileGender.from(profileGender)
     }
 
     private var version: String {
@@ -50,9 +39,6 @@ struct SettingsView: View {
                 appearanceSection
                 prayerSection
                 quranSection
-                if profile.showsSistersFeatures {
-                    cycleSection
-                }
                 privacySection
                 languageSection
                 helpSection
@@ -250,26 +236,6 @@ struct SettingsView: View {
         }
     }
 
-    private var cycleSection: some View {
-        Section {
-            settingsToggle("Period Tracking", icon: "calendar", color: Palette.gold, isOn: $periodTrackingEnabled)
-            settingsToggle("Period Prediction", icon: "sparkle", color: Palette.blue, isOn: $periodPredictionEnabled)
-                .disabled(!periodTrackingEnabled)
-            settingsToggle("Ghusl Reminder", icon: "drop.fill", color: Palette.blue, isOn: $ghuslReminderEnabled)
-                .disabled(!periodTrackingEnabled)
-            settingsToggle("Missed Fast Reminder", icon: "moon.fill", color: Palette.gold, isOn: $missedFastReminderEnabled)
-                .disabled(!periodTrackingEnabled)
-            settingsToggle("Fertile Window", icon: "heart.fill", color: Palette.gold, isOn: $fertileWindowEnabled)
-                .disabled(!periodTrackingEnabled)
-            settingsToggle("Phase Change", icon: "arrow.triangle.2.circlepath", color: Palette.blue, isOn: $phaseChangeEnabled)
-                .disabled(!periodTrackingEnabled)
-        } header: {
-            Text("Cycle")
-        } footer: {
-            Text("Cycle settings are private and stay on this device. Enabled helpers appear inside the Sisters space.")
-        }
-    }
-
     private var privacySection: some View {
         Section("Privacy & Data") {
             NavigationLink {
@@ -418,14 +384,6 @@ struct SettingsView: View {
         }
         .padding(.vertical, 2)
         .accessibilityElement(children: .combine)
-    }
-
-    private func settingsToggle(_ title: String, icon: String, color: Color, isOn: Binding<Bool>) -> some View {
-        Toggle(isOn: isOn) {
-            settingsRow(title, icon: icon, color: color, value: isOn.wrappedValue ? "On" : "Off")
-        }
-        .tint(Palette.gold)
-        .listRowBackground(Palette.card)
     }
 
     private var offsetsSummary: String {

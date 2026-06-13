@@ -7,7 +7,6 @@ struct JourneyView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(PrayerTracker.self) private var tracker
     @Environment(LocationProvider.self) private var location
-    @Environment(CycleTracker.self) private var cycle
     @Environment(InsightsStore.self) private var insights
 
     /// Any day inside the month currently shown in the calendar.
@@ -17,10 +16,9 @@ struct JourneyView: View {
 
     private var tz: TimeZone { location.active.timeZone }
 
-    /// Menstruation days are excused — they bridge the streak and never count as missed.
-    private var excused: Set<Int> {
-        cycle.excusedDayNumbers(today: PrayerTracker.dayKey(Date(), tz))
-    }
+    /// No excused days while the cycle feature is parked — streaks count plainly.
+    /// (The tracker's `excused` hook stays, ready for the cycle feature's return.)
+    private var excused: Set<Int> { [] }
 
     var body: some View {
         NavigationStack {
@@ -374,14 +372,12 @@ struct JourneyView: View {
         for _ in 0..<leading {
             cells.append(DayCell(id: idx, day: nil, date: nil, count: 0, isToday: false, isFuture: false, isExcused: false)); idx += 1
         }
-        let excusedDays = excused
         for d in range {
             guard let date = cal.date(byAdding: .day, value: d - 1, to: first) else { continue }
             let key = PrayerTracker.dayKey(date, tz)
             let isToday = key == todayKey
-            let isExcused = CycleTracker.dayNumber(key).map(excusedDays.contains) ?? false
             cells.append(DayCell(id: idx, day: d, date: date, count: tracker.count(dayKey: key),
-                                 isToday: isToday, isFuture: date > Date() && !isToday, isExcused: isExcused))
+                                 isToday: isToday, isFuture: date > Date() && !isToday, isExcused: false))
             idx += 1
         }
         return cells

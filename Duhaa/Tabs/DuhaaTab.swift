@@ -4,12 +4,14 @@ import SwiftUI
 /// switches below) and it automatically becomes a customizable tab — existing
 /// users get it appended to the end of their order on next launch.
 enum DuhaaTab: String, CaseIterable, Identifiable, Codable {
-    case prayer, qibla, quran, duas, learn, tasbih, sisters
+    // NOTE: `.sisters` (the women's cycle space) is parked — removed for now,
+    // restorable via `git revert` of the cycle-removal commit.
+    case prayer, qibla, quran, duas, learn, tasbih
 
     var id: String { rawValue }
 
     /// The default order shipped to a brand-new user.
-    static let defaultOrder: [DuhaaTab] = [.prayer, .qibla, .quran, .duas, .learn, .tasbih, .sisters]
+    static let defaultOrder: [DuhaaTab] = [.prayer, .qibla, .quran, .duas, .learn, .tasbih]
 
     var title: String {
         switch self {
@@ -19,7 +21,6 @@ enum DuhaaTab: String, CaseIterable, Identifiable, Codable {
         case .duas:    "Du'as"
         case .learn:   "Learn"
         case .tasbih:  "Tasbih"
-        case .sisters: "Sisters"
         }
     }
 
@@ -31,18 +32,12 @@ enum DuhaaTab: String, CaseIterable, Identifiable, Codable {
         case .duas:    "hands.sparkles.fill"
         case .learn:   "graduationcap.fill"
         case .tasbih:  "circle.hexagongrid.fill"
-        case .sisters: "leaf.fill"
         }
     }
 
-    func isAvailable(for profile: UserProfileGender) -> Bool {
-        switch self {
-        case .sisters:
-            profile.showsSistersFeatures
-        default:
-            true
-        }
-    }
+    /// All current tabs are available to everyone. (Gender gating returns with
+    /// the parked Sisters tab.)
+    func isAvailable(for profile: UserProfileGender) -> Bool { true }
 
     /// Full-bleed tabs provide their own top chrome and want no nav bar. The rest
     /// rely on a NavigationStack from their host (MainTabView for direct tabs,
@@ -63,7 +58,6 @@ enum DuhaaTab: String, CaseIterable, Identifiable, Codable {
         case .duas:    DuasView()
         case .learn:   LearnView()
         case .tasbih:  TasbihView()
-        case .sisters: SistersView()
         }
     }
 }

@@ -47,7 +47,13 @@ These are not display text; they are how the app behaves.
 
 ---
 
-## Part 2 — Sisters' section Q&A (highest stakes)
+## Part 2 — Sisters' section Q&A (highest stakes) — ⏸ PARKED, NOT IN CURRENT BUILD
+
+> **Status (2026-06-11):** the entire Sisters section (cycle tracker + this
+> Q&A) has been removed from the shipping app for now and parked in git. It is
+> not in the current build. This content still needs review **before** the
+> feature is restored — keeping it here so the review isn't lost. Item 1.5
+> (menstruation streak-bridging) is likewise dormant until then.
 
 The disclaimer shown alongside this content:
 
