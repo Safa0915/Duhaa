@@ -90,11 +90,32 @@ Plays on **very first launch only**. Skippable ("Skip" fades in after ~4–5s). 
 
 **v1.0 (MVP):** Prayer Times · Duhaa cinematic · Notifications · Qibla compass · Gentle prayer tracking · Widgets · Settings · Onboarding
 
-**v1.1:** Quran reader · Duas · Light mode · Sisters (pink) theme · Apple Watch complication · (later) monthly-point interpolation, mosque timetables, Jummah custom time
+**v1.1:** Quran reader · Duas · Learn · Light mode · Sisters (pink) theme · Apple Watch complication · (later) monthly-point interpolation, mosque timetables, Jummah custom time
 
 **Quran reader (v1.1):** Arabic + Sahih International English, bundled offline (SQLite), bookmarks, surah/ayah nav. **No audio in v1.**
 
 **Duas (v1.1):** occasion-based categories + dedicated "After Prayer" section, ~50–80 duas, Arabic + transliteration + English.
+
+**Learn (v1.1):** fully offline step-by-step education section in Duhaa's celestial design language. Uses bundled guide content (no network calls, no new dependencies) with category sections, title search, cards showing guide title + step count + estimated minutes, and one-step-per-card detail pages.
+
+Locked v1.1 Learn guides — exactly these 9, no broader catalog:
+1. How to Make Wudu
+2. How to Make Ghusl
+3. How to Make Tayammum
+4. How to Pray — Core Structure (takbir to taslim)
+5. Differences per Prayer
+6. Dhikr After Prayer (Adhkar as-Salah)
+7. Mistakes in Prayer & Sujud al-Sahw
+8. Tawbah — Coming Back to Allah
+9. Coming Back to Prayer After Time Away
+
+Learn content rules:
+- Salafi methodology: Quran + sahih/hasan hadith only; omit weak narrations rather than including them.
+- Every religious instruction step must support inline collapsible evidence with source, grade, grader attribution, and optional note.
+- Evidence grades: Quranic, Sahih, Hasan, Da'if, Mawdu'. Shipped guide content should not include Da'if/Mawdu' evidence.
+- If a point cannot be confidently grounded, mark it TODO for creator review instead of guessing.
+- Knowledge is never gamified in Duhaa: **no progress bars, no completion counters, no percentages, no streaks** for Learn. A subtle local visited checkmark is the maximum allowed.
+- Dhikr After Prayer should reuse or point back to the existing Du'as library where the same adhkar already ship.
 
 **Prayer tracking (v1.0, core to mission):** soft "mark as prayed" tap per prayer + a quiet, beautiful progress view. Encouragement layer (short reassuring verse/hadith after marking). **ZERO guilt mechanics** — no broken-streak shaming. Returning after missed prayers is met with *"your Lord has not forsaken you" / "welcome back"*, never a scold.
 
@@ -121,7 +142,7 @@ Active prayer = gold left bar + gold time + gold "Next" badge + subtle gold glow
 
 ## 7. Navigation & Onboarding
 
-**Bottom tab bar:** Prayer · Qibla · Quran · Duas · Settings (Prayer is home).
+**Bottom tab bar:** Prayer · Qibla · Quran · Duas · Settings (Prayer is home). v1.1 Learn is paired with Duas conceptually and should be adjacent in the customizable tab order; if the bar overflows, Learn can live under More rather than displacing a core v1 tab.
 
 **Onboarding** (after the cinematic): 3 screens — Welcome → Location → Calculation method + madhab. No account, no email, under 60 seconds.
 
@@ -138,7 +159,7 @@ Active prayer = gold left bar + gold time + gold "Next" badge + subtle gold glow
 
 ## 9. Monetization
 
-Free. Voluntary **"Support the App" IAP (~$2.99)**. **No paywalled features** — locking Islamic content behind money is off-limits.
+Free. Voluntary **"Support Duhaa" website link** (`duhaa.app/support`) with Stripe handled off-app. **No paywalled features** — locking Islamic content behind money is off-limits. App Store submission notes must clearly explain that support is voluntary and unlocks no worship, Quran, or learning content.
 
 ---
 
@@ -183,7 +204,7 @@ The v1 high-latitude solution is a **stopgap, not a real fix.** Proven with numb
 
 **v1.0** — Prayer engine, Duhaa cinematic, notifications, Qibla, prayer tracking, widgets (small/medium/lock), onboarding, settings, dark theme. *Solo dev.*
 
-**v1.1** — Quran reader, Duas, light mode, Sisters theme, Watch complication.
+**v1.1** — Quran reader, Duas, Learn, light mode, Sisters theme, Watch complication.
 
 **Backlog / debt** — proper high-latitude fix (§13), monthly-point interpolation, mosque-timetable directory, Jummah custom time, region presets.
 

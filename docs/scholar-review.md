@@ -158,7 +158,9 @@ that assert something religious.
   edition (the translator publishes two official editions; this one renders
   the divine name as Allah). Licensed CC BY-NC-ND — free for this free app
   with attribution, no permission required.
-- [ ] **4.3 Recitation:** Sheikh Mishary Rashid Alafasy (streamed, EveryAyah.com).
+- [ ] **4.3 Recitation:** nine reciters (Alafasy default; AbdulBaset, Sudais,
+  Shatri, Rifai, Minshawi, Shuraym) streamed from the Quran Foundation's CDN
+  under registered API access — sources verified per-file at build time.
 - [ ] **4.4 Du'as:** the app currently ships ONLY the two hand-curated
   categories in 4.6. The bulk Hisnul Muslim set (Morning / Evening / Daily /
   Selected) was removed pending curation and will return category by category

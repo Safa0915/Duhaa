@@ -212,7 +212,12 @@ struct OnboardingView: View {
 
     private var continueButton: some View {
         Button {
-            if step < 3 { withAnimation { step += 1 } } else { onFinish() }
+            if step < 3 {
+                withAnimation { step += 1 }
+            } else {
+                DuhaaHaptics.success()   // crossing the threshold into the app
+                onFinish()
+            }
         } label: {
             Text(step < 3 ? "Continue" : "Get Started")
                 .duhaaFont(17, .semibold)

@@ -1,0 +1,55 @@
+{
+ "reciters": [
+  {
+   "id": 1,
+   "name": "AbdulBaset AbdulSamad (Mujawwad)",
+   "prefix": "AbdulBaset/Mujawwad/mp3/"
+  },
+  {
+   "id": 2,
+   "name": "AbdulBaset AbdulSamad (Murattal)",
+   "prefix": "AbdulBaset/Murattal/mp3/"
+  },
+  {
+   "id": 3,
+   "name": "Abdur-Rahman as-Sudais",
+   "prefix": "Sudais/mp3/"
+  },
+  {
+   "id": 4,
+   "name": "Abu Bakr al-Shatri",
+   "prefix": "Shatri/mp3/"
+  },
+  {
+   "id": 5,
+   "name": "Hani ar-Rifai",
+   "prefix": "Rifai/mp3/"
+  },
+  {
+   "id": 7,
+   "name": "Mishary Rashid Alafasy",
+   "prefix": "Alafasy/mp3/"
+  },
+  {
+   "id": 8,
+   "name": "Mohamed Siddiq al-Minshawi (Mujawwad)",
+   "prefix": "Minshawi/Mujawwad/mp3/"
+  },
+  {
+   "id": 9,
+   "name": "Mohamed Siddiq al-Minshawi (Murattal)",
+   "prefix": "Minshawi/Murattal/mp3/"
+  },
+  {
+   "id": 10,
+   "name": "Sa`ud ash-Shuraym",
+   "prefix": "Shuraym/mp3/"
+  },
+  {
+   "id": 173,
+   "name": "Mishary Rashid Alafasy (Classic Recording)",
+   "audioKind": "chapter",
+   "chapterPrefix": "https://download.quranicaudio.com/qdc/mishari_al_afasy/streaming/mp3/"
+  }
+ ]
+}

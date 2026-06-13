@@ -247,11 +247,7 @@ final class PrayerHomeModel {
     /// namesake) — lives inside the Fajr row, never as a sixth prayer. The newline
     /// keeps the namesake nod on its own tidy line instead of an awkward mid-wrap.
     private func fajrSub(_ t: DuhaaPrayerTimes, _ tz: TimeZone) -> String {
-        var first = "ends at sunrise \(clock(t.sunrise, tz))"
-        if now >= t.fajr && now < t.sunrise {
-            first += " · in \(countdown(to: t.sunrise))"
-        }
-        return first + "\nDuhaa follows"
+        "ends at sunrise \(clock(t.sunrise, tz))"
     }
 
     // MARK: Isha "ends at Islamic midnight" sub-line
@@ -262,11 +258,7 @@ final class PrayerHomeModel {
         if t.ishaAfterIslamicMidnight {
             return "approximate at this latitude"
         }
-        var sub = "ends \(clock(t.islamicMidnight, tz))"
-        if now >= t.isha && now < t.islamicMidnight {
-            sub += " · ends in \(countdown(to: t.islamicMidnight))"
-        }
-        return sub
+        return "ends at Islamic midnight \(clock(t.islamicMidnight, tz))"
     }
 
     // MARK: Formatting helpers

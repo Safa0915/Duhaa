@@ -141,12 +141,13 @@ struct QuranListView: View {
     private func row(_ surah: Surah) -> some View {
         HStack(spacing: 14) {
             ZStack {
+                Circle().fill(Palette.gold.opacity(0.09))
                 Circle().stroke(Palette.gold.opacity(0.4), lineWidth: 1.2)
-                    .frame(width: 34, height: 34)
                 Text("\(surah.number)")
                     .duhaaFont(12, .semibold)
                     .foregroundStyle(Palette.gold)
             }
+            .frame(width: 34, height: 34)
             VStack(alignment: .leading, spacing: 2) {
                 Text(surah.englishName)
                     .duhaaFont(16, .medium)

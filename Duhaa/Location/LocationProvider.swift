@@ -21,7 +21,16 @@ final class LocationProvider: NSObject, CLLocationManagerDelegate {
     /// User-facing problem, if any (denied permission, geocode failure…).
     private(set) var errorMessage: String?
 
-    @ObservationIgnored private let manager = CLLocationManager()
+    /// Created lazily so app launch never touches CoreLocation — its setup and
+    /// status reads do disk/XPC I/O, which the Thread Performance Checker flags
+    /// on the main thread. The first real use builds it; CoreLocation then
+    /// delivers the guaranteed initial authorization callback, filling in the status.
+    @ObservationIgnored private lazy var manager: CLLocationManager = {
+        let m = CLLocationManager()
+        m.delegate = self
+        m.desiredAccuracy = kCLLocationAccuracyKilometer // city-level is plenty
+        return m
+    }()
     @ObservationIgnored private let geocoder = CLGeocoder()
     @ObservationIgnored private let cacheKey = "duhaa.activeLocation.v1"
     /// Set when the user asked for current location before permission resolved.
@@ -34,10 +43,11 @@ final class LocationProvider: NSObject, CLLocationManagerDelegate {
         } else {
             active = .fallback
         }
-        authorizationStatus = manager.authorizationStatus
+        // Placeholder only — never read manager.authorizationStatus directly here
+        // (synchronous I/O). The delegate's initial callback corrects it, and the
+        // start()/useCurrentLocation() flows self-heal through that callback.
+        authorizationStatus = .notDetermined
         super.init()
-        manager.delegate = self
-        manager.desiredAccuracy = kCLLocationAccuracyKilometer // city-level is plenty
     }
 
     // MARK: Launch

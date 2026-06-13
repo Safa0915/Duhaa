@@ -92,6 +92,7 @@ struct RamadanCard: View {
     private var fastingToggle: some View {
         Button {
             fasting.toggle(dayKey)
+            DuhaaHaptics.tap()
         } label: {
             HStack(spacing: 10) {
                 Image(systemName: fastedToday ? "checkmark.circle.fill" : "circle")

@@ -12,6 +12,8 @@ struct JourneyView: View {
 
     /// Any day inside the month currently shown in the calendar.
     @State private var monthAnchor = Date()
+    /// Flips on appear: bounces the streak flame and grows the insights bar in.
+    @State private var entranceDone = false
 
     private var tz: TimeZone { location.active.timeZone }
 
@@ -48,6 +50,9 @@ struct JourneyView: View {
         }
         .preferredColorScheme(Palette.active.colorScheme)
         .tint(Palette.gold)
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.6).delay(0.1)) { entranceDone = true }
+        }
     }
 
     // MARK: Streak hero
@@ -59,6 +64,7 @@ struct JourneyView: View {
                 .duhaaFont(38)
                 .foregroundStyle(streak > 0 ? Palette.gold : Palette.gold.opacity(0.3))
                 .shadow(color: streak > 0 ? Palette.gold.opacity(0.5) : .clear, radius: 12)
+                .symbolEffect(.bounce, value: streak > 0 && entranceDone)
             Text(streak == 0 ? "Begin today" : "\(streak)")
                 .duhaaFont(streak == 0 ? 28 : 54, .bold)
                 .foregroundStyle(.primary)
@@ -248,12 +254,13 @@ struct JourneyView: View {
                 .foregroundStyle(Palette.blue.opacity(0.65))
 
             if data.hasData {
+                // Segments grow in from the left on open — a quiet reveal, not a chart demo.
                 GeometryReader { geo in
                     HStack(spacing: 0) {
                         Palette.gold
-                            .frame(width: geo.size.width * frac(data.onTime, data.total))
+                            .frame(width: geo.size.width * frac(data.onTime, data.total) * (entranceDone ? 1 : 0))
                         Palette.blue.opacity(0.85)
-                            .frame(width: geo.size.width * frac(data.late, data.total))
+                            .frame(width: geo.size.width * frac(data.late, data.total) * (entranceDone ? 1 : 0))
                         Color.primary.opacity(0.16)   // missed takes the remainder
                     }
                 }

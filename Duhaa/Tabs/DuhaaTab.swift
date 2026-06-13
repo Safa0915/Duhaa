@@ -4,12 +4,12 @@ import SwiftUI
 /// switches below) and it automatically becomes a customizable tab — existing
 /// users get it appended to the end of their order on next launch.
 enum DuhaaTab: String, CaseIterable, Identifiable, Codable {
-    case prayer, qibla, quran, duas, tasbih, sisters
+    case prayer, qibla, quran, duas, learn, tasbih, sisters
 
     var id: String { rawValue }
 
     /// The default order shipped to a brand-new user.
-    static let defaultOrder: [DuhaaTab] = [.prayer, .qibla, .quran, .duas, .tasbih, .sisters]
+    static let defaultOrder: [DuhaaTab] = [.prayer, .qibla, .quran, .duas, .learn, .tasbih, .sisters]
 
     var title: String {
         switch self {
@@ -17,6 +17,7 @@ enum DuhaaTab: String, CaseIterable, Identifiable, Codable {
         case .qibla:   "Qibla"
         case .quran:   "Quran"
         case .duas:    "Du'as"
+        case .learn:   "Learn"
         case .tasbih:  "Tasbih"
         case .sisters: "Sisters"
         }
@@ -28,8 +29,18 @@ enum DuhaaTab: String, CaseIterable, Identifiable, Codable {
         case .qibla:   "location.north.line.fill"
         case .quran:   "book.closed.fill"
         case .duas:    "hands.sparkles.fill"
+        case .learn:   "graduationcap.fill"
         case .tasbih:  "circle.hexagongrid.fill"
         case .sisters: "leaf.fill"
+        }
+    }
+
+    func isAvailable(for profile: UserProfileGender) -> Bool {
+        switch self {
+        case .sisters:
+            profile.showsSistersFeatures
+        default:
+            true
         }
     }
 
@@ -50,6 +61,7 @@ enum DuhaaTab: String, CaseIterable, Identifiable, Codable {
         case .qibla:   QiblaView()
         case .quran:   QuranListView()
         case .duas:    DuasView()
+        case .learn:   LearnView()
         case .tasbih:  TasbihView()
         case .sisters: SistersView()
         }

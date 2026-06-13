@@ -23,6 +23,8 @@ struct TodayProgressCard: View {
                 Text("\(prayedCount) / 5")
                     .duhaaFont(13, .semibold)
                     .foregroundStyle(prayedCount == 5 ? Palette.gold : .primary.opacity(0.85))
+                    .contentTransition(.numericText())
+                    .animation(.spring(duration: 0.3), value: prayedCount)
                 if onOpen != nil {
                     Image(systemName: "chevron.right")
                         .duhaaFont(11, .semibold)
@@ -32,13 +34,8 @@ struct TodayProgressCard: View {
 
             HStack(spacing: 10) {
                 ForEach(Prayer.allCases, id: \.self) { prayer in
-                    let done = tracker.isMarked(prayer, dayKey: dayKey)
-                    Circle()
-                        .fill(done ? Palette.gold : Color.primary.opacity(0.07))
-                        .frame(width: 13, height: 13)
-                        .overlay(Circle().stroke(done ? .clear : Color.primary.opacity(0.18), lineWidth: 1))
-                        .shadow(color: done ? Palette.gold.opacity(0.5) : .clear, radius: 4)
-                        .accessibilityLabel("\(prayer.rawValue) \(done ? "prayed" : "not prayed")")
+                    ProgressDot(done: tracker.isMarked(prayer, dayKey: dayKey))
+                        .accessibilityLabel("\(prayer.rawValue) \(tracker.isMarked(prayer, dayKey: dayKey) ? "prayed" : "not prayed")")
                 }
                 Spacer()
             }
@@ -62,6 +59,7 @@ struct TodayProgressCard: View {
                                 .stroke(Palette.gold, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
                                 .rotationEffect(.degrees(-90))
                                 .frame(width: 24, height: 24)
+                                .animation(.spring(duration: 0.5), value: fraction)
                             if day.isToday {
                                 Circle().fill(Palette.gold).frame(width: 4, height: 4)
                             }
@@ -89,5 +87,30 @@ struct TodayProgressCard: View {
         case 3, 4: return "Beautiful — you're carrying the day."
         default:   return "All five today. Alhamdulillah."
         }
+    }
+}
+
+/// One of the five TODAY dots. Pops softly the moment it fills — a tiny echo
+/// of the prayer-row celebration — and dims back without fuss when unmarked.
+private struct ProgressDot: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    let done: Bool
+    @State private var pop = 0
+
+    var body: some View {
+        Circle()
+            .fill(done ? Palette.gold : Color.primary.opacity(0.07))
+            .frame(width: 13, height: 13)
+            .overlay(Circle().stroke(done ? .clear : Color.primary.opacity(0.18), lineWidth: 1))
+            .shadow(color: done ? Palette.gold.opacity(0.5) : .clear, radius: 4)
+            .phaseAnimator([false, true], trigger: pop) { content, popping in
+                content.scaleEffect(popping && !reduceMotion ? 1.45 : 1)
+            } animation: { popping in
+                popping ? DuhaaMotion.markSwell : DuhaaMotion.markSettle
+            }
+            .animation(.easeOut(duration: 0.25), value: done)
+            .onChange(of: done) { _, isDone in
+                if isDone { pop += 1 }
+            }
     }
 }

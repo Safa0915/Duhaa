@@ -232,8 +232,12 @@ struct PrayersCard: View {
 
 private struct PrayerRowView: View {
     @Environment(PrayerTracker.self) private var tracker
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let row: PrayerRowData
     let onMark: (Prayer, Bool) -> Void
+
+    /// Bumped on each successful mark — drives the one-shot celebration swell.
+    @State private var celebration = 0
 
     private var isNext: Bool { row.state == .next }
     private var isPrayed: Bool { tracker.isMarked(row.prayer, dayKey: row.dayKey) }
@@ -280,6 +284,16 @@ private struct PrayerRowView: View {
 
             markButton
         }
+        // The celebration: the row swells with a soft gold bloom, then settles.
+        // Content sits inside 18pt padding, so a 5% swell never hits the card edge.
+        .phaseAnimator([false, true], trigger: celebration) { content, swelling in
+            content
+                .scaleEffect(reduceMotion ? 1 : (swelling ? 1.05 : 1))
+                .shadow(color: Palette.gold.opacity(swelling && !reduceMotion ? 0.4 : 0),
+                        radius: swelling ? 12 : 0)
+        } animation: { swelling in
+            swelling ? DuhaaMotion.markSwell : DuhaaMotion.markSettle
+        }
         .padding(.horizontal, 18)
         .padding(.vertical, 15)
         .background(alignment: .leading) {
@@ -295,12 +309,24 @@ private struct PrayerRowView: View {
     private var markButton: some View {
         Button {
             let nowPrayed = tracker.toggle(row.prayer, dayKey: row.dayKey, onTime: row.onTime)
+            // A soft touch-down on every toggle…
+            DuhaaHaptics.tap()
+            if nowPrayed {
+                celebration += 1
+                // …and a warm success pattern landing with the swell's peak.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
+                    DuhaaHaptics.success()
+                }
+            }
             onMark(row.prayer, nowPrayed)
         } label: {
             Image(systemName: isPrayed ? "checkmark.circle.fill" : "circle")
                 .duhaaFont(22)
                 .foregroundStyle(isPrayed ? Palette.gold : Color.primary.opacity(0.22))
                 .symbolEffect(.bounce, value: isPrayed)
+                // HIG minimum touch target — the glyph alone is only ~22pt.
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel(isPrayed ? "\(row.prayer.rawValue) prayed" : "Mark \(row.prayer.rawValue) as prayed")

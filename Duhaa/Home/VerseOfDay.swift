@@ -49,12 +49,13 @@ struct VerseOfDayCard: View {
                             .duhaaFont(11)
                             .foregroundStyle(Palette.blue.opacity(0.7))
                     }
-                    Text(ayah.arabic)
+                    Text(QuranArabicText.display(ayah.arabic))
                         .font(QuranFont.uthmani(22))
                         .lineSpacing(10)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                         .environment(\.layoutDirection, .rightToLeft)
                         .foregroundStyle(.primary)
+                        .accessibilityLabel(ayah.arabic)
                     Text(ayah.english)
                         .duhaaFont(14)
                         .foregroundStyle(.primary.opacity(0.82))
@@ -68,7 +69,7 @@ struct VerseOfDayCard: View {
                 .overlay(RoundedRectangle(cornerRadius: 20).stroke(Palette.gold.opacity(0.3), lineWidth: 1))
                 .clipShape(RoundedRectangle(cornerRadius: 20))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.duhaaPress)
         }
     }
 }

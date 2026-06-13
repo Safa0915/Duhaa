@@ -125,7 +125,15 @@ enum NotificationScheduler {
 
     private static func sound(for mode: PrayerNotificationMode) -> UNNotificationSound? {
         switch mode {
-        case .adhan:  return UNNotificationSound(named: UNNotificationSoundName(NotificationCopy.soundFileName))
+        case .adhan:
+            let saved = UserDefaults.standard.string(forKey: AdhanSoundPreference.key) ?? AdhanSoundPreference.duhaaChime.rawValue
+            let preference = AdhanSoundPreference(rawValue: saved) ?? .duhaaChime
+            switch preference {
+            case .duhaaChime:
+                return UNNotificationSound(named: UNNotificationSoundName(NotificationCopy.soundFileName))
+            case .systemDefault:
+                return .default
+            }
         case .silent: return nil
         case .off:    return nil
         }

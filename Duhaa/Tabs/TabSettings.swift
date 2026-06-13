@@ -41,16 +41,28 @@ final class TabSettings {
     /// Enabled tabs, in order — what the user actually sees.
     var enabled: [DuhaaTab] { order.filter { !hidden.contains($0) } }
 
+    func enabled(for profile: UserProfileGender) -> [DuhaaTab] {
+        enabled.filter { $0.isAvailable(for: profile) }
+    }
+
     /// Tabs shown directly in the bar.
     var barTabs: [DuhaaTab] {
-        let e = enabled
+        barTabs(for: .notSet)
+    }
+
+    func barTabs(for profile: UserProfileGender) -> [DuhaaTab] {
+        let e = enabled(for: profile)
         guard e.count > Self.maxBarSlots else { return e }
         return Array(e.prefix(Self.maxBarSlots - 1))
     }
 
     /// Tabs tucked under the "More" menu (empty unless there are too many).
     var moreTabs: [DuhaaTab] {
-        let e = enabled
+        moreTabs(for: .notSet)
+    }
+
+    func moreTabs(for profile: UserProfileGender) -> [DuhaaTab] {
+        let e = enabled(for: profile)
         guard e.count > Self.maxBarSlots else { return [] }
         return Array(e.dropFirst(Self.maxBarSlots - 1))
     }
@@ -58,8 +70,13 @@ final class TabSettings {
     /// Where a tab currently lives — used by the customize screen.
     enum Placement { case bar, more, hidden }
     func placement(of tab: DuhaaTab) -> Placement {
+        placement(of: tab, for: .notSet)
+    }
+
+    func placement(of tab: DuhaaTab, for profile: UserProfileGender) -> Placement {
+        guard tab.isAvailable(for: profile) else { return .hidden }
         if hidden.contains(tab) { return .hidden }
-        return barTabs.contains(tab) ? .bar : .more
+        return barTabs(for: profile).contains(tab) ? .bar : .more
     }
 
     // MARK: Mutations
@@ -67,6 +84,18 @@ final class TabSettings {
     func move(from source: IndexSet, to destination: Int) {
         order.move(fromOffsets: source, toOffset: destination)
         persist()
+    }
+
+    func move(from source: IndexSet, to destination: Int, profile: UserProfileGender) {
+        let visible = order.enumerated().filter { $0.element.isAvailable(for: profile) }
+        let orderSources = IndexSet(source.compactMap { visible.indices.contains($0) ? visible[$0].offset : nil })
+        let orderDestination: Int
+        if destination >= visible.count {
+            orderDestination = order.count
+        } else {
+            orderDestination = visible[destination].offset
+        }
+        move(from: orderSources, to: orderDestination)
     }
 
     func isHidden(_ tab: DuhaaTab) -> Bool { hidden.contains(tab) }

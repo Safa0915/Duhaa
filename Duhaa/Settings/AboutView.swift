@@ -41,7 +41,7 @@ struct AboutView: View {
                 credit("Uthmani script font",
                        "KFGQPC HAFS Uthmanic Script — King Fahd Glorious Qur'an Printing Complex, Madinah.")
                 credit("Recitation",
-                       "Sheikh Mishary Rashid Alafasy, streamed via EveryAyah.com.")
+                       "Nine renowned reciters — Alafasy, AbdulBaset, Sudais, Minshawi, and others — streamed from the Quran Foundation's audio service (Quran.com).")
             }
 
             Section("Du'as & Adhkar") {

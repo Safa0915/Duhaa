@@ -5,27 +5,52 @@ import SwiftUI
 /// directly; any overflow lands in a "More" tab.
 struct MainTabView: View {
     @Environment(TabSettings.self) private var tabs
+    @AppStorage("duhaa.profile.gender") private var profileGenderRaw = UserProfileGender.notSet.rawValue
+    @AppStorage("duhaa.shortcut.targetTab") private var shortcutTargetTab = ""
     @State private var selection: String = DuhaaTab.prayer.rawValue
+
+    private var profile: UserProfileGender {
+        UserProfileGender.from(profileGenderRaw)
+    }
+
+    private var barTabs: [DuhaaTab] {
+        tabs.barTabs(for: profile)
+    }
+
+    private var moreTabs: [DuhaaTab] {
+        tabs.moreTabs(for: profile)
+    }
 
     var body: some View {
         TabView(selection: $selection) {
-            ForEach(tabs.barTabs) { tab in
+            ForEach(barTabs) { tab in
                 tabRoot(tab)
                     .tag(tab.rawValue)
                     .tabItem { Label(tab.title, systemImage: tab.icon) }
             }
-            if !tabs.moreTabs.isEmpty {
-                MoreView(tabs: tabs.moreTabs)
+            if !moreTabs.isEmpty {
+                MoreView(tabs: moreTabs)
                     .tag("__more__")
                     .tabItem { Label("More", systemImage: "ellipsis") }
             }
         }
         .tint(Palette.gold)
         .preferredColorScheme(Palette.active.colorScheme)
-        .onChange(of: tabs.barTabs) { _, bar in
-            // Keep a valid selection if the selected tab was reordered or hidden.
-            let valid = bar.map(\.rawValue) + (tabs.moreTabs.isEmpty ? [] : ["__more__"])
-            if !valid.contains(selection) { selection = bar.first?.rawValue ?? selection }
+        .onAppear {
+            consumeShortcutTarget()
+            ensureValidSelection()
+        }
+        .onChange(of: barTabs) {
+            ensureValidSelection()
+        }
+        .onChange(of: moreTabs) {
+            ensureValidSelection()
+        }
+        .onChange(of: profileGenderRaw) {
+            ensureValidSelection()
+        }
+        .onChange(of: shortcutTargetTab) {
+            consumeShortcutTarget()
         }
     }
 
@@ -38,5 +63,27 @@ struct MainTabView: View {
         } else {
             NavigationStack { tab.makeView() }
         }
+    }
+
+    private func ensureValidSelection() {
+        let valid = barTabs.map(\.rawValue) + (moreTabs.isEmpty ? [] : ["__more__"])
+        if !valid.contains(selection) {
+            selection = barTabs.first?.rawValue ?? "__more__"
+        }
+    }
+
+    private func consumeShortcutTarget() {
+        guard let target = DuhaaTab(rawValue: shortcutTargetTab),
+              target.isAvailable(for: profile) else {
+            shortcutTargetTab = ""
+            return
+        }
+
+        if barTabs.contains(target) {
+            selection = target.rawValue
+        } else if moreTabs.contains(target) {
+            selection = "__more__"
+        }
+        shortcutTargetTab = ""
     }
 }

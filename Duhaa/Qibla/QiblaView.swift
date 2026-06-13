@@ -67,7 +67,7 @@ struct QiblaView: View {
             }
         }
         .onChange(of: aligned) { _, now in
-            if now && !wasAligned { UINotificationFeedbackGenerator().notificationOccurred(.success) }
+            if now && !wasAligned { DuhaaHaptics.success() }
             wasAligned = now
         }
     }

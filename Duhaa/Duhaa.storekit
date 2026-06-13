@@ -1,0 +1,145 @@
+{
+  "identifier": "515F138C-A990-47C0-89A6-8453C18BDDA7",
+  "nonRenewingSubscriptions": [],
+  "products": [],
+  "settings": {},
+  "subscriptionGroups": [
+    {
+      "id": "21537101",
+      "localizations": [],
+      "name": "Duhaa+",
+      "subscriptions": [
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "1.99",
+          "familyShareable": false,
+          "groupNumber": 3,
+          "internalID": "1153710001",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "The first light. Keep Duhaa free for everyone.",
+              "displayName": "Hilal",
+              "locale": "en_US"
+            }
+          ],
+          "productID": "com.duhaa.app.plus.hilal.monthly",
+          "recurringSubscriptionPeriod": "P1M",
+          "referenceName": "Hilal Monthly",
+          "subscriptionGroupID": "21537101",
+          "type": "RecurringSubscription"
+        },
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "19.99",
+          "familyShareable": false,
+          "groupNumber": 3,
+          "internalID": "1153710002",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "The first light. Keep Duhaa free for everyone.",
+              "displayName": "Hilal (Annual)",
+              "locale": "en_US"
+            }
+          ],
+          "productID": "com.duhaa.app.plus.hilal.annual",
+          "recurringSubscriptionPeriod": "P1Y",
+          "referenceName": "Hilal Annual",
+          "subscriptionGroupID": "21537101",
+          "type": "RecurringSubscription"
+        },
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "2.99",
+          "familyShareable": false,
+          "groupNumber": 2,
+          "internalID": "1153710003",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "The dawn arrives. The full Duhaa+ experience.",
+              "displayName": "Fajr",
+              "locale": "en_US"
+            }
+          ],
+          "productID": "com.duhaa.app.plus.fajr.monthly",
+          "recurringSubscriptionPeriod": "P1M",
+          "referenceName": "Fajr Monthly",
+          "subscriptionGroupID": "21537101",
+          "type": "RecurringSubscription"
+        },
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "29.99",
+          "familyShareable": false,
+          "groupNumber": 2,
+          "internalID": "1153710004",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "The dawn arrives. The full Duhaa+ experience.",
+              "displayName": "Fajr (Annual)",
+              "locale": "en_US"
+            }
+          ],
+          "productID": "com.duhaa.app.plus.fajr.annual",
+          "recurringSubscriptionPeriod": "P1Y",
+          "referenceName": "Fajr Annual",
+          "subscriptionGroupID": "21537101",
+          "type": "RecurringSubscription"
+        },
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "3.99",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "1153710005",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "The full morning brightness, with deeper support.",
+              "displayName": "Duhaa",
+              "locale": "en_US"
+            }
+          ],
+          "productID": "com.duhaa.app.plus.duhaa.monthly",
+          "recurringSubscriptionPeriod": "P1M",
+          "referenceName": "Duhaa Monthly",
+          "subscriptionGroupID": "21537101",
+          "type": "RecurringSubscription"
+        },
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "39.99",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "1153710006",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "The full morning brightness, with deeper support.",
+              "displayName": "Duhaa (Annual)",
+              "locale": "en_US"
+            }
+          ],
+          "productID": "com.duhaa.app.plus.duhaa.annual",
+          "recurringSubscriptionPeriod": "P1Y",
+          "referenceName": "Duhaa Annual",
+          "subscriptionGroupID": "21537101",
+          "type": "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version": {
+    "major": 3,
+    "minor": 0
+  }
+}

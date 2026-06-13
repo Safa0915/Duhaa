@@ -17,6 +17,29 @@ enum PrayerNotificationMode: String, CaseIterable, Identifiable {
     }
 }
 
+enum AdhanSoundPreference: String, CaseIterable, Identifiable {
+    case duhaaChime
+    case systemDefault
+
+    static let key = "duhaa.notif.adhanSound"
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .duhaaChime: "Duhaa chime"
+        case .systemDefault: "iOS default"
+        }
+    }
+
+    var detail: String {
+        switch self {
+        case .duhaaChime: "The soft bundled Duhaa notification chime."
+        case .systemDefault: "The default iOS notification sound."
+        }
+    }
+}
+
 /// Per-prayer notification preferences + optional pre-prayer reminders.
 /// Persisted to UserDefaults and shared via the environment. Changing anything
 /// reschedules the rolling notification window.

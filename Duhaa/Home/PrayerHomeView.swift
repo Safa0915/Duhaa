@@ -72,7 +72,16 @@ struct PrayerHomeView: View {
                         .padding(.horizontal, 22).padding(.top, 16)
 
                         PrayersCard(rows: d.rows) { _, nowPrayed in
-                            if nowPrayed { showToast(Encouragements.afterPrayerMessage()) }
+                            if nowPrayed {
+                                showToast(Encouragements.afterPrayerMessage())
+                                // The fifth of five gets a little extra warmth.
+                                if PrayerCompletionFeedback.shouldPlayPerfectDay(
+                                    nowPrayed: nowPrayed,
+                                    prayedCount: tracker.count(dayKey: d.dayKey)
+                                ) {
+                                    DuhaaHaptics.perfectDay()
+                                }
+                            }
                         }
                         .padding(.horizontal, 22).padding(.top, 16)
 

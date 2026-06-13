@@ -1,0 +1,1358 @@
+{
+  "guides": [
+    {
+      "id": "wudu",
+      "title": "How to Make Wudu",
+      "category": "purification",
+      "summary": "A calm, step-by-step wudu guide from the Qur'an and the Prophet's practice.",
+      "estimatedMinutes": 5,
+      "sortOrder": 10,
+      "steps": [
+        {
+          "id": "wudu-intention",
+          "order": 1,
+          "title": "Begin with intention and Bismillah",
+          "body": "Make the intention in your heart that this wudu is for purification before prayer. Say Bismillah before you start. The intention is not spoken out loud.",
+          "arabicText": "بِسْمِ اللَّهِ",
+          "transliteration": "Bismillah.",
+          "translation": "In the name of Allah.",
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 5:6",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "Allah commands washing for prayer in this verse."
+            },
+            {
+              "sourceText": "Sunan Abi Dawud 101",
+              "grade": "sahih",
+              "graderAttribution": "al-Albani",
+              "note": "Used for mentioning Allah's name at the beginning of wudu."
+            }
+          ]
+        },
+        {
+          "id": "wudu-hands",
+          "order": 2,
+          "title": "Wash both hands",
+          "body": "Wash both hands up to the wrists, starting with the right. The Sunnah description mentions washing the hands three times before the rest of wudu.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 159",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "Uthman described the Prophet's wudu, beginning with washing the hands."
+            }
+          ]
+        },
+        {
+          "id": "wudu-mouth-nose",
+          "order": 3,
+          "title": "Rinse the mouth and nose",
+          "body": "Rinse your mouth, then draw water gently into the nose and blow it out. Do this with care, especially if fasting.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 159",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The narration includes rinsing the mouth and nose in the Prophet's wudu."
+            }
+          ]
+        },
+        {
+          "id": "wudu-face",
+          "order": 4,
+          "title": "Wash the face",
+          "body": "Wash the whole face, from the hairline to the chin and from ear to ear. Make sure water reaches the usual face area without harshness.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 5:6",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "The verse names washing the face as part of wudu."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 159",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The Sunnah description mentions washing the face three times."
+            }
+          ]
+        },
+        {
+          "id": "wudu-arms",
+          "order": 5,
+          "title": "Wash the arms to the elbows",
+          "body": "Wash the right arm up to and including the elbow, then the left arm up to and including the elbow.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 5:6",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "The verse names washing the hands and arms up to the elbows."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 159",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The Sunnah description mentions washing the forearms to the elbows."
+            }
+          ]
+        },
+        {
+          "id": "wudu-head",
+          "order": 6,
+          "title": "Wipe the head",
+          "body": "Wet your hands and wipe over the head. Many scholars include the ears with the head; keep this simple and follow the Sunnah calmly.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 5:6",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "The verse names wiping the head."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 159",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The Sunnah description includes wiping the head."
+            }
+          ]
+        },
+        {
+          "id": "wudu-feet",
+          "order": 7,
+          "title": "Wash the feet to the ankles",
+          "body": "Wash the right foot up to and including the ankle, then the left. Let water reach between the toes and avoid leaving dry spots.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 5:6",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "The verse names washing the feet to the ankles."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 159",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The Sunnah description mentions washing the feet to the ankles."
+            }
+          ]
+        },
+        {
+          "id": "wudu-finish",
+          "order": 8,
+          "title": "Finish with the shahadah",
+          "body": "After completing wudu, say the shahadah. If your wudu was at a bathroom sink, say it after leaving the toilet area when possible.",
+          "arabicText": "أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ، وَأَنَّ مُحَمَّدًا عَبْدُ اللَّهِ وَرَسُولُهُ",
+          "transliteration": "Ashhadu an la ilaha illa Allah, wa anna Muhammadan 'abdullahi wa rasuluh.",
+          "translation": "I testify that none has the right to be worshipped except Allah, and that Muhammad is the servant of Allah and His Messenger.",
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih Muslim 234a",
+              "grade": "sahih",
+              "graderAttribution": "Muslim",
+              "note": "The narration mentions this remembrance after wudu."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ghusl",
+      "title": "How to Make Ghusl",
+      "category": "purification",
+      "summary": "The full bath for major ritual impurity, taught through the Prophet's Sunnah.",
+      "estimatedMinutes": 6,
+      "sortOrder": 20,
+      "steps": [
+        {
+          "id": "ghusl-intention",
+          "order": 1,
+          "title": "Make the intention",
+          "body": "Intend in your heart to lift major ritual impurity. You do not need to say the intention out loud.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 5:6",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "The verse commands full purification when in a state of janabah."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 1",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari and Muslim",
+              "note": "Actions are by intentions."
+            }
+          ]
+        },
+        {
+          "id": "ghusl-hands",
+          "order": 2,
+          "title": "Wash the hands",
+          "body": "Begin by washing both hands. This keeps the rest of the ghusl clean and follows the prophetic description.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 248",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "Aishah described the Prophet beginning ghusl by washing his hands."
+            }
+          ]
+        },
+        {
+          "id": "ghusl-private-area",
+          "order": 3,
+          "title": "Remove impurity",
+          "body": "Wash any physical impurity from the private area and anywhere else it reached. Cleanliness comes before the full wash.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 249",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "Maymunah described the Prophet washing away impurity during ghusl."
+            }
+          ]
+        },
+        {
+          "id": "ghusl-wudu",
+          "order": 4,
+          "title": "Make wudu",
+          "body": "Make wudu as you would for prayer. If you are standing where water gathers, you may delay washing the feet until the end.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 248",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The Prophet made wudu as part of ghusl."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 249",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "Maymunah's report mentions washing the feet after moving from the place of ghusl."
+            }
+          ]
+        },
+        {
+          "id": "ghusl-hair",
+          "order": 5,
+          "title": "Wet the roots of the hair",
+          "body": "Let water reach the roots of the hair, then pour water over the head. The Sunnah description mentions three handfuls over the head.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 248",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The narration mentions moving water through the roots and pouring water over the head three times."
+            }
+          ]
+        },
+        {
+          "id": "ghusl-body",
+          "order": 6,
+          "title": "Wash the whole body",
+          "body": "Wash the rest of the body so water reaches all skin. Be attentive to folds, underarms, behind ears, between toes, and anywhere water may miss.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 5:6",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "The verse commands full purification from janabah."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 248",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The narration ends with pouring water over the whole body."
+            }
+          ]
+        },
+        {
+          "id": "ghusl-finish",
+          "order": 7,
+          "title": "Leave clean and ready",
+          "body": "If you completed ghusl and did not break wudu during or after it, the ghusl includes purification for prayer. If you did break wudu, make wudu again before praying.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 248",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The Prophet's ghusl included wudu within it."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tayammum",
+      "title": "How to Make Tayammum",
+      "category": "purification",
+      "summary": "Dry purification when water is unavailable or harmful to use.",
+      "estimatedMinutes": 3,
+      "sortOrder": 30,
+      "steps": [
+        {
+          "id": "tayammum-when",
+          "order": 1,
+          "title": "Use it only when needed",
+          "body": "Tayammum is for when you cannot find water or cannot safely use it. If water becomes available and you can use it, return to wudu or ghusl.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 5:6",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "The verse permits tayammum when water is not found."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 344",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The Prophet directed a person in janabah without water to use clean earth."
+            }
+          ]
+        },
+        {
+          "id": "tayammum-intention",
+          "order": 2,
+          "title": "Make the intention",
+          "body": "Intend purification for prayer in your heart. Tayammum is worship, so begin deliberately and calmly.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 1",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari and Muslim",
+              "note": "Actions are by intentions."
+            }
+          ]
+        },
+        {
+          "id": "tayammum-earth",
+          "order": 3,
+          "title": "Touch clean earth once",
+          "body": "Place both hands lightly on clean earth, dust, sand, stone, or a clean earthy surface. If there is excess dust, shake or blow it off lightly.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 347; Sahih Muslim 368a",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari and Muslim",
+              "note": "Ammar's narration describes one light strike of the earth."
+            }
+          ]
+        },
+        {
+          "id": "tayammum-face",
+          "order": 4,
+          "title": "Wipe the face",
+          "body": "Wipe over the face once with the dusted hands.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 5:6",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "The verse names wiping the face for tayammum."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 341",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The Prophet said wiping the face and backs of the hands was sufficient."
+            }
+          ]
+        },
+        {
+          "id": "tayammum-hands",
+          "order": 5,
+          "title": "Wipe the hands",
+          "body": "Wipe the hands once. Keep it simple: face and hands, without turning tayammum into a full wudu.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 5:6",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "The verse names wiping the hands for tayammum."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 347; Sahih Muslim 368a",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari and Muslim",
+              "note": "Ammar's narration describes wiping the hands and face."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "prayer-core",
+      "title": "How to Pray — Core Structure",
+      "category": "prayer",
+      "summary": "The shared structure of salah, from takbir to taslim.",
+      "estimatedMinutes": 10,
+      "sortOrder": 40,
+      "steps": [
+        {
+          "id": "prayer-prepare",
+          "order": 1,
+          "title": "Prepare for salah",
+          "body": "Make sure the prayer time has entered, you have purification, your body and place are clean, and you face the qibla. Make the intention in your heart.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 4:103",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "Prayer is prescribed at appointed times."
+            },
+            {
+              "sourceText": "Quran 5:6",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "Purification is commanded when rising for prayer."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 1",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari and Muslim",
+              "note": "Actions are by intentions."
+            }
+          ]
+        },
+        {
+          "id": "prayer-takbir",
+          "order": 2,
+          "title": "Start with takbir",
+          "body": "Stand if you are able, raise your hands if following that Sunnah, and say Allahu Akbar to enter the prayer.",
+          "arabicText": "اللَّهُ أَكْبَرُ",
+          "transliteration": "Allahu Akbar.",
+          "translation": "Allah is greater.",
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 757",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The Prophet taught the man to begin prayer with takbir."
+            }
+          ]
+        },
+        {
+          "id": "prayer-recitation",
+          "order": 3,
+          "title": "Recite Quran while standing",
+          "body": "Recite Surah al-Fatihah in each rak'ah. In the first two rak'ahs, recite another passage after al-Fatihah when appropriate.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 756",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "No prayer is valid without the Opening of the Book."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 776",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "Abu Qatadah described reciting al-Fatihah and another surah in the first two rak'ahs."
+            }
+          ]
+        },
+        {
+          "id": "prayer-ruku",
+          "order": 4,
+          "title": "Bow in ruku",
+          "body": "Say Allahu Akbar and bow until you are settled. Keep your back calm and say the ruku remembrance.",
+          "arabicText": "سُبْحَانَ رَبِّيَ الْعَظِيمِ",
+          "transliteration": "Subhana Rabbiyal-'Azim.",
+          "translation": "Glory be to my Lord, the Magnificent.",
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 757",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The Prophet taught bowing until calm."
+            },
+            {
+              "sourceText": "Sunan Abi Dawud 874; Sahih Muslim 772",
+              "grade": "sahih",
+              "graderAttribution": "Muslim and al-Albani",
+              "note": "Used for the ruku remembrance."
+            }
+          ]
+        },
+        {
+          "id": "prayer-rise",
+          "order": 5,
+          "title": "Rise from ruku",
+          "body": "Rise until standing straight and settled. Say the Sunnah phrases for rising and praising Allah.",
+          "arabicText": "سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ\nرَبَّنَا وَلَكَ الْحَمْدُ",
+          "transliteration": "Sami'a Allahu liman hamidah. Rabbana wa laka al-hamd.",
+          "translation": "Allah hears the one who praises Him. Our Lord, and to You belongs all praise.",
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 757",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The Prophet taught rising until standing straight."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 789",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "Used for the phrases said when rising from ruku."
+            }
+          ]
+        },
+        {
+          "id": "prayer-sujud",
+          "order": 6,
+          "title": "Prostrate in sujud",
+          "body": "Say Allahu Akbar and prostrate until you are settled. Prostrate on the known points of prostration and say the sujud remembrance.",
+          "arabicText": "سُبْحَانَ رَبِّيَ الْأَعْلَى",
+          "transliteration": "Subhana Rabbiyal-A'la.",
+          "translation": "Glory be to my Lord, the Most High.",
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 757",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The Prophet taught prostrating until calm."
+            },
+            {
+              "sourceText": "Sunan Abi Dawud 874; Sahih Muslim 772",
+              "grade": "sahih",
+              "graderAttribution": "Muslim and al-Albani",
+              "note": "Used for the sujud remembrance."
+            }
+          ]
+        },
+        {
+          "id": "prayer-between-sujud",
+          "order": 7,
+          "title": "Sit between the two prostrations",
+          "body": "Rise from sujud, sit calmly, ask Allah for forgiveness, then make the second sujud.",
+          "arabicText": "رَبِّ اغْفِرْ لِي",
+          "transliteration": "Rabbi-ghfir li.",
+          "translation": "My Lord, forgive me.",
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 757",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The Prophet taught sitting between prostrations until calm."
+            },
+            {
+              "sourceText": "Sunan Abi Dawud 874",
+              "grade": "sahih",
+              "graderAttribution": "al-Albani",
+              "note": "Used for the supplication between the two prostrations."
+            }
+          ]
+        },
+        {
+          "id": "prayer-next-rakah",
+          "order": 8,
+          "title": "Stand for the next rak'ah",
+          "body": "After the second sujud, stand for the next rak'ah if more remain. Repeat the same core structure with calmness.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 757",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The Prophet said to do this throughout the prayer."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 631",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "Pray as you have seen the Prophet pray."
+            }
+          ]
+        },
+        {
+          "id": "prayer-tashahhud",
+          "order": 9,
+          "title": "Sit for tashahhud",
+          "body": "In the sitting place of the prayer, recite the tashahhud. In the final sitting, send salah on the Prophet ﷺ before ending.",
+          "arabicText": "التَّحِيَّاتُ لِلَّهِ...",
+          "transliteration": "At-tahiyyatu lillah...",
+          "translation": "All greetings, prayers, and pure words are for Allah...",
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 831",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "Ibn Mas'ud narrated the tashahhud taught by the Prophet."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 3370",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari and Muslim",
+              "note": "Used for sending salah on the Prophet ﷺ in the final sitting."
+            }
+          ]
+        },
+        {
+          "id": "prayer-taslim",
+          "order": 10,
+          "title": "End with taslim",
+          "body": "End the prayer by saying salam to the right and then to the left.",
+          "arabicText": "السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ",
+          "transliteration": "As-salamu 'alaykum wa rahmatullah.",
+          "translation": "Peace and Allah's mercy be upon you.",
+          "dalilReferences": [
+            {
+              "sourceText": "Sunan Abi Dawud 997",
+              "grade": "sahih",
+              "graderAttribution": "al-Albani",
+              "note": "Used for the wording and direction of taslim."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 631",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The overall prayer is learned from the Prophet's practice."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "prayer-differences",
+      "title": "Differences per Prayer",
+      "category": "prayer",
+      "summary": "Rak'ah counts and the main audible/silent differences across the five prayers.",
+      "estimatedMinutes": 5,
+      "sortOrder": 50,
+      "steps": [
+        {
+          "id": "differences-counts",
+          "order": 1,
+          "title": "Know the rak'ah counts",
+          "body": "Fajr is 2 rak'ahs. Dhuhr is 4. Asr is 4. Maghrib is 3. Isha is 4. Keep the core structure the same; the count changes.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 350; Sahih al-Bukhari 1090",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "Aishah narrated that prayers were first prescribed as two rak'ahs, then resident prayers were completed."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 1109",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "Ibn Umar's travel narration mentions Maghrib as three and Isha as two when shortened in travel."
+            }
+          ]
+        },
+        {
+          "id": "differences-fajr",
+          "order": 2,
+          "title": "Fajr is two audible rak'ahs",
+          "body": "Fajr has two rak'ahs. The recitation is audible in congregation, and both rak'ahs include al-Fatihah and another recitation.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 891",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The Prophet's Friday Fajr recitation shows audible recitation in Fajr."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 776",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "Abu Qatadah described recitation in Fajr and the first two rak'ahs of other prayers."
+            }
+          ]
+        },
+        {
+          "id": "differences-dhuhr-asr",
+          "order": 3,
+          "title": "Dhuhr and Asr are four silent rak'ahs",
+          "body": "Dhuhr and Asr are four rak'ahs. In the first two, recite al-Fatihah and another passage; in the last two, recite al-Fatihah. Their recitation is silent.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 776",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "Abu Qatadah described the recitation pattern of Dhuhr and Asr."
+            }
+          ]
+        },
+        {
+          "id": "differences-maghrib",
+          "order": 4,
+          "title": "Maghrib is three rak'ahs",
+          "body": "Maghrib has three rak'ahs. In congregation, the first two are audible, then the third is silent. Sit for tashahhud after the second and third rak'ah.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 1109",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The narration mentions Maghrib as three rak'ahs."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 765",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "Reports of the Prophet's Maghrib recitation show audible recitation in Maghrib."
+            }
+          ]
+        },
+        {
+          "id": "differences-isha",
+          "order": 5,
+          "title": "Isha is four rak'ahs",
+          "body": "Isha has four rak'ahs. In congregation, the first two are audible, then the last two are silent. Sit after the second and final rak'ah.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 1090",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "Aishah's narration anchors resident prayers being completed beyond the original two rak'ahs."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 769",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "Reports of Isha recitation show audible recitation in Isha."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dhikr-after-prayer",
+      "title": "Dhikr After Prayer (Adhkar as-Salah)",
+      "category": "prayer",
+      "summary": "A simple post-prayer routine, aligned with the existing Du'as library.",
+      "estimatedMinutes": 8,
+      "sortOrder": 60,
+      "steps": [
+        {
+          "id": "dhikr-istighfar",
+          "order": 1,
+          "title": "Begin with istighfar and peace",
+          "body": "After salam, say Astaghfirullah three times, then Allahumma Antas-Salam. This is already available in Du'as under After Prayer Adhkar.",
+          "arabicText": "أَسْتَغْفِرُ اللَّهَ\nاللَّهُمَّ أَنْتَ السَّلَامُ، وَمِنْكَ السَّلَامُ",
+          "transliteration": "Astaghfirullah. Allahumma anta as-Salam, wa minka as-salam.",
+          "translation": "I seek Allah's forgiveness. O Allah, You are peace, and from You is peace.",
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih Muslim 591",
+              "grade": "sahih",
+              "graderAttribution": "Muslim",
+              "note": "This is the opening remembrance after the obligatory prayer."
+            }
+          ]
+        },
+        {
+          "id": "dhikr-tawhid",
+          "order": 2,
+          "title": "Say the tawhid remembrance",
+          "body": "Say the post-prayer tawhid phrases: Allah alone owns dominion and praise; none can withhold what He gives or give what He withholds.",
+          "arabicText": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ",
+          "transliteration": "La ilaha illallahu wahdahu la sharika lah.",
+          "translation": "None has the right to be worshipped except Allah alone, without partner.",
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 844",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "This remembrance appears after the obligatory prayer."
+            },
+            {
+              "sourceText": "Sahih Muslim 594a",
+              "grade": "sahih",
+              "graderAttribution": "Muslim",
+              "note": "Includes the sincere tawhid wording after prayer."
+            }
+          ]
+        },
+        {
+          "id": "dhikr-counts",
+          "order": 3,
+          "title": "Make tasbih, tahmid, and takbir",
+          "body": "Use a Sunnah count set from the Du'as library. The common version is Subhanallah 33, Alhamdulillah 33, Allahu Akbar 33, then the closing tawhid phrase once.",
+          "arabicText": "سُبْحَانَ اللَّهِ\nالْحَمْدُ لِلَّهِ\nاللَّهُ أَكْبَرُ",
+          "transliteration": "Subhanallah. Alhamdulillah. Allahu Akbar.",
+          "translation": "Glory be to Allah. All praise is for Allah. Allah is greater.",
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih Muslim 597a",
+              "grade": "sahih",
+              "graderAttribution": "Muslim",
+              "note": "The narration gives the post-prayer count and closing phrase."
+            }
+          ]
+        },
+        {
+          "id": "dhikr-ayat-kursi",
+          "order": 4,
+          "title": "Recite Ayat al-Kursi",
+          "body": "Recite Ayat al-Kursi once after each obligatory prayer. The full Arabic is available in Du'as > After Prayer Adhkar.",
+          "arabicText": "آيَةُ الْكُرْسِيّ",
+          "transliteration": "Ayat al-Kursi.",
+          "translation": "Quran 2:255.",
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 2:255",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "The verse itself is Quranic."
+            },
+            {
+              "sourceText": "An-Nasa'i, al-Sunan al-Kubra 9848",
+              "grade": "sahih",
+              "graderAttribution": "Ibn Hibban and others",
+              "note": "Used by scholars for reciting Ayat al-Kursi after obligatory prayers."
+            }
+          ]
+        },
+        {
+          "id": "dhikr-surahs",
+          "order": 5,
+          "title": "Recite the three protective surahs",
+          "body": "Recite al-Ikhlas, al-Falaq, and an-Nas. The existing Du'as library keeps the full text and the Fajr/Maghrib count note.",
+          "arabicText": "قُلْ هُوَ اللَّهُ أَحَدٌ\nقُلْ أَعُوذُ بِرَبِّ الْفَلَقِ\nقُلْ أَعُوذُ بِرَبِّ النَّاسِ",
+          "transliteration": "Qul huwa Allahu ahad. Qul a'udhu bi-rabbil-falaq. Qul a'udhu bi-rabbin-nas.",
+          "translation": "Surah al-Ikhlas, Surah al-Falaq, and Surah an-Nas.",
+          "dalilReferences": [
+            {
+              "sourceText": "Sunan Abi Dawud 1523",
+              "grade": "sahih",
+              "graderAttribution": "al-Albani",
+              "note": "Used for reciting the Mu'awwidhat after every prayer."
+            }
+          ]
+        },
+        {
+          "id": "dhikr-fajr-maghrib",
+          "order": 6,
+          "title": "Add the Fajr and Maghrib dhikr",
+          "body": "After Fajr and Maghrib, add the specific tawhid dhikr ten times. Keep it tied to those two prayers rather than all five.",
+          "arabicText": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ",
+          "transliteration": "La ilaha illallahu wahdahu la sharika lah.",
+          "translation": "None has the right to be worshipped except Allah alone, without partner.",
+          "dalilReferences": [
+            {
+              "sourceText": "Jami' at-Tirmidhi 3474; Jami' at-Tirmidhi 3534",
+              "grade": "hasan",
+              "graderAttribution": "at-Tirmidhi and al-Albani",
+              "note": "Used for the Fajr and Maghrib specific ten-count dhikr."
+            }
+          ]
+        },
+        {
+          "id": "dhikr-gentle",
+          "order": 7,
+          "title": "Keep it beloved, not burdensome",
+          "body": "These adhkar are beautiful Sunnah routines after the obligatory prayer. Do what you can consistently, and return gently when you forget.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 6465",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari and Muslim",
+              "note": "The most beloved deeds are those done consistently, even if small."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sujud-sahw",
+      "title": "Mistakes in Prayer & Sujud al-Sahw",
+      "category": "prayer",
+      "summary": "Practical decisions for common prayer mistakes without panic.",
+      "estimatedMinutes": 8,
+      "sortOrder": 70,
+      "steps": [
+        {
+          "id": "sahw-calm",
+          "order": 1,
+          "title": "Do not panic",
+          "body": "A mistake in prayer does not mean you are hopeless or that the whole prayer is automatically lost. Pause, identify what happened, and fix what can be fixed.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 1229",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The Prophet corrected a shortened prayer and made sujud al-sahw."
+            }
+          ]
+        },
+        {
+          "id": "sahw-missed-rakah",
+          "order": 2,
+          "title": "If you ended early",
+          "body": "If you gave salam and then realized you missed a rak'ah, stand, complete what was missed, say salam, then make two prostrations of forgetfulness and finish.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 1229",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "In the Dhul-Yadayn incident, the Prophet completed the missing rak'ahs and made sujud al-sahw."
+            }
+          ]
+        },
+        {
+          "id": "sahw-doubt-count",
+          "order": 3,
+          "title": "If you are unsure of the count",
+          "body": "If you cannot tell whether you prayed three or four, build on what you are certain of: take the lower number, complete the prayer, then make two prostrations before salam.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih Muslim 571",
+              "grade": "sahih",
+              "graderAttribution": "Muslim",
+              "note": "The hadith instructs discarding doubt and building on certainty."
+            }
+          ]
+        },
+        {
+          "id": "sahw-likely",
+          "order": 4,
+          "title": "If one number is more likely",
+          "body": "If you strongly think one count is correct, act on what seems correct, complete the prayer, say salam, then make two prostrations and say salam again.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 401; Sahih Muslim 572",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari and Muslim",
+              "note": "The narration teaches seeking what is correct and then prostrating for forgetfulness."
+            }
+          ]
+        },
+        {
+          "id": "sahw-extra",
+          "order": 5,
+          "title": "If you added something",
+          "body": "If you accidentally added an extra standing, sitting, ruku, sujud, or rak'ah, return to the prayer order when you notice and make sujud al-sahw.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih Muslim 572",
+              "grade": "sahih",
+              "graderAttribution": "Muslim",
+              "note": "Sujud al-sahw covers mistakes in the prayer and is tied to completing the prayer correctly."
+            }
+          ]
+        },
+        {
+          "id": "sahw-forgot-tashahhud",
+          "order": 6,
+          "title": "If you forgot the first tashahhud",
+          "body": "If you stood up after the second rak'ah and forgot the first tashahhud, continue if you are already upright, then make sujud al-sahw before salam.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 1224",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The Prophet stood after two rak'ahs without sitting, then made two prostrations before salam."
+            }
+          ]
+        },
+        {
+          "id": "sahw-how",
+          "order": 7,
+          "title": "How to perform sujud al-sahw",
+          "body": "Make two prostrations like the normal sujud of prayer, with takbir as you go down and rise. Follow the before-salam or after-salam placement for the mistake type you are applying.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 1229",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The narration describes two prostrations similar to the prayer's prostration."
+            },
+            {
+              "sourceText": "Sahih Muslim 571",
+              "grade": "sahih",
+              "graderAttribution": "Muslim",
+              "note": "Mentions two prostrations before salam in the uncertainty case."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tawbah",
+      "title": "Tawbah — Coming Back to Allah",
+      "category": "foundations",
+      "summary": "Repentance without despair: stop, return, repair, and keep walking.",
+      "estimatedMinutes": 6,
+      "sortOrder": 80,
+      "steps": [
+        {
+          "id": "tawbah-hope",
+          "order": 1,
+          "title": "Start with hope",
+          "body": "Do not begin tawbah by deciding you are too far gone. Allah calls the servants who exceeded limits not to despair of His mercy.",
+          "arabicText": "لَا تَقْنَطُوا مِنْ رَحْمَةِ اللَّهِ",
+          "transliteration": "La taqnatu min rahmatillah.",
+          "translation": "Do not despair of Allah's mercy.",
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 39:53",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "The verse is the central hope anchor for returning to Allah."
+            }
+          ]
+        },
+        {
+          "id": "tawbah-stop",
+          "order": 2,
+          "title": "Stop the sin",
+          "body": "When you recognize the sin, leave it. If you fall again later, do not use that fall as proof that tawbah was fake; repent again and keep returning.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 66:8",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "Allah commands sincere repentance."
+            }
+          ]
+        },
+        {
+          "id": "tawbah-regret",
+          "order": 3,
+          "title": "Feel regret without self-destruction",
+          "body": "Regret means your heart is alive. Let it move you back to Allah, not into despair or hiding.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sunan Ibn Majah 4252",
+              "grade": "hasan",
+              "graderAttribution": "al-Albani",
+              "note": "Used for the meaning that regret is repentance."
+            },
+            {
+              "sourceText": "Quran 39:53",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "Regret should not become despair of mercy."
+            }
+          ]
+        },
+        {
+          "id": "tawbah-resolve",
+          "order": 4,
+          "title": "Resolve not to return",
+          "body": "Make a real decision to leave the sin. Remove easy paths back to it where you can, and ask Allah for firmness.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 66:8",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "Sincere repentance includes a serious turning back to Allah."
+            }
+          ]
+        },
+        {
+          "id": "tawbah-rights",
+          "order": 5,
+          "title": "Repair people's rights",
+          "body": "If the sin harmed another person, return rights, seek forgiveness where appropriate, or repair the harm in the safest truthful way.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 2449",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari",
+              "note": "The hadith urges settling injustices before the Day when wealth will not settle them."
+            }
+          ]
+        },
+        {
+          "id": "tawbah-good-deeds",
+          "order": 6,
+          "title": "Follow with good deeds",
+          "body": "After tawbah, move. Pray, give, apologize, delete the path back to the sin, call someone good, or do one quiet act Allah loves.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 25:70",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "Allah mentions repentance, belief, and righteous deeds."
+            },
+            {
+              "sourceText": "Sahih Muslim 2675",
+              "grade": "sahih",
+              "graderAttribution": "Muslim",
+              "note": "Allah is pleased with the repentance of His servant."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "coming-back-to-prayer",
+      "title": "Coming Back to Prayer After Time Away",
+      "category": "foundations",
+      "summary": "Duhaa's signature guide for returning to salah with hope, not guilt.",
+      "estimatedMinutes": 7,
+      "sortOrder": 90,
+      "steps": [
+        {
+          "id": "return-not-forsaken",
+          "order": 1,
+          "title": "You are not forsaken",
+          "body": "The fact that you want to come back is a mercy. Begin from hope: Allah did not close the door on you.",
+          "arabicText": "مَا وَدَّعَكَ رَبُّكَ وَمَا قَلَىٰ",
+          "transliteration": "Ma wadda'aka rabbuka wa ma qala.",
+          "translation": "Your Lord has not abandoned you, nor has He become hateful.",
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 93:3",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "Surah Ad-Duhaa is Duhaa's hope anchor."
+            },
+            {
+              "sourceText": "Quran 39:53",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "Do not despair of Allah's mercy."
+            }
+          ]
+        },
+        {
+          "id": "return-next-prayer",
+          "order": 2,
+          "title": "Start with today's next prayer",
+          "body": "Do not wait for a perfect Monday, Ramadan, or a clean emotional state. Check the next prayer time and pray that prayer.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 4:103",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "Prayer is tied to appointed times."
+            },
+            {
+              "sourceText": "Sahih Muslim 684c",
+              "grade": "sahih",
+              "graderAttribution": "Muslim",
+              "note": "When a prayer is missed through sleep or forgetfulness, pray it when remembered."
+            }
+          ]
+        },
+        {
+          "id": "return-five",
+          "order": 3,
+          "title": "Aim for the five, one prayer at a time",
+          "body": "The goal is all five daily prayers. The next step is the next salah in front of you. Let one prayer become the bridge to the next.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 2:238",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "Allah commands guarding the prayers."
+            },
+            {
+              "sourceText": "Sahih al-Bukhari 8; Sahih Muslim 16",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari and Muslim",
+              "note": "The five daily prayers are among Islam's central obligations."
+            }
+          ]
+        },
+        {
+          "id": "return-qada",
+          "order": 4,
+          "title": "Handle missed prayers carefully",
+          "body": "For prayers missed through sleep or forgetfulness, pray them when you remember. For a long period away from prayer, scholars discuss details differently; do not freeze. Repent, protect today's prayers, and ask a trusted scholar for a practical qada plan for your case.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 597; Sahih Muslim 684c",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari and Muslim",
+              "note": "The explicit text covers sleep and forgetfulness; broader long-term qada details require scholarly review."
+            },
+            {
+              "sourceText": "Quran 66:8",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "Begin with sincere repentance."
+            }
+          ]
+        },
+        {
+          "id": "return-make-easy",
+          "order": 5,
+          "title": "Make the next prayer easy to reach",
+          "body": "Put a prayer mat where you see it, keep wudu when you can, set gentle notifications, and choose a simple surah you know. Reduce friction without turning worship into pressure.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Sahih al-Bukhari 6465",
+              "grade": "sahih",
+              "graderAttribution": "al-Bukhari and Muslim",
+              "note": "The most beloved deeds are those done consistently, even if small."
+            }
+          ]
+        },
+        {
+          "id": "return-after-miss",
+          "order": 6,
+          "title": "If you miss again, come back again",
+          "body": "A missed prayer is serious, but it is not an invitation to miss the next one. Make tawbah, pray what needs praying, and return without theatrics.",
+          "arabicText": null,
+          "transliteration": null,
+          "translation": null,
+          "dalilReferences": [
+            {
+              "sourceText": "Quran 39:53",
+              "grade": "quranic",
+              "graderAttribution": "Quran",
+              "note": "Do not despair of Allah's mercy."
+            },
+            {
+              "sourceText": "Sahih Muslim 2675",
+              "grade": "sahih",
+              "graderAttribution": "Muslim",
+              "note": "Allah is pleased with repentance."
+            }
+          ]
+        },
+        {
+          "id": "return-dua",
+          "order": 7,
+          "title": "Ask Allah to help you pray",
+          "body": "End with asking Allah for help. The prayer life you want is built by Allah's help, then your next honest step.",
+          "arabicText": "اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ، وَشُكْرِكَ، وَحُسْنِ عِبَادَتِكَ",
+          "transliteration": "Allahumma a'inni 'ala dhikrika, wa shukrika, wa husni 'ibadatik.",
+          "translation": "O Allah, help me to remember You, thank You, and worship You well.",
+          "dalilReferences": [
+            {
+              "sourceText": "Sunan Abi Dawud 1522",
+              "grade": "sahih",
+              "graderAttribution": "al-Albani",
+              "note": "The Prophet taught Mu'adh this supplication after prayer."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,19 +1,17 @@
 import SwiftUI
 
-/// "Support Duhaa" — a gentle, never-pushy invitation to back the app on Patreon.
+/// "Support Duhaa" — a gentle, never-pushy invitation to back the app.
 /// In the Ad-Duhaa spirit: an offer, with a warm "and if you can't, that's okay."
 struct SupportView: View {
+    @Environment(\.requestReview) private var requestReview
     @Environment(\.openURL) private var openURL
-
-    /// ⚠️ TODO (dev): replace with the real Patreon page URL once it's created.
-    private let patreonURL = URL(string: "https://www.patreon.com/duhaa")!
 
     var body: some View {
         ScrollView {
             VStack(spacing: 22) {
                 hero
 
-                Text("Duhaa is made by one person, kept free, with no ads and nothing locked away. Your support keeps it alive — and helps it grow.")
+                Text("Duhaa is made by one person, kept free, with no ads and nothing locked away. Your support keeps it alive and helps it grow.")
                     .duhaaFont(15)
                     .foregroundStyle(.primary.opacity(0.85))
                     .multilineTextAlignment(.center)
@@ -31,11 +29,11 @@ struct SupportView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 20))
 
                 Button {
-                    openURL(patreonURL)
+                    openURL(SupportLinks.checkout)
                 } label: {
                     HStack(spacing: 8) {
-                        Image(systemName: "hand.raised.fill")
-                        Text("Become a Supporter")
+                        Image(systemName: "heart.fill")
+                        Text("Support on Website")
                     }
                     .duhaaFont(16, .semibold)
                     .foregroundStyle(Palette.onAccent)
@@ -49,6 +47,44 @@ struct SupportView: View {
                     .shadow(color: Palette.gold.opacity(0.4), radius: 12, y: 4)
                 }
                 .buttonStyle(.plain)
+
+                ShareLink(item: "Duhaa — a gentle prayer app built on hope, not guilt.") {
+                    HStack(spacing: 8) {
+                        Image(systemName: "square.and.arrow.up.fill")
+                        Text("Share Duhaa")
+                    }
+                    .duhaaFont(15, .semibold)
+                    .foregroundStyle(Palette.gold)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(Palette.card)
+                    .overlay(RoundedRectangle(cornerRadius: 16).stroke(Palette.cardBorder, lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                }
+                .buttonStyle(.plain)
+
+                Button {
+                    requestReview()
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "star.fill")
+                        Text("Rate Duhaa")
+                    }
+                    .duhaaFont(15, .semibold)
+                    .foregroundStyle(Palette.gold)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(Palette.card)
+                    .overlay(RoundedRectangle(cornerRadius: 16).stroke(Palette.cardBorder, lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                }
+                .buttonStyle(.plain)
+
+                Text("Support opens Duhaa's website and is handled there with Stripe. Core worship, Quran, and learning features stay free.")
+                    .duhaaFont(12)
+                    .foregroundStyle(.primary.opacity(0.66))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 8)
 
                 Text("And if you can't right now, that's completely okay — a quiet du'a for this work means just as much. 🤍")
                     .duhaaFont(13)
@@ -100,4 +136,10 @@ struct SupportView: View {
     private var divider: some View {
         Divider().overlay(Color.primary.opacity(0.06)).padding(.leading, 16)
     }
+}
+
+enum SupportLinks {
+    static let checkout = URL(string: "https://duhaa.app/support?source=ios_app")!
+    static let billing = URL(string: "https://duhaa.app/billing?source=ios_app")!
+    static let redeem = URL(string: "https://duhaa.app/redeem?source=ios_app")!
 }

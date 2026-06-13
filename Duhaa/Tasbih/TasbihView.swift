@@ -27,6 +27,9 @@ struct TasbihView: View {
     private enum Mode: String { case adhkar, custom }
 
     @AppStorage("duhaa.tasbih.mode") private var modeRaw = Mode.adhkar.rawValue
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// Bumped when a goal is reached — pulses the dial once in celebration.
+    @State private var completionPulse = 0
     @AppStorage("duhaa.tasbih.target") private var customTarget = 33
 
     // Adhkar progress (persisted, kept separate from Custom).
@@ -233,6 +236,12 @@ struct TasbihView: View {
             }
         }
         .buttonStyle(.plain)
+        // One celebratory swell when a goal is reached — mirrors the prayer-mark moment.
+        .phaseAnimator([false, true], trigger: completionPulse) { content, swelling in
+            content.scaleEffect(swelling && !reduceMotion ? 1.04 : 1)
+        } animation: { swelling in
+            swelling ? DuhaaMotion.markSwell : DuhaaMotion.markSettle
+        }
         .accessibilityLabel("Tasbih counter")
         .accessibilityValue(dialAccessibilityValue)
     }
@@ -294,23 +303,25 @@ struct TasbihView: View {
             guard !aCompleted else { return }
             withAnimation { aCount += 1 }
             aTotal += 1
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            DuhaaHaptics.count()
             guard aCount >= phase.target else { return }
-            UINotificationFeedbackGenerator().notificationOccurred(.success)
+            DuhaaHaptics.success()
             if aPhase < phases.count - 1 {
                 aPhase += 1
                 aCount = 0
             } else {
                 aCompleted = true
+                completionPulse += 1
             }
 
         case .custom:
             // A plain running tally: counts up and never loops back to zero.
             withAnimation { cCount += 1 }
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            DuhaaHaptics.count()
             // Gentle celebration the moment you reach your goal — but keep counting.
             if cCount == target {
-                UINotificationFeedbackGenerator().notificationOccurred(.success)
+                DuhaaHaptics.success()
+                completionPulse += 1
             }
         }
     }
@@ -320,7 +331,7 @@ struct TasbihView: View {
         let clamped = min(max(value, 1), 9999)
         guard clamped != customTarget else { return }
         withAnimation { customTarget = clamped }
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        DuhaaHaptics.count()
     }
 
     /// The only thing that clears the count — and only for the mode in view.
@@ -333,6 +344,6 @@ struct TasbihView: View {
                 cCount = 0
             }
         }
-        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        DuhaaHaptics.reset()
     }
 }

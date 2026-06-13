@@ -1,124 +1,62 @@
 import SwiftUI
+import StoreKit
+import UIKit
 
-/// The Settings screen. Changing anything here persists and the home screen
-/// recomputes live (spec §4, §12, §13). Reached from the gear on the home screen.
+/// Settings keeps Duhaa's existing working controls, but presents them in a
+/// fuller sectioned structure: identity, appearance, prayer, Quran, cycle,
+/// privacy, support, and about.
 struct SettingsView: View {
     @Environment(SettingsStore.self) private var store
     @Environment(LocationProvider.self) private var location
     @Environment(ThemeStore.self) private var themeStore
     @Environment(InsightsStore.self) private var insights
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.requestReview) private var requestReview
+    @Environment(\.openURL) private var openURL
 
-    /// High latitudes (≈ above 48°) get the gentle Fajr/Isha precaution copy.
-    private var isHighLatitude: Bool { abs(location.active.latitude) > 48 }
+    @AppStorage("duhaa.profile.name") private var profileName = ""
+    @AppStorage("duhaa.profile.gender") private var profileGender = UserProfileGender.notSet.rawValue
+    @AppStorage("duhaa.quran.reciter") private var quranReciterID = Reciters.defaultID
+    @AppStorage("duhaa.quran.showTranslation") private var quranShowTranslation = true
+    @AppStorage("duhaa.cycle.periodTrackingEnabled") private var periodTrackingEnabled = true
+    @AppStorage("duhaa.cycle.periodPredictionEnabled") private var periodPredictionEnabled = true
+    @AppStorage("duhaa.cycle.ghuslReminderEnabled") private var ghuslReminderEnabled = true
+    @AppStorage("duhaa.cycle.missedFastReminderEnabled") private var missedFastReminderEnabled = false
+    @AppStorage("duhaa.cycle.fertileWindowEnabled") private var fertileWindowEnabled = false
+    @AppStorage("duhaa.cycle.phaseChangeEnabled") private var phaseChangeEnabled = false
+    @AppStorage(AdhanSoundPreference.key) private var adhanSoundRaw = AdhanSoundPreference.duhaaChime.rawValue
+
+    @State private var showingLocationPicker = false
+    @State private var showingMembership = false
+    @Environment(SubscriptionStore.self) private var subscriptions
+
+    private var displayName: String {
+        let trimmed = profileName.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? "Duhaa friend" : trimmed
+    }
+
+    private var profile: UserProfileGender {
+        UserProfileGender.from(profileGender)
+    }
+
+    private var version: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+    }
 
     var body: some View {
-        @Bindable var store = store
-
         NavigationStack {
             Form {
-                Section {
-                    NavigationLink {
-                        NotificationSettingsView()
-                    } label: {
-                        Label("Notifications", systemImage: "bell.badge")
-                    }
-                    // Support Duhaa (SupportView) is hidden for the v1 App Store
-                    // submission: external donation links risk rejection under
-                    // guideline 3.1.1. Returns in v1.1 as a StoreKit tip jar.
+                profileSection
+                appearanceSection
+                prayerSection
+                quranSection
+                if profile.showsSistersFeatures {
+                    cycleSection
                 }
-
-                Section("Appearance") {
-                    Picker("Theme", selection: themeBinding) {
-                        ForEach(AppTheme.allCases) { theme in
-                            Text(theme.displayName).tag(theme)
-                        }
-                    }
-                    .pickerStyle(.inline)
-                    .labelsHidden()
-                }
-
-                Section {
-                    NavigationLink {
-                        CustomizeTabsView()
-                    } label: {
-                        Label("Customize Tabs", systemImage: "square.grid.2x2")
-                    }
-                }
-
-                Section {
-                    Toggle(isOn: insightsBinding) {
-                        Label("Prayer insights", systemImage: "chart.line.uptrend.xyaxis")
-                    }
-                    .tint(Palette.gold)
-                } header: {
-                    Text("Insights")
-                } footer: {
-                    Text("Shows how many prayers you've kept on time, prayed late, or missed in your Journey — a gentle nudge to grow. Turning it on starts fresh from today.")
-                }
-
-                Section("Calculation Method") {
-                    Picker("Method", selection: $store.method) {
-                        ForEach(CalcMethod.allCases) { method in
-                            Text(method.displayName).tag(method)
-                        }
-                    }
-                    .pickerStyle(.navigationLink)
-                }
-
-                Section {
-                    Picker("Asr method", selection: $store.madhab) {
-                        ForEach(AsrMadhab.allCases) { madhab in
-                            Text(madhab.label).tag(madhab)
-                        }
-                    }
-                    .pickerStyle(.inline)
-                    .labelsHidden()
-                } header: {
-                    Text("Asr (Afternoon Prayer)")
-                } footer: {
-                    Text("Hanafi calculates Asr later, when an object's shadow is twice its length.")
-                }
-
-                Section {
-                    Stepper(value: $store.hijriOffsetDays, in: -2...2) {
-                        HStack {
-                            Text("Adjust days")
-                            Spacer()
-                            Text(signed(store.hijriOffsetDays))
-                                .foregroundStyle(Palette.blue)
-                        }
-                    }
-                    Toggle("Show Hijri as the primary date", isOn: $store.hijriIsPrimary)
-                } header: {
-                    Text("Hijri Date")
-                } footer: {
-                    Text("Nudge ±1–2 days to match your local moon sighting. Both dates are always shown.")
-                }
-
-                Section {
-                    offsetStepper("Fajr", value: $store.offsets.fajr)
-                    offsetStepper("Dhuhr", value: $store.offsets.dhuhr)
-                    offsetStepper("Asr", value: $store.offsets.asr)
-                    offsetStepper("Maghrib", value: $store.offsets.maghrib)
-                    offsetStepper("Isha", value: $store.offsets.isha)
-                } header: {
-                    Text("Adjust Prayer Times")
-                } footer: {
-                    Text("Fine-tune any prayer by a few minutes to match your local mosque.")
-                }
-
-                if isHighLatitude {
-                    highLatitudeSection
-                }
-
-                Section {
-                    NavigationLink {
-                        AboutView()
-                    } label: {
-                        Label("About & Acknowledgements", systemImage: "info.circle")
-                    }
-                }
+                privacySection
+                languageSection
+                helpSection
+                aboutSection
             }
             .scrollContentBackground(.hidden)
             .scrollIndicators(.hidden)
@@ -127,59 +65,447 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }.foregroundStyle(Palette.gold)
+                    Button("Done") { dismiss() }
+                        .foregroundStyle(Palette.gold)
                 }
+            }
+            .sheet(isPresented: $showingMembership) {
+                MembershipView()
+            }
+            .sheet(isPresented: $showingLocationPicker) {
+                LocationPickerView()
             }
         }
         .preferredColorScheme(Palette.active.colorScheme)
     }
 
-    // MARK: High-latitude precaution (spec §13)
+    // MARK: Sections
 
-    private var highLatitudeSection: some View {
+    private var profileSection: some View {
         Section {
-            precaution("sunrise", "Dawn is hard to pin down exactly here. To be safe, finish suhoor a little early — and don't rush to pray the moment Fajr begins.")
-            precaution("moon.stars", "Isha's start is approximate here. Give it a few minutes before you pray.")
-            precaution("calendar.badge.clock", "Daylight shifts fast at this latitude — re-check these offsets each season.")
+            NavigationLink {
+                ProfileSettingsView()
+            } label: {
+                HStack(spacing: 14) {
+                    ZStack {
+                        Circle()
+                            .fill(Palette.gold.opacity(0.18))
+                            .frame(width: 48, height: 48)
+                        Text(String(displayName.prefix(1)).uppercased())
+                            .duhaaFont(20, .bold)
+                            .foregroundStyle(Palette.gold)
+                    }
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(displayName)
+                            .duhaaFont(17, .semibold)
+                            .foregroundStyle(.primary)
+                        Text("Local profile · no account required")
+                            .duhaaFont(12)
+                            .foregroundStyle(Palette.blue.opacity(0.72))
+                    }
+                }
+                .padding(.vertical, 6)
+            }
+            .listRowBackground(Palette.card)
+
+            HStack(spacing: 12) {
+                Button {
+                    showingMembership = true
+                } label: {
+                    statusCard(icon: subscriptions.currentTier?.icon ?? "moon.stars",
+                               title: subscriptions.currentTier.map { "Duhaa+ \($0.displayName)" } ?? "Duhaa+",
+                               detail: subscriptions.isSubscribed ? "Active — jazakum Allahu khairan" : "Nurture the ummah")
+                }
+                .buttonStyle(.duhaaPress)
+                statusCard(icon: "arrow.triangle.2.circlepath", title: version, detail: "Installed")
+            }
+            .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 4, trailing: 0))
+            .listRowBackground(Color.clear)
+
+            NavigationLink {
+                MembershipBenefitsView()
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "rosette")
+                        .duhaaFont(17)
+                        .foregroundStyle(Palette.gold)
+                    Text("Membership Benefits")
+                        .duhaaFont(16, .medium)
+                        .foregroundStyle(.primary)
+                }
+                .padding(.vertical, 4)
+            }
+            .listRowBackground(Palette.card)
+        }
+    }
+
+    private var appearanceSection: some View {
+        Section("Appearance") {
+            NavigationLink {
+                ThemeSettingsView()
+            } label: {
+                settingsRow("Appearance", icon: "paintbrush.fill", color: Palette.gold, value: themeStore.theme.displayName)
+            }
+            .listRowBackground(Palette.card)
+
+            NavigationLink {
+                CustomizeTabsView()
+            } label: {
+                settingsRow("Customize Tabs", icon: "square.grid.2x2.fill", color: Palette.blue)
+            }
+            .listRowBackground(Palette.card)
+
+            NavigationLink {
+                NotificationSettingsView()
+            } label: {
+                settingsRow("Notifications", icon: "bell.badge.fill", color: Palette.blue)
+            }
+            .listRowBackground(Palette.card)
+        }
+    }
+
+    private var prayerSection: some View {
+        Section("Prayer") {
+            NavigationLink {
+                CalculationMethodSettingsView()
+            } label: {
+                settingsRow("Calculation Method", icon: "calendar.badge.clock", color: Palette.blue, value: store.method.shortName)
+            }
+            .listRowBackground(Palette.card)
+
+            NavigationLink {
+                AsrMethodSettingsView()
+            } label: {
+                settingsRow("Madhab", icon: "book.closed.fill", color: Palette.gold, value: store.madhab.shortName)
+            }
+            .listRowBackground(Palette.card)
+
+            NavigationLink {
+                HighLatitudeSettingsView()
+            } label: {
+                settingsRow("High Latitude Rule", icon: "globe.europe.africa.fill", color: Palette.blue, value: "Middle of Night")
+            }
+            .listRowBackground(Palette.card)
+
+            NavigationLink {
+                PrayerTimeAdjustmentsView()
+            } label: {
+                settingsRow("Time Adjustments", icon: "clock.badge.fill", color: Palette.gold, value: offsetsSummary)
+            }
+            .listRowBackground(Palette.card)
+
+            NavigationLink {
+                HijriDateSettingsView()
+            } label: {
+                settingsRow("Hijri Date", icon: "moonphase.waxing.crescent", color: Palette.blue, value: hijriSummary)
+            }
+            .listRowBackground(Palette.card)
+
+            NavigationLink {
+                PrayerInsightsSettingsView()
+            } label: {
+                settingsRow("Prayer Insights", icon: "chart.line.uptrend.xyaxis", color: Palette.gold, value: insights.enabled ? "On" : "Off")
+            }
+            .listRowBackground(Palette.card)
+
+            NavigationLink {
+                SiriShortcutsSettingsView()
+            } label: {
+                settingsRow("Siri Shortcuts", icon: "sparkles", color: Palette.blue)
+            }
+            .listRowBackground(Palette.card)
+
+            NavigationLink {
+                AdhanSoundSettingsView()
+            } label: {
+                settingsRow("Adhan Sound", icon: "speaker.wave.2.fill", color: Palette.gold, value: adhanSoundLabel)
+            }
+            .listRowBackground(Palette.card)
+
+            Button {
+                showingLocationPicker = true
+            } label: {
+                settingsRow("Location", icon: "location.fill", color: Palette.blue, value: location.active.name)
+            }
+            .buttonStyle(.duhaaPress)
+            .listRowBackground(Palette.card)
+        }
+    }
+
+    private var quranSection: some View {
+        Section("Quran") {
+            NavigationLink {
+                QuranPreferencesView()
+            } label: {
+                settingsRow("Quran Preferences", icon: "book.closed.fill", color: Palette.gold)
+            }
+            .listRowBackground(Palette.card)
+
+            Toggle(isOn: $quranShowTranslation) {
+                settingsRow("Show Translation", icon: "text.alignleft", color: Palette.blue)
+            }
+            .tint(Palette.gold)
+            .listRowBackground(Palette.card)
+        }
+    }
+
+    private var cycleSection: some View {
+        Section {
+            settingsToggle("Period Tracking", icon: "calendar", color: Palette.gold, isOn: $periodTrackingEnabled)
+            settingsToggle("Period Prediction", icon: "sparkle", color: Palette.blue, isOn: $periodPredictionEnabled)
+                .disabled(!periodTrackingEnabled)
+            settingsToggle("Ghusl Reminder", icon: "drop.fill", color: Palette.blue, isOn: $ghuslReminderEnabled)
+                .disabled(!periodTrackingEnabled)
+            settingsToggle("Missed Fast Reminder", icon: "moon.fill", color: Palette.gold, isOn: $missedFastReminderEnabled)
+                .disabled(!periodTrackingEnabled)
+            settingsToggle("Fertile Window", icon: "heart.fill", color: Palette.gold, isOn: $fertileWindowEnabled)
+                .disabled(!periodTrackingEnabled)
+            settingsToggle("Phase Change", icon: "arrow.triangle.2.circlepath", color: Palette.blue, isOn: $phaseChangeEnabled)
+                .disabled(!periodTrackingEnabled)
         } header: {
-            Label("High-latitude note — \(location.active.name)", systemImage: "exclamationmark.triangle")
-                .foregroundStyle(Palette.gold)
+            Text("Cycle")
         } footer: {
-            Text("Pray each one on time — that's the heart of it.")
-                .foregroundStyle(Palette.blue)
+            Text("Cycle settings are private and stay on this device. Enabled helpers appear inside the Sisters space.")
         }
     }
 
-    private func precaution(_ icon: String, _ text: String) -> some View {
-        HStack(alignment: .top, spacing: 10) {
-            Image(systemName: icon).foregroundStyle(Palette.blue).frame(width: 20)
-            Text(text).font(.footnote).foregroundStyle(.primary.opacity(0.85))
+    private var privacySection: some View {
+        Section("Privacy & Data") {
+            NavigationLink {
+                DataExportPreviewView(title: "Backup & Transfer",
+                                      intro: "Duhaa does not sync data to a server. For now, backup and transfer means making a local JSON export you can save or send to yourself.")
+            } label: {
+                settingsRow("Backup & Transfer", icon: "archivebox.fill", color: Palette.blue, value: "Local export")
+            }
+            .listRowBackground(Palette.card)
+
+            NavigationLink {
+                DataExportPreviewView()
+            } label: {
+                settingsRow("Export My Data", icon: "square.and.arrow.up.fill", color: Palette.gold)
+            }
+            .listRowBackground(Palette.card)
+
+            NavigationLink {
+                DeleteLocalDataView()
+            } label: {
+                settingsRow("Delete All Local Data", icon: "trash.fill", color: .orange)
+            }
+            .listRowBackground(Palette.card)
         }
     }
 
-    // MARK: Helpers
+    private var languageSection: some View {
+        Section {
+            Button {
+                openAppSettings()
+            } label: {
+                settingsRow("App Language", icon: "globe", color: Palette.blue, value: Locale.current.localizedString(forIdentifier: Locale.current.identifier))
+            }
+            .buttonStyle(.duhaaPress)
+            .listRowBackground(Palette.card)
+        } header: {
+            Text("Language")
+        } footer: {
+            Text("iOS manages per-app language from the system Settings app.")
+        }
+    }
 
-    private func offsetStepper(_ name: String, value: Binding<Int>) -> some View {
-        Stepper(value: value, in: -30...30) {
-            HStack {
-                Text(name)
-                Spacer()
-                Text("\(signed(value.wrappedValue)) min")
-                    .foregroundStyle(value.wrappedValue == 0 ? .secondary : Palette.blue)
+    private var helpSection: some View {
+        // Subscription management & offer codes live in Membership Benefits —
+        // real StoreKit sheets, not website links to a domain we don't own.
+        Section("Help & Support") {
+            Button {
+                requestReview()
+            } label: {
+                settingsRow("Rate the App", icon: "star.fill", color: Palette.gold)
+            }
+            .buttonStyle(.duhaaPress)
+            .listRowBackground(Palette.card)
+
+            ShareLink(item: "Duhaa — a gentle prayer app built on hope, not guilt.") {
+                settingsRow("Share the App", icon: "square.and.arrow.up.fill", color: Palette.blue)
+            }
+            .tint(.primary)   // keep the title white like its neighbours, not accent-gold
+            .listRowBackground(Palette.card)
+
+            Button {
+                reportBug()
+            } label: {
+                settingsRow("Report a Bug", icon: "ladybug.fill", color: .orange)
+            }
+            .buttonStyle(.duhaaPress)
+            .listRowBackground(Palette.card)
+        }
+    }
+
+    private var aboutSection: some View {
+        Section("About") {
+            NavigationLink {
+                WhatsNewView()
+            } label: {
+                settingsRow("What's New", icon: "sparkles", color: Palette.gold)
+            }
+            .listRowBackground(Palette.card)
+
+            NavigationLink {
+                AboutView()
+            } label: {
+                settingsRow("About & Acknowledgements", icon: "info.circle.fill", color: Palette.blue)
+            }
+            .listRowBackground(Palette.card)
+
+            NavigationLink {
+                LegalDocumentView(document: .privacy)
+            } label: {
+                settingsRow("Privacy Policy", icon: "hand.raised.fill", color: Palette.blue)
+            }
+            .listRowBackground(Palette.card)
+
+            NavigationLink {
+                LegalDocumentView(document: .terms)
+            } label: {
+                settingsRow("Terms of Service", icon: "doc.text.fill", color: Palette.gold)
+            }
+            .listRowBackground(Palette.card)
+        }
+    }
+
+    // MARK: Row helpers
+
+    private func statusCard(icon: String, title: String, detail: String) -> some View {
+        // Fixed height + a Spacer means the icon pins to the top and the title /
+        // caption pin to the bottom — so the two cards line up exactly even when
+        // one is wrapped in a Button and the other isn't.
+        VStack(alignment: .leading, spacing: 0) {
+            Image(systemName: icon)
+                .duhaaFont(18, .semibold)
+                .foregroundStyle(Palette.gold)
+            Spacer(minLength: 10)
+            Text(title)
+                .duhaaFont(20, .bold)
+                .foregroundStyle(.primary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
+            Text(detail)
+                .duhaaFont(12)
+                .foregroundStyle(.primary.opacity(0.64))
+                .lineLimit(1)
+                .padding(.top, 3)
+        }
+        .frame(maxWidth: .infinity, minHeight: 108, alignment: .leading)
+        .padding(16)
+        .background(Palette.card)
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Palette.cardBorder, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+    }
+
+    private func settingsRow(_ title: String, icon: String, color: Color, value: String? = nil) -> some View {
+        HStack(spacing: 12) {
+            SettingsIcon(systemName: icon, color: color)
+            Text(title)
+                .duhaaFont(16, .semibold)
+                .foregroundStyle(.primary)
+            Spacer(minLength: 10)
+            if let value, !value.isEmpty {
+                Text(value)
+                    .duhaaFont(14, .medium)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
             }
         }
+        .padding(.vertical, 2)
+        .accessibilityElement(children: .combine)
+    }
+
+    private func settingsToggle(_ title: String, icon: String, color: Color, isOn: Binding<Bool>) -> some View {
+        Toggle(isOn: isOn) {
+            settingsRow(title, icon: icon, color: color, value: isOn.wrappedValue ? "On" : "Off")
+        }
+        .tint(Palette.gold)
+        .listRowBackground(Palette.card)
+    }
+
+    private var offsetsSummary: String {
+        let values = store.offsets
+        let offsets = [values.fajr, values.dhuhr, values.asr, values.maghrib, values.isha]
+        let changed = offsets.filter { $0 != 0 }.count
+        return changed == 0 ? "None" : "\(changed) changed"
+    }
+
+    private var hijriSummary: String {
+        store.hijriOffsetDays == 0 ? (store.hijriIsPrimary ? "Primary" : "Secondary") : signed(store.hijriOffsetDays)
+    }
+
+    private var quranReciterLabel: String {
+        Reciters.byID(quranReciterID)?.name ?? "Alafasy"
+    }
+
+    private var adhanSoundLabel: String {
+        AdhanSoundPreference(rawValue: adhanSoundRaw)?.label ?? AdhanSoundPreference.duhaaChime.label
     }
 
     private func signed(_ n: Int) -> String { n > 0 ? "+\(n)" : "\(n)" }
 
-    private var themeBinding: Binding<AppTheme> {
-        Binding(get: { themeStore.theme }, set: { themeStore.theme = $0 })
+    private func openAppSettings() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            openURL(url)
+        }
     }
 
-    private var insightsBinding: Binding<Bool> {
-        Binding(
-            get: { insights.enabled },
-            set: { insights.setEnabled($0, today: PrayerTracker.dayKey(Date(), location.active.timeZone)) }
-        )
+    private func reportBug() {
+        var components = URLComponents()
+        components.scheme = "mailto"
+        components.path = "safaburak0915@gmail.com"   // the real, monitored inbox
+        components.queryItems = [
+            URLQueryItem(name: "subject", value: "Duhaa Bug Report")
+        ]
+        if let url = components.url {
+            openURL(url)
+        }
+    }
+}
+
+private struct SettingsIcon: View {
+    let systemName: String
+    let color: Color
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(color.opacity(0.18))
+                .frame(width: 30, height: 30)
+            Image(systemName: systemName)
+                .duhaaFont(13, .semibold)
+                .foregroundStyle(color)
+        }
+        .accessibilityHidden(true)
+    }
+}
+
+private extension CalcMethod {
+    var shortName: String {
+        switch self {
+        case .muslimWorldLeague: "MWL"
+        case .northAmerica: "ISNA"
+        case .egyptian: "Egyptian"
+        case .ummAlQura: "Umm al-Qura"
+        case .karachi: "Karachi"
+        case .dubai: "Dubai"
+        case .qatar: "Qatar"
+        case .kuwait: "Kuwait"
+        case .singapore: "Singapore"
+        case .tehran: "Tehran"
+        case .turkey: "Turkey"
+        case .moonsighting: "Moonsighting"
+        }
+    }
+}
+
+private extension AsrMadhab {
+    var shortName: String {
+        self == .hanafi ? "Hanafi" : "Standard"
     }
 }
