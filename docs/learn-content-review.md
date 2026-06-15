@@ -4,6 +4,11 @@ _9 guides, generated from `Duhaa/Learn/learn_guides.json`. Every step's evidence
 
 > ⚠️ This is unverified-but-sourced. Please check each hadith reference, grade, and grader before release.
 
+> ℹ️ The numbered order below is the original authoring order. The **shipping
+> order/grouping** and the new review-status / madhhab-sensitivity / source-chip
+> framework are described in `docs/learn-sourcing-and-madhhab.md`. The per-guide
+> content text itself is unchanged.
+
 
 ## Contents
 

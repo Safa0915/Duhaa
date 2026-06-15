@@ -3,6 +3,8 @@ import XCTest
 
 final class LearnDataTests: XCTestCase {
 
+    // (steps, minutes, category) — unchanged content shape, used to prove the
+    // reorganization didn't drop or mutate any guide.
     private let expectedShape: [String: (steps: Int, minutes: Int, category: GuideCategory)] = [
         "wudu": (8, 5, .purification),
         "ghusl": (7, 6, .purification),
@@ -15,25 +17,42 @@ final class LearnDataTests: XCTestCase {
         "coming-back-to-prayer": (7, 7, .foundations),
     ]
 
-    func testExactlyNineRequestedGuidesLoadInOrder() {
+    // MARK: - Load + ordering
+
+    func testJSONDecodesAndAllNineGuidesLoad() {
+        XCTAssertEqual(Learn.guides.count, 9, "learn_guides.json did not decode all 9 guides")
+    }
+
+    func testGuidesLoadInNewDisplayOrder() {
         XCTAssertEqual(Learn.guides.map(\.id), [
+            "coming-back-to-prayer",
             "wudu",
+            "prayer-core",
+            "dhikr-after-prayer",
+            "tawbah",
             "ghusl",
             "tayammum",
-            "prayer-core",
-            "prayer-differences",
-            "dhikr-after-prayer",
             "sujud-sahw",
-            "tawbah",
-            "coming-back-to-prayer",
+            "prayer-differences",
         ])
-        XCTAssertEqual(Learn.guides.count, 9)
+    }
+
+    func testGuideIDsAreUnique() {
+        let ids = Learn.guides.map(\.id)
+        XCTAssertEqual(Set(ids).count, ids.count, "duplicate guide id")
+    }
+
+    func testStepIDsAreUniqueWithinEachGuide() {
+        for guide in Learn.guides {
+            let ids = guide.steps.map(\.id)
+            XCTAssertEqual(Set(ids).count, ids.count, "\(guide.id): duplicate step id")
+        }
     }
 
     func testGuideCountsMinutesAndCategoriesMatchBundledContent() {
         for guide in Learn.guides {
             let expected = expectedShape[guide.id]
-            XCTAssertNotNil(expected, "\(guide.id) was not requested for v1.1 Learn")
+            XCTAssertNotNil(expected, "\(guide.id) was not requested for Learn")
             XCTAssertEqual(guide.steps.count, expected?.steps, "\(guide.id): step count changed")
             XCTAssertEqual(guide.estimatedMinutes, expected?.minutes, "\(guide.id): minute estimate changed")
             XCTAssertEqual(guide.category, expected?.category, "\(guide.id): category changed")
@@ -45,6 +64,75 @@ final class LearnDataTests: XCTestCase {
             XCTAssertEqual(guide.sortedSteps.map(\.order), Array(1...guide.steps.count), "\(guide.id): step order is not contiguous")
         }
     }
+
+    // MARK: - New framework metadata
+
+    func testEveryGuideHasDisplayOrderReviewStatusAndSensitivity() {
+        let orders = Learn.guides.map(\.displayOrder)
+        XCTAssertEqual(Set(orders).count, orders.count, "displayOrder values must be unique")
+        XCTAssertEqual(orders.sorted(), Array(1...9), "displayOrder should be 1...9")
+        for guide in Learn.guides {
+            // reviewStatus / madhhabSensitivity are non-optional, so presence is
+            // structural; assert the product guardrail instead.
+            XCTAssertNotEqual(guide.scholarReviewStatus, .reviewed,
+                              "\(guide.id): nothing should claim scholar-reviewed before sign-off")
+        }
+    }
+
+    func testGuidesAreGroupedWithoutDuplicateCards() {
+        let grouped = Learn.guidesByGroup
+        XCTAssertFalse(grouped.isEmpty)
+        // Group sections must appear in the fixed display order.
+        XCTAssertEqual(grouped.map(\.group.displayIndex), grouped.map(\.group.displayIndex).sorted())
+        // Every guide appears exactly once across all groups.
+        let groupedIDs = grouped.flatMap { $0.guides.map(\.id) }
+        XCTAssertEqual(Set(groupedIDs).count, groupedIDs.count, "a guide appears in more than one group")
+        XCTAssertEqual(Set(groupedIDs), Set(Learn.guides.map(\.id)), "grouping dropped a guide")
+    }
+
+    func testStartHereLeadsWithTheBeginnerEssentials() {
+        let startHere = Learn.guidesByGroup.first { $0.group == .startHere }
+        XCTAssertEqual(startHere?.guides.map(\.id), ["coming-back-to-prayer", "wudu", "prayer-core"])
+    }
+
+    func testMadhhabSensitiveStepsCarryAGentleNote() {
+        var flagged = 0
+        for guide in Learn.guides {
+            for step in guide.steps where step.madhhabSensitivity.warrantsNote {
+                flagged += 1
+                XCTAssertNotNil(step.madhhabNote, "\(guide.id)/\(step.id): sensitive step is missing a madhhabNote")
+                XCTAssertFalse(step.madhhabNote?.isEmpty ?? true)
+            }
+        }
+        XCTAssertGreaterThan(flagged, 0, "expected at least one madhhab-sensitive step to be flagged")
+    }
+
+    func testEveryStepHasASourceSummaryChip() {
+        for guide in Learn.guides {
+            for step in guide.steps {
+                let chip = step.sourceSummary?.trimmingCharacters(in: .whitespacesAndNewlines)
+                XCTAssertFalse(chip?.isEmpty ?? true, "\(guide.id)/\(step.id): missing sourceSummary")
+            }
+        }
+    }
+
+    func testNothingIsFalselyMarkedReviewed() {
+        for guide in Learn.guides {
+            XCTAssertNotEqual(guide.reviewStatus, .reviewed, "\(guide.id): content marked reviewed pre-sign-off")
+            for step in guide.steps {
+                XCTAssertNotEqual(step.reviewStatus, .reviewed, "\(guide.id)/\(step.id): step marked reviewed pre-sign-off")
+            }
+        }
+    }
+
+    func testOptionalScholarNotesDoNotBreakDecoding() {
+        // Most steps have no scholarNotes/subtitle/scholarSources; a successful load
+        // with those absent proves IfPresent decoding works.
+        XCTAssertTrue(Learn.guides.contains { $0.steps.contains { $0.scholarNotes == nil } })
+        XCTAssertTrue(Learn.guides.contains { $0.subtitle == nil })
+    }
+
+    // MARK: - Evidence integrity (preserved through the reorg)
 
     func testEveryStepHasEvidenceWithSourceGradeAndAttribution() {
         for guide in Learn.guides {
@@ -69,6 +157,14 @@ final class LearnDataTests: XCTestCase {
         }
     }
 
+    func testArabicAndTranslationSurvivedTheReorg() {
+        // The Bismillah step keeps its Arabic + translation.
+        let wudu = Learn.guide(id: "wudu")
+        let step = wudu?.steps.first { $0.id == "wudu-intention" }
+        XCTAssertEqual(step?.arabicText, "بِسْمِ اللَّهِ")
+        XCTAssertNotNil(step?.translation)
+    }
+
     func testDhikrGuidePointsBackToExistingDuaLibrary() {
         let afterPrayer = Duas.categories.first { $0.name == "After Prayer Adhkar" }
         XCTAssertNotNil(afterPrayer)
@@ -77,6 +173,10 @@ final class LearnDataTests: XCTestCase {
         let guide = Learn.guide(id: "dhikr-after-prayer")
         XCTAssertNotNil(guide)
         XCTAssertTrue(guide?.steps.contains { $0.body.contains("Du'as") } == true)
+    }
+
+    func testExistingDuasJSONStillDecodes() {
+        XCTAssertFalse(Duas.categories.isEmpty, "Duas JSON failed to decode")
     }
 
     func testContentHasNoReviewTodos() {
@@ -88,5 +188,43 @@ final class LearnDataTests: XCTestCase {
                 XCTAssertFalse(step.body.localizedCaseInsensitiveContains("TODO"), "\(guide.id)/\(step.id)")
             }
         }
+    }
+
+    // MARK: - Madhhab preference framework
+
+    func testNotSureMeansSharedBasicsAndNeverPicksASchool() {
+        let pref = MadhhabPreference.notSure
+        XCTAssertTrue(pref.usesSharedBasics)
+        XCTAssertNil(pref.specificSchool, "not_sure must never resolve to a specific madhhab")
+    }
+
+    func testLocalImamAlsoDefersRatherThanFixingASchool() {
+        XCTAssertTrue(MadhhabPreference.localImamOrTeacher.usesSharedBasics)
+        XCTAssertNil(MadhhabPreference.localImamOrTeacher.specificSchool)
+    }
+
+    func testSpecificMadhhabResolvesToItself() {
+        for pref in [MadhhabPreference.hanafi, .maliki, .shafii, .hanbali] {
+            XCTAssertFalse(pref.usesSharedBasics)
+            XCTAssertEqual(pref.specificSchool, pref)
+        }
+    }
+
+    func testMadhhabSettingsDefaultsToNotSureAndPersists() {
+        let suite = UserDefaults(suiteName: "test.learn.madhhab.\(UUID().uuidString)")!
+        let settings = MadhhabSettings(defaults: suite)
+        XCTAssertEqual(settings.preference, .notSure)
+        XCTAssertTrue(settings.isSharedBasicsMode)
+
+        settings.preference = .shafii
+        let reloaded = MadhhabSettings(defaults: suite)
+        XCTAssertEqual(reloaded.preference, .shafii)
+        XCTAssertFalse(reloaded.isSharedBasicsMode)
+    }
+
+    func testNoteIsShownForSensitiveStepsRegardlessOfSchool() {
+        XCTAssertTrue(MadhhabGuidance.shouldShowNote(for: .scholar_difference, preference: .notSure))
+        XCTAssertTrue(MadhhabGuidance.shouldShowNote(for: .madhhab_sensitive, preference: .hanafi))
+        XCTAssertFalse(MadhhabGuidance.shouldShowNote(for: .shared_basic, preference: .notSure))
     }
 }
