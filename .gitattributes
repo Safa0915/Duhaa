@@ -1,0 +1,25 @@
+# Keep line endings LF everywhere so editing from Windows never corrupts files
+# for the Mac/CI toolchain. (Set `git config core.autocrlf false` on Windows too.)
+* text=auto eol=lf
+
+# Source & config — always LF
+*.swift   text eol=lf
+*.json    text eol=lf
+*.md      text eol=lf
+*.html    text eol=lf
+*.plist   text eol=lf
+*.pbxproj text eol=lf
+*.xcscheme text eol=lf
+*.storekit text eol=lf
+*.yml     text eol=lf
+*.sh      text eol=lf
+
+# Binary assets — never touch
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.ttf   binary
+*.otf   binary
+*.wav   binary
+*.mp3   binary
+*.pdf   binary
