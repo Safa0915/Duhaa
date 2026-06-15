@@ -16,6 +16,7 @@ struct PrayerHomeView: View {
     @State private var welcomeBack: String?
     @State private var verseSheet: VerseRef?
     @State private var showingJourney = false
+    @State private var showingMosques = false
 
     var body: some View {
         let d = model.display(for: location.active,
@@ -92,6 +93,9 @@ struct PrayerHomeView: View {
 
                         NightCard(tahajjud: d.tahajjud, islamicMidnight: d.islamicMidnight)
                             .padding(.horizontal, 22).padding(.top, 14)
+
+                        NearbyMosquesButton { showingMosques = true }
+                            .padding(.horizontal, 22).padding(.top, 14)
                     } else {
                         emptyState
                             .padding(.horizontal, 22).padding(.top, 28)
@@ -110,6 +114,9 @@ struct PrayerHomeView: View {
         }
         .sheet(isPresented: $showingJourney) {
             JourneyView()
+        }
+        .sheet(isPresented: $showingMosques) {
+            NearbyMosquesView()
         }
         .sheet(item: $verseSheet) { ref in
             if let surah = Quran.surah(ref.surah) {
