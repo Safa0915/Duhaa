@@ -24,25 +24,85 @@ struct ThemeSettingsView: View {
     @Environment(ThemeStore.self) private var themeStore
 
     var body: some View {
-        @Bindable var themeStore = themeStore
-
         Form {
             Section {
-                Picker("Theme", selection: $themeStore.theme) {
-                    ForEach(AppTheme.allCases) { theme in
-                        Text(theme.displayName).tag(theme)
+                ForEach(AppTheme.allCases) { theme in
+                    Button {
+                        guard themeStore.theme != theme else { return }
+                        themeStore.theme = theme
+                        DuhaaHaptics.tick()
+                    } label: {
+                        ThemeOptionRow(theme: theme, isSelected: themeStore.theme == theme)
                     }
+                    .buttonStyle(.plain)
+                    .listRowBackground(Palette.card)
                 }
-                .pickerStyle(.inline)
-                .labelsHidden()
-                .onChange(of: themeStore.theme) { DuhaaHaptics.tick() }
             } header: {
-                Text("Theme")
+                Text("Appearance")
             } footer: {
-                Text("The locked celestial palette stays the default. Dawn (Light) and Rose are v1.1 additions.")
+                Text("Light Pink is a free premium preview - a taste of future premium themes. No subscription is required.")
             }
         }
         .settingsDetailStyle(title: "Appearance")
+    }
+}
+
+private struct ThemeOptionRow: View {
+    let theme: AppTheme
+    let isSelected: Bool
+
+    var body: some View {
+        HStack(spacing: 13) {
+            ThemeSwatches(theme: theme)
+
+            VStack(alignment: .leading, spacing: 5) {
+                HStack(spacing: 7) {
+                    Text(theme.displayName)
+                        .duhaaFont(16, .semibold)
+                        .foregroundStyle(.primary)
+                    if let badge = theme.previewBadge {
+                        Text(badge)
+                            .duhaaFont(10.5, .bold)
+                            .foregroundStyle(Palette.onAccent)
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 3)
+                            .background(theme.colors.accent, in: Capsule())
+                    }
+                }
+
+                Text(theme.previewSubtitle)
+                    .duhaaFont(12.5)
+                    .foregroundStyle(Palette.secondaryText.opacity(0.84))
+            }
+
+            Spacer(minLength: 8)
+
+            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                .duhaaFont(20, .semibold)
+                .foregroundStyle(isSelected ? Palette.gold : Palette.secondaryText.opacity(0.38))
+                .accessibilityHidden(true)
+        }
+        .padding(.vertical, 6)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(theme.displayName), \(theme.previewSubtitle)\(isSelected ? ", selected" : "")")
+    }
+}
+
+private struct ThemeSwatches: View {
+    let theme: AppTheme
+
+    var body: some View {
+        HStack(spacing: -4) {
+            let swatches = theme.previewSwatches
+            ForEach(Array(swatches.enumerated()), id: \.offset) { _, color in
+                Circle()
+                    .fill(color)
+                    .frame(width: 18, height: 18)
+                    .overlay(Circle().stroke(theme.colors.border.opacity(0.85), lineWidth: 1))
+            }
+        }
+        .frame(width: 58, alignment: .leading)
+        .accessibilityHidden(true)
     }
 }
 
@@ -743,7 +803,7 @@ private extension View {
         self
             .scrollContentBackground(.hidden)
             .scrollIndicators(.hidden)
-            .background(Palette.appBg.ignoresSafeArea())
+            .background(ThemeDecorativeBackground())
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .tint(Palette.gold)

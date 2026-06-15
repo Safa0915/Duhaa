@@ -46,7 +46,7 @@ struct SettingsView: View {
             }
             .scrollContentBackground(.hidden)
             .scrollIndicators(.hidden)
-            .background(Palette.appBg.ignoresSafeArea())
+            .background(ThemeDecorativeBackground())
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -131,7 +131,7 @@ struct SettingsView: View {
             NavigationLink {
                 ThemeSettingsView()
             } label: {
-                settingsRow("Appearance", icon: "paintbrush.fill", color: Palette.gold, value: themeStore.theme.displayName)
+                settingsRow("Theme", icon: "paintbrush.fill", color: Palette.gold, value: themeStore.theme.displayName)
             }
             .listRowBackground(Palette.card)
 

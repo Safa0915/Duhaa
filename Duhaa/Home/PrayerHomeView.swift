@@ -25,7 +25,7 @@ struct PrayerHomeView: View {
                               hijriIsPrimary: settings.hijriIsPrimary)
 
         ZStack {
-            CelestialBackground()
+            CelestialBackground(allowsThemeDecorations: true)
 
             ScrollView {
                 VStack(spacing: 0) {

@@ -6,10 +6,18 @@ import Foundation
 /// The locked celestial backdrop: dark navy with a warm gold glow up top, a cool
 /// blue glow mid-right, and a scattering of faint stars.
 struct CelestialBackground: View {
+    var allowsThemeDecorations = false
+
     var body: some View {
         ZStack {
             Palette.appBg
-            if Palette.active.isDark {
+            if allowsThemeDecorations && Palette.active.showsFloatingHearts {
+                RadialGradient(colors: [Palette.glow.opacity(0.42), .clear],
+                               center: .topLeading, startRadius: 0, endRadius: 340)
+                RadialGradient(colors: [Palette.softAccent.opacity(0.28), .clear],
+                               center: .bottomTrailing, startRadius: 0, endRadius: 360)
+                LightPinkHeartsBackground()
+            } else if Palette.active.isDark {
                 RadialGradient(colors: [Palette.gold.opacity(0.18), .clear],
                                center: .top, startRadius: 0, endRadius: 320)
                 StarField()

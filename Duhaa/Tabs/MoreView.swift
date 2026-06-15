@@ -23,7 +23,7 @@ struct MoreView: View {
             }
             .scrollContentBackground(.hidden)
             .scrollIndicators(.hidden)
-            .background(Palette.appBg.ignoresSafeArea())
+            .background(ThemeDecorativeBackground())
             .navigationTitle("More")
             .tint(Palette.gold)
             .navigationDestination(for: DuhaaTab.self) { tab in
