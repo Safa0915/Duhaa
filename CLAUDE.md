@@ -1,27 +1,45 @@
-# Duhaa (ﺿﺤﻰ) — project context for Claude Code
+# Duhaa (ﺿﺤﻰ) — Claude Code project context
 
-> An iOS prayer app built on **hope, not guilt** — to gently bring people who don't pray, or barely pray, back to all five daily prayers. Named after Surah Ad-Duhaa ("the morning brightness" / "your Lord has not forsaken you").
+> Native **iOS 17+ SwiftUI** prayer app, built on **hope, not guilt** — gently bringing people back to the five daily prayers. Named after Surah Ad-Duhaa.
 
-**If you are a fresh Claude session: read `DUHAA_SPEC.md` first — it is the full, authoritative spec.** The `context/` folder holds the original locked decision docs from the design session.
+**New session? Read `docs/DUHAA_HANDOFF.md` first** — it's the up-to-date state of the app. (`DUHAA_SPEC.md` + `context/` hold original design rationale, but parts are now historical — trust the handoff + the code for current truth.)
 
-**Full design-session transcript** (the complete "why" behind every decision) is archived in `docs/design-session.md` (conversation + decisions) and `docs/design-session-full.md` (also includes tool outputs: the prayer-time verifications, the East London Mosque comparison, and the high-latitude fiqh research). Read these if you need the reasoning behind a decision — but `DUHAA_SPEC.md` + `BUILD_PLAN.md` are the day-to-day source of truth.
+## Status (2026-06-15)
+Feature-complete v1 app, **not yet submitted** (dev hasn't paid the $99 Apple Developer fee — staying in device-testing mode). Builds clean, **103 tests pass**. Pushed to GitHub `Safa0915/Duhaa` (branch `main`).
 
-## Current status
-- **Design: complete & locked.** Every decision is in `DUHAA_SPEC.md`.
-- **Framework: NATIVE SwiftUI (Xcode).** Switched from React Native on 2026-06-07 — Duhaa is iOS-native-heavy (cinematic Core Haptics, WidgetKit, custom sounds) and the dev wants to work in Xcode. iOS-only for now; Android = future rewrite if ever.
-- **Engine: not yet built.** The prayer-time logic (Adhan Swift + Tahajjud/Islamic-midnight + offsets + Hijri) is the next thing to build — as a Swift module with unit tests, the riskiest/most important piece.
-- **App shell: not started.** SwiftUI app, built/run in Xcode on macOS.
+## Design — LOCKED, do not change
+- **Calm, premium, Islamic.** Dark celestial: bg `#0D1628`, gold `#F0C040`, blue `#8ECFE8`, card `rgba(255,255,255,0.07)`. Rounded cards, generous spacing.
+- Themes: `dark` (Celestial, default), `light` (Dawn), `sisters` (Rose) — `AppTheme` in `Duhaa/Theme/Palette.swift`.
+- **No flashy / game-like animation** — no confetti, particles, mascots. Motion is subtle and purposeful (gold swells, shimmer skeletons). Always respect Reduce Motion.
+- Fonts: `.duhaaFont(size, weight)` (Dynamic Type). Arabic: bundled KFGQPC Uthmani font via `QuranFont`.
 
-## How to work on this project
-- **Build target:** iOS-only (SwiftUI), min deployment iOS 17+. Built and run in Xcode.
-- **Stack:** Native **SwiftUI**, **Adhan Swift** (`batoulapps/adhan-swift` via Swift Package Manager), state via `@Observable`/`@AppStorage`, persistence via UserDefaults (settings) and SwiftData/SQLite (Quran/Duas in v1.1). Widgets = WidgetKit; haptics = Core Haptics; notifications = UserNotifications; audio = AVFoundation.
-- **Verification harness:** `prayer-verify/` — Node scripts (adhan-js) validated against East London Mosque. Keep as a cross-check reference for the Swift engine's output: `cd prayer-verify && npm install && node verify.js`. The Swift engine should reproduce these same numbers.
+## Religious-content rules (non-negotiable)
+- **Source-backed.** Every claim cites a source; **never label content "Verified"** until a scholar reviews it (see `docs/scholar-review.md`). Prefer "Source provided" or a grade + grader.
+- **Arabic + transliteration + English** for du'as/adhkar/guide steps.
+- **Learn / Du'a UI:** source chips + an expandable "Evidence" disclosure (source · grade · grader). Pattern lives in `Duhaa/Learn/` and `Duhaa/Duas/`.
+- **Madhhab differences:** where schools differ, add a neutral "Madhhab note" rather than asserting one ruling. The app only declares a school for Asr timing (Standard/Hanafi).
+- Salafi methodology for Learn (Quran + sahih/hasan, weak narrations omitted). High-latitude Fajr/Isha = known unsolved debt — never present as authoritative.
 
-## 🚨 Read before touching prayer-time logic
-High-latitude (UK/N.Europe) **Fajr & Isha are a KNOWN EMERGENCY / unsolved debt** — see the banner at the top of `context/project_prayer_app.md` and §13 of `DUHAA_SPEC.md`. No calculation reproduces a real local mosque (proven with numbers). v1 ships a stopgap (manual offsets + seasonal re-check); it must be properly fixed later. Do NOT present any high-lat number as authoritative.
+## Hard product rules
+- **No halal-food / restaurant finder.** Ever.
+- **Nearby Mosques is MapKit-only** (`MKLocalSearch`/CoreLocation) — no Google/Yelp/OSM, no API key, no analytics, no background tracking.
+- **Interactive prayer widget** (planned, not built): WidgetKit + `AppIntent` (Toggle/Button) + **App Group shared storage**. Persist in `perform()` before returning, then `WidgetCenter.reloadTimelines`. **Custom haptics stay in the main app only** — never required from the widget.
+- **No third-party packages** unless explicitly asked. Only dependency is Adhan Swift (SPM). No analytics, ever.
+- Don't break existing features: Prayer, Qibla, Quran, Du'as, Learn, Tasbih, Nearby Mosques, Membership, Notifications, Ramadan, Journey/tracking.
 
-## The "Duhaa moment" (first-launch cinematic)
-The emotional heart of the app, to be built in its own focused session. Full storyboard in `context/project_duhaa_first_launch.md` and §2 of `DUHAA_SPEC.md`. Handle with care; do not cheapen it.
+## Architecture / conventions
+- State: `@Observable` + `@AppStorage`; persistence: `UserDefaults` (keys prefixed `duhaa.*`) + bundled JSON (Quran/du'as/learn/reciters).
+- **Xcode 16 synchronized folder groups (`objectVersion 71`):** new `.swift` files dropped into `Duhaa/…` auto-join the app target — no `project.pbxproj` surgery. ⚠️ A **widget extension is a separate target**; its files do NOT auto-join and need manual Xcode setup.
+- Bundle id `com.duhaa.app`. Tracking store: `Duhaa/Tracking/PrayerTracker.swift` (`@Observable`, `init(defaults:)` for tests). Haptics: `Duhaa/Theme/DuhaaHaptics.swift` (CoreHaptics, main app only).
+- Memory lives in `~/.claude/projects/-Users-safagokdemir-Desktop-Duhaa/memory/` (read `MEMORY.md`).
 
-## Design / palette (LOCKED — do not change)
-Dark celestial. bg `#0D1628`, gold `#F0C040`, blue `#8ECFE8`, card `rgba(255,255,255,0.07)`. Reference mockup: `design/design-1-celestial.html`.
+## Build / test
+```bash
+export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+# Full suite (iPhone 17 sim — adjust the id via `xcrun simctl list devices available`)
+xcodebuild test -scheme Duhaa -destination 'id=77A5968F-1D12-4B45-B6E9-CA5F4DA115B9' -derivedDataPath build/DerivedData
+# Device install (dev's iPhone; needs the phone unlocked)
+xcodebuild -scheme Duhaa -destination 'id=<device-id>' -derivedDataPath build/DeviceDD -allowProvisioningUpdates build
+xcrun devicectl device install app --device <device-id> build/DeviceDD/Build/Products/Debug-iphoneos/Duhaa.app
+```
+Commit only when asked; end commit messages with `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.
