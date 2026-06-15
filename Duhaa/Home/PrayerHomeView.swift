@@ -121,7 +121,7 @@ struct PrayerHomeView: View {
         .sheet(item: $verseSheet) { ref in
             if let surah = Quran.surah(ref.surah) {
                 NavigationStack {
-                    SurahReaderView(surah: surah, scrollTo: ref.ayah)
+                    SurahReaderView(surah: surah, scrollTo: ref.ayah, highlightTarget: true)
                         .toolbar {
                             ToolbarItem(placement: .confirmationAction) {
                                 Button("Done") { verseSheet = nil }.foregroundStyle(Palette.gold)

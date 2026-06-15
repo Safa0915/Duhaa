@@ -5,13 +5,26 @@ import SwiftUI
 /// per-ayah play button (streams Mishary Alafasy and auto-advances).
 struct SurahReaderView: View {
     let surah: Surah
-    /// If set, scroll to this ayah on appear (used when opening a bookmark).
+    /// If set, scroll to this ayah on appear (bookmark, search, Verse of the Day).
     var scrollTo: Int? = nil
+    /// When true, the target ayah is briefly highlighted in the theme accent after the
+    /// jump (used for "jump to a specific verse" entry points; off for resume-reading).
+    var highlightTarget: Bool = false
 
     @Environment(QuranBookmarks.self) private var bookmarks
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var furthestAyah = 0
     @State private var player = AyahPlayer()
     @State private var showingChapterAudioHint = false
+
+    // The one-time jump-to-verse: where we are, whether we've already jumped, the
+    // currently-glowing ayah, and a quiet fallback message if the ayah is missing.
+    @State private var didInitialJump = false
+    @State private var highlightedAyah: Int? = nil
+    @State private var jumpMessage: String? = nil
+
+    /// Place the target a little above center so it reads cleanly with context above it.
+    private let jumpAnchor = UnitPoint(x: 0.5, y: 0.3)
 
     // Reading preferences — shared across all surahs.
     @AppStorage("duhaa.quran.reciter") private var reciterID = Reciters.defaultID
@@ -41,9 +54,7 @@ struct SurahReaderView: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 40)
             }
-            .onAppear {
-                if let scrollTo { proxy.scrollTo(scrollTo, anchor: .top) }
-            }
+            .onAppear { performInitialJump(using: proxy) }
             .onChange(of: player.playingKey) { _, key in
                 if let key, let ayahNumber = Int(key.split(separator: ":").last ?? "") {
                     withAnimation(.easeInOut) { proxy.scrollTo(ayahNumber, anchor: .center) }
@@ -52,6 +63,19 @@ struct SurahReaderView: View {
         }
         .scrollIndicators(.hidden)
         .background(Palette.appBg.ignoresSafeArea())
+        .overlay(alignment: .bottom) {
+            if let jumpMessage {
+                Text(jumpMessage)
+                    .duhaaFont(13, .medium)
+                    .foregroundStyle(.primary)
+                    .padding(.horizontal, 18).padding(.vertical, 12)
+                    .background(.ultraThinMaterial, in: Capsule())
+                    .overlay(Capsule().stroke(Palette.gold.opacity(0.3), lineWidth: 1))
+                    .padding(.bottom, 28)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.3), value: jumpMessage)
         .navigationTitle(surah.englishName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -89,6 +113,68 @@ struct SurahReaderView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text("This Alafasy recording streams by surah in Duhaa. Use the play button at the top to listen.")
+        }
+    }
+
+    // MARK: Jump to a specific verse (Verse of the Day, bookmark, search)
+
+    /// Scroll to `scrollTo` once, after layout, and (optionally) glow it briefly.
+    /// Runs a single time per presentation; manual scrolling afterwards is untouched.
+    private func performInitialJump(using proxy: ScrollViewProxy) {
+        guard !didInitialJump, let target = scrollTo else { return }
+        didInitialJump = true
+
+        // Graceful fallback: the surah is open, but this ayah doesn't exist.
+        guard surah.ayahs.contains(where: { $0.number == target }) else {
+            if highlightTarget { showJumpMessage("Couldn’t jump to verse.") }
+            return
+        }
+
+        // First pass on the next runloop tick lets the LazyVStack begin laying out;
+        // a second pass once heights are known lands precisely (and reveals the glow).
+        // A short retry covers a target that wasn't materialized on the first attempt.
+        DispatchQueue.main.async {
+            proxy.scrollTo(target, anchor: jumpAnchor)
+            scrollPrecisely(to: target, using: proxy, after: 0.35, reveal: true)
+            scrollPrecisely(to: target, using: proxy, after: 0.7, reveal: false)
+        }
+    }
+
+    private func scrollPrecisely(to target: Int, using proxy: ScrollViewProxy,
+                                 after delay: TimeInterval, reveal: Bool) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            if reduceMotion {
+                proxy.scrollTo(target, anchor: jumpAnchor)
+            } else {
+                withAnimation(.easeInOut(duration: 0.4)) { proxy.scrollTo(target, anchor: jumpAnchor) }
+            }
+            if reveal { revealHighlight(target) }
+        }
+    }
+
+    /// Glow the target verse, then fade it after a few seconds (Reduce-Motion-aware).
+    private func revealHighlight(_ target: Int) {
+        guard highlightTarget else { return }
+        if reduceMotion {
+            highlightedAyah = target
+        } else {
+            withAnimation(.easeOut(duration: 0.5)) { highlightedAyah = target }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
+            guard highlightedAyah == target else { return } // don't clobber a newer state
+            if reduceMotion {
+                highlightedAyah = nil
+            } else {
+                withAnimation(.easeInOut(duration: 0.8)) { highlightedAyah = nil }
+            }
+        }
+    }
+
+    private func showJumpMessage(_ message: String) {
+        jumpMessage = message
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.6) {
+            guard jumpMessage == message else { return }
+            withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.3)) { jumpMessage = nil }
         }
     }
 
@@ -174,6 +260,7 @@ struct SurahReaderView: View {
     private func ayahView(_ ayah: Ayah) -> some View {
         let isPlaying = player.isPlaying(surah.number, ayah.number)
         let isBookmarked = bookmarks.isBookmarked(surah.number, ayah.number)
+        let isHighlighted = highlightedAyah == ayah.number
         return VStack(alignment: .leading, spacing: 12) {
             HStack {
                 ZStack {
@@ -219,14 +306,30 @@ struct SurahReaderView: View {
         .padding(.horizontal, 10)
         .background(
             RoundedRectangle(cornerRadius: 14)
-                .fill(isPlaying ? Palette.gold.opacity(0.08) : .clear)
+                .fill(rowFill(isPlaying: isPlaying, isHighlighted: isHighlighted))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14)
-                .stroke(isPlaying ? Palette.gold.opacity(0.35) : .clear, lineWidth: 1)
+                .stroke(rowStroke(isPlaying: isPlaying, isHighlighted: isHighlighted),
+                        lineWidth: isHighlighted ? 1.2 : 1)
         )
         .animation(.easeInOut(duration: 0.3), value: isPlaying)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.5), value: isHighlighted)
         .onAppear { furthestAyah = max(furthestAyah, ayah.number) }
+    }
+
+    /// Soft accent fill: the temporary verse highlight wins over the playing tint.
+    private func rowFill(isPlaying: Bool, isHighlighted: Bool) -> Color {
+        if isHighlighted { return Palette.gold.opacity(0.18) }
+        if isPlaying { return Palette.gold.opacity(0.08) }
+        return .clear
+    }
+
+    /// Subtle accent border — a touch firmer for the highlighted verse than for playback.
+    private func rowStroke(isPlaying: Bool, isHighlighted: Bool) -> Color {
+        if isHighlighted { return Palette.gold.opacity(0.4) }
+        if isPlaying { return Palette.gold.opacity(0.35) }
+        return .clear
     }
 
     private func arabicDisplayText(_ raw: String, defaultColor: Color) -> Text {

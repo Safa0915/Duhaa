@@ -16,7 +16,7 @@ struct BookmarksView: View {
                         if let surah = Quran.surah(ref.surah),
                            let ayah = surah.ayahs.first(where: { $0.number == ref.ayah }) {
                             NavigationLink {
-                                SurahReaderView(surah: surah, scrollTo: ref.ayah)
+                                SurahReaderView(surah: surah, scrollTo: ref.ayah, highlightTarget: true)
                             } label: {
                                 VStack(alignment: .leading, spacing: 3) {
                                     Text("\(surah.englishName) · \(ref.surah):\(ref.ayah)")

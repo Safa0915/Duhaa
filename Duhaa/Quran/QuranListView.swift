@@ -84,7 +84,7 @@ struct QuranListView: View {
             Section("Verses") {
                 ForEach(verses) { match in
                     NavigationLink {
-                        SurahReaderView(surah: match.surah, scrollTo: match.ayah.number)
+                        SurahReaderView(surah: match.surah, scrollTo: match.ayah.number, highlightTarget: true)
                     } label: {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("\(match.surah.englishName) · \(match.surah.number):\(match.ayah.number)")
