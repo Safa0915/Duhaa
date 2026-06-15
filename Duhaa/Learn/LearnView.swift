@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// Offline Learn guides: category sections, title search, and plain guide cards.
+/// Learn home: beginner-first grouped sections (Start Here → Purification →
+/// Prayer Help → Foundations) of light, scannable guide cards, plus title search.
 struct LearnView: View {
     @State private var query = ""
 
@@ -8,21 +9,23 @@ struct LearnView: View {
         query.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    private var groupedGuides: [(category: GuideCategory, guides: [Guide])] {
-        guard !trimmed.isEmpty else { return Learn.guidesByCategory }
-        return GuideCategory.allCases.compactMap { category in
-            let matches = Learn.guides
-                .filter { $0.category == category && $0.title.localizedStandardContains(trimmed) }
-                .sorted { $0.sortOrder < $1.sortOrder }
-            return matches.isEmpty ? nil : (category, matches)
-        }
+    private var groupedGuides: [(group: GuideGroup, guides: [Guide])] {
+        guard !trimmed.isEmpty else { return Learn.guidesByGroup }
+        return GuideGroup.allCases
+            .sorted { $0.displayIndex < $1.displayIndex }
+            .compactMap { group in
+                let matches = Learn.guides
+                    .filter { $0.group == group && $0.title.localizedStandardContains(trimmed) }
+                    .sorted { $0.displayOrder < $1.displayOrder }
+                return matches.isEmpty ? nil : (group, matches)
+            }
     }
 
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 22) {
-                ForEach(groupedGuides, id: \.category) { group in
-                    guideSection(group.category, guides: group.guides)
+            LazyVStack(alignment: .leading, spacing: 24) {
+                ForEach(groupedGuides, id: \.group) { section in
+                    guideSection(section.group, guides: section.guides)
                 }
 
                 if groupedGuides.isEmpty {
@@ -40,78 +43,31 @@ struct LearnView: View {
         .tint(Palette.gold)
     }
 
-    private func guideSection(_ category: GuideCategory, guides: [Guide]) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
+    private func guideSection(_ group: GuideGroup, guides: [Guide]) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
-                Image(systemName: category.icon)
+                Image(systemName: group.icon)
                     .duhaaFont(13, .semibold)
                     .foregroundStyle(Palette.gold.opacity(0.9))
-                Text(category.title.uppercased())
+                Text(group.title.uppercased())
                     .duhaaFont(13, .bold)
                     .foregroundStyle(Palette.blue.opacity(0.85))
                 Spacer()
-                Text("\(guides.count)")
-                    .duhaaFont(13, .semibold)
-                    .foregroundStyle(Palette.blue.opacity(0.7))
             }
             .padding(.horizontal, 2)
+            .accessibilityAddTraits(.isHeader)
 
             VStack(spacing: 12) {
                 ForEach(guides) { guide in
                     NavigationLink {
                         GuideDetailView(guide: guide)
                     } label: {
-                        guideCard(guide)
+                        LearnGuideCard(guide: guide)
                     }
                     .buttonStyle(.duhaaPress)
                 }
             }
         }
-    }
-
-    private func guideCard(_ guide: Guide) -> some View {
-        HStack(alignment: .center, spacing: 14) {
-            VStack(alignment: .leading, spacing: 7) {
-                Text(guide.title)
-                    .duhaaFont(17, .semibold)
-                    .foregroundStyle(.primary)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                Text(guide.summary)
-                    .duhaaFont(13)
-                    .foregroundStyle(.primary.opacity(0.68))
-                    .lineLimit(2)
-
-                HStack(spacing: 14) {
-                    metric(icon: "list.bullet", text: "\(guide.steps.count) steps")
-                    metric(icon: "clock", text: "\(guide.estimatedMinutes) min")
-                }
-                .padding(.top, 1)
-            }
-
-            Spacer(minLength: 8)
-
-            Image(systemName: "chevron.right")
-                .duhaaFont(14, .semibold)
-                .foregroundStyle(Palette.blue.opacity(0.48))
-        }
-        .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Palette.card)
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Palette.cardBorder, lineWidth: 1))
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(guide.title), \(guide.steps.count) steps, about \(guide.estimatedMinutes) minutes")
-    }
-
-    private func metric(icon: String, text: String) -> some View {
-        HStack(spacing: 5) {
-            Image(systemName: icon)
-                .duhaaFont(12, .semibold)
-            Text(text)
-                .duhaaFont(12, .medium)
-        }
-        .foregroundStyle(Palette.blue.opacity(0.78))
     }
 
     private var emptyState: some View {
@@ -129,5 +85,85 @@ struct LearnView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 44)
         .accessibilityElement(children: .combine)
+    }
+}
+
+/// A light, scannable guide card: soft group icon, title, one-line summary, a
+/// wrapping chip row (category · status · optional "scholars differ"), and a
+/// compact step/time metric line. No Arabic or evidence here — that lives inside.
+struct LearnGuideCard: View {
+    let guide: Guide
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 13) {
+            icon
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text(guide.title)
+                    .duhaaFont(17, .semibold)
+                    .foregroundStyle(.primary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text(guide.subtitle ?? guide.summary)
+                    .duhaaFont(13)
+                    .foregroundStyle(.primary.opacity(0.66))
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                FlowLayout(spacing: 6) {
+                    LearnChip(text: guide.category.title, systemImage: guide.category.icon, tint: Palette.blue)
+                    LearnStatusChip(status: guide.reviewStatus)
+                    if guide.madhhabSensitivity.warrantsNote {
+                        LearnChip(text: guide.madhhabSensitivity.chipLabel,
+                                  systemImage: guide.madhhabSensitivity.chipIcon, tint: Palette.gold)
+                    }
+                }
+                .padding(.top, 1)
+
+                metricLine
+                    .padding(.top, 1)
+            }
+
+            Spacer(minLength: 4)
+
+            Image(systemName: "chevron.right")
+                .duhaaFont(13, .semibold)
+                .foregroundStyle(Palette.blue.opacity(0.45))
+                .padding(.top, 4)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Palette.card)
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Palette.cardBorder, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(guide.title). \(guide.subtitle ?? guide.summary). \(guide.steps.count) steps, about \(guide.estimatedMinutes) minutes. \(guide.reviewStatus.label).")
+    }
+
+    private var icon: some View {
+        ZStack {
+            Circle()
+                .fill(Palette.gold.opacity(0.12))
+                .frame(width: 38, height: 38)
+            Image(systemName: guide.group.icon)
+                .duhaaFont(15, .semibold)
+                .foregroundStyle(Palette.gold)
+        }
+        .accessibilityHidden(true)
+    }
+
+    private var metricLine: some View {
+        HStack(spacing: 14) {
+            metric(icon: "list.bullet", text: "\(guide.steps.count) steps")
+            metric(icon: "clock", text: "~\(guide.estimatedMinutes) min")
+        }
+    }
+
+    private func metric(icon: String, text: String) -> some View {
+        HStack(spacing: 5) {
+            Image(systemName: icon).duhaaFont(11.5, .semibold)
+            Text(text).duhaaFont(12, .medium)
+        }
+        .foregroundStyle(Palette.blue.opacity(0.72))
     }
 }
