@@ -13,7 +13,11 @@ struct DuhaaApp: App {
     @State private var fastingTracker = FastingTracker()
     @State private var insightsStore = InsightsStore()
     @State private var subscriptions = SubscriptionStore()
+    @State private var didRunInitialNotificationSchedule = false
+    @State private var lastAppNotificationReschedule: Date?
     @AppStorage("duhaa.hasOnboarded") private var hasOnboarded = false
+
+    private let notificationRescheduleCooldown: TimeInterval = 30
 
     init() { QuranFont.register() }
 
@@ -43,15 +47,24 @@ struct DuhaaApp: App {
                 location.start()
                 await NotificationScheduler.requestAuthorization()
                 rescheduleNotifications()
+                didRunInitialNotificationSchedule = true
             }
             .onChange(of: scenePhase) { _, phase in
                 // Re-fill the rolling notification window on every app open (spec §8).
-                if phase == .active && hasOnboarded { rescheduleNotifications() }
+                if phase == .active && hasOnboarded && didRunInitialNotificationSchedule {
+                    rescheduleNotifications()
+                }
             }
         }
     }
 
     private func rescheduleNotifications() {
+        let now = Date()
+        if let lastAppNotificationReschedule,
+           now.timeIntervalSince(lastAppNotificationReschedule) < notificationRescheduleCooldown {
+            return
+        }
+        lastAppNotificationReschedule = now
         NotificationScheduler.reschedule(location: location.active,
                                          config: settings.prayerConfig,
                                          notifs: notifications)

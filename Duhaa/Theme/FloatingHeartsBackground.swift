@@ -1,52 +1,34 @@
-import SwiftUI
+    import SwiftUI
 
 /// Shared decorative background. Light Pink gets gentle ambient hearts; other
 /// themes receive their normal solid app background.
-///
-/// Opt-in by usage: only screens that apply this view (Prayer home, More, Settings)
-/// get hearts. Reading-heavy screens (Quran, Du'a, Learn) use `Palette.appBg`
-/// directly and never see hearts. A screen that *does* use this view but wants the
-/// plain background anyway can pass `allowsHearts: false`.
 struct ThemeDecorativeBackground: View {
-    var allowsHearts: Bool = true
-
     var body: some View {
         ZStack {
             Palette.appBg
-            if Self.showsHearts(allowsHearts: allowsHearts, palette: Palette.active) {
+            if Palette.active.showsFloatingHearts {
                 LightPinkHeartsBackground()
             }
         }
         .ignoresSafeArea()
     }
-
-    /// Pure gate so the show/hide decision is unit-testable without rendering.
-    static func showsHearts(allowsHearts: Bool, palette: ThemeColors) -> Bool {
-        allowsHearts && palette.showsFloatingHearts
-    }
 }
 
-/// A subtle, deterministic heart field for the Light Pink free-preview theme.
-///
-/// Design: sparse (16), low opacity (≤ 0.12), small-to-medium, biased to the side
-/// gutters so the central reading column stays clear, drifting slowly upward.
-/// No glow, capped at 20fps for battery. Sits behind content and is decorative
-/// only — never under primary text, never interactive, hidden from VoiceOver.
+/// A charming, deterministic heart field for the Light Pink free preview theme.
+/// It stays behind content, but is visible enough to make the theme feel special.
 struct LightPinkHeartsBackground: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var animationStart = Date.timeIntervalSinceReferenceDate
 
     var body: some View {
-        GeometryReader { proxy in
-            Group {
-                if reduceMotion {
-                    // Reduce Motion: faint static hearts, no drift.
-                    hearts(in: proxy.size, time: 0)
-                } else {
-                    // 20fps is plenty for a slow drift and far kinder to the battery
-                    // than the default per-frame schedule.
-                    TimelineView(.animation(minimumInterval: 1.0 / 20.0)) { timeline in
-                        hearts(in: proxy.size, time: timeline.date.timeIntervalSinceReferenceDate)
-                    }
+        Group {
+            if reduceMotion {
+                heartCanvas(time: 0)
+            } else {
+                TimelineView(.animation) { timeline in
+                    heartCanvas(time: Self.animationTime(
+                        for: timeline.date.timeIntervalSinceReferenceDate,
+                        startedAt: animationStart))
                 }
             }
         }
@@ -54,27 +36,74 @@ struct LightPinkHeartsBackground: View {
         .accessibilityHidden(true)
     }
 
-    @ViewBuilder
-    private func hearts(in size: CGSize, time: TimeInterval) -> some View {
-        ForEach(FloatingHeartFactory.hearts) { heart in
-            let progress = heart.progress(at: reduceMotion ? 0 : time)
-            let progressCGFloat = CGFloat(progress)
-            // Rise from just below the bottom (staggered) to just above the top.
-            let startY = size.height + heart.size + heart.y * size.height * 0.28
-            let endY = -heart.size - 40
-            let drift = reduceMotion ? 0 : CGFloat(sin(progress * 2 * .pi + heart.phase)) * heart.wobble
-            let x = heart.x * size.width + drift
-            let y = startY + (endY - startY) * progressCGFloat
-            let tilt = reduceMotion ? 0 : sin(progress * 2 * .pi) * 3
+    static func animationTime(for currentTime: TimeInterval, startedAt startTime: TimeInterval) -> TimeInterval {
+        max(0, currentTime - startTime)
+    }
 
-            Image(systemName: heart.symbol)
-                .font(.system(size: heart.size, weight: .light))
-                .foregroundStyle(heart.usesAccent ? Palette.accent : Palette.softAccent)
-                .opacity(heart.opacity)
-                .rotationEffect(.degrees(heart.rotation + tilt))
-                .position(x: x, y: y)
+    /// All hearts drawn into ONE Canvas layer: each icon is rasterized just once
+    /// (via `symbols`) and then composited per frame with a transform + shadow.
+    /// The previous version was 34 individually-shadowed SwiftUI views, and their
+    /// `TimelineView` keeps animating even while the Light Pink home tab sits
+    /// off-screen behind another tab — that background churn is what made the
+    /// Qibla compass stutter in this theme. One flat Canvas layer makes it cheap.
+    private func heartCanvas(time: TimeInterval) -> some View {
+        Canvas { context, size in
+            for heart in FloatingHeartFactory.hearts {
+                let opacity = heart.opacity(at: time)
+                guard opacity > 0.004,
+                      let symbol = context.resolveSymbol(id: heart.id) else { continue }
+
+                var layer = context
+                layer.opacity = opacity
+                layer.addFilter(.shadow(color: Palette.glow.opacity(min(1, opacity * 2.0)),
+                                        radius: heart.size * 0.22))
+                let position = heart.position(in: size, at: time)
+                layer.translateBy(x: position.x, y: position.y)
+                layer.rotate(by: .degrees(heart.rotation(at: time)))
+                let scale = heart.scale(at: time)
+                layer.scaleBy(x: scale, y: scale)
+                layer.draw(symbol, at: .zero, anchor: .center)
+            }
+        } symbols: {
+            ForEach(FloatingHeartFactory.hearts) { heart in
+                FloatingHeartIcon(heart: heart)
+                    .tag(heart.id)
+            }
         }
     }
+}
+
+private struct FloatingHeartIcon: View {
+    let heart: FloatingHeartSpec
+
+    var body: some View {
+        Group {
+            switch heart.style {
+            case .simple:
+                Image(systemName: heart.symbol)
+                    .font(.system(size: heart.size, weight: .light))
+                    .foregroundStyle(heart.usesAccent ? Palette.softAccent : Palette.accent)
+            case .sparkly:
+                SparklingHeartEmojiIcon(size: heart.size)
+            }
+        }
+        .frame(width: heart.visualSize, height: heart.visualSize)
+    }
+}
+
+private struct SparklingHeartEmojiIcon: View {
+    let size: CGFloat
+
+    var body: some View {
+        Text("💖")
+            .font(.system(size: size * 1.12))
+            .frame(width: size * 1.35, height: size * 1.35)
+    }
+}
+
+enum FloatingHeartStyle: Equatable {
+    case simple
+    case sparkly
 }
 
 struct FloatingHeartSpec: Identifiable {
@@ -83,18 +112,58 @@ struct FloatingHeartSpec: Identifiable {
     let y: CGFloat
     let size: CGFloat
     let opacity: Double
-    let travel: CGFloat
-    let duration: Double
+    let drift: Double
+    let twinkleSpeed: Double
     let phase: Double
     let wobble: CGFloat
+    let wobbleSpeed: Double
     let rotation: Double
+    let rotationDrift: Double
     let symbol: String
     let usesAccent: Bool
+    let style: FloatingHeartStyle
 
-    func progress(at time: TimeInterval) -> Double {
-        let offset = phase / (2 * .pi)
-        let local = (time / duration + offset).truncatingRemainder(dividingBy: 1)
-        return local < 0 ? local + 1 : local
+    var visualSize: CGFloat {
+        switch style {
+        case .simple:
+            return size
+        case .sparkly:
+            return size * 1.35
+        }
+    }
+
+    func verticalFraction(at time: TimeInterval) -> CGFloat {
+        var fraction = y - CGFloat((time * drift).truncatingRemainder(dividingBy: 1))
+        if fraction < 0 {
+            fraction += 1
+        }
+        return fraction
+    }
+
+    func position(in size: CGSize, at time: TimeInterval) -> CGPoint {
+        let yFraction = verticalFraction(at: time)
+        let x = self.x * size.width + CGFloat(sin(time * wobbleSpeed + phase)) * wobble
+        let y = yFraction * size.height
+        return CGPoint(x: x, y: y)
+    }
+
+    func opacity(at time: TimeInterval) -> Double {
+        let yFraction = Double(verticalFraction(at: time))
+        let topFade = min(1, max(0, yFraction / 0.07))
+        let bottomFade = min(1, max(0, (1 - yFraction) / 0.12))
+        let routeFade = min(topFade, bottomFade)
+        let twinkle = 0.72 + 0.28 * (0.5 + 0.5 * sin(time * twinkleSpeed + phase))
+        return opacity * routeFade * twinkle
+    }
+
+    func scale(at time: TimeInterval) -> CGFloat {
+        let yFraction = Double(verticalFraction(at: time))
+        let topExit = max(0, 1 - yFraction / 0.07)
+        return 1 + CGFloat(sin(topExit * .pi) * topExit * 0.12)
+    }
+
+    func rotation(at time: TimeInterval) -> Double {
+        rotation + sin(time * rotationDrift + phase) * 4
     }
 }
 
@@ -114,30 +183,43 @@ private struct FloatingHeartSeededGenerator: RandomNumberGenerator {
 }
 
 enum FloatingHeartFactory {
-    /// Sparse, edge-biased, low-opacity ambient hearts. Deterministic (seeded) so
-    /// the field never reflows between launches and never feels chaotic.
+    private static let columnCenters: [Double] = [0.07, 0.235, 0.40, 0.565, 0.73, 0.895]
+
     static let hearts: [FloatingHeartSpec] = {
         var rng = FloatingHeartSeededGenerator(seed: 0xD0AA_1FEE)
-        return (0..<16).map { index in
-            let isFeatureHeart = index.isMultiple(of: 5)
-            // Keep the central reading column clear: hearts live in the side gutters.
-            let onLeft = Bool.random(using: &rng)
-            let x = onLeft
-                ? Double.random(in: 0.02...0.18, using: &rng)
-                : Double.random(in: 0.82...0.98, using: &rng)
+        let rowCount = 6
+
+        return (0..<34).map { index in
+            let isFeatureHeart = index.isMultiple(of: 7)
+            let isSparklyHeart = isFeatureHeart
+            let columnIndex = index % columnCenters.count
+            let column = columnCenters[columnIndex]
+            let rowIndex = index / columnCenters.count
+            let xJitter = Double.random(in: -0.010...0.010, using: &rng)
+            let columnStagger = Double(columnIndex) * 0.018
+            let yJitter = Double.random(in: -0.014...0.014, using: &rng)
+            var y = 0.045 + (Double(rowIndex) / Double(rowCount)) * 0.88 + columnStagger + yJitter
+            y = y.truncatingRemainder(dividingBy: 1)
+            if y < 0 {
+                y += 1
+            }
+
             return FloatingHeartSpec(
                 id: index,
-                x: CGFloat(x),
-                y: CGFloat(Double.random(in: 0.05...0.98, using: &rng)),
-                size: CGFloat(Double.random(in: isFeatureHeart ? 24...30 : 12...22, using: &rng)),
-                opacity: Double.random(in: isFeatureHeart ? 0.10...0.12 : 0.05...0.10, using: &rng),
-                travel: CGFloat(Double.random(in: 0.10...0.26, using: &rng)),
-                duration: Double.random(in: 34...58, using: &rng),
+                x: CGFloat(column + xJitter),
+                y: CGFloat(y),
+                size: CGFloat(Double.random(in: isFeatureHeart ? 28...40 : 13...29, using: &rng)),
+                opacity: Double.random(in: isFeatureHeart ? 0.18...0.26 : 0.09...0.20, using: &rng),
+                drift: 0.0062,
+                twinkleSpeed: Double.random(in: 0.45...1.25, using: &rng),
                 phase: Double.random(in: 0...(2 * .pi), using: &rng),
-                wobble: CGFloat(Double.random(in: 5...14, using: &rng)),
-                rotation: Double.random(in: -16...16, using: &rng),
-                symbol: index.isMultiple(of: 3) ? "heart" : "heart.fill",
-                usesAccent: index.isMultiple(of: 2)
+                wobble: CGFloat(Double.random(in: 3...6, using: &rng)),
+                wobbleSpeed: Double.random(in: 0.16...0.36, using: &rng),
+                rotation: Double.random(in: -20...20, using: &rng),
+                rotationDrift: Double.random(in: 0.18...0.36, using: &rng),
+                symbol: index.isMultiple(of: 4) ? "heart" : "heart.fill",
+                usesAccent: index.isMultiple(of: 3),
+                style: isSparklyHeart ? .sparkly : .simple
             )
         }
     }()

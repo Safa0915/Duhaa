@@ -44,8 +44,11 @@ final class ThemeStoreTests: XCTestCase {
         XCTAssertEqual(palette.id, .lightPink)
         XCTAssertEqual(palette.hexes.background, 0xFFF5F8)
         XCTAssertEqual(palette.hexes.secondaryBackground, 0xFFEAF1)
-        XCTAssertEqual(palette.hexes.accent, 0xFF8FB3)
-        XCTAssertEqual(palette.hexes.softAccent, 0xFFD1DF)
+        XCTAssertEqual(palette.hexes.accent, 0xFFA6C8)
+        XCTAssertEqual(palette.hexes.softAccent, 0xFFC7DA)
+        XCTAssertEqual(palette.hexes.secondaryText, 0x9A6B80)
+        XCTAssertEqual(palette.hexes.glow, 0xFFD8E6)
+        XCTAssertEqual(palette.hexes.warning, 0xC87596)
         XCTAssertTrue(palette.showsFloatingHearts)
         XCTAssertEqual(AppTheme.lightPink.previewBadge, "Free preview")
         XCTAssertTrue(AppTheme.lightPink.isPremiumPreview)
@@ -59,33 +62,105 @@ final class ThemeStoreTests: XCTestCase {
     }
 
     func testFloatingHeartSpecsStayLightweightAndSubtle() {
-        let hearts = FloatingHeartFactory.hearts
-        XCTAssertEqual(hearts.count, 16, "sparse field")
-        XCTAssertTrue(hearts.allSatisfy { $0.opacity <= 0.12 }, "hearts must stay subtle (<= 0.12)")
-        XCTAssertTrue(hearts.allSatisfy { $0.size <= 30 }, "hearts stay small-to-medium")
+        XCTAssertEqual(FloatingHeartFactory.hearts.count, 34)
+        XCTAssertTrue(FloatingHeartFactory.hearts.allSatisfy { $0.opacity <= 0.26 })
+        XCTAssertTrue(FloatingHeartFactory.hearts.allSatisfy { $0.drift > 0 })
+        XCTAssertTrue(FloatingHeartFactory.hearts.contains { $0.size >= 28 && $0.opacity >= 0.18 })
     }
 
-    func testHeartsHugTheSideGuttersNotTheReadingColumn() {
-        // Nothing should drift through the central reading column (0.20...0.80).
-        XCTAssertTrue(FloatingHeartFactory.hearts.allSatisfy { $0.x <= 0.20 || $0.x >= 0.80 },
-                      "hearts must hug the side gutters to keep text clear")
+    func testSparklyHeartsAreSpecialButSparse() {
+        let sparklyHearts = FloatingHeartFactory.hearts.filter { $0.style == .sparkly }
+
+        XCTAssertEqual(sparklyHearts.count, 5)
+        XCTAssertLessThan(sparklyHearts.count, FloatingHeartFactory.hearts.count)
+        XCTAssertTrue(sparklyHearts.allSatisfy { $0.size >= 28 })
+        XCTAssertTrue(sparklyHearts.allSatisfy { $0.visualSize > $0.size })
     }
 
-    func testHeartProgressIsBoundedIncludingReduceMotionPath() {
-        for heart in FloatingHeartFactory.hearts {
-            let still = heart.progress(at: 0)              // Reduce Motion path uses time 0
-            XCTAssertTrue(still >= 0 && still < 1, "progress out of range at rest: \(still)")
-            let moving = heart.progress(at: 12_345.678)
-            XCTAssertTrue(moving >= 0 && moving < 1, "progress out of range while moving: \(moving)")
+    func testFloatingHeartsStaySeparatedAcrossMotion() {
+        let canvas = CGSize(width: 390, height: 844)
+        let sampleTimes = stride(from: 0.0, through: 160.0, by: 4.0)
+
+        for time in sampleTimes {
+            let positioned = FloatingHeartFactory.hearts.map { heart in
+                (heart: heart, point: heart.position(in: canvas, at: time))
+            }
+
+            for i in 0..<positioned.count {
+                for j in (i + 1)..<positioned.count {
+                    let a = positioned[i]
+                    let b = positioned[j]
+                    let distance = hypot(a.point.x - b.point.x, a.point.y - b.point.y)
+                    let minimumDistance = (a.heart.visualSize + b.heart.visualSize) * 0.46
+
+                    XCTAssertGreaterThanOrEqual(
+                        distance,
+                        minimumDistance,
+                        "hearts \(a.heart.id) and \(b.heart.id) overlap at \(time)s"
+                    )
+                }
+            }
         }
     }
 
-    func testDecorationGateRespectsThemeAndPerScreenOptOut() {
-        // Classic never shows hearts, even if a screen allows decorations.
-        XCTAssertFalse(ThemeDecorativeBackground.showsHearts(allowsHearts: true, palette: AppTheme.dark.colors))
-        // Light Pink shows hearts by default…
-        XCTAssertTrue(ThemeDecorativeBackground.showsHearts(allowsHearts: true, palette: AppTheme.lightPink.colors))
-        // …but a reading-heavy screen can suppress them.
-        XCTAssertFalse(ThemeDecorativeBackground.showsHearts(allowsHearts: false, palette: AppTheme.lightPink.colors))
+    func testLaunchFrameAlreadyHasTopHearts() {
+        let canvas = CGSize(width: 390, height: 844)
+        let topVisibleHearts = FloatingHeartFactory.hearts.filter { heart in
+            let y = heart.position(in: canvas, at: 0).y
+            return y >= 0 && y <= canvas.height * 0.38 && heart.opacity(at: 0) >= 0.04
+        }
+
+        XCTAssertGreaterThanOrEqual(topVisibleHearts.count, 7)
+        XCTAssertTrue(topVisibleHearts.contains { $0.style == .sparkly })
+    }
+
+    func testLiveAnimationStartsFromLaunchFrameNotAbsoluteClockTime() {
+        XCTAssertEqual(LightPinkHeartsBackground.animationTime(for: 1_000, startedAt: 1_000), 0)
+        XCTAssertEqual(LightPinkHeartsBackground.animationTime(for: 1_012.5, startedAt: 1_000), 12.5)
+        XCTAssertEqual(LightPinkHeartsBackground.animationTime(for: 999, startedAt: 1_000), 0)
+    }
+
+    func testFloatingHeartFieldKeepsTopAreaPopulated() {
+        let canvas = CGSize(width: 390, height: 844)
+        let sampleTimes = stride(from: 0.0, through: 160.0, by: 4.0)
+
+        for time in sampleTimes {
+            let topVisibleHearts = FloatingHeartFactory.hearts.filter { heart in
+                let y = heart.position(in: canvas, at: time).y
+                return y >= 0 && y <= canvas.height * 0.38 && heart.opacity(at: time) >= 0.04
+            }
+
+            XCTAssertGreaterThanOrEqual(
+                topVisibleHearts.count,
+                7,
+                "top area needs several visible hearts at \(time)s"
+            )
+        }
+    }
+
+    func testFloatingHeartsDoNotSitInOnePlace() {
+        let canvas = CGSize(width: 390, height: 844)
+
+        for heart in FloatingHeartFactory.hearts {
+            let first = heart.position(in: canvas, at: 0)
+            let next = heart.position(in: canvas, at: 1)
+            let distance = hypot(first.x - next.x, first.y - next.y)
+
+            XCTAssertGreaterThan(
+                distance,
+                1.5,
+                "heart \(heart.id) should drift instead of staying fixed"
+            )
+        }
+    }
+
+    func testFloatingHeartsFadeAtRouteEdges() {
+        for heart in FloatingHeartFactory.hearts {
+            let topTime = TimeInterval(Double(heart.y) / heart.drift)
+            let justAfterWrap = topTime + 0.01
+
+            XCTAssertLessThanOrEqual(heart.opacity(at: topTime), heart.opacity * 0.1)
+            XCTAssertLessThanOrEqual(heart.opacity(at: justAfterWrap), heart.opacity * 0.1)
+        }
     }
 }

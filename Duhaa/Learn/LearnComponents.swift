@@ -48,30 +48,56 @@ struct FlowLayout: Layout {
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Void) -> CGSize {
         let maxWidth = proposal.width ?? .infinity
-        var x: CGFloat = 0, y: CGFloat = 0, rowHeight: CGFloat = 0, widest: CGFloat = 0
-        for sv in subviews {
-            let size = sv.sizeThatFits(.unspecified)
-            if x + size.width > maxWidth, x > 0 {
-                x = 0; y += rowHeight + spacing; rowHeight = 0
-            }
-            x += size.width + spacing
-            rowHeight = max(rowHeight, size.height)
-            widest = max(widest, x - spacing)
-        }
-        return CGSize(width: min(widest, maxWidth), height: y + rowHeight)
+        let rows = arrange(subviews, maxWidth: maxWidth)
+        let height = rows.reduce(0) { $0 + $1.height } + spacing * CGFloat(max(0, rows.count - 1))
+        let intrinsic = rows.map(\.width).max() ?? 0
+        // Report the full width we were proposed (when finite) — not just the
+        // widest row. Returning the narrower widest-row value made SwiftUI place
+        // us inside that smaller box, where `placeSubviews` re-wraps into MORE
+        // rows than this height accounts for; the extra row then overlaps whatever
+        // sits below (the "tags on top of each other" bug).
+        return CGSize(width: maxWidth.isFinite ? maxWidth : intrinsic, height: height)
     }
 
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Void) {
-        var x = bounds.minX, y = bounds.minY, rowHeight: CGFloat = 0
-        for sv in subviews {
-            let size = sv.sizeThatFits(.unspecified)
-            if x + size.width > bounds.maxX, x > bounds.minX {
-                x = bounds.minX; y += rowHeight + spacing; rowHeight = 0
+        let rows = arrange(subviews, maxWidth: bounds.width)
+        var y = bounds.minY
+        for row in rows {
+            var x = bounds.minX
+            for placed in row.items {
+                subviews[placed.index].place(at: CGPoint(x: x, y: y),
+                                             proposal: ProposedViewSize(placed.size))
+                x += placed.size.width + spacing
             }
-            sv.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(size))
-            x += size.width + spacing
-            rowHeight = max(rowHeight, size.height)
+            y += row.height + spacing
         }
+    }
+
+    // MARK: Shared row arrangement
+
+    private struct Placed { let index: Int; let size: CGSize }
+    private struct Row { var items: [Placed] = []; var width: CGFloat = 0; var height: CGFloat = 0 }
+
+    /// Group the subviews into rows for a given width. Used by *both* passes so the
+    /// height reported by `sizeThatFits` always matches what `placeSubviews` draws.
+    private func arrange(_ subviews: Subviews, maxWidth: CGFloat) -> [Row] {
+        var rows: [Row] = []
+        var current = Row()
+        for index in subviews.indices {
+            let size = subviews[index].sizeThatFits(.unspecified)
+            let candidate = current.items.isEmpty ? size.width : current.width + spacing + size.width
+            if !current.items.isEmpty, candidate > maxWidth {
+                rows.append(current)
+                current = Row(items: [Placed(index: index, size: size)],
+                              width: size.width, height: size.height)
+            } else {
+                current.items.append(Placed(index: index, size: size))
+                current.width = candidate
+                current.height = max(current.height, size.height)
+            }
+        }
+        if !current.items.isEmpty { rows.append(current) }
+        return rows
     }
 }
 

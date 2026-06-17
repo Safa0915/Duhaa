@@ -7,18 +7,15 @@ import UIKit
 /// turn the phone until it points straight up at the fixed marker. On a real
 /// device the dial tracks the live heading; in the Simulator (no magnetometer)
 /// it shows the Qibla relative to North.
+///
+/// The live heading (which fires many updates per second) lives in `QiblaCompass`,
+/// not here — so the theme background and the rest of the screen are NOT
+/// re-rendered on every heading tick. That keeps the compass equally smooth in
+/// every theme (the Light Pink background no longer gets re-processed each frame).
 struct QiblaView: View {
     @Environment(LocationProvider.self) private var location
-    @State private var headingProvider = HeadingProvider()
-    @State private var wasAligned = false
-    /// Continuous (unwrapped) heading: accumulates shortest-path deltas so the
-    /// dial and needle never whip a full circle when heading crosses 0°/360° (North).
-    @State private var continuousHeading = 0.0
-    @State private var hasHeading = false
 
     private let kaaba = CLLocation(latitude: 21.4225, longitude: 39.8262)
-
-    // MARK: Derived values
 
     private var qiblaBearing: Double {
         Qibla(coordinates: Coordinates(latitude: location.active.latitude,
@@ -28,14 +25,6 @@ struct QiblaView: View {
         CLLocation(latitude: location.active.latitude, longitude: location.active.longitude)
             .distance(from: kaaba) / 1000
     }
-    /// On-screen angle of the needle (0 = straight up).
-    private var relativeQibla: Double { qiblaBearing - continuousHeading }
-    private var aligned: Bool {
-        guard headingProvider.heading != nil else { return false }
-        return abs(angleDelta(continuousHeading, qiblaBearing)) < 5
-    }
-
-    // MARK: Body
 
     var body: some View {
         ZStack {
@@ -47,13 +36,47 @@ struct QiblaView: View {
                     .foregroundStyle(Palette.blue.opacity(0.7))
                     .padding(.top, 20)
 
-                compass(size: 290)
-                readout
-                statusLine
+                QiblaCompass(qiblaBearing: qiblaBearing,
+                             distanceKm: distanceKm,
+                             locationName: location.active.name,
+                             size: 290)
                 Spacer()
             }
         }
         .preferredColorScheme(Palette.active.colorScheme)
+    }
+}
+
+// MARK: - Compass (owns the live heading in isolation)
+
+/// The rotating compass, readout and status line. It owns the heading stream, so
+/// heading updates re-render only this subview — never the parent's background.
+private struct QiblaCompass: View {
+    let qiblaBearing: Double
+    let distanceKm: Double
+    let locationName: String
+    let size: CGFloat
+
+    @State private var headingProvider = HeadingProvider()
+    @State private var wasAligned = false
+    /// Continuous (unwrapped) heading: accumulates shortest-path deltas so the
+    /// dial and needle never whip a full circle when heading crosses 0°/360° (North).
+    @State private var continuousHeading = 0.0
+    @State private var hasHeading = false
+
+    /// On-screen angle of the needle (0 = straight up).
+    private var relativeQibla: Double { qiblaBearing - continuousHeading }
+    private var aligned: Bool {
+        guard headingProvider.heading != nil else { return false }
+        return abs(angleDelta(continuousHeading, qiblaBearing)) < 5
+    }
+
+    var body: some View {
+        VStack(spacing: 24) {
+            compass(size: size)
+            readout
+            statusLine
+        }
         .onAppear { headingProvider.start() }
         .onDisappear { headingProvider.stop() }
         .onChange(of: headingProvider.heading) { _, newValue in
@@ -101,6 +124,10 @@ struct QiblaView: View {
                 cardinal("W", 270, r - 32)
             }
             .frame(width: size, height: size)
+            // Flatten the 72 ticks + 4 cardinals into one GPU texture so a live
+            // heading (which fires many updates per second) just transforms a
+            // cached layer instead of re-compositing ~80 views every frame.
+            .drawingGroup()
             .rotationEffect(.degrees(-continuousHeading))
 
             // Qibla needle
@@ -154,7 +181,7 @@ struct QiblaView: View {
             Text("\(formattedDistance) to Makkah")
                 .duhaaFont(14)
                 .foregroundStyle(Palette.blue.opacity(0.8))
-            Text(location.active.name)
+            Text(locationName)
                 .duhaaFont(12)
                 .foregroundStyle(Palette.blue.opacity(0.5))
         }
@@ -227,14 +254,14 @@ private struct QiblaNeedle: Shape {
     func path(in r: CGRect) -> Path {
         var p = Path()
         let cx = r.midX
-        let tipY = r.minY + 30
+        let tipY = r.minY + 24
         // shaft: from just below the arrowhead down to the center
-        p.addRoundedRect(in: CGRect(x: cx - 1.5, y: tipY + 16, width: 3, height: r.midY - (tipY + 16)),
-                         cornerSize: CGSize(width: 1.5, height: 1.5))
-        // arrowhead
+        p.addRoundedRect(in: CGRect(x: cx - 2.5, y: tipY + 22, width: 5, height: r.midY - (tipY + 22)),
+                         cornerSize: CGSize(width: 2.5, height: 2.5))
+        // arrowhead — larger so the Qibla direction reads at a glance
         p.move(to: CGPoint(x: cx, y: tipY))
-        p.addLine(to: CGPoint(x: cx + 12, y: tipY + 20))
-        p.addLine(to: CGPoint(x: cx - 12, y: tipY + 20))
+        p.addLine(to: CGPoint(x: cx + 17, y: tipY + 28))
+        p.addLine(to: CGPoint(x: cx - 17, y: tipY + 28))
         p.closeSubpath()
         return p
     }

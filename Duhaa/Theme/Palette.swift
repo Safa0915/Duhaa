@@ -131,30 +131,33 @@ enum AppTheme: String, CaseIterable, Identifiable {
 
         case .lightPink:
             let ink = Color(hex: 0x35232A)
-            let muted = Color(hex: 0x7A5A66)
+            let muted = Color(hex: 0x9A6B80)
+            let babyPink = Color(hex: 0xFFA6C8)
+            let blushPink = Color(hex: 0xFFC7DA)
+            let roseAccent = Color(hex: 0xD979A2)
             return ThemeColors(
                 id: self,
                 hexes: ThemeColorHexes(
                     background: 0xFFF5F8, secondaryBackground: 0xFFEAF1,
                     cardBackground: 0xFFFFFF, elevatedCardBackground: 0xFFF0F5,
-                    accent: 0xFF8FB3, softAccent: 0xFFD1DF,
-                    primaryText: 0x35232A, secondaryText: 0x7A5A66,
-                    border: 0xF7BFD0, glow: 0xFFC2D6,
-                    success: 0x4F8A67, warning: 0xA86B21, destructive: 0xB9475D),
+                    accent: 0xFFA6C8, softAccent: 0xFFC7DA,
+                    primaryText: 0x35232A, secondaryText: 0x9A6B80,
+                    border: 0xF8C5D4, glow: 0xFFD8E6,
+                    success: 0x4F8A67, warning: 0xC87596, destructive: 0xB9475D),
                 background: Color(hex: 0xFFF5F8),
                 secondaryBackground: Color(hex: 0xFFEAF1),
                 cardBackground: Color(hex: 0xFFFFFF),
                 elevatedCardBackground: Color(hex: 0xFFF0F5),
                 primaryText: ink,
                 secondaryText: muted,
-                accent: Color(hex: 0xFF8FB3),
-                softAccent: Color(hex: 0xFFD1DF),
-                border: Color(hex: 0xF7BFD0),
-                glow: Color(hex: 0xFFC2D6),
+                accent: babyPink,
+                softAccent: blushPink,
+                border: Color(hex: 0xF8C5D4),
+                glow: Color(hex: 0xFFD8E6),
                 success: Color(hex: 0x4F8A67),
-                warning: Color(hex: 0xA86B21),
+                warning: Color(hex: 0xC87596),
                 destructive: Color(hex: 0xB9475D),
-                secondaryAccent: muted,
+                secondaryAccent: roseAccent,
                 prayerTime: ink.opacity(0.9),
                 colorScheme: .light,
                 isDark: false,
