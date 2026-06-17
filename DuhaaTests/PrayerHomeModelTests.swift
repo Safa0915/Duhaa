@@ -34,6 +34,16 @@ final class PrayerHomeModelTests: XCTestCase {
 
     private func dayKey(_ date: Date) -> String { PrayerTracker.dayKey(date, tz) }
 
+    private func expectedCountdown(from start: Date, to end: Date) -> String {
+        let seconds = max(0, Int(ceil(end.timeIntervalSince(start))))
+        let h = seconds / 3600
+        let m = (seconds % 3600) / 60
+        let s = seconds % 60
+        if h > 0 { return "\(h)h \(m)m" }
+        if m > 0 { return "\(m) minute\(m == 1 ? "" : "s")" }
+        return "\(s) second\(s == 1 ? "" : "s")"
+    }
+
     // MARK: Fajr on-time window (consensus: ends at sunrise)
 
     func testFajrOnTimeBeforeSunrise() {
@@ -88,5 +98,61 @@ final class PrayerHomeModelTests: XCTestCase {
         let t = engineTimes()
         let midday = t.dhuhr.addingTimeInterval(60)
         XCTAssertEqual(row(.isha, at: midday).dayKey, dayKey(midday))
+    }
+
+    // MARK: Next prayer countdown
+
+    func testCountdownUsesNextPrayerTime() {
+        let t = engineTimes()
+        let now = t.fajr.addingTimeInterval(90)
+        let d = display(at: now)
+
+        XCTAssertEqual(d.nextName, Prayer.dhuhr.rawValue)
+        XCTAssertEqual(d.countdown, expectedCountdown(from: now, to: t.dhuhr))
+    }
+
+    func testCountdownShowsSecondsInFinalMinute() {
+        let t = engineTimes()
+        let now = t.dhuhr.addingTimeInterval(-30)
+        let d = display(at: now)
+
+        XCTAssertEqual(d.nextName, Prayer.dhuhr.rawValue)
+        XCTAssertEqual(d.countdown, "30 seconds")
+    }
+
+    func testNextPrayerRollsForwardAtExactPrayerTime() {
+        let t = engineTimes()
+        let d = display(at: t.dhuhr)
+
+        XCTAssertEqual(d.nextName, Prayer.asr.rawValue)
+    }
+
+    func testNextPrayerAfterIshaUsesTomorrowFajr() {
+        let t = engineTimes()
+        let d = display(at: t.isha.addingTimeInterval(60))
+
+        XCTAssertEqual(d.nextName, Prayer.fajr.rawValue)
+    }
+
+    // MARK: Time remaining mode deadlines
+
+    func testTimeRemainingDuringFajrCountsToSunrise() {
+        let t = engineTimes()
+        let now = t.sunrise.addingTimeInterval(-5 * 60)
+        let d = display(at: now)
+
+        XCTAssertEqual(d.nextName, Prayer.dhuhr.rawValue)
+        XCTAssertEqual(d.timeRemainingTarget, "sunrise")
+        XCTAssertEqual(d.timeRemainingCountdown, "5 minutes")
+    }
+
+    func testTimeRemainingDuringIshaCountsToIslamicMidnight() {
+        let t = engineTimes()
+        let now = t.islamicMidnight.addingTimeInterval(-5 * 60)
+        let d = display(at: now)
+
+        XCTAssertEqual(d.nextName, Prayer.fajr.rawValue)
+        XCTAssertEqual(d.timeRemainingTarget, "Islamic midnight")
+        XCTAssertEqual(d.timeRemainingCountdown, "5 minutes")
     }
 }

@@ -118,9 +118,7 @@ struct DuaListView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Palette.card)
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Palette.cardBorder, lineWidth: 1))
-        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .duhaaCardStyle()
     }
 
     /// Du'a Arabic in the Uthmani font — except punctuation. The KFGQPC mushaf
@@ -154,7 +152,8 @@ struct DuaListView: View {
                 .background(Palette.blue.opacity(0.12))
                 .clipShape(Capsule())
         } else if (dua.count ?? 1) > 1 || dua.prayerScope != nil {
-            Text([(dua.count ?? 1) > 1 ? "\(dua.count!)×" : nil, dua.prayerScope]
+            let countText = dua.count.flatMap { $0 > 1 ? "\($0)×" : nil }
+            Text([countText, dua.prayerScope]
                 .compactMap(\.self).joined(separator: " · "))
                 .duhaaFont(11, .medium)
                 .foregroundStyle(Palette.blue)

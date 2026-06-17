@@ -54,7 +54,10 @@ struct SurahReaderView: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 40)
             }
-            .onAppear { performInitialJump(using: proxy) }
+            .onAppear {
+                FirstUseDiagnostics.event("Quran reader view first appear", "\(surah.number)")
+                performInitialJump(using: proxy)
+            }
             .onChange(of: player.playingKey) { _, key in
                 if let key, let ayahNumber = Int(key.split(separator: ":").last ?? "") {
                     withAnimation(.easeInOut) { proxy.scrollTo(ayahNumber, anchor: .center) }
@@ -64,8 +67,8 @@ struct SurahReaderView: View {
         .scrollIndicators(.hidden)
         .background(Palette.appBg.ignoresSafeArea())
         .overlay(alignment: .bottom) {
-            if let jumpMessage {
-                Text(jumpMessage)
+            if let message = jumpMessage ?? player.failureMessage {
+                Text(message)
                     .duhaaFont(13, .medium)
                     .foregroundStyle(.primary)
                     .padding(.horizontal, 18).padding(.vertical, 12)
@@ -76,6 +79,10 @@ struct SurahReaderView: View {
             }
         }
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.3), value: jumpMessage)
+        .task {
+            FirstUseDiagnostics.event("Quran feature first async startup begins", "reciters-prewarm")
+            _ = await Reciters.loadAsync(priority: .utility)
+        }
         .navigationTitle(surah.englishName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -85,10 +92,16 @@ struct SurahReaderView: View {
                     else if selectedReciter?.supportsChapterAudio == true { player.playChapter(in: surah) }
                     else { player.play(in: surah, from: 1) }
                 } label: {
-                    Image(systemName: player.isActive ? "pause.circle.fill" : "play.circle")
-                        .foregroundStyle(Palette.gold)
+                    if player.isLoading {
+                        ProgressView()
+                            .controlSize(.small)
+                            .tint(Palette.gold)
+                    } else {
+                        Image(systemName: player.isActive ? "pause.circle.fill" : "play.circle")
+                            .foregroundStyle(Palette.gold)
+                    }
                 }
-                .accessibilityLabel(player.isActive ? "Pause surah" : "Play surah")
+                .accessibilityLabel(player.isLoading ? "Loading recitation" : (player.isActive ? "Pause surah" : "Play surah"))
             }
             ToolbarItem(placement: .topBarTrailing) {
                 readingOptionsMenu

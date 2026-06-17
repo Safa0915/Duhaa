@@ -10,6 +10,7 @@ struct PrayerHomeView: View {
     @State private var model = PrayerHomeModel()
     @State private var showingLocationPicker = false
     @State private var showingSettings = false
+    @State private var showingHighLatitudeSettings = false
     @State private var moonBreath = false
     @State private var toast: String?
     @State private var toastToken = 0
@@ -17,6 +18,8 @@ struct PrayerHomeView: View {
     @State private var verseSheet: VerseRef?
     @State private var showingJourney = false
     @State private var showingMosques = false
+
+    private var isHighLatitude: Bool { abs(location.active.latitude) > 48 }
 
     var body: some View {
         let d = model.display(for: location.active,
@@ -56,9 +59,22 @@ struct PrayerHomeView: View {
 
                     if d.hasData {
                         NextPrayerBanner(nextName: d.nextName, countdown: d.countdown,
+                                         displayMode: settings.nextPrayerDisplayMode,
+                                         timeRemainingCountdown: d.timeRemainingCountdown,
+                                         timeRemainingTarget: d.timeRemainingTarget,
+                                         timeRemainingProgress: d.timeRemainingProgress,
+                                         timeRemainingPrevLabel: d.timeRemainingPrevLabel,
+                                         timeRemainingNextLabel: d.timeRemainingNextLabel,
                                          progress: d.progress, prevLabel: d.prevLabel,
                                          nextLabel: d.nextLabel)
                             .padding(.horizontal, 22).padding(.top, 20)
+
+                        if isHighLatitude {
+                            HighLatitudeHomeNotice {
+                                showingHighLatitudeSettings = true
+                            }
+                            .padding(.horizontal, 22).padding(.top, 14)
+                        }
 
                         if d.isRamadan {
                             RamadanCard(dayKey: d.dayKey, ramadanDay: d.ramadanDay,
@@ -112,6 +128,9 @@ struct PrayerHomeView: View {
         .sheet(isPresented: $showingSettings) {
             SettingsView()
         }
+        .sheet(isPresented: $showingHighLatitudeSettings) {
+            NavigationStack { HighLatitudeSettingsView() }
+        }
         .sheet(isPresented: $showingJourney) {
             JourneyView()
         }
@@ -119,17 +138,7 @@ struct PrayerHomeView: View {
             NearbyMosquesView()
         }
         .sheet(item: $verseSheet) { ref in
-            if let surah = Quran.surah(ref.surah) {
-                NavigationStack {
-                    SurahReaderView(surah: surah, scrollTo: ref.ayah, highlightTarget: true)
-                        .toolbar {
-                            ToolbarItem(placement: .confirmationAction) {
-                                Button("Done") { verseSheet = nil }.foregroundStyle(Palette.gold)
-                            }
-                        }
-                }
-                .preferredColorScheme(Palette.active.colorScheme)
-            }
+            VerseReaderSheet(ref: ref) { verseSheet = nil }
         }
         .overlay(alignment: .bottom) {
             if let toast {
@@ -257,6 +266,43 @@ struct PrayerHomeView: View {
     }
 }
 
+private struct VerseReaderSheet: View {
+    let ref: VerseRef
+    let onDone: () -> Void
+
+    @State private var surah: Surah?
+    @State private var didLoad = false
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if let surah {
+                    SurahReaderView(surah: surah, scrollTo: ref.ayah, highlightTarget: true)
+                } else if didLoad {
+                    ContentUnavailableView("Verse unavailable",
+                                           systemImage: "book.closed",
+                                           description: Text("Couldn’t open this verse."))
+                } else {
+                    ProgressView()
+                        .tint(Palette.gold)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { onDone() }.foregroundStyle(Palette.gold)
+                }
+            }
+        }
+        .preferredColorScheme(Palette.active.colorScheme)
+        .task(id: ref.id) {
+            didLoad = false
+            surah = await Quran.surahAsync(ref.surah)
+            didLoad = true
+        }
+    }
+}
+
 #Preview {
     PrayerHomeView()
         .environment(LocationProvider())
@@ -292,5 +338,42 @@ private struct WelcomeBackBanner: View {
         )
         .overlay(RoundedRectangle(cornerRadius: 16).stroke(Palette.gold.opacity(0.3), lineWidth: 1))
         .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+}
+
+private struct HighLatitudeHomeNotice: View {
+    let onOpen: () -> Void
+
+    var body: some View {
+        Button(action: onOpen) {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .duhaaFont(17, .semibold)
+                    .foregroundStyle(Palette.gold)
+                    .frame(width: 26)
+
+                VStack(alignment: .leading, spacing: 5) {
+                    Text("Verify Fajr & Isha locally")
+                        .duhaaFont(14, .semibold)
+                        .foregroundStyle(.primary)
+                    Text("At this latitude, dawn and night can be approximate. Compare with a trusted local mosque and adjust times if needed.")
+                        .duhaaFont(12)
+                        .foregroundStyle(Palette.blue.opacity(0.78))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Spacer(minLength: 8)
+                Image(systemName: "chevron.right")
+                    .duhaaFont(11, .semibold)
+                    .foregroundStyle(Palette.blue.opacity(0.55))
+                    .padding(.top, 3)
+            }
+            .padding(14)
+            .background(Palette.gold.opacity(0.10))
+            .overlay(RoundedRectangle(cornerRadius: 16).stroke(Palette.gold.opacity(0.32), lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("High latitude caution. Verify Fajr and Isha with a trusted local mosque and adjust times if needed.")
     }
 }

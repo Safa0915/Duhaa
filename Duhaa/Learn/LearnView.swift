@@ -4,17 +4,19 @@ import SwiftUI
 /// Prayer Help → Foundations) of light, scannable guide cards, plus title search.
 struct LearnView: View {
     @State private var query = ""
+    @State private var guides: [Guide]?
 
     private var trimmed: String {
         query.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     private var groupedGuides: [(group: GuideGroup, guides: [Guide])] {
-        guard !trimmed.isEmpty else { return Learn.guidesByGroup }
+        guard let guides else { return [] }
+        guard !trimmed.isEmpty else { return Learn.grouped(guides) }
         return GuideGroup.allCases
             .sorted { $0.displayIndex < $1.displayIndex }
             .compactMap { group in
-                let matches = Learn.guides
+                let matches = guides
                     .filter { $0.group == group && $0.title.localizedStandardContains(trimmed) }
                     .sorted { $0.displayOrder < $1.displayOrder }
                 return matches.isEmpty ? nil : (group, matches)
@@ -22,25 +24,37 @@ struct LearnView: View {
     }
 
     var body: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 24) {
-                ForEach(groupedGuides, id: \.group) { section in
-                    guideSection(section.group, guides: section.guides)
-                }
+        Group {
+            if guides != nil {
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 24) {
+                        ForEach(groupedGuides, id: \.group) { section in
+                            guideSection(section.group, guides: section.guides)
+                        }
 
-                if groupedGuides.isEmpty {
-                    emptyState
+                        if groupedGuides.isEmpty {
+                            emptyState
+                        }
+                    }
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 20)
                 }
+                .scrollIndicators(.hidden)
+            } else {
+                ProgressView()
+                    .tint(Palette.gold)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .padding(.horizontal, 18)
-            .padding(.vertical, 20)
         }
-        .scrollIndicators(.hidden)
         .background(Palette.appBg.ignoresSafeArea())
         .navigationTitle("Learn")
         .searchable(text: $query, prompt: "Search guides")
         .preferredColorScheme(Palette.active.colorScheme)
         .tint(Palette.gold)
+        .task {
+            guard guides == nil else { return }
+            guides = await Learn.loadAsync()
+        }
     }
 
     private func guideSection(_ group: GuideGroup, guides: [Guide]) -> some View {
@@ -133,9 +147,7 @@ struct LearnGuideCard: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Palette.card)
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Palette.cardBorder, lineWidth: 1))
-        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .duhaaCardStyle()
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(guide.title). \(guide.subtitle ?? guide.summary). \(guide.steps.count) steps, about \(guide.estimatedMinutes) minutes. \(guide.reviewStatus.label).")
     }

@@ -67,6 +67,11 @@ struct HomeDisplay {
     var progress: Double = 0
     var prevLabel = ""
     var nextLabel = ""
+    var timeRemainingCountdown = ""
+    var timeRemainingTarget = ""
+    var timeRemainingProgress: Double = 0
+    var timeRemainingPrevLabel = ""
+    var timeRemainingNextLabel = ""
     var rows: [PrayerRowData] = []
     var tahajjud = ""
     var islamicMidnight = ""
@@ -126,41 +131,33 @@ final class PrayerHomeModel {
         // A timeline spanning yesterday's Isha → today's five → tomorrow's Fajr,
         // so "previous" and "next" resolve correctly at any hour.
         let yesterday = times(location, config, dayOffset: -1)
+        let tomorrow = times(location, config, dayOffset: 1)
         var timeline: [(Prayer, Date)] = []
         if let y = yesterday { timeline.append((.isha, y.isha)) }
         timeline += [(.fajr, today.fajr), (.dhuhr, today.dhuhr), (.asr, today.asr),
                      (.maghrib, today.maghrib), (.isha, today.isha)]
-        if let t = times(location, config, dayOffset: 1) { timeline.append((.fajr, t.fajr)) }
+        if let tomorrow { timeline.append((.fajr, tomorrow.fajr)) }
         timeline.sort { $0.1 < $1.1 }
 
         let next = timeline.first { $0.1 > now }
         let prev = timeline.last { $0.1 <= now }
 
-        if let next {
-            d.nextName = next.0.rawValue
-            d.countdown = countdown(to: next.1)
-            d.nextLabel = "\(next.0.rawValue) \(clock(next.1, tz))"
-        }
-        if let prev {
-            d.prevLabel = "\(prev.0.rawValue) \(clock(prev.1, tz))"
-        }
-        if let next, let prev {
-            let total = next.1.timeIntervalSince(prev.1)
-            let elapsed = now.timeIntervalSince(prev.1)
-            d.progress = total > 0 ? min(1, max(0, elapsed / total)) : 0
-        }
-
         // The five list rows.
-        let byPrayer: [Prayer: Date] = [
-            .fajr: today.fajr, .dhuhr: today.dhuhr, .asr: today.asr,
-            .maghrib: today.maghrib, .isha: today.isha,
-        ]
+        func time(for prayer: Prayer) -> Date {
+            switch prayer {
+            case .fajr: today.fajr
+            case .dhuhr: today.dhuhr
+            case .asr: today.asr
+            case .maghrib: today.maghrib
+            case .isha: today.isha
+            }
+        }
         // Each prayer is "on time" until the next prayer begins (gentle, hope-framed:
         // grace over strictness). Two fiqh boundaries are firm: Fajr ends at sunrise
         // (consensus), and Isha ends at Islamic midnight — matching the "ends ..."
         // note the row itself shows. At extreme latitudes where Isha begins after
         // Islamic midnight, fall back to Fajr so it isn't "late" the moment it starts.
-        let tomorrowFajr = times(location, config, dayOffset: 1)?.fajr
+        let tomorrowFajr = tomorrow?.fajr
         let ishaEnd = today.ishaAfterIslamicMidnight
             ? (tomorrowFajr ?? today.isha.addingTimeInterval(6 * 3600))
             : today.islamicMidnight
@@ -179,26 +176,102 @@ final class PrayerHomeModel {
             y.ishaAfterIslamicMidnight ? today.fajr : y.islamicMidnight
         } ?? today.fajr
         let preFajr = now < today.fajr
+
+        if let next {
+            d.nextName = next.0.rawValue
+            d.countdown = countdown(to: next.1)
+            d.nextLabel = "\(next.0.rawValue) \(clock(next.1, tz))"
+        }
+        if let prev {
+            d.prevLabel = "\(prev.0.rawValue) \(clock(prev.1, tz))"
+        }
+        if let next, let prev {
+            let total = next.1.timeIntervalSince(prev.1)
+            let elapsed = now.timeIntervalSince(prev.1)
+            d.progress = total > 0 ? min(1, max(0, elapsed / total)) : 0
+        }
+
+        func setTimeRemaining(target: String, start: Date, end: Date, startLabel: String, endLabel: String) {
+            d.timeRemainingTarget = target
+            d.timeRemainingCountdown = countdown(to: end)
+            d.timeRemainingPrevLabel = startLabel
+            d.timeRemainingNextLabel = endLabel
+            let total = end.timeIntervalSince(start)
+            let elapsed = now.timeIntervalSince(start)
+            d.timeRemainingProgress = total > 0 ? min(1, max(0, elapsed / total)) : 0
+        }
+
+        if let y = yesterday, preFajr, now >= y.isha, now < lastNightIshaEnd {
+            let target = y.ishaAfterIslamicMidnight ? Prayer.fajr.rawValue : "Islamic midnight"
+            setTimeRemaining(target: target,
+                             start: y.isha,
+                             end: lastNightIshaEnd,
+                             startLabel: "Isha \(clock(y.isha, tz))",
+                             endLabel: "\(target) \(clock(lastNightIshaEnd, tz))")
+        } else if now >= today.fajr && now < today.sunrise {
+            setTimeRemaining(target: "sunrise",
+                             start: today.fajr,
+                             end: today.sunrise,
+                             startLabel: "Fajr \(clock(today.fajr, tz))",
+                             endLabel: "Sunrise \(clock(today.sunrise, tz))")
+        } else if now >= today.dhuhr && now < today.asr {
+            setTimeRemaining(target: Prayer.asr.rawValue,
+                             start: today.dhuhr,
+                             end: today.asr,
+                             startLabel: "Dhuhr \(clock(today.dhuhr, tz))",
+                             endLabel: "Asr \(clock(today.asr, tz))")
+        } else if now >= today.asr && now < today.maghrib {
+            setTimeRemaining(target: Prayer.maghrib.rawValue,
+                             start: today.asr,
+                             end: today.maghrib,
+                             startLabel: "Asr \(clock(today.asr, tz))",
+                             endLabel: "Maghrib \(clock(today.maghrib, tz))")
+        } else if now >= today.maghrib && now < today.isha {
+            setTimeRemaining(target: Prayer.isha.rawValue,
+                             start: today.maghrib,
+                             end: today.isha,
+                             startLabel: "Maghrib \(clock(today.maghrib, tz))",
+                             endLabel: "Isha \(clock(today.isha, tz))")
+        } else if now >= today.isha && now < ishaEnd {
+            let target = today.ishaAfterIslamicMidnight ? Prayer.fajr.rawValue : "Islamic midnight"
+            setTimeRemaining(target: target,
+                             start: today.isha,
+                             end: ishaEnd,
+                             startLabel: "Isha \(clock(today.isha, tz))",
+                             endLabel: "\(target) \(clock(ishaEnd, tz))")
+        } else if let next {
+            let start = now >= today.sunrise && now < today.dhuhr ? today.sunrise : (prev?.1 ?? now)
+            let startLabel = now >= today.sunrise && now < today.dhuhr
+                ? "Sunrise \(clock(today.sunrise, tz))"
+                : (prev.map { "\($0.0.rawValue) \(clock($0.1, tz))" } ?? "")
+            setTimeRemaining(target: next.0.rawValue,
+                             start: start,
+                             end: next.1,
+                             startLabel: startLabel,
+                             endLabel: "\(next.0.rawValue) \(clock(next.1, tz))")
+        }
+
         d.rows = Prayer.allCases.map { prayer in
-            let time = byPrayer[prayer]!
+            let isLastNightsIsha = prayer == .isha && preFajr
+            let rowTimes = isLastNightsIsha ? yesterday : today
+            let rowStart = isLastNightsIsha ? (yesterday?.isha ?? today.isha) : time(for: prayer)
             let state: RowState
             if prayer.rawValue == next?.0.rawValue {
                 state = .next
             } else {
-                state = time <= now ? .passed : .upcoming
+                state = rowStart <= now ? .passed : .upcoming
             }
-            let isLastNightsIsha = prayer == .isha && preFajr
-            let end = isLastNightsIsha ? lastNightIshaEnd : (windowEnd[prayer] ?? time)
+            let end = isLastNightsIsha ? lastNightIshaEnd : (windowEnd[prayer] ?? rowStart)
             let sub: String? = switch prayer {
-            case .isha: ishaSub(today, tz)
+            case .isha: rowTimes.map { ishaSub($0, tz) }
             case .fajr: fajrSub(today, tz)
             default: nil
             }
             return PrayerRowData(prayer: prayer,
-                                 time: clock(time, tz),
+                                 time: clock(rowStart, tz),
                                  state: state,
                                  sub: sub,
-                                 onTime: now < end,
+                                 onTime: now >= rowStart && now < end,
                                  dayKey: isLastNightsIsha ? yesterdayKey : d.dayKey)
         }
 
@@ -264,9 +337,13 @@ final class PrayerHomeModel {
     // MARK: Formatting helpers
 
     private func countdown(to date: Date) -> String {
-        let seconds = max(0, Int(date.timeIntervalSince(now)))
-        let h = seconds / 3600, m = (seconds % 3600) / 60
-        return h > 0 ? "\(h)h \(m)m" : "\(m)m"
+        let seconds = max(0, Int(ceil(date.timeIntervalSince(now))))
+        let h = seconds / 3600
+        let m = (seconds % 3600) / 60
+        let s = seconds % 60
+        if h > 0 { return "\(h)h \(m)m" }
+        if m > 0 { return "\(m) minute\(m == 1 ? "" : "s")" }
+        return "\(s) second\(s == 1 ? "" : "s")"
     }
 
     private func clock(_ date: Date, _ tz: TimeZone) -> String { format("h:mm a", date, tz) }

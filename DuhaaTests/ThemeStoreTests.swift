@@ -25,6 +25,15 @@ final class ThemeStoreTests: XCTestCase {
         XCTAssertEqual(Palette.active.id, .dark)
     }
 
+    func testThemeListOrder() {
+        XCTAssertEqual(AppTheme.allCases.map(\.displayName), [
+            "Classic Duhaa",
+            "Rose",
+            "Sky",
+            "Light Pink"
+        ])
+    }
+
     func testLightPinkCanBeSelectedAndPersists() {
         let store = ThemeStore(defaults: defaults)
 
@@ -45,6 +54,7 @@ final class ThemeStoreTests: XCTestCase {
         XCTAssertEqual(palette.hexes.background, 0xFFF5F8)
         XCTAssertEqual(palette.hexes.secondaryBackground, 0xFFEAF1)
         XCTAssertEqual(palette.hexes.accent, 0xFFA6C8)
+        XCTAssertEqual(palette.hexes.onAccent, 0x35232A)
         XCTAssertEqual(palette.hexes.softAccent, 0xFFC7DA)
         XCTAssertEqual(palette.hexes.secondaryText, 0x9A6B80)
         XCTAssertEqual(palette.hexes.glow, 0xFFD8E6)
@@ -52,6 +62,23 @@ final class ThemeStoreTests: XCTestCase {
         XCTAssertTrue(palette.showsFloatingHearts)
         XCTAssertEqual(AppTheme.lightPink.previewBadge, "Free preview")
         XCTAssertTrue(AppTheme.lightPink.isPremiumPreview)
+    }
+
+    func testSkyPaletteUsesSkyTokens() {
+        let palette = AppTheme.light.colors
+
+        XCTAssertEqual(palette.id, .light)
+        XCTAssertEqual(AppTheme.light.displayName, "Sky")
+        XCTAssertEqual(AppTheme.light.previewSubtitle, "Pale blue · Islamic navy")
+        XCTAssertEqual(palette.hexes.background, 0xECF4FD)
+        XCTAssertEqual(palette.hexes.secondaryBackground, 0xE4EFFB)
+        XCTAssertEqual(palette.hexes.cardBackground, 0xFFFFFF)
+        XCTAssertEqual(palette.hexes.accent, 0x1154A4)
+        XCTAssertEqual(palette.hexes.onAccent, 0xFFFFFF)
+        XCTAssertEqual(palette.hexes.softAccent, 0x2C69B0)
+        XCTAssertEqual(palette.hexes.primaryText, 0x0C1F3B)
+        XCTAssertEqual(palette.hexes.secondaryText, 0x44698E)
+        XCTAssertFalse(palette.showsFloatingHearts)
     }
 
     func testClassicDoesNotUseLightPinkDecorations() {

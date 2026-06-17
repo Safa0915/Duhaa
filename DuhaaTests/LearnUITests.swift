@@ -39,8 +39,8 @@ final class LearnUITests: XCTestCase {
 
     func testMadhhabChipWordingStaysCalmAndNonSectarian() {
         // "Scholars differ" — never "Salafi", never a school label.
-        XCTAssertEqual(MadhhabSensitivity.scholar_difference.chipLabel, "Scholars differ")
-        XCTAssertFalse(MadhhabSensitivity.scholar_difference.chipLabel.localizedCaseInsensitiveContains("salafi"))
+        XCTAssertEqual(MadhhabSensitivity.scholarDifference.chipLabel, "Scholars differ")
+        XCTAssertFalse(MadhhabSensitivity.scholarDifference.chipLabel.localizedCaseInsensitiveContains("salafi"))
     }
 
     // MARK: - Arabic presence

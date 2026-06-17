@@ -28,7 +28,7 @@ struct NotificationSettingsView: View {
 
             Section {
                 Toggle("Pre-prayer reminder", isOn: $notifs.preReminderEnabled)
-                    .onChange(of: notifs.preReminderEnabled) { reschedule() }
+                    .onChange(of: notifs.preReminderEnabled) { _, _ in reschedule() }
                 if notifs.preReminderEnabled {
                     Stepper(value: $notifs.preReminderMinutes, in: 5...30, step: 5) {
                         HStack {
@@ -37,7 +37,7 @@ struct NotificationSettingsView: View {
                             Text("\(notifs.preReminderMinutes) min").foregroundStyle(Palette.blue)
                         }
                     }
-                    .onChange(of: notifs.preReminderMinutes) { reschedule() }
+                    .onChange(of: notifs.preReminderMinutes) { _, _ in reschedule() }
                 }
             } header: {
                 Text("Reminders")
@@ -47,7 +47,7 @@ struct NotificationSettingsView: View {
 
             Section {
                 Toggle("Jumu'ah reminder", isOn: $notifs.jumuahReminder)
-                    .onChange(of: notifs.jumuahReminder) { reschedule() }
+                    .onChange(of: notifs.jumuahReminder) { _, _ in reschedule() }
             } header: {
                 Text("Friday")
             } footer: {

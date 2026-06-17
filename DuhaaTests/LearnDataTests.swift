@@ -157,6 +157,16 @@ final class LearnDataTests: XCTestCase {
         }
     }
 
+    func testLearnEvidenceDisplayOmitsAlbaniByline() {
+        for guide in Learn.guides {
+            for step in guide.steps {
+                for reference in step.dalilReferences {
+                    XCTAssertFalse(reference.displayGradingText.localizedCaseInsensitiveContains("al-Albani"), "\(guide.id)/\(step.id): remove al-Albani from visible grading text")
+                }
+            }
+        }
+    }
+
     func testArabicAndTranslationSurvivedTheReorg() {
         // The Bismillah step keeps its Arabic + translation.
         let wudu = Learn.guide(id: "wudu")
@@ -223,8 +233,8 @@ final class LearnDataTests: XCTestCase {
     }
 
     func testNoteIsShownForSensitiveStepsRegardlessOfSchool() {
-        XCTAssertTrue(MadhhabGuidance.shouldShowNote(for: .scholar_difference, preference: .notSure))
-        XCTAssertTrue(MadhhabGuidance.shouldShowNote(for: .madhhab_sensitive, preference: .hanafi))
-        XCTAssertFalse(MadhhabGuidance.shouldShowNote(for: .shared_basic, preference: .notSure))
+        XCTAssertTrue(MadhhabGuidance.shouldShowNote(for: .scholarDifference, preference: .notSure))
+        XCTAssertTrue(MadhhabGuidance.shouldShowNote(for: .madhhabSensitive, preference: .hanafi))
+        XCTAssertFalse(MadhhabGuidance.shouldShowNote(for: .sharedBasic, preference: .notSure))
     }
 }

@@ -2,7 +2,7 @@ import Foundation
 
 /// Editorial category of a guide. Kept as-is for the detail-view icon/label;
 /// navigation grouping now uses `GuideGroup` (see below).
-enum GuideCategory: String, Codable, CaseIterable, Identifiable, Hashable {
+enum GuideCategory: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
     case purification
     case prayer
     case fasting
@@ -32,7 +32,7 @@ enum GuideCategory: String, Codable, CaseIterable, Identifiable, Hashable {
 /// Navigation grouping for the Learn list. Beginner-first: "Start Here" surfaces
 /// the come-back / wudu / how-to-pray essentials before the deeper material.
 /// Each guide belongs to exactly one group, so no card is shown twice.
-enum GuideGroup: String, Codable, CaseIterable, Identifiable, Hashable {
+enum GuideGroup: String, Codable, CaseIterable, Identifiable, Hashable, Sendable {
     case startHere
     case purification
     case prayerHelp
@@ -80,38 +80,38 @@ enum GuideGroup: String, Codable, CaseIterable, Identifiable, Hashable {
 
 /// Source-review state for a guide or step. **Never** add a `verified` case here
 /// until a qualified scholar has signed off — that is a deliberate guardrail.
-enum ReviewStatus: String, Codable, CaseIterable, Hashable {
-    case source_backed
+enum ReviewStatus: String, Codable, CaseIterable, Hashable, Sendable {
+    case sourceBacked = "source_backed"
     case reviewed
-    case needs_review
+    case needsReview = "needs_review"
 
     var label: String {
         switch self {
-        case .source_backed: "Source-backed"
+        case .sourceBacked: "Source-backed"
         case .reviewed: "Reviewed"
-        case .needs_review: "Needs review"
+        case .needsReview: "Needs review"
         }
     }
 }
 
 /// How madhhab-sensitive a guide or step is. Drives whether a gentle "scholars
 /// differ" note should be shown instead of asserting a single ruling.
-enum MadhhabSensitivity: String, Codable, CaseIterable, Hashable {
-    case shared_basic
-    case madhhab_sensitive
-    case scholar_difference
-    case needs_review
+enum MadhhabSensitivity: String, Codable, CaseIterable, Hashable, Sendable {
+    case sharedBasic = "shared_basic"
+    case madhhabSensitive = "madhhab_sensitive"
+    case scholarDifference = "scholar_difference"
+    case needsReview = "needs_review"
 
     /// `true` when a beginner-safe note about differences is warranted.
     var warrantsNote: Bool {
         switch self {
-        case .shared_basic: false
-        case .madhhab_sensitive, .scholar_difference, .needs_review: true
+        case .sharedBasic: false
+        case .madhhabSensitive, .scholarDifference, .needsReview: true
         }
     }
 }
 
-struct Guide: Decodable, Identifiable {
+struct Guide: Decodable, Identifiable, Sendable {
     let id: String
     let title: String
     let subtitle: String?
@@ -153,16 +153,16 @@ struct Guide: Decodable, Identifiable {
         priorityOrder = try c.decodeIfPresent(Int.self, forKey: .priorityOrder)
         group = try c.decodeIfPresent(GuideGroup.self, forKey: .group)
             ?? GuideGroup.fallback(for: category)
-        reviewStatus = try c.decodeIfPresent(ReviewStatus.self, forKey: .reviewStatus) ?? .source_backed
-        madhhabSensitivity = try c.decodeIfPresent(MadhhabSensitivity.self, forKey: .madhhabSensitivity) ?? .shared_basic
-        scholarReviewStatus = try c.decodeIfPresent(ReviewStatus.self, forKey: .scholarReviewStatus) ?? .needs_review
+        reviewStatus = try c.decodeIfPresent(ReviewStatus.self, forKey: .reviewStatus) ?? .sourceBacked
+        madhhabSensitivity = try c.decodeIfPresent(MadhhabSensitivity.self, forKey: .madhhabSensitivity) ?? .sharedBasic
+        scholarReviewStatus = try c.decodeIfPresent(ReviewStatus.self, forKey: .scholarReviewStatus) ?? .needsReview
         scholarSources = try c.decodeIfPresent([String].self, forKey: .scholarSources)
         steps = try c.decode([GuideStep].self, forKey: .steps)
             .sorted { $0.order < $1.order }
     }
 }
 
-struct GuideStep: Decodable, Identifiable {
+struct GuideStep: Decodable, Identifiable, Sendable {
     let id: String
     let order: Int
     let title: String
@@ -195,8 +195,8 @@ struct GuideStep: Decodable, Identifiable {
         arabicText = try c.decodeIfPresent(String.self, forKey: .arabicText)
         transliteration = try c.decodeIfPresent(String.self, forKey: .transliteration)
         translation = try c.decodeIfPresent(String.self, forKey: .translation)
-        reviewStatus = try c.decodeIfPresent(ReviewStatus.self, forKey: .reviewStatus) ?? .source_backed
-        madhhabSensitivity = try c.decodeIfPresent(MadhhabSensitivity.self, forKey: .madhhabSensitivity) ?? .shared_basic
+        reviewStatus = try c.decodeIfPresent(ReviewStatus.self, forKey: .reviewStatus) ?? .sourceBacked
+        madhhabSensitivity = try c.decodeIfPresent(MadhhabSensitivity.self, forKey: .madhhabSensitivity) ?? .sharedBasic
         madhhabNote = try c.decodeIfPresent(String.self, forKey: .madhhabNote)
         scholarNotes = try c.decodeIfPresent(String.self, forKey: .scholarNotes)
         sourceSummary = try c.decodeIfPresent(String.self, forKey: .sourceSummary)
@@ -213,6 +213,23 @@ enum Learn {
         guides.first { $0.id == id }
     }
 
+    static func loadAsync(priority: TaskPriority = .userInitiated) async -> [Guide] {
+        await Task.detached(priority: priority) {
+            guides
+        }.value
+    }
+
+    static func grouped(_ guides: [Guide]) -> [(group: GuideGroup, guides: [Guide])] {
+        GuideGroup.allCases
+            .sorted { $0.displayIndex < $1.displayIndex }
+            .compactMap { group in
+                let matches = guides
+                    .filter { $0.group == group }
+                    .sorted { $0.displayOrder < $1.displayOrder }
+                return matches.isEmpty ? nil : (group, matches)
+            }
+    }
+
     private struct File: Decodable { let guides: [Guide] }
     private final class BundleToken {}
 
@@ -225,14 +242,4 @@ enum Learn {
         return decoded.guides.sorted { $0.displayOrder < $1.displayOrder }
     }
 
-    private static func grouped(_ guides: [Guide]) -> [(group: GuideGroup, guides: [Guide])] {
-        GuideGroup.allCases
-            .sorted { $0.displayIndex < $1.displayIndex }
-            .compactMap { group in
-                let matches = guides
-                    .filter { $0.group == group }
-                    .sorted { $0.displayOrder < $1.displayOrder }
-                return matches.isEmpty ? nil : (group, matches)
-            }
-    }
 }

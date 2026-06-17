@@ -155,6 +155,12 @@ private struct StarField: View {
 struct NextPrayerBanner: View {
     let nextName: String
     let countdown: String
+    let displayMode: NextPrayerDisplayMode
+    let timeRemainingCountdown: String
+    let timeRemainingTarget: String
+    let timeRemainingProgress: Double
+    let timeRemainingPrevLabel: String
+    let timeRemainingNextLabel: String
     let progress: Double
     let prevLabel: String
     let nextLabel: String
@@ -167,15 +173,17 @@ struct NextPrayerBanner: View {
                         .fill(Palette.gold)
                         .frame(width: 7, height: 7)
                         .shadow(color: Palette.gold.opacity(0.8), radius: 4)
-                    Text("NEXT PRAYER")
+                    Text(eyebrow)
                         .duhaaFont(12, .medium)
                         .tracking(0.8)
                         .foregroundStyle(Palette.gold.opacity(0.8))
                 }
                 Spacer()
-                (Text("\(nextName) in ").foregroundStyle(.primary)
-                 + Text(countdown).foregroundStyle(Palette.gold))
+                headline
                     .duhaaFont(18, .semibold)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.68)
+                    .multilineTextAlignment(.trailing)
             }
 
             GeometryReader { geo in
@@ -184,16 +192,16 @@ struct NextPrayerBanner: View {
                     Capsule()
                         .fill(LinearGradient(colors: [Palette.gold.opacity(0.5), Palette.gold],
                                              startPoint: .leading, endPoint: .trailing))
-                        .frame(width: max(0, geo.size.width * progress))
+                        .frame(width: max(0, geo.size.width * activeProgress))
                         .shadow(color: Palette.gold.opacity(0.4), radius: 4)
                 }
             }
             .frame(height: 3)
 
             HStack {
-                Text(prevLabel)
+                Text(activePrevLabel)
                 Spacer()
-                Text(nextLabel)
+                Text(activeNextLabel)
             }
             .duhaaFont(10)
             .foregroundStyle(Palette.blue.opacity(0.4))
@@ -207,6 +215,45 @@ struct NextPrayerBanner: View {
         .overlay(RoundedRectangle(cornerRadius: 18).stroke(Palette.gold.opacity(0.4), lineWidth: 1))
         .clipShape(RoundedRectangle(cornerRadius: 18))
         .shadow(color: Palette.gold.opacity(0.15), radius: 12)
+    }
+
+    private var eyebrow: String {
+        switch displayMode {
+        case .nextPrayer: return "NEXT PRAYER"
+        case .timeRemaining: return "TIME REMAINING"
+        }
+    }
+
+    private var headline: Text {
+        switch displayMode {
+        case .nextPrayer:
+            return Text("\(nextName) in ").foregroundStyle(.primary)
+                + Text(countdown).foregroundStyle(Palette.gold)
+        case .timeRemaining:
+            return Text(timeRemainingCountdown).foregroundStyle(Palette.gold)
+                + Text(" until \(timeRemainingTarget)").foregroundStyle(.primary)
+        }
+    }
+
+    private var activeProgress: Double {
+        switch displayMode {
+        case .nextPrayer: return progress
+        case .timeRemaining: return timeRemainingProgress
+        }
+    }
+
+    private var activePrevLabel: String {
+        switch displayMode {
+        case .nextPrayer: return prevLabel
+        case .timeRemaining: return timeRemainingPrevLabel
+        }
+    }
+
+    private var activeNextLabel: String {
+        switch displayMode {
+        case .nextPrayer: return nextLabel
+        case .timeRemaining: return timeRemainingNextLabel
+        }
     }
 }
 
@@ -231,9 +278,7 @@ struct PrayersCard: View {
                     PrayerRowView(row: row, onMark: onMark)
                 }
             }
-            .background(Palette.card)
-            .overlay(RoundedRectangle(cornerRadius: 20).stroke(Palette.cardBorder, lineWidth: 1))
-            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .duhaaCardStyle(cornerRadius: 20)
         }
     }
 }
@@ -249,6 +294,7 @@ private struct PrayerRowView: View {
 
     private var isNext: Bool { row.state == .next }
     private var isPrayed: Bool { tracker.isMarked(row.prayer, dayKey: row.dayKey) }
+    private var canToggleMark: Bool { isPrayed || row.state == .passed }
     /// Softly de-emphasise a passed-and-unmarked prayer — gentle, never a scold.
     private var contentOpacity: Double { isPrayed ? 1 : (row.state == .passed ? 0.5 : 1) }
 
@@ -316,6 +362,7 @@ private struct PrayerRowView: View {
 
     private var markButton: some View {
         Button {
+            guard canToggleMark else { return }
             let nowPrayed = tracker.toggle(row.prayer, dayKey: row.dayKey, onTime: row.onTime)
             // A soft touch-down on every toggle…
             DuhaaHaptics.tap()
@@ -379,12 +426,10 @@ struct NightCard: View {
             nightRow(icon: "clock", name: "Islamic Midnight",
                      sub: "Between Maghrib & Fajr", time: islamicMidnight)
         }
-        .background(
-            LinearGradient(colors: [Palette.blue.opacity(0.12), Palette.appBg.opacity(0.6)],
-                           startPoint: .topLeading, endPoint: .bottomTrailing)
+        .duhaaGradientCardStyle(
+            colors: [Palette.blue.opacity(0.12), Palette.appBg.opacity(0.6)],
+            stroke: Palette.blue.opacity(0.22)
         )
-        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Palette.blue.opacity(0.22), lineWidth: 1))
-        .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 
     private func nightRow(icon: String, name: String, sub: String, time: String) -> some View {

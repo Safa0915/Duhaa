@@ -3,7 +3,7 @@ import Foundation
 /// Shared authenticity grades for religious evidence used by curated content.
 /// Keep this small and explicit: Duhaa should show sources plainly, not as a
 /// vague "verified" label that hides what was verified.
-enum EvidenceGrade: String, Codable, CaseIterable, Hashable {
+enum EvidenceGrade: String, Codable, CaseIterable, Hashable, Sendable {
     case quranic
     case sahih
     case hasan
@@ -27,7 +27,7 @@ enum EvidenceGrade: String, Codable, CaseIterable, Hashable {
 /// The optional fields below are framework prep for the future scholar-check
 /// layer (Ibn Baz, Ibn Uthaymin, al-Fawzan, the Permanent Committee). They are
 /// decoded `IfPresent`, so older JSON without them keeps working unchanged.
-struct DalilReference: Codable, Hashable, Identifiable {
+struct DalilReference: Codable, Hashable, Identifiable, Sendable {
     let sourceText: String
     let grade: EvidenceGrade
     let graderAttribution: String
@@ -43,5 +43,23 @@ struct DalilReference: Codable, Hashable, Identifiable {
     var id: String {
         [sourceText, grade.rawValue, graderAttribution, note ?? ""]
             .joined(separator: "|")
+    }
+
+    var displayGradingText: String {
+        let attribution = visibleGraderAttribution
+        guard !attribution.isEmpty else { return "Grading: \(grade.displayName)" }
+        return "Grading: \(grade.displayName) · \(attribution)"
+    }
+
+    private var visibleGraderAttribution: String {
+        var value = graderAttribution
+        for phrase in [" and al-Albani", "al-Albani and ", "al-Albani"] {
+            value = value.replacingOccurrences(of: phrase, with: "")
+        }
+        while value.contains("  ") {
+            value = value.replacingOccurrences(of: "  ", with: " ")
+        }
+        let trimSet = CharacterSet.whitespacesAndNewlines.union(CharacterSet(charactersIn: "·,"))
+        return value.trimmingCharacters(in: trimSet)
     }
 }

@@ -3,32 +3,75 @@ import Foundation
 enum QuranAudioCache {
     private static let budgetKey = "duhaa.quran.audioCacheBudgetMB"
     private static let folderName = "DuhaaQuranAudio"
+    private static let maxFileBytes: Int64 = 25 * 1_024 * 1_024
+    private static let allowedHosts: Set<String> = [
+        "verses.quran.com",
+        "download.quranicaudio.com"
+    ]
 
     static func playableURL(for remoteURL: URL) async -> URL {
-        guard budgetBytes > 0 else { return remoteURL }
+        await Task.detached(priority: .userInitiated) {
+            guard budgetBytes > 0, isAllowedRemoteURL(remoteURL) else { return remoteURL }
 
-        let localURL = cacheDirectory.appendingPathComponent(cacheName(for: remoteURL))
-        if FileManager.default.fileExists(atPath: localURL.path) {
-            touch(localURL)
-            return localURL
-        }
-
-        do {
-            try FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true)
-            let (temporaryURL, _) = try await URLSession.shared.download(from: remoteURL)
+            let localURL = cacheDirectory.appendingPathComponent(cacheName(for: remoteURL))
             if FileManager.default.fileExists(atPath: localURL.path) {
-                try? FileManager.default.removeItem(at: localURL)
+                touch(localURL)
+                return localURL
             }
-            try FileManager.default.moveItem(at: temporaryURL, to: localURL)
-            trimToBudget()
-            return localURL
-        } catch {
-            return remoteURL
-        }
+
+            do {
+                try FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true)
+                let (temporaryURL, response) = try await URLSession.shared.download(from: remoteURL)
+                guard isValidDownload(response: response, temporaryURL: temporaryURL) else {
+                    try? FileManager.default.removeItem(at: temporaryURL)
+                    return remoteURL
+                }
+                if FileManager.default.fileExists(atPath: localURL.path) {
+                    try? FileManager.default.removeItem(at: localURL)
+                }
+                try FileManager.default.moveItem(at: temporaryURL, to: localURL)
+                trimToBudget()
+                return localURL
+            } catch {
+                return remoteURL
+            }
+        }.value
     }
 
     static func clear() {
         try? FileManager.default.removeItem(at: cacheDirectory)
+    }
+
+    static func isAllowedRemoteURL(_ url: URL) -> Bool {
+        guard url.scheme?.lowercased() == "https",
+              let host = url.host(percentEncoded: false)?.lowercased(),
+              allowedHosts.contains(host) else {
+            return false
+        }
+        return url.pathExtension.lowercased() == "mp3"
+    }
+
+    private static func isValidDownload(response: URLResponse, temporaryURL: URL) -> Bool {
+        guard let http = response as? HTTPURLResponse,
+              (200...299).contains(http.statusCode),
+              let responseURL = http.url,
+              isAllowedRemoteURL(responseURL) else {
+            return false
+        }
+
+        if let mimeType = http.mimeType?.lowercased(), !mimeType.contains("mpeg") && !mimeType.contains("mp3") {
+            return false
+        }
+        if http.expectedContentLength > maxFileBytes {
+            return false
+        }
+        guard let values = try? temporaryURL.resourceValues(forKeys: [.fileSizeKey]),
+              let size = values.fileSize,
+              size > 0,
+              Int64(size) <= maxFileBytes else {
+            return false
+        }
+        return true
     }
 
     private static var budgetBytes: Int64 {

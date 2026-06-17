@@ -6,6 +6,7 @@ import UIKit
 struct LocationPickerView: View {
     @Environment(LocationProvider.self) private var location
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
 
     @State private var query = ""
     @State private var results: [CitySuggestion] = []
@@ -110,7 +111,7 @@ struct LocationPickerView: View {
 
     private func openSettings() {
         if let url = URL(string: UIApplication.openSettingsURLString) {
-            UIApplication.shared.open(url)
+            openURL(url)
         }
     }
 }

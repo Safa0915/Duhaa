@@ -3,14 +3,14 @@ import Foundation
 /// A Quran audio option. Most entries are ayah-by-ayah recitations from
 /// verses.quran.com; Quran.com media-reciter IDs can also point at full-surah
 /// chapter recordings, which are deliberately modeled separately.
-struct Reciter: Decodable, Identifiable, Hashable {
+struct Reciter: Decodable, Identifiable, Hashable, Sendable {
     let id: Int
     let name: String
     let audioKind: AudioKind
     let prefix: String?
     let chapterPrefix: String?
 
-    enum AudioKind: String, Decodable {
+    enum AudioKind: String, Decodable, Sendable {
         case ayah
         case chapter
     }
@@ -56,6 +56,12 @@ enum Reciters {
     static let defaultID = 7
 
     static func byID(_ id: Int) -> Reciter? { all.first { $0.id == id } }
+
+    static func loadAsync(priority: TaskPriority = .utility) async -> [Reciter] {
+        await Task.detached(priority: priority) {
+            all
+        }.value
+    }
 
     private struct File: Decodable { let reciters: [Reciter] }
     private final class BundleToken {}

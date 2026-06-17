@@ -59,7 +59,7 @@ struct GuideDetailView: View {
                 }
             }
 
-            if guide.scholarReviewStatus == .needs_review {
+            if guide.scholarReviewStatus == .needsReview {
                 Text("Sources provided · pending scholar review.")
                     .duhaaFont(11.5)
                     .foregroundStyle(.primary.opacity(0.5))

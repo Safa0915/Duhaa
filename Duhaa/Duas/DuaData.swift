@@ -1,7 +1,7 @@
 import Foundation
 
 /// A category of du'as (e.g. "After Prayer", "Morning").
-struct DuaCategory: Decodable, Identifiable {
+struct DuaCategory: Decodable, Identifiable, Sendable {
     let name: String
     let icon: String         // SF Symbol
     let subtitle: String?    // optional override for the count line (e.g. "4 verified adhkar")
@@ -12,7 +12,7 @@ struct DuaCategory: Decodable, Identifiable {
 /// One supplication: Arabic, transliteration, English, note, source, and optional
 /// authenticity status / fiqh note. New fields are optional so older entries — and
 /// the existing `duas.json` — keep decoding unchanged.
-struct Dua: Decodable, Identifiable {
+struct Dua: Decodable, Identifiable, Sendable {
     let title: String
     let arabic: String
     let latin: String        // transliteration
@@ -42,6 +42,12 @@ struct Dua: Decodable, Identifiable {
 /// Loads `duas.json` from the bundle once (Hisnul Muslim, fitrahive/dua-dhikr).
 enum Duas {
     static let categories: [DuaCategory] = load()
+
+    static func loadAsync(priority: TaskPriority = .userInitiated) async -> [DuaCategory] {
+        await Task.detached(priority: priority) {
+            categories
+        }.value
+    }
 
     private struct File: Decodable { let categories: [DuaCategory] }
     /// Anchors the lookup to the app module's bundle (not Bundle.main), so unit

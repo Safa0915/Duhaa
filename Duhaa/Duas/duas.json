@@ -20,7 +20,7 @@
      "latin": "Bismillah.",
      "en": "In the name of Allah.",
      "note": "Say before starting wudu. If possible, say it before entering the bathroom. If making wudu at a bathroom sink, keep the area clean, close the toilet lid if available, and say it quietly or in your heart.",
-     "source": "Sunan Abi Dawud 101 · Sahih by al-Albani",
+     "source": "Sunan Abi Dawud 101",
      "status": "Verified",
      "fiqhNote": "Ibn Baz allowed saying it verbally in the bathroom when needed; Ibn ‘Uthaymin mentioned saying it in the heart. Bathroom wording differs among scholars."
     },
@@ -39,7 +39,7 @@
      "latin": "Ghufranak.",
      "en": "I seek Your forgiveness.",
      "note": "Say after leaving the toilet/bathroom.",
-     "source": "Sunan Abi Dawud 30 · Sahih by al-Albani",
+     "source": "Sunan Abi Dawud 30",
      "status": "Verified"
     }
    ]
@@ -116,9 +116,9 @@
      "latin": "Qul huwa Allāhu aḥad. Allāhuṣ-ṣamad. Lam yalid wa lam yūlad. Wa lam yakun lahū kufuwan aḥad.\n\nQul aʿūdhu bi-rabbil-falaq. Min sharri mā khalaq. Wa min sharri ghāsiqin idhā waqab. Wa min sharrin-naffāthāti fil-ʿuqad. Wa min sharri ḥāsidin idhā ḥasad.\n\nQul aʿūdhu bi-rabbin-nās. Malikin-nās. Ilāhin-nās. Min sharril-waswāsil-khannās. Alladhī yuwaswisu fī ṣudūrin-nās. Minal-jinnati wan-nās.",
      "en": "Surah al-Ikhlas, Surah al-Falaq, and Surah an-Nas.",
      "note": "After Dhuhr, Asr, and Isha: recite each surah once. After Fajr and Maghrib: recite each surah three times.",
-     "source": "Sunan Abi Dawud 1523",
+     "source": "Sunan Abi Dawud 1523; Sunan Abi Dawud 5082 · Hasan by al-Albani",
      "countNote": "Dhuhr · Asr · Isha: once each — Fajr · Maghrib: 3× each",
-     "fiqhNote": "Sunan Abi Dawud 1523 reports the command to recite the Muʿawwidhāt after every prayer. The three-times count after Fajr and Maghrib follows Ibn Baz/Permanent Committee guidance."
+     "fiqhNote": "Sunan Abi Dawud 1523 reports reciting the Muʿawwidhāt after every prayer. The app shows 3× at Fajr and Maghrib because they anchor morning/evening adhkar; the count itself is based on the narration from Abdullah ibn Khubayb: recite al-Ikhlas and al-Muʿawwidhatayn when morning and evening come, three times; they suffice you against everything (Sunan Abi Dawud 5082 · Hasan by al-Albani; also reported by Jamiʿ at-Tirmidhi 3575 and Sunan an-Nasa’i 5428)."
     },
     {
      "title": "Optional Post-Prayer Du‘as",

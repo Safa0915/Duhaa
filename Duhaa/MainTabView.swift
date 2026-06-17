@@ -37,8 +37,12 @@ struct MainTabView: View {
         .tint(Palette.gold)
         .preferredColorScheme(Palette.active.colorScheme)
         .onAppear {
+            FirstUseDiagnostics.event("Tab selected", selection)
             consumeShortcutTarget()
             ensureValidSelection()
+        }
+        .onChange(of: selection) { _, newValue in
+            FirstUseDiagnostics.event("Tab selected", newValue)
         }
         .onChange(of: barTabs) {
             ensureValidSelection()

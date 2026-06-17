@@ -60,6 +60,7 @@ final class LocationProvider: NSObject, CLLocationManagerDelegate {
         switch authorizationStatus {
         case .notDetermined:
             fetchWhenAuthorized = true
+            QiblaDiagnostics.event("Location authorization requested", "source=app-start")
             manager.requestWhenInUseAuthorization()
         case .authorizedWhenInUse, .authorizedAlways:
             requestFix()
@@ -76,6 +77,7 @@ final class LocationProvider: NSObject, CLLocationManagerDelegate {
         switch authorizationStatus {
         case .notDetermined:
             fetchWhenAuthorized = true
+            QiblaDiagnostics.event("Location authorization requested", "source=use-current-location")
             manager.requestWhenInUseAuthorization()
         case .authorizedWhenInUse, .authorizedAlways:
             requestFix()
@@ -88,6 +90,7 @@ final class LocationProvider: NSObject, CLLocationManagerDelegate {
 
     private func requestFix() {
         isLocating = true
+        QiblaDiagnostics.event("Location fix requested")
         manager.requestLocation() // one-shot
     }
 
@@ -123,6 +126,8 @@ final class LocationProvider: NSObject, CLLocationManagerDelegate {
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         authorizationStatus = manager.authorizationStatus
+        QiblaDiagnostics.event("Location authorization resolved",
+                               "status=\(authorizationStatus.rawValue)")
         let allowed = authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways
         if allowed && fetchWhenAuthorized {
             fetchWhenAuthorized = false

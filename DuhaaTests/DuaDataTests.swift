@@ -47,6 +47,14 @@ final class DuaDataTests: XCTestCase {
         }
     }
 
+    func testNoDuaSourceUsesAlbaniByline() {
+        for category in Duas.categories {
+            for dua in category.duas {
+                XCTAssertFalse(dua.source.localizedCaseInsensitiveContains("Sahih by al-Albani"), "\(dua.title): remove al-Albani byline from source")
+            }
+        }
+    }
+
     func testFajrMaghribDhikrFields() {
         let dhikr = afterPrayer.duas[3]
         XCTAssertEqual(dhikr.count, 10)

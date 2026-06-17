@@ -54,9 +54,7 @@ struct NearbyMosqueCard: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Palette.card)
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Palette.cardBorder, lineWidth: 1))
-        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .duhaaCardStyle()
     }
 
     private func actionButton(_ title: String, icon: String, primary: Bool = false,
@@ -105,9 +103,7 @@ struct MosqueCardSkeleton: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Palette.card)
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Palette.cardBorder, lineWidth: 1))
-        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .duhaaCardStyle()
         .shimmering()
         .accessibilityHidden(true)
     }

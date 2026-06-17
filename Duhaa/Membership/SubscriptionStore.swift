@@ -174,7 +174,7 @@ final class SubscriptionStore {
             guard case .verified(let transaction) = result,
                   transaction.productType == .autoRenewable,
                   let tier = MembershipTier(productID: transaction.productID) else { continue }
-            if bestTier == nil || tier.rank > bestTier!.rank {
+            if bestTier.map({ tier.rank > $0.rank }) ?? true {
                 bestTier = tier
                 bestProductID = transaction.productID
             }

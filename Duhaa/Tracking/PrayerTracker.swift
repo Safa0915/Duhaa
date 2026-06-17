@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import WidgetKit
 
 /// Records which prayers the user has marked as prayed, per day. Persisted to
 /// UserDefaults. ZERO guilt mechanics (spec §5): it only ever counts what's
@@ -16,12 +17,24 @@ final class PrayerTracker {
 
     @ObservationIgnored private let defaults: UserDefaults
 
-    /// `defaults` is injectable so tests can use an isolated suite.
-    init(defaults: UserDefaults = .standard) {
+    /// `defaults` is injectable so tests can use an isolated suite. Production uses
+    /// the App-Group suite so the home-screen widget reads/writes the very same
+    /// completion data — no separate copy (see `SharedPrayerStore`).
+    init(defaults: UserDefaults = .duhaaShared) {
         self.defaults = defaults
         marks = Self.decodeMarks(defaults.data(forKey: Key.marks))
         lateMarks = Self.decodeMarks(defaults.data(forKey: Key.lateMarks))
         lastOpenedDay = defaults.string(forKey: Key.lastOpened)
+    }
+
+    /// Re-read completion from the shared store. Call when the app returns to the
+    /// foreground so prayers checked off from the widget appear in the app. Cheap;
+    /// only reassigns when something actually changed (avoids needless redraws).
+    func reloadFromStore() {
+        let freshMarks = Self.decodeMarks(defaults.data(forKey: Key.marks))
+        let freshLate = Self.decodeMarks(defaults.data(forKey: Key.lateMarks))
+        if freshMarks != marks { marks = freshMarks }
+        if freshLate != lateMarks { lateMarks = freshLate }
     }
 
     private static func decodeMarks(_ data: Data?) -> [String: Set<String>] {
@@ -195,6 +208,13 @@ final class PrayerTracker {
         }
         if let data = try? JSONEncoder().encode(lateMarks.mapValues { Array($0) }) {
             defaults.set(data, forKey: Key.lateMarks)
+        }
+        // App → widget: when the app changes completion, refresh the widgets.
+        // Guarded to the real shared suite so tests (isolated suites) never poke
+        // WidgetKit. Identity compare is valid — `duhaaShared` is a single cached
+        // instance.
+        if defaults === UserDefaults.duhaaShared {
+            WidgetReloader.reload()
         }
     }
 

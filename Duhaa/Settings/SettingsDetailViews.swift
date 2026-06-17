@@ -63,7 +63,7 @@ private struct ThemeOptionRow: View {
                     if let badge = theme.previewBadge {
                         Text(badge)
                             .duhaaFont(10.5, .bold)
-                            .foregroundStyle(Palette.onAccent)
+                            .foregroundStyle(theme.colors.onAccent)
                             .padding(.horizontal, 7)
                             .padding(.vertical, 3)
                             .background(theme.colors.accent, in: Capsule())
@@ -156,6 +156,31 @@ struct AsrMethodSettingsView: View {
     }
 }
 
+struct PrayerDisplaySettingsView: View {
+    @Environment(SettingsStore.self) private var store
+
+    var body: some View {
+        @Bindable var store = store
+
+        Form {
+            Section {
+                Picker("Home display", selection: $store.nextPrayerDisplayMode) {
+                    ForEach(NextPrayerDisplayMode.allCases) { mode in
+                        Text(mode.label).tag(mode)
+                    }
+                }
+                .pickerStyle(.inline)
+                .labelsHidden()
+            } header: {
+                Text("Home Display")
+            } footer: {
+                Text("Choose whether the home banner leads with the next prayer name or the time remaining until it begins.")
+            }
+        }
+        .settingsDetailStyle(title: "Home Display")
+    }
+}
+
 struct HighLatitudeSettingsView: View {
     @Environment(LocationProvider.self) private var location
 
@@ -175,6 +200,13 @@ struct HighLatitudeSettingsView: View {
                 if isHighLatitude {
                     precaution("sunrise", "Dawn is hard to pin down exactly here. To be safe, finish suhoor a little early — and don't rush to pray the moment Fajr begins.")
                     precaution("moon.stars", "Isha's start is approximate here. Give it a few minutes before you pray.")
+                    NavigationLink {
+                        PrayerTimeAdjustmentsView()
+                    } label: {
+                        Label("Adjust Fajr & Isha Times", systemImage: "clock.badge.fill")
+                            .foregroundStyle(Palette.gold)
+                    }
+                    .listRowBackground(Palette.card)
                     precaution("calendar.badge.clock", "Daylight shifts fast at this latitude — re-check these offsets each season.")
                 } else {
                     Text("Your saved location is not currently in Duhaa's high-latitude caution zone.")
@@ -185,7 +217,7 @@ struct HighLatitudeSettingsView: View {
             } header: {
                 Text("High-Latitude Handling")
             } footer: {
-                Text("This is a v1 stopgap. High-latitude Fajr and Isha remain a known research debt, so Duhaa does not present them as uniquely authoritative.")
+                Text("This is a v1 stopgap. High-latitude Fajr and Isha remain a known research debt, so Duhaa does not present them as uniquely authoritative. Compare with a trusted local mosque when unsure.")
             }
         }
         .settingsDetailStyle(title: "High Latitude")
@@ -220,14 +252,14 @@ struct PrayerTimeAdjustmentsView: View {
             } header: {
                 Text("Adjust Prayer Times")
             } footer: {
-                Text("Fine-tune any prayer by a few minutes to match your local mosque.")
+                Text("Fine-tune any prayer to match your trusted local mosque. Larger adjustments are available for high-latitude Fajr and Isha differences.")
             }
         }
         .settingsDetailStyle(title: "Time Adjustments")
     }
 
     private func offsetStepper(_ name: String, value: Binding<Int>) -> some View {
-        Stepper(value: value, in: -30...30) {
+        Stepper(value: value, in: -120...120, step: 5) {
             HStack {
                 Text(name)
                 Spacer()
@@ -673,7 +705,7 @@ enum LegalDocument {
         case .privacy:
             [
                 LegalSection("Local First", "Duhaa is designed to work without an account. Your prayer marks, Quran bookmarks, and settings are stored on this device unless you choose to export them."),
-                LegalSection("Location", "Prayer times need a location. Duhaa stores your selected location locally and uses it to calculate times on device. The app does not sell or share your location."),
+                LegalSection("Location", "Prayer times need a location. Duhaa stores your selected location locally and uses it to calculate times on device. City search, current-location naming, and nearby mosque search use Apple's location and MapKit services; Duhaa does not sell your location or use it for ads."),
                 LegalSection("Notifications", "Prayer reminders are scheduled through iOS notifications. You can turn them off per prayer or from system Settings at any time."),
                 LegalSection("Support", "If you email a bug report or support request, your message is handled by your mail app and whatever details you choose to include."),
                 LegalSection("Your Controls", "Export My Data creates a local JSON file. Delete All Local Data removes Duhaa's local keys from this device.")
@@ -702,8 +734,14 @@ struct LegalSection: Identifiable {
 }
 
 enum DuhaaDataExporter {
+    private struct DefaultsSuite {
+        let label: String
+        let defaults: UserDefaults
+        let keys: [String]
+    }
+
     static var exportedKeyCount: Int {
-        exportableDefaults().count
+        defaultSuites().reduce(0) { $0 + exportableDefaults(from: $1).count }
     }
 
     static func makeExportFile(now: Date = Date(), appVersion: String = appVersion) throws -> URL {
@@ -716,36 +754,115 @@ enum DuhaaDataExporter {
     }
 
     static func exportPayload(now: Date = Date(), appVersion: String = appVersion) -> [String: Any] {
-        [
-            "app": "Duhaa",
-            "appVersion": appVersion,
-            "exportedAt": ISO8601DateFormatter().string(from: now),
-            "format": "duhaa.local.userdefaults.v1",
-            "settings": exportableDefaults()
-        ]
+        exportPayload(now: now, appVersion: appVersion, suites: defaultSuites())
+    }
+
+    static func exportPayload(now: Date = Date(), appVersion: String = appVersion, standard: UserDefaults, appGroup: UserDefaults) -> [String: Any] {
+        exportPayload(now: now,
+                      appVersion: appVersion,
+                      suites: [DefaultsSuite(label: "standard", defaults: standard, keys: standardKeys),
+                               DefaultsSuite(label: "appGroup", defaults: appGroup, keys: appGroupKeys)])
     }
 
     @discardableResult
     static func deleteLocalData() -> Int {
-        let defaults = UserDefaults.standard
-        let keys = defaults.dictionaryRepresentation().keys.filter { $0.hasPrefix("duhaa.") }
-        keys.forEach { defaults.removeObject(forKey: $0) }
-        defaults.synchronize()
-        return keys.count
+        deleteLocalData(from: defaultSuites())
+    }
+
+    @discardableResult
+    static func deleteLocalData(standard: UserDefaults, appGroup: UserDefaults) -> Int {
+        deleteLocalData(from: [DefaultsSuite(label: "standard", defaults: standard, keys: standardKeys),
+                               DefaultsSuite(label: "appGroup", defaults: appGroup, keys: appGroupKeys)])
+    }
+
+    private static func exportPayload(now: Date, appVersion: String, suites: [DefaultsSuite]) -> [String: Any] {
+        let settings = suites.reduce(into: [String: Any]()) { result, suite in
+            result[suite.label] = exportableDefaults(from: suite)
+        }
+        return [
+            "app": "Duhaa",
+            "appVersion": appVersion,
+            "exportedAt": ISO8601DateFormatter().string(from: now),
+            "format": "duhaa.local.userdefaults.v2",
+            "settings": settings
+        ]
+    }
+
+    private static func deleteLocalData(from suites: [DefaultsSuite]) -> Int {
+        suites.reduce(0) { total, suite in
+            let existingKeys = suite.keys.filter { suite.defaults.object(forKey: $0) != nil }
+            existingKeys.forEach { suite.defaults.removeObject(forKey: $0) }
+            suite.defaults.synchronize()
+            return total + existingKeys.count
+        }
     }
 
     private static var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
     }
 
-    private static func exportableDefaults() -> [String: Any] {
-        let raw = UserDefaults.standard.dictionaryRepresentation()
-            .filter { $0.key.hasPrefix("duhaa.") }
+    private static func defaultSuites() -> [DefaultsSuite] {
+        [DefaultsSuite(label: "standard", defaults: .standard, keys: standardKeys),
+         DefaultsSuite(label: "appGroup", defaults: .duhaaShared, keys: appGroupKeys)]
+    }
 
-        return raw.keys.sorted().reduce(into: [String: Any]()) { result, key in
-            result[key] = jsonSafeValue(raw[key] as Any)
+    private static func exportableDefaults(from suite: DefaultsSuite) -> [String: Any] {
+        suite.keys.sorted().reduce(into: [String: Any]()) { result, key in
+            guard let value = suite.defaults.object(forKey: key) else { return }
+            result[key] = jsonSafeValue(value)
         }
     }
+
+    private static let standardKeys = [
+        "duhaa.activeLocation.v1",
+        "duhaa.fasting.days",
+        "duhaa.hasOnboarded",
+        "duhaa.insights.enabled",
+        "duhaa.insights.startDay",
+        "duhaa.notif.adhanSound",
+        "duhaa.notif.jumuah",
+        "duhaa.notif.modes",
+        "duhaa.notif.reminderMinutes",
+        "duhaa.notif.reminderOn",
+        "duhaa.notifications.didShowOptIn",
+        "duhaa.profile.gender",
+        "duhaa.profile.name",
+        "duhaa.quran.arabicSize",
+        "duhaa.quran.audioCacheBudgetMB",
+        "duhaa.quran.bookmarks",
+        "duhaa.quran.lastAyah",
+        "duhaa.quran.lastSurah",
+        "duhaa.quran.readerFont",
+        "duhaa.quran.reciter",
+        "duhaa.quran.showTranslation",
+        "duhaa.quran.tajweedColoring",
+        "duhaa.settings.hijriIsPrimary",
+        "duhaa.settings.hijriOffsetDays",
+        "duhaa.settings.madhab",
+        "duhaa.settings.method",
+        "duhaa.settings.nextPrayerDisplayMode",
+        "duhaa.settings.offsets",
+        "duhaa.shortcut.targetTab",
+        "duhaa.tabs.hidden",
+        "duhaa.tabs.order",
+        "duhaa.tasbih.adhkar.completed",
+        "duhaa.tasbih.adhkar.count",
+        "duhaa.tasbih.adhkar.phase",
+        "duhaa.tasbih.adhkar.total",
+        "duhaa.tasbih.custom.count",
+        "duhaa.tasbih.mode",
+        "duhaa.tasbih.target",
+        "duhaa.theme"
+    ]
+
+    private static let appGroupKeys = [
+        "duhaa.shared.migratedTrackerV1",
+        "duhaa.theme",
+        "duhaa.tracker.lastOpened",
+        "duhaa.tracker.lateMarks",
+        "duhaa.tracker.marks",
+        "duhaa.widget.timesPayload.v1"
+    ]
 
     private static func jsonSafeValue(_ value: Any) -> Any {
         switch value {

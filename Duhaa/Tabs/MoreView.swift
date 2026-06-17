@@ -14,8 +14,15 @@ struct MoreView: View {
                 Section {
                     ForEach(tabs) { tab in
                         NavigationLink(value: tab) {
-                            Label(tab.title, systemImage: tab.icon)
-                                .duhaaFont(16)
+                            // Color the icon from the theme explicitly: List-row
+                            // Label symbols otherwise fall back to the static
+                            // AccentColor asset (gold) instead of the live theme.
+                            Label {
+                                Text(tab.title).duhaaFont(16)
+                            } icon: {
+                                Image(systemName: tab.icon)
+                                    .foregroundStyle(Palette.gold)
+                            }
                         }
                         .listRowBackground(Palette.card)
                     }

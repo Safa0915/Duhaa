@@ -15,12 +15,13 @@ struct SettingsView: View {
     @Environment(\.openURL) private var openURL
 
     @AppStorage("duhaa.profile.name") private var profileName = ""
-    @AppStorage("duhaa.quran.reciter") private var quranReciterID = Reciters.defaultID
     @AppStorage("duhaa.quran.showTranslation") private var quranShowTranslation = true
     @AppStorage(AdhanSoundPreference.key) private var adhanSoundRaw = AdhanSoundPreference.duhaaChime.rawValue
 
     @State private var showingLocationPicker = false
     @State private var showingMembership = false
+    @State private var showingProfileSettings = false
+    @State private var showingMembershipBenefits = false
     @Environment(SubscriptionStore.self) private var subscriptions
 
     private var displayName: String {
@@ -34,26 +35,35 @@ struct SettingsView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                profileSection
-                appearanceSection
-                prayerSection
-                quranSection
-                privacySection
-                languageSection
-                helpSection
-                aboutSection
-            }
-            .scrollContentBackground(.hidden)
-            .scrollIndicators(.hidden)
-            .background(ThemeDecorativeBackground())
-            .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
-                        .foregroundStyle(Palette.gold)
+            ZStack {
+                ThemeDecorativeBackground()
+
+                VStack(spacing: 0) {
+                    settingsHeader
+                        .padding(.horizontal, 22)
+                        .padding(.top, 12)
+                        .padding(.bottom, 6)
+
+                    Form {
+                        profileSection
+                        appearanceSection
+                        prayerSection
+                        quranSection
+                        privacySection
+                        languageSection
+                        helpSection
+                        aboutSection
+                    }
+                    .scrollContentBackground(.hidden)
+                    .scrollIndicators(.hidden)
                 }
+            }
+            .toolbar(.hidden, for: .navigationBar)
+            .navigationDestination(isPresented: $showingProfileSettings) {
+                ProfileSettingsView()
+            }
+            .navigationDestination(isPresented: $showingMembershipBenefits) {
+                MembershipBenefitsView()
             }
             .sheet(isPresented: $showingMembership) {
                 MembershipView()
@@ -67,62 +77,70 @@ struct SettingsView: View {
 
     // MARK: Sections
 
+    private var settingsHeader: some View {
+        ZStack {
+            Text("settings")
+                .duhaaFont(28, .bold)
+                .foregroundStyle(.primary)
+                .lineLimit(1)
+
+            HStack {
+                Spacer()
+                Button("done") { dismiss() }
+                    .duhaaFont(20, .bold)
+                    .foregroundStyle(Palette.blue)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+                    .background(settingsHeaderButtonFill, in: Capsule())
+                    .overlay(Capsule().stroke(Palette.cardBorder.opacity(0.7), lineWidth: 1))
+                    .buttonStyle(.plain)
+            }
+        }
+        .frame(height: 58)
+        .accessibilityElement(children: .contain)
+    }
+
     private var profileSection: some View {
         Section {
-            NavigationLink {
-                ProfileSettingsView()
-            } label: {
-                HStack(spacing: 14) {
-                    ZStack {
-                        Circle()
-                            .fill(Palette.gold.opacity(0.18))
-                            .frame(width: 48, height: 48)
-                        Text(String(displayName.prefix(1)).uppercased())
-                            .duhaaFont(20, .bold)
-                            .foregroundStyle(Palette.gold)
-                    }
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(displayName)
-                            .duhaaFont(17, .semibold)
-                            .foregroundStyle(.primary)
-                        Text("Local profile · no account required")
-                            .duhaaFont(12)
-                            .foregroundStyle(Palette.blue.opacity(0.72))
-                    }
-                }
-                .padding(.vertical, 6)
-            }
-            .listRowBackground(Palette.card)
-
-            HStack(spacing: 12) {
+            VStack(spacing: 18) {
                 Button {
-                    showingMembership = true
+                    showingProfileSettings = true
                 } label: {
-                    statusCard(icon: subscriptions.currentTier?.icon ?? "moon.stars",
-                               title: subscriptions.currentTier.map { "Duhaa+ \($0.displayName)" } ?? "Duhaa+",
-                               detail: subscriptions.isSubscribed ? "Active — jazakum Allahu khairan" : "Nurture the ummah")
+                    profileHeroCard
                 }
                 .buttonStyle(.duhaaPress)
-                statusCard(icon: "arrow.triangle.2.circlepath", title: version, detail: "Installed")
-            }
-            .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 4, trailing: 0))
-            .listRowBackground(Color.clear)
 
-            NavigationLink {
-                MembershipBenefitsView()
-            } label: {
-                HStack(spacing: 12) {
-                    Image(systemName: "rosette")
-                        .duhaaFont(17)
-                        .foregroundStyle(Palette.gold)
-                    Text("Membership Benefits")
-                        .duhaaFont(16, .medium)
-                        .foregroundStyle(.primary)
+                HStack(alignment: .top, spacing: 12) {
+                    Button {
+                        showingMembership = true
+                    } label: {
+                        topMetricCard(icon: "checkmark.seal.fill",
+                                      iconFill: settingsPink,
+                                      title: "duhaa+",
+                                      value: subscriptions.isSubscribed ? "active" : "support",
+                                      detail: "Nurture\nthe ummah")
+                    }
+                    .buttonStyle(.duhaaPress)
+                    .frame(maxWidth: .infinity)
+
+                    topMetricCard(icon: "gearshape.fill",
+                                  iconFill: settingsBlue,
+                                  title: "update",
+                                  value: version,
+                                  detail: "keep your app\nalways up to date")
+                    .frame(maxWidth: .infinity)
                 }
-                .padding(.vertical, 4)
+
+                Button {
+                    showingMembershipBenefits = true
+                } label: {
+                    membershipBenefitsCard
+                }
+                .buttonStyle(.duhaaPress)
             }
-            .listRowBackground(Palette.card)
+            .listRowInsets(EdgeInsets(top: 18, leading: 0, bottom: 18, trailing: 0))
+            .listRowBackground(Color.clear)
+            .listRowSeparator(.hidden)
         }
     }
 
@@ -164,6 +182,13 @@ struct SettingsView: View {
                 AsrMethodSettingsView()
             } label: {
                 settingsRow("Madhab", icon: "book.closed.fill", color: Palette.gold, value: store.madhab.shortName)
+            }
+            .listRowBackground(Palette.card)
+
+            NavigationLink {
+                PrayerDisplaySettingsView()
+            } label: {
+                settingsRow("Home Display", icon: "timer", color: Palette.blue, value: store.nextPrayerDisplayMode.label)
             }
             .listRowBackground(Palette.card)
 
@@ -340,31 +365,120 @@ struct SettingsView: View {
 
     // MARK: Row helpers
 
-    private func statusCard(icon: String, title: String, detail: String) -> some View {
-        // Fixed height + a Spacer means the icon pins to the top and the title /
-        // caption pin to the bottom — so the two cards line up exactly even when
-        // one is wrapped in a Button and the other isn't.
+    private var profileHeroCard: some View {
+        HStack(spacing: 18) {
+            ZStack {
+                Circle()
+                    .fill(settingsAvatarFill)
+                    .frame(width: 66, height: 66)
+                Text(String(displayName.prefix(1)).uppercased())
+                    .duhaaFont(30, .medium)
+                    .foregroundStyle(.white)
+            }
+            .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text(displayName)
+                    .duhaaFont(24, .bold)
+                    .foregroundStyle(settingsPink)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+                Text("tap to edit your profile")
+                    .duhaaFont(18, .semibold)
+                    .foregroundStyle(settingsMutedText)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+            }
+
+            Spacer(minLength: 12)
+
+            Image(systemName: "chevron.right")
+                .duhaaFont(23, .bold)
+                .foregroundStyle(settingsMutedText.opacity(0.62))
+                .accessibilityHidden(true)
+        }
+        .padding(.horizontal, 22)
+        .frame(maxWidth: .infinity, minHeight: 116, alignment: .leading)
+        .background(settingsCardFill, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .contentShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Profile, \(displayName), tap to edit your profile")
+    }
+
+    private func topMetricCard(icon: String, iconFill: Color, title: String, value: String, detail: String) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            Image(systemName: icon)
-                .duhaaFont(18, .semibold)
-                .foregroundStyle(Palette.gold)
-            Spacer(minLength: 10)
-            Text(title)
-                .duhaaFont(20, .bold)
+            HStack(spacing: 9) {
+                ZStack {
+                    Circle()
+                        .fill(iconFill)
+                        .frame(width: 42, height: 42)
+                    Image(systemName: icon)
+                        .duhaaFont(21, .bold)
+                        .foregroundStyle(.white)
+                }
+                .accessibilityHidden(true)
+
+                Text(title)
+                    .duhaaFont(18, .bold)
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.78)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            Spacer(minLength: 14)
+
+            Text(value)
+                .duhaaFont(24, .bold)
                 .foregroundStyle(.primary)
                 .lineLimit(1)
-                .minimumScaleFactor(0.6)
+                .minimumScaleFactor(0.76)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
             Text(detail)
-                .duhaaFont(12)
-                .foregroundStyle(.primary.opacity(0.64))
-                .lineLimit(1)
-                .padding(.top, 3)
+                .duhaaFont(13, .semibold)
+                .foregroundStyle(settingsMutedText)
+                .lineLimit(3)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 8)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .frame(maxWidth: .infinity, minHeight: 108, alignment: .leading)
+        .frame(maxWidth: .infinity, minHeight: 162, alignment: .leading)
         .padding(16)
-        .background(Palette.card)
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Palette.cardBorder, lineWidth: 1))
-        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .background(settingsCardFill, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+    }
+
+    private var membershipBenefitsCard: some View {
+        HStack(spacing: 18) {
+            ZStack {
+                Circle()
+                    .fill(settingsPink)
+                    .frame(width: 54, height: 54)
+                Image(systemName: "rosette")
+                    .duhaaFont(30, .bold)
+                    .foregroundStyle(.white)
+            }
+            .accessibilityHidden(true)
+
+            Text("membership benefits")
+                .duhaaFont(24, .semibold)
+                .foregroundStyle(.primary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+
+            Spacer(minLength: 8)
+
+            Image(systemName: "chevron.right")
+                .duhaaFont(23, .bold)
+                .foregroundStyle(settingsMutedText.opacity(0.62))
+                .accessibilityHidden(true)
+        }
+        .padding(.horizontal, 22)
+        .frame(maxWidth: .infinity, minHeight: 92, alignment: .leading)
+        .background(settingsCardFill, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .contentShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
     }
 
     private func settingsRow(_ title: String, icon: String, color: Color, value: String? = nil) -> some View {
@@ -397,10 +511,6 @@ struct SettingsView: View {
         store.hijriOffsetDays == 0 ? (store.hijriIsPrimary ? "Primary" : "Secondary") : signed(store.hijriOffsetDays)
     }
 
-    private var quranReciterLabel: String {
-        Reciters.byID(quranReciterID)?.name ?? "Alafasy"
-    }
-
     private var adhanSoundLabel: String {
         AdhanSoundPreference(rawValue: adhanSoundRaw)?.label ?? AdhanSoundPreference.duhaaChime.label
     }
@@ -423,6 +533,30 @@ struct SettingsView: View {
         if let url = components.url {
             openURL(url)
         }
+    }
+
+    private var settingsCardFill: Color {
+        Palette.active.isDark ? Color.white.opacity(0.105) : Palette.card
+    }
+
+    private var settingsHeaderButtonFill: Color {
+        Palette.active.isDark ? Color.black.opacity(0.22) : Palette.elevatedCardBackground
+    }
+
+    private var settingsMutedText: Color {
+        Palette.active.isDark ? Color.white.opacity(0.46) : Palette.secondaryText.opacity(0.78)
+    }
+
+    private var settingsPink: Color {
+        Palette.active.isDark ? Color(hex: 0xF14F78) : Palette.gold
+    }
+
+    private var settingsBlue: Color {
+        Palette.active.isDark ? Color(hex: 0x1DA1FF) : Palette.blue
+    }
+
+    private var settingsAvatarFill: Color {
+        Palette.active.isDark ? Color(hex: 0xAF42C7) : Palette.gold
     }
 }
 

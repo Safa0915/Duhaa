@@ -26,9 +26,9 @@ extension GuideStep {
 extension ReviewStatus {
     var chipIcon: String {
         switch self {
-        case .source_backed: "text.book.closed"
+        case .sourceBacked: "text.book.closed"
         case .reviewed: "checkmark.seal"
-        case .needs_review: "exclamationmark.circle"
+        case .needsReview: "exclamationmark.circle"
         }
     }
 }
@@ -134,7 +134,7 @@ struct LearnStatusChip: View {
     var body: some View {
         LearnChip(text: status.label,
                   systemImage: status.chipIcon,
-                  tint: status == .needs_review ? Palette.gold : Palette.blue)
+                  tint: status == .needsReview ? Palette.gold : Palette.blue)
             .accessibilityLabel("Status: \(status.label)")
     }
 }
@@ -251,7 +251,7 @@ struct LearnEvidenceRow: View {
                 gradeBadge
             }
 
-            Text("Grading: \(reference.grade.displayName) · \(reference.graderAttribution)")
+            Text(reference.displayGradingText)
                 .duhaaFont(11.5, .medium)
                 .foregroundStyle(Palette.blue.opacity(0.75))
                 .fixedSize(horizontal: false, vertical: true)

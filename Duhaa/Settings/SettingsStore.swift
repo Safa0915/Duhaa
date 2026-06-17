@@ -55,6 +55,20 @@ enum AsrMadhab: String, CaseIterable, Identifiable {
     var adhanMadhab: Madhab { self == .hanafi ? .hanafi : .shafi }
 }
 
+/// What the home banner emphasizes for the upcoming prayer.
+enum NextPrayerDisplayMode: String, CaseIterable, Identifiable {
+    case nextPrayer, timeRemaining
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .nextPrayer: return "Next prayer"
+        case .timeRemaining: return "Time Remaining"
+        }
+    }
+}
+
 // MARK: - Store
 
 /// The single, persisted source of settings. Created once at app launch and
@@ -64,6 +78,7 @@ enum AsrMadhab: String, CaseIterable, Identifiable {
 final class SettingsStore {
     var method: CalcMethod { didSet { persist() } }
     var madhab: AsrMadhab { didSet { persist() } }
+    var nextPrayerDisplayMode: NextPrayerDisplayMode { didSet { persist() } }
 
     /// ±days to nudge the Hijri date for local moon-sighting differences (§12).
     var hijriOffsetDays: Int { didSet { persist() } }
@@ -73,11 +88,13 @@ final class SettingsStore {
     /// Manual per-prayer offsets in minutes (high-latitude stopgap, §13).
     var offsets: PrayerOffsets { didSet { persist() } }
 
-    @ObservationIgnored private let defaults = UserDefaults.standard
+    @ObservationIgnored private let defaults: UserDefaults
 
-    init() {
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
         method = CalcMethod(rawValue: defaults.string(forKey: Key.method) ?? "") ?? .muslimWorldLeague
         madhab = AsrMadhab(rawValue: defaults.string(forKey: Key.madhab) ?? "") ?? .standard
+        nextPrayerDisplayMode = NextPrayerDisplayMode(rawValue: defaults.string(forKey: Key.nextPrayerDisplayMode) ?? "") ?? .timeRemaining
         hijriOffsetDays = defaults.integer(forKey: Key.hijriOffset) // 0 if unset
         hijriIsPrimary = defaults.bool(forKey: Key.hijriPrimary)
         if let data = defaults.data(forKey: Key.offsets),
@@ -99,6 +116,7 @@ final class SettingsStore {
     private func persist() {
         defaults.set(method.rawValue, forKey: Key.method)
         defaults.set(madhab.rawValue, forKey: Key.madhab)
+        defaults.set(nextPrayerDisplayMode.rawValue, forKey: Key.nextPrayerDisplayMode)
         defaults.set(hijriOffsetDays, forKey: Key.hijriOffset)
         defaults.set(hijriIsPrimary, forKey: Key.hijriPrimary)
         if let data = try? JSONEncoder().encode(offsets) {
@@ -109,6 +127,7 @@ final class SettingsStore {
     private enum Key {
         static let method = "duhaa.settings.method"
         static let madhab = "duhaa.settings.madhab"
+        static let nextPrayerDisplayMode = "duhaa.settings.nextPrayerDisplayMode"
         static let hijriOffset = "duhaa.settings.hijriOffsetDays"
         static let hijriPrimary = "duhaa.settings.hijriIsPrimary"
         static let offsets = "duhaa.settings.offsets"

@@ -7,6 +7,13 @@ struct VerseRef: Identifiable, Equatable {
     var id: String { "\(surah):\(ayah)" }
 }
 
+private struct VerseOfDayContent: Sendable {
+    let surahName: String
+    let reference: String
+    let arabic: String
+    let english: String
+}
+
 /// A curated rotation of short, hopeful verses (the Ad-Duhaa spirit — mercy, ease,
 /// nearness, not despairing). One is chosen per calendar day.
 enum VerseOfDay {
@@ -26,50 +33,99 @@ enum VerseOfDay {
         let day = Calendar.current.ordinality(of: .day, in: .era, for: date) ?? 0
         return verses[((day % verses.count) + verses.count) % verses.count]
     }
+
+    fileprivate static func content(for ref: VerseRef) async -> VerseOfDayContent? {
+        let quran = await Quran.loadAsync()
+        guard let surah = quran.surah(ref.surah),
+              let ayah = surah.ayahs.first(where: { $0.number == ref.ayah }) else {
+            return nil
+        }
+
+        return VerseOfDayContent(
+            surahName: surah.englishName,
+            reference: "\(ref.surah):\(ref.ayah)",
+            arabic: ayah.arabic,
+            english: ayah.english
+        )
+    }
 }
 
 /// The "Verse of the Day" card on the Prayer home. Tapping opens the ayah in the reader.
 struct VerseOfDayCard: View {
     let ref: VerseRef
     let onTap: () -> Void
-
-    private var surah: Surah? { Quran.surah(ref.surah) }
-    private var ayah: Ayah? { surah?.ayahs.first { $0.number == ref.ayah } }
+    @State private var content: VerseOfDayContent?
 
     var body: some View {
-        if let surah, let ayah {
-            Button(action: onTap) {
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        Label("VERSE OF THE DAY", systemImage: "sparkles")
-                            .duhaaFont(11, .semibold).tracking(1)
-                            .foregroundStyle(Palette.gold.opacity(0.9))
-                        Spacer()
-                        Text("\(surah.englishName) · \(ref.surah):\(ref.ayah)")
-                            .duhaaFont(11)
-                            .foregroundStyle(Palette.blue.opacity(0.7))
-                    }
-                    Text(QuranArabicText.display(ayah.arabic))
-                        .font(QuranFont.uthmani(22))
-                        .lineSpacing(10)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                        .environment(\.layoutDirection, .rightToLeft)
-                        .foregroundStyle(.primary)
-                        .accessibilityLabel(ayah.arabic)
-                    Text(ayah.english)
-                        .duhaaFont(14)
-                        .foregroundStyle(.primary.opacity(0.82))
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .padding(16)
-                .background(
-                    LinearGradient(colors: [Palette.gold.opacity(0.14), Palette.gold.opacity(0.05)],
-                                   startPoint: .topLeading, endPoint: .bottomTrailing)
-                )
-                .overlay(RoundedRectangle(cornerRadius: 20).stroke(Palette.gold.opacity(0.3), lineWidth: 1))
-                .clipShape(RoundedRectangle(cornerRadius: 20))
+        Group {
+            if let content {
+                card(content)
+            } else {
+                placeholder
             }
-            .buttonStyle(.duhaaPress)
         }
+        .task(id: ref.id) {
+            content = await VerseOfDay.content(for: ref)
+        }
+    }
+
+    private func card(_ content: VerseOfDayContent) -> some View {
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Label("VERSE OF THE DAY", systemImage: "sparkles")
+                        .duhaaFont(11, .semibold).tracking(1)
+                        .foregroundStyle(Palette.gold.opacity(0.9))
+                    Spacer()
+                    Text("\(content.surahName) · \(content.reference)")
+                        .duhaaFont(11)
+                        .foregroundStyle(Palette.blue.opacity(0.7))
+                }
+                Text(QuranArabicText.display(content.arabic))
+                    .font(QuranFont.uthmani(22))
+                    .lineSpacing(10)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .environment(\.layoutDirection, .rightToLeft)
+                    .foregroundStyle(.primary)
+                    .accessibilityLabel(content.arabic)
+                Text(content.english)
+                    .duhaaFont(14)
+                    .foregroundStyle(.primary.opacity(0.82))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(16)
+            .duhaaGradientCardStyle(
+                colors: [Palette.gold.opacity(0.14), Palette.gold.opacity(0.05)],
+                stroke: Palette.gold.opacity(0.3)
+            )
+        }
+        .buttonStyle(.duhaaPress)
+    }
+
+    private var placeholder: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Label("VERSE OF THE DAY", systemImage: "sparkles")
+                    .duhaaFont(11, .semibold).tracking(1)
+                    .foregroundStyle(Palette.gold.opacity(0.65))
+                Spacer()
+                ProgressView()
+                    .tint(Palette.gold)
+                    .scaleEffect(0.75)
+            }
+
+            RoundedRectangle(cornerRadius: 6)
+                .fill(Palette.gold.opacity(0.10))
+                .frame(height: 24)
+            RoundedRectangle(cornerRadius: 6)
+                .fill(Palette.blue.opacity(0.12))
+                .frame(height: 42)
+        }
+        .padding(16)
+        .duhaaGradientCardStyle(
+            colors: [Palette.gold.opacity(0.10), Palette.gold.opacity(0.04)],
+            stroke: Palette.gold.opacity(0.22)
+        )
+        .accessibilityLabel("Verse of the day loading")
     }
 }

@@ -91,18 +91,21 @@ enum DuhaaHaptics {
     }
 
     private static func preparedEngine() throws -> CHHapticEngine {
-        if engine == nil {
-            let newEngine = try CHHapticEngine()
-            newEngine.stoppedHandler = { _ in
-                DispatchQueue.main.async { engine = nil }
-            }
-            newEngine.resetHandler = {
-                DispatchQueue.main.async { try? engine?.start() }
-            }
-            engine = newEngine
+        if let engine {
+            try engine.start()
+            return engine
         }
-        try engine?.start()
-        return engine!
+
+        let newEngine = try CHHapticEngine()
+        newEngine.stoppedHandler = { _ in
+            DispatchQueue.main.async { engine = nil }
+        }
+        newEngine.resetHandler = {
+            DispatchQueue.main.async { try? engine?.start() }
+        }
+        try newEngine.start()
+        engine = newEngine
+        return newEngine
     }
 
     private static func event(_ type: CHHapticEvent.EventType,

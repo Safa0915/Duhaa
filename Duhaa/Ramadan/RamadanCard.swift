@@ -32,13 +32,12 @@ struct RamadanCard: View {
             fastingToggle
         }
         .padding(16)
-        .background(
-            LinearGradient(colors: [Palette.gold.opacity(0.18), Palette.gold.opacity(0.06)],
-                           startPoint: .topLeading, endPoint: .bottomTrailing)
+        .duhaaGradientCardStyle(
+            colors: [Palette.gold.opacity(0.18), Palette.gold.opacity(0.06)],
+            stroke: Palette.gold.opacity(0.4),
+            shadowColor: Palette.gold.opacity(0.12),
+            shadowRadius: 12
         )
-        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Palette.gold.opacity(0.4), lineWidth: 1))
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .shadow(color: Palette.gold.opacity(0.12), radius: 12)
     }
 
     private var header: some View {

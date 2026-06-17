@@ -9,6 +9,7 @@ struct ThemeColorHexes: Equatable {
     let cardBackground: UInt32
     let elevatedCardBackground: UInt32
     let accent: UInt32
+    let onAccent: UInt32
     let softAccent: UInt32
     let primaryText: UInt32
     let secondaryText: UInt32
@@ -31,6 +32,7 @@ struct DuhaaThemePalette {
     let primaryText: Color
     let secondaryText: Color
     let accent: Color
+    let onAccent: Color
     let softAccent: Color
     let border: Color
     let glow: Color
@@ -56,7 +58,7 @@ typealias ThemeColors = DuhaaThemePalette
 
 /// The selectable themes (Classic is default; Light Pink is a free preview).
 enum AppTheme: String, CaseIterable, Identifiable {
-    case dark, lightPink, light, sisters
+    case dark, sisters, light, lightPink
 
     var id: String { rawValue }
 
@@ -64,7 +66,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
         switch self {
         case .dark:      return "Classic Duhaa"
         case .lightPink: return "Light Pink"
-        case .light:     return "Dawn (Light)"
+        case .light:     return "Sky"
         case .sisters:   return "Rose"   // theme kept; the Sisters section is parked
         }
     }
@@ -76,7 +78,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
         case .lightPink:
             return "Free premium preview"
         case .light:
-            return "Warm morning light"
+            return "Pale blue · Islamic navy"
         case .sisters:
             return "Rose night palette"
         }
@@ -106,7 +108,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
                 hexes: ThemeColorHexes(
                     background: 0x0D1628, secondaryBackground: 0x08111F,
                     cardBackground: 0xFFFFFF, elevatedCardBackground: 0xFFFFFF,
-                    accent: 0xF0C040, softAccent: 0x8ECFE8,
+                    accent: 0xF0C040, onAccent: 0x10182A, softAccent: 0x8ECFE8,
                     primaryText: 0xFFFFFF, secondaryText: 0x8ECFE8,
                     border: 0xFFFFFF, glow: 0xF0C040,
                     success: 0x7BCB8F, warning: 0xF0C040, destructive: 0xFF7A7A),
@@ -117,6 +119,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
                 primaryText: .white,
                 secondaryText: Color(hex: 0x8ECFE8),
                 accent: Color(hex: 0xF0C040),
+                onAccent: Color(hex: 0x10182A),
                 softAccent: Color(hex: 0x8ECFE8),
                 border: Color.white.opacity(0.13),
                 glow: Color(hex: 0xF0C040),
@@ -140,7 +143,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
                 hexes: ThemeColorHexes(
                     background: 0xFFF5F8, secondaryBackground: 0xFFEAF1,
                     cardBackground: 0xFFFFFF, elevatedCardBackground: 0xFFF0F5,
-                    accent: 0xFFA6C8, softAccent: 0xFFC7DA,
+                    accent: 0xFFA6C8, onAccent: 0x35232A, softAccent: 0xFFC7DA,
                     primaryText: 0x35232A, secondaryText: 0x9A6B80,
                     border: 0xF8C5D4, glow: 0xFFD8E6,
                     success: 0x4F8A67, warning: 0xC87596, destructive: 0xB9475D),
@@ -151,6 +154,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
                 primaryText: ink,
                 secondaryText: muted,
                 accent: babyPink,
+                onAccent: ink,
                 softAccent: blushPink,
                 border: Color(hex: 0xF8C5D4),
                 glow: Color(hex: 0xFFD8E6),
@@ -169,7 +173,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
                 hexes: ThemeColorHexes(
                     background: 0x1E1126, secondaryBackground: 0x140A18,
                     cardBackground: 0xFFFFFF, elevatedCardBackground: 0xFFFFFF,
-                    accent: 0xF48FB1, softAccent: 0xCBA6E8,
+                    accent: 0xF48FB1, onAccent: 0x10182A, softAccent: 0xCBA6E8,
                     primaryText: 0xFFFFFF, secondaryText: 0xCBA6E8,
                     border: 0xFFFFFF, glow: 0xF48FB1,
                     success: 0x8BD39F, warning: 0xF3C76E, destructive: 0xFF7A93),
@@ -180,6 +184,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
                 primaryText: .white,
                 secondaryText: Color(hex: 0xCBA6E8),
                 accent: Color(hex: 0xF48FB1),
+                onAccent: Color(hex: 0x10182A),
                 softAccent: Color(hex: 0xCBA6E8),
                 border: Color.white.opacity(0.14),
                 glow: Color(hex: 0xF48FB1),
@@ -192,32 +197,34 @@ enum AppTheme: String, CaseIterable, Identifiable {
                 isDark: true,
                 showsFloatingHearts: false)
 
-        case .light: // warm, golden "honey cream" dawn
-            let ink = Color(hex: 0x2A2412)
+        case .light: // B — Sky: pale blue + Islamic navy
+            let ink = Color(hex: 0x0C1F3B)
+            let steelBlue = Color(hex: 0x44698E)
+            let islamicNavy = Color(hex: 0x1154A4)
             return ThemeColors(
                 id: self,
                 hexes: ThemeColorHexes(
-                    background: 0xF4E7C6, secondaryBackground: 0xE7D3A2,
-                    cardBackground: 0xFCF3D9, elevatedCardBackground: 0xFFF7E5,
-                    accent: 0x9C6A06, softAccent: 0xEBC978,
-                    primaryText: 0x2A2412, secondaryText: 0x1F5470,
-                    border: 0x7A6526, glow: 0xD89A16,
-                    success: 0x4F7E4D, warning: 0x9C6A06, destructive: 0xA84835),
-                background: Color(hex: 0xF4E7C6),
-                secondaryBackground: Color(hex: 0xE7D3A2),
-                // Warm golden-ivory cards, a touch lighter than the honey bg.
-                cardBackground: Color(hex: 0xFCF3D9).opacity(0.92),
-                elevatedCardBackground: Color(hex: 0xFFF7E5),
+                    background: 0xECF4FD, secondaryBackground: 0xE4EFFB,
+                    cardBackground: 0xFFFFFF, elevatedCardBackground: 0xF8FBFF,
+                    accent: 0x1154A4, onAccent: 0xFFFFFF, softAccent: 0x2C69B0,
+                    primaryText: 0x0C1F3B, secondaryText: 0x44698E,
+                    border: 0xC9D8E8, glow: 0x86BDF3,
+                    success: 0x236B4E, warning: 0x8A621B, destructive: 0xB14A45),
+                background: Color(hex: 0xECF4FD),
+                secondaryBackground: Color(hex: 0xE4EFFB),
+                cardBackground: Color(hex: 0xFFFFFF),
+                elevatedCardBackground: Color(hex: 0xF8FBFF),
                 primaryText: ink,
-                secondaryText: Color(hex: 0x1F5470),
-                accent: Color(hex: 0x9C6A06),
-                softAccent: Color(hex: 0xEBC978),
-                border: Color(hex: 0x7A6526).opacity(0.20),
-                glow: Color(hex: 0xD89A16),
-                success: Color(hex: 0x4F7E4D),
-                warning: Color(hex: 0x9C6A06),
-                destructive: Color(hex: 0xA84835),
-                secondaryAccent: Color(hex: 0x1F5470),
+                secondaryText: steelBlue,
+                accent: islamicNavy,
+                onAccent: .white,
+                softAccent: Color(hex: 0x2C69B0),
+                border: Color(hex: 0xC9D8E8),
+                glow: Color(hex: 0x86BDF3),
+                success: Color(hex: 0x236B4E),
+                warning: Color(hex: 0x8A621B),
+                destructive: Color(hex: 0xB14A45),
+                secondaryAccent: steelBlue,
                 prayerTime: ink.opacity(0.9),
                 colorScheme: .light,
                 isDark: false,
@@ -283,8 +290,8 @@ enum Palette {
     static var cardBorder: Color { active.cardBorder }
     static var prayerTime: Color { active.prayerTime }
 
-    /// Text/icon color to use on TOP of a gold/accent fill - always dark for contrast.
-    static let onAccent = Color(hex: 0x10182A)
+    /// Text/icon color to use on top of the active accent fill.
+    static var onAccent: Color { active.onAccent }
 }
 
 extension Color {

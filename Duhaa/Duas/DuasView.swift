@@ -2,26 +2,40 @@ import SwiftUI
 
 /// The Du'as tab: occasion-based categories (After Prayer, Morning, Evening, …).
 struct DuasView: View {
+    @State private var categories: [DuaCategory]?
+
     var body: some View {
-        // Host provides the NavigationStack (see MainTabView / MoreView).
-        ScrollView {
-            VStack(spacing: 14) {
-                ForEach(Duas.categories) { category in
-                    NavigationLink {
-                        DuaListView(category: category)
-                    } label: {
-                        card(category)
+        Group {
+            if let categories {
+                // Host provides the NavigationStack (see MainTabView / MoreView).
+                ScrollView {
+                    VStack(spacing: 14) {
+                        ForEach(categories) { category in
+                            NavigationLink {
+                                DuaListView(category: category)
+                            } label: {
+                                card(category)
+                            }
+                            .buttonStyle(.plain)
+                        }
                     }
-                    .buttonStyle(.plain)
+                    .padding(20)
                 }
+                .scrollIndicators(.hidden)
+            } else {
+                ProgressView()
+                    .tint(Palette.gold)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .padding(20)
         }
-        .scrollIndicators(.hidden)
         .background(Palette.appBg.ignoresSafeArea())
         .navigationTitle("Du'as")
         .preferredColorScheme(Palette.active.colorScheme)
         .tint(Palette.gold)
+        .task {
+            guard categories == nil else { return }
+            categories = await Duas.loadAsync()
+        }
     }
 
     private func card(_ category: DuaCategory) -> some View {
@@ -44,8 +58,6 @@ struct DuasView: View {
                 .foregroundStyle(Palette.blue.opacity(0.5))
         }
         .padding(16)
-        .background(Palette.card)
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Palette.cardBorder, lineWidth: 1))
-        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .duhaaCardStyle()
     }
 }

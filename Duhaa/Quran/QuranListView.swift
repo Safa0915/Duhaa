@@ -12,24 +12,19 @@ private struct VerseMatch: Identifiable {
 struct QuranListView: View {
     @Environment(QuranBookmarks.self) private var bookmarks
     @State private var query = ""
+    @State private var quran: QuranData?
 
     private var trimmed: String { query.trimmingCharacters(in: .whitespacesAndNewlines) }
     private var isSearching: Bool { !trimmed.isEmpty }
 
     var body: some View {
-        // Host provides the NavigationStack (see MainTabView / MoreView).
-        List {
-            if isSearching {
-                searchResults
+        Group {
+            if let quran {
+                quranList(quran)
             } else {
-                continueReadingSection
-                Section {
-                    ForEach(Quran.shared.surahs) { surahLink($0) }
-                }
+                loadingView
             }
         }
-        .scrollContentBackground(.hidden)
-        .scrollIndicators(.hidden)
         .background(Palette.appBg.ignoresSafeArea())
         .navigationTitle("Quran")
         .searchable(text: $query, prompt: "Search surahs or verses")
@@ -42,12 +37,38 @@ struct QuranListView: View {
         }
         .preferredColorScheme(Palette.active.colorScheme)
         .tint(Palette.gold)
+        .task {
+            guard quran == nil else { return }
+            quran = await Quran.loadAsync()
+        }
+    }
+
+    // Host provides the NavigationStack (see MainTabView / MoreView).
+    private func quranList(_ quran: QuranData) -> some View {
+        List {
+            if isSearching {
+                searchResults(quran)
+            } else {
+                continueReadingSection(quran)
+                Section {
+                    ForEach(quran.surahs) { surahLink($0) }
+                }
+            }
+        }
+        .scrollContentBackground(.hidden)
+        .scrollIndicators(.hidden)
+    }
+
+    private var loadingView: some View {
+        ProgressView()
+            .tint(Palette.gold)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     // MARK: Continue reading
 
-    @ViewBuilder private var continueReadingSection: some View {
-        if let number = bookmarks.lastReadSurah, let surah = Quran.surah(number) {
+    @ViewBuilder private func continueReadingSection(_ quran: QuranData) -> some View {
+        if let number = bookmarks.lastReadSurah, let surah = quran.surah(number) {
             Section {
                 NavigationLink {
                     SurahReaderView(surah: surah, scrollTo: bookmarks.lastReadAyah)
@@ -74,9 +95,9 @@ struct QuranListView: View {
 
     // MARK: Search
 
-    @ViewBuilder private var searchResults: some View {
-        let surahs = surahMatches
-        let verses = verseMatches
+    @ViewBuilder private func searchResults(_ quran: QuranData) -> some View {
+        let surahs = surahMatches(in: quran)
+        let verses = verseMatches(in: quran)
         if !surahs.isEmpty {
             Section("Surahs") { ForEach(surahs) { surahLink($0) } }
         }
@@ -106,8 +127,8 @@ struct QuranListView: View {
         }
     }
 
-    private var surahMatches: [Surah] {
-        Quran.shared.surahs.filter {
+    private func surahMatches(in quran: QuranData) -> [Surah] {
+        quran.surahs.filter {
             $0.englishName.localizedStandardContains(trimmed)
             || $0.translation.localizedStandardContains(trimmed)
             || $0.arabicName.contains(trimmed)
@@ -115,10 +136,10 @@ struct QuranListView: View {
         }
     }
 
-    private var verseMatches: [VerseMatch] {
+    private func verseMatches(in quran: QuranData) -> [VerseMatch] {
         guard trimmed.count >= 2 else { return [] }
         var out: [VerseMatch] = []
-        outer: for surah in Quran.shared.surahs {
+        outer: for surah in quran.surahs {
             for ayah in surah.ayahs where ayah.english.localizedStandardContains(trimmed) {
                 out.append(VerseMatch(surah: surah, ayah: ayah))
                 if out.count >= 40 { break outer }
