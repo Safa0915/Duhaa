@@ -19,7 +19,7 @@ struct Dua: Decodable, Identifiable, Sendable {
     let en: String           // translation
     let note: String         // repetition badge ("Read 3x") OR a short instruction
     let source: String
-    let status: String?      // e.g. "Verified" — shown as a small badge when present
+    let status: String?      // e.g. "Sourced" — shown as a small badge when present
     let fiqhNote: String?    // small, secondary scholarly note shown at the card's foot
     let count: Int?          // Sunnah repetition count — badge "10×" (hidden when 1)
     let prayerScope: String? // e.g. "Fajr & Maghrib" when a dhikr isn't for all five

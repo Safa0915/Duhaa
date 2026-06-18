@@ -264,7 +264,7 @@ extension PrayerWidgetSnapshot {
                                arabic: "اللَّهُمَّ رَبَّ هَٰذِهِ الدَّعْوَةِ التَّامَّةِ",
                                latin: "Allāhumma Rabba hādhihi-d-da‘wati-t-tāmmah",
                                en: "O Allah, Lord of this perfect call…",
-                               source: "Bukhari 614", status: "Verified"))
+                               source: "Bukhari 614", status: "Sourced"))
         let completed = Set(PrayerID.ordered.prefix(max(0, min(5, completedCount))))
         let lateSet: Set<PrayerID> = completedCount >= 2 ? [.fajr] : []
         let now = at(14, 5)   // mid-afternoon: Asr next, Dhuhr current

@@ -30,15 +30,18 @@ private struct DailyDuaView: View {
     var body: some View {
         if let dua {
             VStack(alignment: .leading, spacing: 6) {
-                HStack(spacing: 6) {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Text(dua.title)
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(theme.accent)
                         .lineLimit(1)
+                        .minimumScaleFactor(0.85)
                     Spacer(minLength: 4)
                     if let status = dua.status {
                         Text(status)
                             .font(.system(size: 9, weight: .medium))
+                            .lineLimit(1)
+                            .fixedSize()
                             .padding(.horizontal, 6).padding(.vertical, 2)
                             .background(theme.accent.opacity(0.18), in: Capsule())
                             .foregroundStyle(theme.accent)
@@ -54,6 +57,7 @@ private struct DailyDuaView: View {
                     .font(.system(size: 11))
                     .foregroundStyle(theme.secondaryText)
                     .lineLimit(2)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 Spacer(minLength: 0)
                 HStack(spacing: 5) {
                     Image(systemName: "book.closed").font(.system(size: 9))
@@ -64,6 +68,8 @@ private struct DailyDuaView: View {
                 }
                 .foregroundStyle(theme.secondaryText)
             }
+            .padding(14)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .accessibilityElement(children: .combine)
             .accessibilityLabel("Du'a of the day: \(dua.title). \(dua.en). Source \(dua.source).")
         } else {

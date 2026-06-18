@@ -89,5 +89,5 @@ struct DuaStamp: Codable, Hashable, Sendable {
     let latin: String
     let en: String
     let source: String
-    let status: String?      // authenticity badge (e.g. "Verified") when present
+    let status: String?      // authenticity badge (e.g. "Sourced") when present
 }
