@@ -58,7 +58,7 @@ typealias ThemeColors = DuhaaThemePalette
 
 /// The selectable themes (Classic is default; Light Pink is a free preview).
 enum AppTheme: String, CaseIterable, Identifiable {
-    case dark, sisters, light, lightPink
+    case dark, sisters, ocean, saudi, light, lightPink
 
     var id: String { rawValue }
 
@@ -68,6 +68,8 @@ enum AppTheme: String, CaseIterable, Identifiable {
         case .lightPink: return "Light Pink"
         case .light:     return "Sky"
         case .sisters:   return "Rose"   // theme kept; the Sisters section is parked
+        case .ocean:     return "Ocean"
+        case .saudi:     return "Saudi"
         }
     }
 
@@ -81,6 +83,10 @@ enum AppTheme: String, CaseIterable, Identifiable {
             return "Pale blue · Islamic navy"
         case .sisters:
             return "Rose night palette"
+        case .ocean:
+            return "Ocean night palette"
+        case .saudi:
+            return "Emerald green · royal gold"
         }
     }
 
@@ -192,6 +198,66 @@ enum AppTheme: String, CaseIterable, Identifiable {
                 warning: Color(hex: 0xF3C76E),
                 destructive: Color(hex: 0xFF7A93),
                 secondaryAccent: Color(hex: 0xCBA6E8),
+                prayerTime: Color.white.opacity(0.85),
+                colorScheme: .dark,
+                isDark: true,
+                showsFloatingHearts: false)
+
+        case .ocean: // all-blue celestial — the Rose palette, in blue
+            return ThemeColors(
+                id: self,
+                hexes: ThemeColorHexes(
+                    background: 0x0A1E3A, secondaryBackground: 0x05101F,
+                    cardBackground: 0xFFFFFF, elevatedCardBackground: 0xFFFFFF,
+                    accent: 0x5BB4F0, onAccent: 0x10182A, softAccent: 0x9CD2F2,
+                    primaryText: 0xFFFFFF, secondaryText: 0x9CD2F2,
+                    border: 0xFFFFFF, glow: 0x5BB4F0,
+                    success: 0x8BD39F, warning: 0xF3C76E, destructive: 0xFF7A93),
+                background: Color(hex: 0x0A1E3A),
+                secondaryBackground: Color(hex: 0x05101F),
+                cardBackground: Color.white.opacity(0.07),
+                elevatedCardBackground: Color.white.opacity(0.10),
+                primaryText: .white,
+                secondaryText: Color(hex: 0x9CD2F2),
+                accent: Color(hex: 0x5BB4F0),
+                onAccent: Color(hex: 0x10182A),
+                softAccent: Color(hex: 0x9CD2F2),
+                border: Color.white.opacity(0.14),
+                glow: Color(hex: 0x5BB4F0),
+                success: Color(hex: 0x8BD39F),
+                warning: Color(hex: 0xF3C76E),
+                destructive: Color(hex: 0xFF7A93),
+                secondaryAccent: Color(hex: 0x9CD2F2),
+                prayerTime: Color.white.opacity(0.85),
+                colorScheme: .dark,
+                isDark: true,
+                showsFloatingHearts: false)
+
+        case .saudi: // deep emerald night + royal gold — premium, Saudi green & gold
+            return ThemeColors(
+                id: self,
+                hexes: ThemeColorHexes(
+                    background: 0x06301F, secondaryBackground: 0x021A11,
+                    cardBackground: 0xFFFFFF, elevatedCardBackground: 0xFFFFFF,
+                    accent: 0xE8C36B, onAccent: 0x0A2014, softAccent: 0x9FD8B8,
+                    primaryText: 0xFFFFFF, secondaryText: 0x9FD8B8,
+                    border: 0xFFFFFF, glow: 0xE8C36B,
+                    success: 0x8BD39F, warning: 0xF3C76E, destructive: 0xFF7A93),
+                background: Color(hex: 0x06301F),
+                secondaryBackground: Color(hex: 0x021A11),
+                cardBackground: Color.white.opacity(0.07),
+                elevatedCardBackground: Color.white.opacity(0.10),
+                primaryText: .white,
+                secondaryText: Color(hex: 0x9FD8B8),
+                accent: Color(hex: 0xE8C36B),
+                onAccent: Color(hex: 0x0A2014),
+                softAccent: Color(hex: 0x9FD8B8),
+                border: Color.white.opacity(0.13),
+                glow: Color(hex: 0xE8C36B),
+                success: Color(hex: 0x8BD39F),
+                warning: Color(hex: 0xF3C76E),
+                destructive: Color(hex: 0xFF7A93),
+                secondaryAccent: Color(hex: 0x9FD8B8),
                 prayerTime: Color.white.opacity(0.85),
                 colorScheme: .dark,
                 isDark: true,

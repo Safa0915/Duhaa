@@ -166,25 +166,21 @@ struct NextPrayerBanner: View {
     let nextLabel: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                HStack(spacing: 7) {
-                    Circle()
-                        .fill(Palette.gold)
-                        .frame(width: 7, height: 7)
-                        .shadow(color: Palette.gold.opacity(0.8), radius: 4)
-                    Text(eyebrow)
-                        .duhaaFont(12, .medium)
-                        .tracking(0.8)
-                        .foregroundStyle(Palette.gold.opacity(0.8))
-                }
-                Spacer()
-                headline
-                    .duhaaFont(18, .semibold)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 7) {
+                Circle()
+                    .fill(Palette.gold)
+                    .frame(width: 7, height: 7)
+                    .shadow(color: Palette.gold.opacity(0.8), radius: 4)
+                Text(eyebrow)
+                    .duhaaFont(12, .medium)
+                    .tracking(0.8)
+                    .foregroundStyle(Palette.gold.opacity(0.8))
                     .lineLimit(1)
-                    .minimumScaleFactor(0.68)
-                    .multilineTextAlignment(.trailing)
+                    .minimumScaleFactor(0.82)
             }
+
+            headlineView
 
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
@@ -215,6 +211,7 @@ struct NextPrayerBanner: View {
         .overlay(RoundedRectangle(cornerRadius: 18).stroke(Palette.gold.opacity(0.4), lineWidth: 1))
         .clipShape(RoundedRectangle(cornerRadius: 18))
         .shadow(color: Palette.gold.opacity(0.15), radius: 12)
+        .accessibilityElement(children: .combine)
     }
 
     private var eyebrow: String {
@@ -232,6 +229,33 @@ struct NextPrayerBanner: View {
         case .timeRemaining:
             return Text(timeRemainingCountdown).foregroundStyle(Palette.gold)
                 + Text(" until \(timeRemainingTarget)").foregroundStyle(.primary)
+        }
+    }
+
+    @ViewBuilder
+    private var headlineView: some View {
+        switch displayMode {
+        case .nextPrayer:
+            headline
+                .duhaaFont(18, .semibold)
+                .lineLimit(2)
+                .minimumScaleFactor(0.82)
+                .fixedSize(horizontal: false, vertical: true)
+        case .timeRemaining:
+            VStack(alignment: .leading, spacing: 2) {
+                Text(timeRemainingCountdown)
+                    .duhaaFont(21, .bold)
+                    .foregroundStyle(Palette.gold)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.82)
+
+                Text("until \(timeRemainingTarget)")
+                    .duhaaFont(16, .semibold)
+                    .foregroundStyle(.primary)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.86)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
     }
 
@@ -261,8 +285,12 @@ struct NextPrayerBanner: View {
 
 struct PrayersCard: View {
     let rows: [PrayerRowData]
+    /// The user's masjid name, shown in a small footer when jamāʿah times are set.
+    var masjidName: String = ""
     /// Fires when a prayer is tapped to mark/unmark; Bool = now prayed.
     let onMark: (Prayer, Bool) -> Void
+
+    private var hasIqama: Bool { rows.contains { $0.iqama != nil } }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -279,6 +307,19 @@ struct PrayersCard: View {
                 }
             }
             .duhaaCardStyle(cornerRadius: 20)
+
+            if hasIqama {
+                HStack(spacing: 5) {
+                    Image(systemName: "building.columns.fill")
+                        .duhaaFont(9)
+                    Text(masjidName.isEmpty
+                         ? "Jamāʿah times from your local masjid"
+                         : "Jamāʿah times · \(masjidName)")
+                }
+                .duhaaFont(10.5)
+                .foregroundStyle(Palette.blue.opacity(0.55))
+                .padding(.horizontal, 6)
+            }
         }
     }
 }
@@ -326,14 +367,22 @@ private struct PrayerRowView: View {
 
                 Spacer()
 
-                Text(row.time)
-                    .duhaaFont(isNext ? 16 : 15, isNext ? .semibold : .medium)
-                    .foregroundStyle(isNext ? Palette.gold : Palette.prayerTime)
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text(row.time)
+                        .duhaaFont(isNext ? 16 : 15, isNext ? .semibold : .medium)
+                        .foregroundStyle(isNext ? Palette.gold : Palette.prayerTime)
+                    if let iqama = row.iqama {
+                        Text("\(row.iqamaIsJumuah ? "Jumuʿah" : "Jamāʿah") \(iqama)")
+                            .duhaaFont(10.5, .medium)
+                            .foregroundStyle(Palette.blue.opacity(0.6))
+                    }
+                }
             }
             .opacity(contentOpacity)
             .accessibilityElement(children: .combine)
             .accessibilityLabel("\(row.prayer.rawValue), \(row.time)"
                                 + (row.sub.map { ", \($0)" } ?? "")
+                                + (row.iqama.map { ", \(row.iqamaIsJumuah ? "Jumuʿah" : "jamāʿah") \($0)" } ?? "")
                                 + (isPrayed ? ", prayed" : ""))
 
             markButton

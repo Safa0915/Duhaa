@@ -9,10 +9,23 @@ struct Reciter: Decodable, Identifiable, Hashable, Sendable {
     let audioKind: AudioKind
     let prefix: String?
     let chapterPrefix: String?
+    /// Profile photo (Quran.com CDN). Optional — the gallery falls back to a
+    /// themed monogram when absent or if the image fails to load.
+    let imageURL: URL?
 
     enum AudioKind: String, Decodable, Sendable {
         case ayah
         case chapter
+    }
+
+    /// Two-letter monogram for the avatar fallback (first + last name word,
+    /// parentheticals like "(Murattal)" stripped).
+    var initials: String {
+        let cleaned = name.replacingOccurrences(of: #"\s*\(.*?\)"#, with: "", options: .regularExpression)
+        let words = cleaned.split { $0 == " " || $0 == "-" }.map(String.init).filter { !$0.isEmpty }
+        guard let first = words.first?.first else { return "?" }
+        if words.count > 1, let last = words.last?.first { return String([first, last]).uppercased() }
+        return String(first).uppercased()
     }
 
     var supportsAyahAudio: Bool {
@@ -31,11 +44,12 @@ struct Reciter: Decodable, Identifiable, Hashable, Sendable {
 
     func chapterURL(surah: Int) -> URL? {
         guard supportsChapterAudio, let chapterPrefix else { return nil }
-        return URL(string: "\(chapterPrefix)\(surah).mp3")
+        // QuranicAudio chapter files are zero-padded to 3 digits, e.g. 008.mp3.
+        return URL(string: "\(chapterPrefix)\(String(format: "%03d", surah)).mp3")
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, name, audioKind, prefix, chapterPrefix
+        case id, name, audioKind, prefix, chapterPrefix, imageURL
     }
 
     init(from decoder: Decoder) throws {
@@ -44,6 +58,7 @@ struct Reciter: Decodable, Identifiable, Hashable, Sendable {
         name = try container.decode(String.self, forKey: .name)
         prefix = try container.decodeIfPresent(String.self, forKey: .prefix)
         chapterPrefix = try container.decodeIfPresent(String.self, forKey: .chapterPrefix)
+        imageURL = try container.decodeIfPresent(URL.self, forKey: .imageURL)
         audioKind = try container.decodeIfPresent(AudioKind.self, forKey: .audioKind)
             ?? (chapterPrefix == nil ? .ayah : .chapter)
     }

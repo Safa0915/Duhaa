@@ -484,23 +484,48 @@ struct QuranPreferencesView: View {
     @AppStorage("duhaa.quran.showTranslation") private var showTranslation = true
     @AppStorage("duhaa.quran.tajweedColoring") private var tajweedColoring = false
     @AppStorage("duhaa.quran.audioCacheBudgetMB") private var audioCacheBudgetMB = 0
+    @Environment(QuranOfflineLibrary.self) private var offline
+    @State private var showingReciterPicker = false
+    @State private var offlineBytes: Int64 = 0
 
     var body: some View {
         Form {
             Section {
-                Picker("Reciter", selection: $reciterID) {
-                    ForEach(Reciters.all) { reciter in
-                        Text(reciter.name).tag(reciter.id)
+                Button { showingReciterPicker = true } label: {
+                    HStack(spacing: 12) {
+                        if let reciter = Reciters.byID(reciterID) {
+                            ReciterAvatar(reciter: reciter, size: 32)
+                        }
+                        Text("Reciter").foregroundStyle(.primary)
+                        Spacer()
+                        Text(Reciters.byID(reciterID)?.name ?? "Choose")
+                            .foregroundStyle(Palette.blue)
+                            .lineLimit(1)
+                        Image(systemName: "chevron.right")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.secondary)
                     }
                 }
-                .pickerStyle(.navigationLink)
+                .sheet(isPresented: $showingReciterPicker) {
+                    ReciterPickerView(selection: $reciterID)
+                }
 
-                Stepper(value: $arabicSize, in: 22...40, step: 2) {
+                VStack(spacing: 6) {
                     HStack {
                         Text("Arabic size")
                         Spacer()
                         Text("\(Int(arabicSize)) pt")
                             .foregroundStyle(Palette.blue)
+                    }
+                    HStack(spacing: 12) {
+                        Image(systemName: "textformat.size.smaller")
+                            .foregroundStyle(.secondary)
+                        Slider(value: $arabicSize, in: 22...40, step: 2)
+                            .tint(Palette.gold)
+                            .accessibilityLabel("Arabic size")
+                            .accessibilityValue("\(Int(arabicSize)) points")
+                        Image(systemName: "textformat.size.larger")
+                            .foregroundStyle(.secondary)
                     }
                 }
 
@@ -547,7 +572,32 @@ struct QuranPreferencesView: View {
             } footer: {
                 Text("When enabled, played Quran audio is cached locally up to this budget. Off clears the cache.")
             }
+
+            Section {
+                HStack {
+                    Text("Downloaded recitations")
+                    Spacer()
+                    Text(offlineBytes > 0
+                         ? ByteCountFormatter.string(fromByteCount: offlineBytes, countStyle: .file)
+                         : "None")
+                        .foregroundStyle(Palette.blue)
+                }
+                if offlineBytes > 0 {
+                    Button(role: .destructive) {
+                        offline.clearAll()
+                        offlineBytes = 0
+                        DuhaaHaptics.tick()
+                    } label: {
+                        Text("Remove all downloads")
+                    }
+                }
+            } header: {
+                Text("Offline")
+            } footer: {
+                Text("Download a surah from the Listen player (the headphones button) to keep it for offline playback. Downloads stay until you remove them.")
+            }
         }
+        .onAppear { offlineBytes = offline.totalBytes() }
         .settingsDetailStyle(title: "Quran")
     }
 }

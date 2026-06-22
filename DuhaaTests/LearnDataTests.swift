@@ -200,41 +200,11 @@ final class LearnDataTests: XCTestCase {
         }
     }
 
-    // MARK: - Madhhab preference framework
-
-    func testNotSureMeansSharedBasicsAndNeverPicksASchool() {
-        let pref = MadhhabPreference.notSure
-        XCTAssertTrue(pref.usesSharedBasics)
-        XCTAssertNil(pref.specificSchool, "not_sure must never resolve to a specific madhhab")
-    }
-
-    func testLocalImamAlsoDefersRatherThanFixingASchool() {
-        XCTAssertTrue(MadhhabPreference.localImamOrTeacher.usesSharedBasics)
-        XCTAssertNil(MadhhabPreference.localImamOrTeacher.specificSchool)
-    }
-
-    func testSpecificMadhhabResolvesToItself() {
-        for pref in [MadhhabPreference.hanafi, .maliki, .shafii, .hanbali] {
-            XCTAssertFalse(pref.usesSharedBasics)
-            XCTAssertEqual(pref.specificSchool, pref)
-        }
-    }
-
-    func testMadhhabSettingsDefaultsToNotSureAndPersists() {
-        let suite = UserDefaults(suiteName: "test.learn.madhhab.\(UUID().uuidString)")!
-        let settings = MadhhabSettings(defaults: suite)
-        XCTAssertEqual(settings.preference, .notSure)
-        XCTAssertTrue(settings.isSharedBasicsMode)
-
-        settings.preference = .shafii
-        let reloaded = MadhhabSettings(defaults: suite)
-        XCTAssertEqual(reloaded.preference, .shafii)
-        XCTAssertFalse(reloaded.isSharedBasicsMode)
-    }
-
-    func testNoteIsShownForSensitiveStepsRegardlessOfSchool() {
-        XCTAssertTrue(MadhhabGuidance.shouldShowNote(for: .scholarDifference, preference: .notSure))
-        XCTAssertTrue(MadhhabGuidance.shouldShowNote(for: .madhhabSensitive, preference: .hanafi))
-        XCTAssertFalse(MadhhabGuidance.shouldShowNote(for: .sharedBasic, preference: .notSure))
-    }
+    // NOTE: The user-facing madhhab-preference picker (MadhhabPreference /
+    // MadhhabSettings, and MadhhabGuidance.shouldShowNote) was removed in commit
+    // b614ca2 "Publish Duhaa updates" — the app now keeps only neutral guidance
+    // text on MadhhabGuidance and never asks the user to declare a school. The
+    // five tests that exercised that removed API were left behind by that commit
+    // and broke the test target's compile; they're removed here. Neutral
+    // MadhhabSensitivity chip wording is still covered in LearnUITests.
 }

@@ -122,6 +122,19 @@ final class LocationProvider: NSObject, CLLocationManagerDelegate {
                                  timeZoneID: city.timeZoneID, isManual: true))
     }
 
+    /// Apply a city picked from the offline country→city list (no network needed).
+    func choose(city: WorldCity, country: String) {
+        errorMessage = nil
+        setActive(ActiveLocation(name: "\(city.n), \(country)",
+                                 latitude: city.lat, longitude: city.lon,
+                                 timeZoneID: city.tz, isManual: true))
+    }
+
+    /// True when `city` is the one currently driving prayer times (for a checkmark).
+    func isActive(_ city: WorldCity) -> Bool {
+        active.isManual && active.latitude == city.lat && active.longitude == city.lon
+    }
+
     // MARK: CLLocationManagerDelegate
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {

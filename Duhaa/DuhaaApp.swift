@@ -10,10 +10,14 @@ struct DuhaaApp: App {
     @State private var tracker = PrayerTracker()
     @State private var theme = ThemeStore()
     @State private var quranBookmarks = QuranBookmarks()
+    @State private var quranOffline = QuranOfflineLibrary()
+    @State private var quranAudioPlayer = AyahPlayer()
     @State private var tabSettings = TabSettings()
     @State private var fastingTracker = FastingTracker()
     @State private var insightsStore = InsightsStore()
     @State private var subscriptions = SubscriptionStore()
+    @State private var salahLock = SalahLockController()
+    @State private var feedback = FeedbackStore()
     @State private var didRunInitialNotificationSchedule = false
     @State private var lastAppNotificationReschedule: Date?
     @State private var showingNotificationOptIn = false
@@ -40,10 +44,14 @@ struct DuhaaApp: App {
             .environment(tracker)
             .environment(theme)
             .environment(quranBookmarks)
+            .environment(quranOffline)
+            .environment(quranAudioPlayer)
             .environment(tabSettings)
             .environment(fastingTracker)
             .environment(insightsStore)
             .environment(subscriptions)
+            .environment(salahLock)
+            .environment(feedback)
             .id(theme.theme) // rebuild the tree so the new palette takes effect everywhere
             // Drive the app-wide accent from the LIVE theme. Without this, any
             // control that falls back to the default accent uses the static gold
@@ -63,6 +71,9 @@ struct DuhaaApp: App {
                 updateWidgetSnapshot()
                 didRunInitialNotificationSchedule = true
                 await presentNotificationOptInIfNeeded()
+                if !showingNotificationOptIn {
+                    feedback.recordAppOpen()
+                }
             }
             .onChange(of: scenePhase) { _, phase in
                 guard phase == .active && hasOnboarded && didRunInitialNotificationSchedule else { return }
@@ -72,6 +83,7 @@ struct DuhaaApp: App {
                 // we were away, then refresh the widget's own times snapshot.
                 tracker.reloadFromStore()
                 updateWidgetSnapshot()
+                feedback.recordAppOpen()
             }
             // Keep the widget's times + theme in step with the live app state.
             .onChange(of: location.active) { _, _ in updateWidgetSnapshot() }
@@ -89,6 +101,7 @@ struct DuhaaApp: App {
                 )
                 .presentationDetents([.medium])
             }
+            .feedbackPresentation(feedback)
         }
     }
 
@@ -100,6 +113,9 @@ struct DuhaaApp: App {
                                     config: settings.prayerConfig,
                                     themeID: theme.theme.rawValue,
                                     hijriOffsetDays: settings.hijriOffsetDays)
+        // Salah Lock reads the same shared times payload — re-arm its windows
+        // whenever times change so each prayer's lock fires at the right moment.
+        salahLock.refreshSchedule()
     }
 
     private func rescheduleNotifications(force: Bool = false) {

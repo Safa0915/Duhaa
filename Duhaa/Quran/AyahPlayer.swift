@@ -24,6 +24,22 @@ enum QuranAudioRequest: Equatable {
             return "\(surah):chapter"
         }
     }
+
+    var surahNumber: Int {
+        switch self {
+        case .ayah(let surah, _), .chapter(let surah):
+            return surah
+        }
+    }
+
+    var ayahNumber: Int? {
+        switch self {
+        case .ayah(_, let ayah):
+            return ayah
+        case .chapter:
+            return nil
+        }
+    }
 }
 
 enum QuranAudioError: Error, Equatable, LocalizedError {
@@ -55,6 +71,10 @@ protocol QuranAudioPlaying: AnyObject {
     var onFailed: ((Error) -> Void)? { get set }
     var onEnded: (() -> Void)? { get set }
     var onFirstPlayback: (() -> Void)? { get set }
+    /// Fractional progress (0...1) through the current item, for the player scrubber.
+    var onProgress: ((Double) -> Void)? { get set }
+    /// Current playback time and item duration, in seconds.
+    var onTimingUpdate: ((TimeInterval, TimeInterval) -> Void)? { get set }
 
     func prepare(url: URL) async throws
     func play()
@@ -109,6 +129,11 @@ struct LiveQuranAudioURLResolver: QuranAudioURLResolving {
 
         guard let remoteURL else { throw QuranAudioError.missingURL }
 
+        // Offline-first: a permanently-downloaded ayah plays with no network.
+        if let offlineURL = QuranOfflineStore.localURLIfDownloaded(for: remoteURL) {
+            return offlineURL
+        }
+
         let cacheToken = FirstUseDiagnostics.begin("Quran cache lookup", remoteURL.absoluteString)
         let playableURL = await QuranAudioCache.playableURL(for: remoteURL)
         FirstUseDiagnostics.end("Quran cache lookup", token: cacheToken)
@@ -122,11 +147,14 @@ final class AVQuranAudioPlayer: NSObject, QuranAudioPlaying {
     var onFailed: ((Error) -> Void)?
     var onEnded: (() -> Void)?
     var onFirstPlayback: (() -> Void)?
+    var onProgress: ((Double) -> Void)?
+    var onTimingUpdate: ((TimeInterval, TimeInterval) -> Void)?
 
     private var player: AVPlayer?
     private var endObserver: NSObjectProtocol?
     private var statusObservation: NSKeyValueObservation?
     private var timeControlObservation: NSKeyValueObservation?
+    private var timeObserverToken: Any?
 
     func prepare(url: URL) async throws {
         cleanupObservers()
@@ -177,6 +205,25 @@ final class AVQuranAudioPlayer: NSObject, QuranAudioPlaying {
                 self?.onFirstPlayback?()
             }
         }
+
+        addPeriodicTimeObserverIfNeeded()
+    }
+
+    private func addPeriodicTimeObserverIfNeeded() {
+        guard timeObserverToken == nil, let player else { return }
+        // 0.1s keeps word-by-word highlighting in step with the recitation.
+        let interval = CMTime(seconds: 0.1, preferredTimescale: 600)
+        timeObserverToken = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
+            // The observer fires on the main queue, so we're already main-actor.
+            MainActor.assumeIsolated {
+                guard let self, let item = self.player?.currentItem else { return }
+                let duration = item.duration.seconds
+                guard duration.isFinite, duration > 0 else { return }
+                let elapsed = max(0, min(time.seconds, duration))
+                self.onProgress?(max(0, min(1, elapsed / duration)))
+                self.onTimingUpdate?(elapsed, duration)
+            }
+        }
     }
 
     func play() {
@@ -203,6 +250,10 @@ final class AVQuranAudioPlayer: NSObject, QuranAudioPlaying {
         statusObservation = nil
         timeControlObservation?.invalidate()
         timeControlObservation = nil
+        if let timeObserverToken {
+            player?.removeTimeObserver(timeObserverToken)
+            self.timeObserverToken = nil
+        }
     }
 }
 
@@ -216,21 +267,32 @@ final class AyahPlayer {
     private(set) var playingKey: String?
     private(set) var playbackState: QuranAudioPlaybackState = .idle
     private(set) var failureMessage: String?
+    /// Fractional progress (0...1) through the currently-playing ayah.
+    private(set) var progress: Double = 0
+    /// Current playback time and duration in seconds, when the audio item exposes them.
+    private(set) var elapsedSeconds: TimeInterval = 0
+    private(set) var durationSeconds: TimeInterval = 0
+    /// The active surah for the current audio request. This can advance beyond
+    /// the reader screen when autoplay crosses into the next surah.
+    private(set) var currentSurah: Surah?
+    private(set) var currentRequest: QuranAudioRequest?
 
     @ObservationIgnored private let audioSession: QuranAudioSessionManaging
     @ObservationIgnored private let urlResolver: QuranAudioURLResolving
     @ObservationIgnored private let audioPlayer: QuranAudioPlaying
-    @ObservationIgnored private var surah: Surah?
+    @ObservationIgnored private let quran: QuranData
     @ObservationIgnored private var playbackTask: Task<Void, Never>?
     @ObservationIgnored private var generation = 0
 
     init(audioSession: QuranAudioSessionManaging = LiveQuranAudioSessionManager(),
          urlResolver: QuranAudioURLResolving = LiveQuranAudioURLResolver(),
-         audioPlayer: QuranAudioPlaying? = nil) {
+         audioPlayer: QuranAudioPlaying? = nil,
+         quran: QuranData = Quran.shared) {
         FirstUseDiagnostics.event("Quran audio controller init start")
         self.audioSession = audioSession
         self.urlResolver = urlResolver
         self.audioPlayer = audioPlayer ?? AVQuranAudioPlayer()
+        self.quran = quran
         wirePlayerCallbacks()
         FirstUseDiagnostics.event("Quran audio controller init end")
     }
@@ -256,8 +318,12 @@ final class AyahPlayer {
     var isBuffering: Bool { isLoading }
 
     var playingAyahNumber: Int? {
-        guard let playingKey else { return nil }
-        return Int(playingKey.split(separator: ":").last ?? "")
+        currentRequest?.ayahNumber
+    }
+
+    var remainingSeconds: TimeInterval? {
+        guard durationSeconds.isFinite, durationSeconds > 0 else { return nil }
+        return max(0, durationSeconds - elapsedSeconds)
     }
 
     func isPlayingChapter(_ surahNumber: Int) -> Bool {
@@ -275,13 +341,12 @@ final class AyahPlayer {
 
     /// Play (or restart) the surah from a given ayah.
     func play(in surah: Surah, from ayahNumber: Int) {
-        self.surah = surah
-        beginPlayback(.ayah(surah: surah.number, ayah: ayahNumber))
+        let clampedAyah = min(max(ayahNumber, 1), surah.ayahs.count)
+        beginPlayback(.ayah(surah: surah.number, ayah: clampedAyah), in: surah)
     }
 
     func playChapter(in surah: Surah) {
-        self.surah = nil
-        beginPlayback(.chapter(surah: surah.number))
+        beginPlayback(.chapter(surah: surah.number), in: surah)
     }
 
     func pause() {
@@ -290,14 +355,74 @@ final class AyahPlayer {
         playbackState = .paused
     }
 
+    /// Resume a paused ayah (no-op unless paused on an active ayah).
+    func resume() {
+        guard isActive, playbackState == .paused else { return }
+        audioPlayer.play()
+        playbackState = .playing
+    }
+
+    /// One button for the immersive player: pause when playing, resume when
+    /// paused, or (re)start the surah when idle/failed.
+    func togglePlayPause() {
+        switch playbackState {
+        case .playing, .ready, .loading, .buffering:
+            pause()
+        case .paused:
+            resume()
+        case .idle, .failed:
+            restartCurrentRequest()
+        }
+    }
+
+    var canPlayPreviousAyah: Bool {
+        guard let currentSurah, let ayah = playingAyahNumber else { return false }
+        return ayah > 1 || previousSurah(before: currentSurah.number) != nil
+    }
+
+    var canPlayNextAyah: Bool {
+        guard let currentSurah, let ayah = playingAyahNumber else { return false }
+        return ayah < currentSurah.ayahs.count || nextSurah(after: currentSurah.number) != nil
+    }
+
+    @discardableResult
+    func playPreviousAyah() -> Bool {
+        guard let currentSurah, let ayah = playingAyahNumber else { return false }
+        if ayah > 1 {
+            play(in: currentSurah, from: ayah - 1)
+            return true
+        }
+        guard let previous = previousSurah(before: currentSurah.number),
+              let lastAyah = previous.ayahs.last?.number else { return false }
+        play(in: previous, from: lastAyah)
+        return true
+    }
+
+    @discardableResult
+    func playNextAyah() -> Bool {
+        guard let currentSurah, let ayah = playingAyahNumber else { return false }
+        if ayah < currentSurah.ayahs.count {
+            play(in: currentSurah, from: ayah + 1)
+            return true
+        }
+        guard let next = nextSurah(after: currentSurah.number) else { return false }
+        play(in: next, from: 1)
+        return true
+    }
+
     func stop() {
         generation += 1
         playbackTask?.cancel()
         playbackTask = nil
         audioPlayer.stop()
         playingKey = nil
+        currentRequest = nil
+        currentSurah = nil
         playbackState = .idle
         failureMessage = nil
+        progress = 0
+        elapsedSeconds = 0
+        durationSeconds = 0
         Task { [audioSession] in
             await audioSession.deactivate()
         }
@@ -305,13 +430,18 @@ final class AyahPlayer {
 
     // MARK: Internals
 
-    private func beginPlayback(_ request: QuranAudioRequest) {
+    private func beginPlayback(_ request: QuranAudioRequest, in surah: Surah? = nil) {
         generation += 1
         let currentGeneration = generation
         playbackTask?.cancel()
         failureMessage = nil
         playingKey = request.key
+        currentRequest = request
+        currentSurah = surah ?? currentSurah(for: request.surahNumber)
         playbackState = .loading
+        progress = 0
+        elapsedSeconds = 0
+        durationSeconds = 0
         FirstUseDiagnostics.event("Quran play button tapped", request.key)
         FirstUseDiagnostics.event("Quran loading UI shown", request.key)
 
@@ -360,20 +490,80 @@ final class AyahPlayer {
         audioPlayer.onEnded = { [weak self] in
             self?.advanceOrStop()
         }
+        audioPlayer.onProgress = { [weak self] value in
+            guard let self, self.isActive else { return }
+            self.progress = value
+        }
+        audioPlayer.onTimingUpdate = { [weak self] elapsed, duration in
+            guard let self, self.isActive else { return }
+            self.elapsedSeconds = max(0, elapsed)
+            self.durationSeconds = max(0, duration)
+        }
     }
 
     private func advanceOrStop() {
-        guard let surah,
-              let playingKey,
-              let ayah = Int(playingKey.split(separator: ":").last ?? "") else {
+        guard let request = currentRequest else {
             stop()
             return
         }
-        let next = ayah + 1
-        if next <= surah.ayahs.count {
-            beginPlayback(.ayah(surah: surah.number, ayah: next))
+
+        switch request {
+        case .ayah:
+            guard let currentSurah, let ayah = request.ayahNumber else {
+                stop()
+                return
+            }
+
+            let nextAyah = ayah + 1
+            if nextAyah <= currentSurah.ayahs.count {
+                beginPlayback(.ayah(surah: currentSurah.number, ayah: nextAyah), in: currentSurah)
+            } else if let nextSurah = nextSurah(after: currentSurah.number) {
+                beginPlayback(.ayah(surah: nextSurah.number, ayah: 1), in: nextSurah)
+            } else {
+                stop()
+            }
+        case .chapter(let surahNumber):
+            if let nextSurah = nextSurah(after: surahNumber) {
+                beginPlayback(.chapter(surah: nextSurah.number), in: nextSurah)
+            } else {
+                stop()
+            }
+        }
+    }
+
+    private func currentSurah(for number: Int) -> Surah? {
+        if currentSurah?.number == number {
+            return currentSurah
+        }
+        return quran.surah(number)
+    }
+
+    private func nextSurah(after number: Int) -> Surah? {
+        if let index = quran.surahs.firstIndex(where: { $0.number == number }),
+           quran.surahs.indices.contains(index + 1) {
+            return quran.surahs[index + 1]
+        }
+        return quran.surah(number + 1)
+    }
+
+    private func previousSurah(before number: Int) -> Surah? {
+        if let index = quran.surahs.firstIndex(where: { $0.number == number }),
+           quran.surahs.indices.contains(index - 1) {
+            return quran.surahs[index - 1]
         } else {
-            stop()
+            return quran.surah(number - 1)
+        }
+    }
+
+    private func restartCurrentRequest() {
+        guard let currentSurah else { return }
+        switch currentRequest {
+        case .ayah(_, let ayah):
+            play(in: currentSurah, from: ayah)
+        case .chapter:
+            playChapter(in: currentSurah)
+        case nil:
+            play(in: currentSurah, from: 1)
         }
     }
 
@@ -383,6 +573,9 @@ final class AyahPlayer {
         playbackTask = nil
         audioPlayer.stop()
         playingKey = nil
+        progress = 0
+        elapsedSeconds = 0
+        durationSeconds = 0
         let message = (error as? LocalizedError)?.errorDescription ?? "Couldn’t start this recitation."
         failureMessage = message
         playbackState = .failed(message)

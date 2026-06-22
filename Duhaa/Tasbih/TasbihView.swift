@@ -68,6 +68,7 @@ struct TasbihView: View {
                 dial
                 footer
                 Spacer()
+                fingerNote
             }
         }
         .preferredColorScheme(Palette.active.colorScheme)
@@ -292,6 +293,23 @@ struct TasbihView: View {
             .padding(.top, 4)
             .accessibilityLabel("Reset tasbih counter")
         }
+    }
+
+    /// A quiet, sourced reminder that the Sunnah is to count dhikr on the fingers.
+    private var fingerNote: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "hand.point.up.left")
+                .duhaaFont(11)
+            Text("Sunnah to count on your fingers · Abū Dāwūd 1502")
+                .duhaaFont(11)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .foregroundStyle(Palette.blue.opacity(0.5))
+        .padding(.horizontal, 28)
+        .padding(.bottom, 14)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("It is Sunnah to count dhikr on your fingers. Source: Abu Dawud, hadith 1502.")
     }
 
     // MARK: Actions

@@ -29,9 +29,48 @@ final class ThemeStoreTests: XCTestCase {
         XCTAssertEqual(AppTheme.allCases.map(\.displayName), [
             "Classic Duhaa",
             "Rose",
+            "Ocean",
+            "Saudi",
             "Sky",
             "Light Pink"
         ])
+    }
+
+    func testSaudiPaletteUsesEmeraldAndGold() {
+        let palette = AppTheme.saudi.colors
+
+        XCTAssertEqual(palette.id, .saudi)
+        XCTAssertEqual(AppTheme.saudi.displayName, "Saudi")
+        XCTAssertEqual(AppTheme.saudi.previewSubtitle, "Emerald green · royal gold")
+        XCTAssertEqual(palette.hexes.background, 0x06301F)
+        XCTAssertEqual(palette.hexes.secondaryBackground, 0x021A11)
+        XCTAssertEqual(palette.hexes.accent, 0xE8C36B)
+        XCTAssertEqual(palette.hexes.onAccent, 0x0A2014)
+        XCTAssertEqual(palette.hexes.softAccent, 0x9FD8B8)
+        XCTAssertEqual(palette.hexes.secondaryText, 0x9FD8B8)
+        XCTAssertEqual(palette.hexes.glow, 0xE8C36B)
+        XCTAssertTrue(palette.isDark)
+        XCTAssertFalse(palette.showsFloatingHearts)
+        XCTAssertFalse(AppTheme.saudi.isPremiumPreview)
+        XCTAssertNil(AppTheme.saudi.previewBadge)
+    }
+
+    func testOceanPaletteMirrorsRoseInBlue() {
+        let palette = AppTheme.ocean.colors
+
+        XCTAssertEqual(palette.id, .ocean)
+        XCTAssertEqual(AppTheme.ocean.displayName, "Ocean")
+        XCTAssertEqual(AppTheme.ocean.previewSubtitle, "Ocean night palette")
+        XCTAssertEqual(palette.hexes.background, 0x0A1E3A)
+        XCTAssertEqual(palette.hexes.secondaryBackground, 0x05101F)
+        XCTAssertEqual(palette.hexes.accent, 0x5BB4F0)
+        XCTAssertEqual(palette.hexes.softAccent, 0x9CD2F2)
+        XCTAssertEqual(palette.hexes.secondaryText, 0x9CD2F2)
+        XCTAssertEqual(palette.hexes.glow, 0x5BB4F0)
+        XCTAssertTrue(palette.isDark)
+        XCTAssertFalse(palette.showsFloatingHearts)
+        XCTAssertFalse(AppTheme.ocean.isPremiumPreview)
+        XCTAssertNil(AppTheme.ocean.previewBadge)
     }
 
     func testLightPinkCanBeSelectedAndPersists() {

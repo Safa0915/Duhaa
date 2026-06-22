@@ -65,6 +65,25 @@ struct LocationPickerView: View {
                 Text("Your Location")
             }
 
+            Section {
+                NavigationLink {
+                    CountryPickerView(onChoose: { dismiss() })
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "globe").foregroundStyle(Palette.gold)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Browse by country").foregroundStyle(.primary)
+                            Text("Pick a country, then your city — works offline")
+                                .font(.caption).foregroundStyle(Palette.blue.opacity(0.6))
+                        }
+                    }
+                }
+            } header: {
+                Text("Choose Manually")
+            } footer: {
+                Text("Or use the search bar above to look up any city online.")
+            }
+
             if !results.isEmpty {
                 Section("Search Results") {
                     ForEach(results) { city in

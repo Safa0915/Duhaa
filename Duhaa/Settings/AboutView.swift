@@ -42,6 +42,8 @@ struct AboutView: View {
                        "KFGQPC HAFS Uthmanic Script — King Fahd Glorious Qur'an Printing Complex, Madinah.")
                 credit("Recitation",
                        "Nine renowned reciters — Alafasy, AbdulBaset, Sudais, Minshawi, and others — streamed from the Quran Foundation's audio service (Quran.com).")
+                credit("Tafsir",
+                       "Ibn Kathir (Abridged), English — bundled offline via the open spa5k/tafsir_api dataset (sourced from Quran.com).")
             }
 
             Section("Du'as & Adhkar") {
@@ -54,6 +56,8 @@ struct AboutView: View {
             Section("Prayer times") {
                 credit("Calculation engine",
                        "Adhan Swift by Batoul Apps — MIT License.")
+                credit("City database",
+                       "Country & city list (for choosing your location offline) from GeoNames — CC BY 4.0.")
             }
 
             Section {

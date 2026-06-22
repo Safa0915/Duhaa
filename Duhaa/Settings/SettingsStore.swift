@@ -88,6 +88,9 @@ final class SettingsStore {
     /// Manual per-prayer offsets in minutes (high-latitude stopgap, §13).
     var offsets: PrayerOffsets { didSet { persist() } }
 
+    /// The user's local masjid jamāʿah times (optional; empty until added).
+    var masjid: MasjidTimetable { didSet { persist() } }
+
     @ObservationIgnored private let defaults: UserDefaults
 
     init(defaults: UserDefaults = .standard) {
@@ -102,6 +105,12 @@ final class SettingsStore {
             offsets = decoded
         } else {
             offsets = PrayerOffsets()
+        }
+        if let data = defaults.data(forKey: Key.masjid),
+           let decoded = try? JSONDecoder().decode(MasjidTimetable.self, from: data) {
+            masjid = decoded
+        } else {
+            masjid = MasjidTimetable()
         }
     }
 
@@ -122,6 +131,9 @@ final class SettingsStore {
         if let data = try? JSONEncoder().encode(offsets) {
             defaults.set(data, forKey: Key.offsets)
         }
+        if let data = try? JSONEncoder().encode(masjid) {
+            defaults.set(data, forKey: Key.masjid)
+        }
     }
 
     private enum Key {
@@ -131,5 +143,6 @@ final class SettingsStore {
         static let hijriOffset = "duhaa.settings.hijriOffsetDays"
         static let hijriPrimary = "duhaa.settings.hijriIsPrimary"
         static let offsets = "duhaa.settings.offsets"
+        static let masjid = "duhaa.settings.masjid"
     }
 }

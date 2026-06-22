@@ -44,6 +44,46 @@ struct Ayah: Decodable, Identifiable, Sendable {
     enum CodingKeys: String, CodingKey { case number = "n", arabic = "a", english = "e" }
 }
 
+struct QuranPageStart: Decodable, Equatable, Sendable {
+    let page: Int
+    let surah: Int
+    let ayah: Int
+
+    enum CodingKeys: String, CodingKey {
+        case page = "p", surah = "s", ayah = "a"
+    }
+}
+
+/// Madani mushaf page starts, generated from Quran.com verse page metadata.
+struct QuranPageIndex: Sendable {
+    static let shared = load()
+
+    let pages: [QuranPageStart]
+
+    func pageNumber(surah: Int, ayah: Int) -> Int? {
+        pages.last { start in
+            start.surah < surah || (start.surah == surah && start.ayah <= ayah)
+        }?.page
+    }
+
+    func pageStartNumber(surah: Int, ayah: Int) -> Int? {
+        pages.first { $0.surah == surah && $0.ayah == ayah }?.page
+    }
+
+    private struct File: Decodable {
+        let pages: [QuranPageStart]
+    }
+
+    private static func load() -> QuranPageIndex {
+        guard let url = Bundle.main.url(forResource: "quran_pages", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let decoded = try? JSONDecoder().decode(File.self, from: data) else {
+            return QuranPageIndex(pages: [])
+        }
+        return QuranPageIndex(pages: decoded.pages)
+    }
+}
+
 /// Loads `quran.json` from the bundle once, on first access.
 enum Quran {
     static let shared: QuranData = load()

@@ -10,6 +10,8 @@ struct SettingsView: View {
     @Environment(LocationProvider.self) private var location
     @Environment(ThemeStore.self) private var themeStore
     @Environment(InsightsStore.self) private var insights
+    @Environment(SalahLockController.self) private var salahLock
+    @Environment(FeedbackStore.self) private var feedback
     @Environment(\.dismiss) private var dismiss
     @Environment(\.requestReview) private var requestReview
     @Environment(\.openURL) private var openURL
@@ -22,6 +24,7 @@ struct SettingsView: View {
     @State private var showingMembership = false
     @State private var showingProfileSettings = false
     @State private var showingMembershipBenefits = false
+    @State private var feedbackDraft: FeedbackDraft?
     @Environment(SubscriptionStore.self) private var subscriptions
 
     private var displayName: String {
@@ -70,6 +73,18 @@ struct SettingsView: View {
             }
             .sheet(isPresented: $showingLocationPicker) {
                 LocationPickerView()
+            }
+            .sheet(item: $feedbackDraft) { draft in
+                FeedbackComposerView(
+                    reason: draft.reason,
+                    initialCategory: draft.category,
+                    onClose: { feedbackDraft = nil },
+                    onSubmitted: {
+                        feedback.recordFeedbackStarted()
+                        feedbackDraft = nil
+                    }
+                )
+                .presentationDetents([.large])
             }
         }
         .preferredColorScheme(Palette.active.colorScheme)
@@ -207,6 +222,13 @@ struct SettingsView: View {
             .listRowBackground(Palette.card)
 
             NavigationLink {
+                MasjidTimesView()
+            } label: {
+                settingsRow("Local Masjid", icon: "building.columns.fill", color: Palette.gold, value: masjidSummary)
+            }
+            .listRowBackground(Palette.card)
+
+            NavigationLink {
                 HijriDateSettingsView()
             } label: {
                 settingsRow("Hijri Date", icon: "moonphase.waxing.crescent", color: Palette.blue, value: hijriSummary)
@@ -217,6 +239,13 @@ struct SettingsView: View {
                 PrayerInsightsSettingsView()
             } label: {
                 settingsRow("Prayer Insights", icon: "chart.line.uptrend.xyaxis", color: Palette.gold, value: insights.enabled ? "On" : "Off")
+            }
+            .listRowBackground(Palette.card)
+
+            NavigationLink {
+                SalahLockView()
+            } label: {
+                settingsRow("Salah Lock", icon: "lock.fill", color: Palette.gold, value: salahLock.isArmed ? "On" : "Off")
             }
             .listRowBackground(Palette.card)
 
@@ -315,6 +344,14 @@ struct SettingsView: View {
             .buttonStyle(.duhaaPress)
             .listRowBackground(Palette.card)
 
+            Button {
+                feedbackDraft = FeedbackDraft(reason: .manual, category: .general)
+            } label: {
+                settingsRow("Send Feedback", icon: "bubble.left.and.bubble.right.fill", color: Palette.blue)
+            }
+            .buttonStyle(.duhaaPress)
+            .listRowBackground(Palette.card)
+
             ShareLink(item: "Duhaa — a gentle prayer app built on hope, not guilt.") {
                 settingsRow("Share the App", icon: "square.and.arrow.up.fill", color: Palette.blue)
             }
@@ -322,11 +359,21 @@ struct SettingsView: View {
             .listRowBackground(Palette.card)
 
             Button {
-                reportBug()
+                feedbackDraft = FeedbackDraft(reason: .bug, category: .bug)
             } label: {
                 settingsRow("Report a Bug", icon: "ladybug.fill", color: .orange)
             }
             .buttonStyle(.duhaaPress)
+            .listRowBackground(Palette.card)
+
+            NavigationLink {
+                FeedbackPromptSettingsView()
+            } label: {
+                settingsRow("Feedback Prompts",
+                            icon: feedback.automaticPromptsEnabled ? "bell.badge.fill" : "bell.slash.fill",
+                            color: Palette.gold,
+                            value: feedback.automaticPromptsEnabled ? "On" : "Off")
+            }
             .listRowBackground(Palette.card)
         }
     }
@@ -511,6 +558,12 @@ struct SettingsView: View {
         store.hijriOffsetDays == 0 ? (store.hijriIsPrimary ? "Primary" : "Secondary") : signed(store.hijriOffsetDays)
     }
 
+    private var masjidSummary: String {
+        guard store.masjid.hasAnyTime else { return "Off" }
+        let name = store.masjid.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        return name.isEmpty ? "On" : name
+    }
+
     private var adhanSoundLabel: String {
         AdhanSoundPreference(rawValue: adhanSoundRaw)?.label ?? AdhanSoundPreference.duhaaChime.label
     }
@@ -519,18 +572,6 @@ struct SettingsView: View {
 
     private func openAppSettings() {
         if let url = URL(string: UIApplication.openSettingsURLString) {
-            openURL(url)
-        }
-    }
-
-    private func reportBug() {
-        var components = URLComponents()
-        components.scheme = "mailto"
-        components.path = "safaburak0915@gmail.com"   // the real, monitored inbox
-        components.queryItems = [
-            URLQueryItem(name: "subject", value: "Duhaa Bug Report")
-        ]
-        if let url = components.url {
             openURL(url)
         }
     }
@@ -558,6 +599,12 @@ struct SettingsView: View {
     private var settingsAvatarFill: Color {
         Palette.active.isDark ? Color(hex: 0xAF42C7) : Palette.gold
     }
+}
+
+private struct FeedbackDraft: Identifiable {
+    let id = UUID()
+    let reason: FeedbackPromptReason
+    let category: FeedbackCategory
 }
 
 private struct SettingsIcon: View {

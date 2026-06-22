@@ -21,11 +21,11 @@ final class PrayerHomeModelTests: XCTestCase {
                                   date: comps, config: config)!
     }
 
-    private func display(at now: Date) -> HomeDisplay {
+    private func display(at now: Date, masjid: MasjidTimetable = MasjidTimetable()) -> HomeDisplay {
         let model = PrayerHomeModel()
         model.now = now
         return model.display(for: nyc, config: config,
-                             hijriOffsetDays: 0, hijriIsPrimary: false)
+                             hijriOffsetDays: 0, hijriIsPrimary: false, masjid: masjid)
     }
 
     private func row(_ prayer: Prayer, at now: Date) -> PrayerRowData {
@@ -154,5 +154,53 @@ final class PrayerHomeModelTests: XCTestCase {
         XCTAssertEqual(d.nextName, Prayer.fajr.rawValue)
         XCTAssertEqual(d.timeRemainingTarget, "Islamic midnight")
         XCTAssertEqual(d.timeRemainingCountdown, "5 minutes")
+    }
+
+    // MARK: Local masjid jamāʿah times
+
+    func testNoMasjidTimesMeansNoIqama() {
+        let d = display(at: engineTimes().dhuhr.addingTimeInterval(60))
+        XCTAssertTrue(d.rows.allSatisfy { $0.iqama == nil })
+        XCTAssertEqual(d.masjidName, "")
+    }
+
+    func testMasjidIqamaShowsOnItsRowOnly() {
+        var masjid = MasjidTimetable(name: "Test Masjid")
+        masjid.asr = 17 * 60 + 15   // 5:15 PM
+        let d = display(at: engineTimes().dhuhr.addingTimeInterval(60), masjid: masjid)
+
+        let asr = d.rows.first { $0.prayer == .asr }
+        XCTAssertEqual(asr?.iqama, "5:15 PM")
+        XCTAssertEqual(asr?.iqamaIsJumuah, false)
+        XCTAssertNil(d.rows.first { $0.prayer == .fajr }?.iqama)
+        XCTAssertEqual(d.masjidName, "Test Masjid")
+    }
+
+    func testJumuahReplacesDhuhrIqamaOnFriday() {
+        // 2026-06-12 is a Friday; assert that, then check the swap.
+        var comps = DateComponents()
+        comps.year = 2026; comps.month = 6; comps.day = 12; comps.hour = 12
+        comps.timeZone = tz
+        var cal = Calendar(identifier: .gregorian); cal.timeZone = tz
+        let friday = cal.date(from: comps)!
+        XCTAssertEqual(cal.component(.weekday, from: friday), 6, "fixture must be a Friday")
+
+        var masjid = MasjidTimetable()
+        masjid.dhuhr = 13 * 60          // 1:00 PM on weekdays
+        masjid.jumuah = 13 * 60 + 30    // 1:30 PM Jumuʿah
+        let dhuhr = display(at: friday, masjid: masjid).rows.first { $0.prayer == .dhuhr }
+        XCTAssertEqual(dhuhr?.iqamaIsJumuah, true)
+        XCTAssertEqual(dhuhr?.iqama, "1:30 PM")
+    }
+
+    func testJumuahNotUsedOnNonFriday() {
+        var masjid = MasjidTimetable()
+        masjid.dhuhr = 13 * 60
+        masjid.jumuah = 13 * 60 + 30
+        // June 9 2026 is a Tuesday.
+        let dhuhr = display(at: engineTimes().dhuhr.addingTimeInterval(60), masjid: masjid)
+            .rows.first { $0.prayer == .dhuhr }
+        XCTAssertEqual(dhuhr?.iqamaIsJumuah, false)
+        XCTAssertEqual(dhuhr?.iqama, "1:00 PM")
     }
 }

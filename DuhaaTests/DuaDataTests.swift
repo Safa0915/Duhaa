@@ -9,12 +9,12 @@ final class DuaDataTests: XCTestCase {
         Duas.categories.first { $0.name == "After Prayer Adhkar" }
     }
 
-    /// Only the two dev-curated categories ship for now; the Hisnul-Muslim bulk
-    /// set (Morning/Evening/Daily/Selected) was removed pending curation and
-    /// lives in git history.
+    /// Dev-curated source-backed categories only. User-submitted categories are
+    /// intentionally not part of the product.
     func testAllCategoriesDecode() {
         let names = Duas.categories.map(\.name)
         XCTAssertEqual(names, ["Wudu & Purification", "After Prayer Adhkar"])
+        XCTAssertFalse(names.contains { $0.localizedCaseInsensitiveContains("community") })
     }
 
     func testWuduCategoryIntact() {

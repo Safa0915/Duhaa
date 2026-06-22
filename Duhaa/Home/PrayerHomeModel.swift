@@ -32,6 +32,11 @@ struct PrayerRowData: Identifiable {
     let state: RowState
     /// Extra line under the name (only Isha uses it: "ends 11:53 PM · …").
     let sub: String?
+    /// The local masjid's jamāʿah time for this prayer, formatted, when the user
+    /// has added one (else nil). Shown beside the calculated adhān time.
+    let iqama: String?
+    /// True when `iqama` is the Friday Jumuʿah time (shown on the Dhuhr row).
+    let iqamaIsJumuah: Bool
     /// Whether marking this prayer *right now* counts as on time (logged before the
     /// next prayer begins). Used only by the opt-in insights tracker.
     let onTime: Bool
@@ -54,6 +59,7 @@ struct DayRef: Identifiable {
 struct HomeDisplay {
     var hasData = false
     var locationName = ""
+    var masjidName = ""
     var dayKey = ""
     var week: [DayRef] = []
     /// Smaller date in the header; larger date under the clock. Which is Hijri vs
@@ -110,10 +116,12 @@ final class PrayerHomeModel {
     func display(for location: ActiveLocation,
                  config: PrayerConfig,
                  hijriOffsetDays: Int,
-                 hijriIsPrimary: Bool) -> HomeDisplay {
+                 hijriIsPrimary: Bool,
+                 masjid: MasjidTimetable = MasjidTimetable()) -> HomeDisplay {
         let tz = location.timeZone
         var d = HomeDisplay()
         d.locationName = location.name
+        d.masjidName = masjid.name
         d.dayKey = PrayerTracker.dayKey(now, tz)
         d.week = weekRefs(now, tz, todayKey: d.dayKey)
 
@@ -251,6 +259,8 @@ final class PrayerHomeModel {
                              endLabel: "\(next.0.rawValue) \(clock(next.1, tz))")
         }
 
+        // Friday → Jumuʿah replaces the Dhuhr jamāʿah, when both apply.
+        let isFriday = weekday(now, tz) == 6
         d.rows = Prayer.allCases.map { prayer in
             let isLastNightsIsha = prayer == .isha && preFajr
             let rowTimes = isLastNightsIsha ? yesterday : today
@@ -267,10 +277,14 @@ final class PrayerHomeModel {
             case .fajr: fajrSub(today, tz)
             default: nil
             }
+            let useJumuah = prayer == .dhuhr && isFriday && masjid.jumuah != nil
+            let iqamaMinutes = useJumuah ? masjid.jumuah : masjid.minutes(for: prayer)
             return PrayerRowData(prayer: prayer,
                                  time: clock(rowStart, tz),
                                  state: state,
                                  sub: sub,
+                                 iqama: iqamaMinutes.map { MasjidTimetable.clock($0) },
+                                 iqamaIsJumuah: useJumuah,
                                  onTime: now >= rowStart && now < end,
                                  dayKey: isLastNightsIsha ? yesterdayKey : d.dayKey)
         }
@@ -364,6 +378,13 @@ final class PrayerHomeModel {
             let key = PrayerTracker.dayKey(day, tz)
             return DayRef(key: key, letter: weekdayLetter(day, tz), isToday: key == todayKey)
         }
+    }
+
+    /// Gregorian weekday in the location's zone (1 = Sunday … 6 = Friday … 7 = Saturday).
+    private func weekday(_ date: Date, _ tz: TimeZone) -> Int {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = tz
+        return calendar.component(.weekday, from: date)
     }
 
     private func weekdayLetter(_ date: Date, _ tz: TimeZone) -> String {

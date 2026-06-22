@@ -16,6 +16,7 @@
 		DA0000000000000000000124 /* PrayerCompletionIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000000000000000000114 /* PrayerCompletionIntents.swift */; };
 		DA0000000000000000000125 /* PrayerTimelinePlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000000000000000000115 /* PrayerTimelinePlanner.swift */; };
 		DA0000000000000000000126 /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000000000000000000116 /* Palette.swift */; };
+		DA000000000000000000020E /* SalahLockShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA000000000000000000020D /* SalahLockShared.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +61,8 @@
 		DA0000000000000000000114 /* PrayerCompletionIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PrayerCompletionIntents.swift; path = Duhaa/Shared/PrayerCompletionIntents.swift; sourceTree = SOURCE_ROOT; };
 		DA0000000000000000000115 /* PrayerTimelinePlanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PrayerTimelinePlanner.swift; path = Duhaa/Shared/PrayerTimelinePlanner.swift; sourceTree = SOURCE_ROOT; };
 		DA0000000000000000000116 /* Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Palette.swift; path = Duhaa/Theme/Palette.swift; sourceTree = SOURCE_ROOT; };
+		DA0000000000000000000201 /* DuhaaSalahLockMonitor.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DuhaaSalahLockMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		DA000000000000000000020D /* SalahLockShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SalahLockShared.swift; path = Duhaa/Shared/SalahLockShared.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -70,12 +73,27 @@
 			);
 			target = DA0000000000000000000102 /* DuhaaWidgets */;
 		};
+		DA0000000000000000000141 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = DA0000000000000000000010 /* Duhaa */;
+		};
+		DA0000000000000000000209 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = DA0000000000000000000200 /* DuhaaSalahLockMonitor */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		DA0000000000000000000030 /* Duhaa */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Duhaa; sourceTree = "<group>"; };
+		DA0000000000000000000030 /* Duhaa */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (DA0000000000000000000141 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Duhaa; sourceTree = "<group>"; };
 		DA0000000000000000000031 /* DuhaaTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = DuhaaTests; sourceTree = "<group>"; };
 		DA0000000000000000000101 /* DuhaaWidgets */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (DA0000000000000000000140 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = DuhaaWidgets; sourceTree = "<group>"; };
+		DA0000000000000000000208 /* DuhaaSalahLockMonitor */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (DA0000000000000000000209 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = DuhaaSalahLockMonitor; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +119,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DA0000000000000000000203 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -110,6 +135,7 @@
 				DA0000000000000000000030 /* Duhaa */,
 				DA0000000000000000000031 /* DuhaaTests */,
 				DA0000000000000000000101 /* DuhaaWidgets */,
+				DA0000000000000000000208 /* DuhaaSalahLockMonitor */,
 				DA0000000000000000000130 /* Widget Shared (membership) */,
 				DA0000000000000000000003 /* Products */,
 			);
@@ -121,6 +147,7 @@
 				DA0000000000000000000020 /* Duhaa.app */,
 				DA0000000000000000000021 /* DuhaaTests.xctest */,
 				DA0000000000000000000100 /* DuhaaWidgets.appex */,
+				DA0000000000000000000201 /* DuhaaSalahLockMonitor.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -135,6 +162,7 @@
 				DA0000000000000000000114 /* PrayerCompletionIntents.swift */,
 				DA0000000000000000000115 /* PrayerTimelinePlanner.swift */,
 				DA0000000000000000000116 /* Palette.swift */,
+				DA000000000000000000020D /* SalahLockShared.swift */,
 			);
 			name = "Widget Shared (membership)";
 			sourceTree = "<group>";
@@ -212,6 +240,28 @@
 			productReference = DA0000000000000000000100 /* DuhaaWidgets.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		DA0000000000000000000200 /* DuhaaSalahLockMonitor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DA0000000000000000000205 /* Build configuration list for PBXNativeTarget "DuhaaSalahLockMonitor" */;
+			buildPhases = (
+				DA0000000000000000000202 /* Sources */,
+				DA0000000000000000000203 /* Frameworks */,
+				DA0000000000000000000204 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				DA0000000000000000000208 /* DuhaaSalahLockMonitor */,
+			);
+			name = DuhaaSalahLockMonitor;
+			packageProductDependencies = (
+			);
+			productName = DuhaaSalahLockMonitor;
+			productReference = DA0000000000000000000201 /* DuhaaSalahLockMonitor.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -251,6 +301,7 @@
 				DA0000000000000000000010 /* Duhaa */,
 				DA0000000000000000000011 /* DuhaaTests */,
 				DA0000000000000000000102 /* DuhaaWidgets */,
+				DA0000000000000000000200 /* DuhaaSalahLockMonitor */,
 			);
 		};
 /* End PBXProject section */
@@ -271,6 +322,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		DA0000000000000000000105 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DA0000000000000000000204 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -305,6 +363,14 @@
 				DA0000000000000000000124 /* PrayerCompletionIntents.swift in Sources */,
 				DA0000000000000000000125 /* PrayerTimelinePlanner.swift in Sources */,
 				DA0000000000000000000126 /* Palette.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DA0000000000000000000202 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DA000000000000000000020E /* SalahLockShared.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -459,7 +525,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3HYBHNTCV7;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Duhaa/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Duhaa ضحى";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Duhaa uses your location to calculate accurate prayer times and find nearby mosques. Your location is not sold or used for ads.";
@@ -492,7 +559,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3HYBHNTCV7;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Duhaa/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Duhaa ضحى";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Duhaa uses your location to calculate accurate prayer times and find nearby mosques. Your location is not sold or used for ads.";
@@ -609,6 +677,60 @@
 			};
 			name = Release;
 		};
+		DA0000000000000000000206 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = DuhaaSalahLockMonitor/DuhaaSalahLockMonitor.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3HYBHNTCV7;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DuhaaSalahLockMonitor/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Salah Lock";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.duhaa.app.SalahLockMonitor;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		DA0000000000000000000207 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = DuhaaSalahLockMonitor/DuhaaSalahLockMonitor.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3HYBHNTCV7;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DuhaaSalahLockMonitor/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Salah Lock";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.duhaa.app.SalahLockMonitor;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -644,6 +766,15 @@
 			buildConfigurations = (
 				DA0000000000000000000107 /* Debug */,
 				DA0000000000000000000108 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DA0000000000000000000205 /* Build configuration list for PBXNativeTarget "DuhaaSalahLockMonitor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DA0000000000000000000206 /* Debug */,
+				DA0000000000000000000207 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

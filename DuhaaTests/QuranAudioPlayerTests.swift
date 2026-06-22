@@ -50,6 +50,8 @@ private final class FakeQuranAudioPlayer: QuranAudioPlaying {
     var onFailed: ((Error) -> Void)?
     var onEnded: (() -> Void)?
     var onFirstPlayback: (() -> Void)?
+    var onProgress: ((Double) -> Void)?
+    var onTimingUpdate: ((TimeInterval, TimeInterval) -> Void)?
 
     private(set) var preparedURLs: [URL] = []
     private(set) var playCount = 0
@@ -301,6 +303,121 @@ final class QuranAudioPlayerTests: XCTestCase {
         }
     }
 
+    func testTogglePlayPausePausesThenResumes() async {
+        let harness = makeHarness()
+        harness.player.play(in: testSurah, from: 1)
+        await waitUntil("playback starts") { harness.player.playbackState == .playing }
+
+        harness.player.togglePlayPause()
+        XCTAssertEqual(harness.player.playbackState, .paused)
+        XCTAssertEqual(harness.audioPlayer.pauseCount, 1)
+
+        harness.player.togglePlayPause()
+        XCTAssertEqual(harness.player.playbackState, .playing)
+        XCTAssertEqual(harness.audioPlayer.playCount, 2) // initial play + resume
+    }
+
+    func testResumeIsIgnoredWhenNotPaused() async {
+        let harness = makeHarness()
+        harness.player.play(in: testSurah, from: 1)
+        await waitUntil("playback starts") { harness.player.playbackState == .playing }
+
+        harness.player.resume() // already playing — no-op
+        XCTAssertEqual(harness.audioPlayer.playCount, 1)
+    }
+
+    func testProgressCallbackUpdatesPlayerAndResetsOnStop() async {
+        let harness = makeHarness()
+        harness.player.play(in: testSurah, from: 1)
+        await waitUntil("playback starts") { harness.player.playbackState == .playing }
+
+        harness.audioPlayer.onProgress?(0.5)
+        harness.audioPlayer.onTimingUpdate?(12, 40)
+        XCTAssertEqual(harness.player.progress, 0.5, accuracy: 0.001)
+        XCTAssertEqual(harness.player.elapsedSeconds, 12, accuracy: 0.001)
+        XCTAssertEqual(harness.player.durationSeconds, 40, accuracy: 0.001)
+        XCTAssertEqual(harness.player.remainingSeconds ?? -1, 28, accuracy: 0.001)
+
+        harness.player.stop()
+        XCTAssertEqual(harness.player.progress, 0)
+        XCTAssertEqual(harness.player.elapsedSeconds, 0)
+        XCTAssertEqual(harness.player.durationSeconds, 0)
+        XCTAssertNil(harness.player.remainingSeconds)
+    }
+
+    func testEndOfSurahAutoAdvancesToNextSurah() async {
+        let second = testSecondSurah
+        let harness = makeHarness(quran: testQuran([testSurah, second]))
+
+        harness.player.play(in: testSurah, from: 3)
+        await waitUntil("last ayah starts") {
+            harness.player.playbackState == .playing
+        }
+
+        harness.audioPlayer.onEnded?()
+        await waitUntil("next surah request is queued") {
+            harness.resolver.requests.contains(.ayah(surah: 2, ayah: 1))
+        }
+
+        XCTAssertEqual(harness.player.playingKey, "2:1")
+        XCTAssertEqual(harness.player.currentSurah?.number, 2)
+        XCTAssertEqual(harness.player.playingAyahNumber, 1)
+    }
+
+    func testFinalSurahEndStopsPlayback() async {
+        let harness = makeHarness(quran: testQuran([testSurah]))
+
+        harness.player.play(in: testSurah, from: 3)
+        await waitUntil("last ayah starts") {
+            harness.player.playbackState == .playing
+        }
+
+        harness.audioPlayer.onEnded?()
+        XCTAssertEqual(harness.player.playbackState, .idle)
+        XCTAssertNil(harness.player.playingKey)
+        XCTAssertNil(harness.player.currentSurah)
+    }
+
+    func testChapterEndAutoAdvancesToNextSurah() async {
+        let second = testSecondSurah
+        let harness = makeHarness(quran: testQuran([testSurah, second]))
+
+        harness.player.playChapter(in: testSurah)
+        await waitUntil("chapter starts") {
+            harness.player.playbackState == .playing
+        }
+
+        harness.audioPlayer.onEnded?()
+        await waitUntil("next chapter request is queued") {
+            harness.resolver.requests.contains(.chapter(surah: 2))
+        }
+
+        XCTAssertEqual(harness.player.playingKey, "2:chapter")
+        XCTAssertEqual(harness.player.currentSurah?.number, 2)
+    }
+
+    func testTransportControlsCanCrossSurahBoundaries() async {
+        let second = testSecondSurah
+        let harness = makeHarness(quran: testQuran([testSurah, second]))
+
+        harness.player.play(in: testSurah, from: 3)
+        await waitUntil("last ayah starts") {
+            harness.player.playbackState == .playing
+        }
+
+        XCTAssertTrue(harness.player.canPlayNextAyah)
+        XCTAssertTrue(harness.player.playNextAyah())
+        XCTAssertEqual(harness.player.playingKey, "2:1")
+
+        await waitUntil("next surah starts") {
+            harness.player.playbackState == .playing && harness.player.currentSurah?.number == 2
+        }
+
+        XCTAssertTrue(harness.player.canPlayPreviousAyah)
+        XCTAssertTrue(harness.player.playPreviousAyah())
+        XCTAssertEqual(harness.player.playingKey, "1:3")
+    }
+
     private var testSurah: Surah {
         Surah(number: 1,
               arabicName: "الفاتحة",
@@ -314,15 +431,33 @@ final class QuranAudioPlayerTests: XCTestCase {
               ])
     }
 
+    private var testSecondSurah: Surah {
+        Surah(number: 2,
+              arabicName: "البقرة",
+              englishName: "Al-Baqarah",
+              translation: "The Cow",
+              revelation: "Medinan",
+              ayahs: [
+                Ayah(number: 1, arabic: "d", english: "four"),
+                Ayah(number: 2, arabic: "e", english: "five")
+              ])
+    }
+
+    private func testQuran(_ surahs: [Surah]) -> QuranData {
+        QuranData(bismillah: Bismillah(arabic: "", english: ""), surahs: surahs)
+    }
+
     private func makeHarness(result: Result<URL, Error> = .success(URL(string: "https://example.com/audio.mp3")!),
-                             delayedResolver: Bool = false) -> Harness {
+                             delayedResolver: Bool = false,
+                             quran: QuranData? = nil) -> Harness {
         let session = FakeAudioSessionManager()
         let resolver = FakeAudioURLResolver()
         resolver.immediateResult = delayedResolver ? nil : result
         let audioPlayer = FakeQuranAudioPlayer()
         let player = AyahPlayer(audioSession: session,
                                 urlResolver: resolver,
-                                audioPlayer: audioPlayer)
+                                audioPlayer: audioPlayer,
+                                quran: quran ?? testQuran([testSurah]))
         return Harness(player: player,
                        session: session,
                        resolver: resolver,

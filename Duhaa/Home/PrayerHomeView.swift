@@ -7,6 +7,8 @@ struct PrayerHomeView: View {
     @Environment(LocationProvider.self) private var location
     @Environment(SettingsStore.self) private var settings
     @Environment(PrayerTracker.self) private var tracker
+    @Environment(SalahLockController.self) private var salahLock
+    @Environment(FeedbackStore.self) private var feedback
     @State private var model = PrayerHomeModel()
     @State private var showingLocationPicker = false
     @State private var showingSettings = false
@@ -25,7 +27,8 @@ struct PrayerHomeView: View {
         let d = model.display(for: location.active,
                               config: settings.prayerConfig,
                               hijriOffsetDays: settings.hijriOffsetDays,
-                              hijriIsPrimary: settings.hijriIsPrimary)
+                              hijriIsPrimary: settings.hijriIsPrimary,
+                              masjid: settings.masjid)
 
         ZStack {
             CelestialBackground(allowsThemeDecorations: true)
@@ -88,8 +91,12 @@ struct PrayerHomeView: View {
                         }
                         .padding(.horizontal, 22).padding(.top, 16)
 
-                        PrayersCard(rows: d.rows) { _, nowPrayed in
+                        PrayersCard(rows: d.rows, masjidName: d.masjidName) { prayer, nowPrayed in
                             if nowPrayed {
+                                feedback.recordMeaningfulAction(.prayerMarked)
+                                // Lift any active Salah Lock for this prayer — the
+                                // reward is for praying, not waiting out the cap.
+                                salahLock.markPrayed(prayer.rawValue)
                                 showToast(Encouragements.afterPrayerMessage())
                                 // The fifth of five gets a little extra warmth.
                                 if PrayerCompletionFeedback.shouldPlayPerfectDay(
@@ -117,7 +124,9 @@ struct PrayerHomeView: View {
                             .padding(.horizontal, 22).padding(.top, 28)
                     }
                 }
-                .padding(.bottom, 40)
+                // The floating tab bar overlays full-screen tab content, so the
+                // final prayer rows need enough room to scroll above it.
+                .padding(.bottom, 150)
             }
             .scrollIndicators(.hidden)
         }
@@ -308,6 +317,8 @@ private struct VerseReaderSheet: View {
         .environment(LocationProvider())
         .environment(SettingsStore())
         .environment(PrayerTracker())
+        .environment(SalahLockController())
+        .environment(FeedbackStore())
 }
 
 /// A warm, dismissible welcome for someone returning after a gap (spec §5).
