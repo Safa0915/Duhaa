@@ -55,4 +55,66 @@ final class MasjidTimetableTests: XCTestCase {
         let suite = UserDefaults(suiteName: "masjid.test.\(UUID().uuidString)")!
         XCTAssertFalse(SettingsStore(defaults: suite).masjid.hasAnyTime)
     }
+
+    // MARK: Share & import
+
+    func testShareTextRoundTrips() {
+        var t = MasjidTimetable(name: "Masjid An-Noor")
+        t.fajr = 5 * 60 + 45
+        t.dhuhr = 13 * 60 + 30
+        t.asr = 17 * 60
+        t.maghrib = 19 * 60 + 12
+        t.isha = 20 * 60 + 30
+        t.jumuah = 13 * 60 + 15
+
+        let parsed = MasjidTimetable.parse(t.shareText())
+
+        XCTAssertEqual(parsed, t, "a copied timetable should paste back identically")
+    }
+
+    func testShareTextOnlyListsSetPrayers() {
+        var t = MasjidTimetable(name: "Local Masjid")
+        t.fajr = 5 * 60 + 30
+        t.isha = 20 * 60
+
+        let text = t.shareText()
+
+        XCTAssertTrue(text.contains("Fajr"))
+        XCTAssertTrue(text.contains("Isha"))
+        XCTAssertFalse(text.contains("Dhuhr"))
+        XCTAssertFalse(text.contains("Asr"))
+        XCTAssertEqual(MasjidTimetable.parse(text), t)
+    }
+
+    func testParseKeepsHyphenatedNameIntact() {
+        let parsed = MasjidTimetable.parse("Masjid Al-Noor — Jamāʿah times\nFajr — 5:30 AM")
+        XCTAssertEqual(parsed?.name, "Masjid Al-Noor")
+        XCTAssertEqual(parsed?.fajr, 5 * 60 + 30)
+    }
+
+    func testParseToleratesHandTypedTimes() {
+        let parsed = MasjidTimetable.parse("""
+        fajr 5:15am
+        Dhuhr: 13:30
+        maghrib - 7:05 PM
+        """)
+        XCTAssertEqual(parsed?.fajr, 5 * 60 + 15)      // lowercase + no space before am
+        XCTAssertEqual(parsed?.dhuhr, 13 * 60 + 30)    // 24-hour, no am/pm
+        XCTAssertEqual(parsed?.maghrib, 19 * 60 + 5)   // PM
+        XCTAssertNil(parsed?.asr)
+    }
+
+    func testParseReturnsNilWhenNoTimesPresent() {
+        XCTAssertNil(MasjidTimetable.parse("just some random text, no prayer times here"))
+        XCTAssertNil(MasjidTimetable.parse(""))
+    }
+
+    func testParseClockHandlesNoonMidnightAndPeriods() {
+        XCTAssertEqual(MasjidTimetable.parseClock("12:00 AM"), 0)
+        XCTAssertEqual(MasjidTimetable.parseClock("12:00 PM"), 12 * 60)
+        XCTAssertEqual(MasjidTimetable.parseClock("1:30 PM"), 13 * 60 + 30)
+        XCTAssertEqual(MasjidTimetable.parseClock("23:59"), 23 * 60 + 59)
+        XCTAssertNil(MasjidTimetable.parseClock("no time here"))
+        XCTAssertNil(MasjidTimetable.parseClock("25:00"))
+    }
 }

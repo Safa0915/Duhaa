@@ -71,7 +71,8 @@ enum NotificationScheduler {
             let dayComps = calendar.dateComponents([.year, .month, .day], from: day)
             guard let times = PrayerEngine.times(latitude: location.latitude,
                                                  longitude: location.longitude,
-                                                 date: dayComps, config: config) else { continue }
+                                                 date: dayComps, config: config,
+                                                 timeZone: tz) else { continue }
 
             let isFriday = calendar.component(.weekday, from: day) == 6   // Gregorian: Sun=1 … Fri=6
             let dhuhrMode = modeMap[.dhuhr] ?? .adhan

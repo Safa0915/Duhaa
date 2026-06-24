@@ -23,6 +23,11 @@ struct PrayerConfig: Equatable {
     /// Manual per-prayer nudges in minutes — the v1 high-latitude stopgap and
     /// the user's local-mosque fine-tuning (spec §4, §13).
     var offsets = PrayerOffsets()
+
+    /// A full set of user-entered times. When `manual.enabled`, the engine returns
+    /// these verbatim instead of calculating — for people who follow a fixed printed
+    /// timetable. Offsets and method/madhab no longer apply in that mode.
+    var manual = ManualPrayerTimes()
 }
 
 /// Per-prayer manual offsets, in minutes (may be negative).
@@ -33,6 +38,24 @@ struct PrayerOffsets: Equatable, Codable {
     var asr = 0
     var maghrib = 0
     var isha = 0
+}
+
+/// A user-supplied daily timetable (the same wall-clock times every day), stored as
+/// minutes since local midnight. Sunrise is included so the Fajr window and the Duha
+/// threshold still read correctly. Defaults are placeholders; the settings screen
+/// seeds real values from the calculated times the first time it's switched on.
+struct ManualPrayerTimes: Equatable, Codable {
+    /// When true, `PrayerEngine` returns these times instead of calculating.
+    var enabled = false
+    /// Set once the fields have been seeded from the calculated times, so we only
+    /// auto-fill on the very first enable — never overwriting the user's own edits.
+    var configured = false
+    var fajr = 5 * 60            // 5:00 AM
+    var sunrise = 6 * 60 + 30    // 6:30 AM
+    var dhuhr = 13 * 60          // 1:00 PM
+    var asr = 16 * 60 + 30       // 4:30 PM
+    var maghrib = 19 * 60        // 7:00 PM
+    var isha = 20 * 60 + 30      // 8:30 PM
 }
 
 // MARK: - Result
@@ -78,7 +101,14 @@ enum PrayerEngine {
     static func times(latitude: Double,
                       longitude: Double,
                       date: DateComponents,
-                      config: PrayerConfig = PrayerConfig()) -> DuhaaPrayerTimes? {
+                      config: PrayerConfig = PrayerConfig(),
+                      timeZone: TimeZone = .current) -> DuhaaPrayerTimes? {
+
+        // Manual override: the user follows their own fixed timetable. Build the
+        // day's instants straight from their wall-clock times in the location's zone.
+        if config.manual.enabled {
+            return manualTimes(config.manual, date: date, timeZone: timeZone)
+        }
 
         let coordinates = Coordinates(latitude: latitude, longitude: longitude)
 
@@ -110,6 +140,42 @@ enum PrayerEngine {
             isha: prayers.isha,
             islamicMidnight: sunnah.middleOfTheNight,
             tahajjud: sunnah.lastThirdOfTheNight
+        )
+    }
+
+    /// Build a day's times from the user's fixed wall-clock timetable. Islamic
+    /// midnight and Tahajjud are derived the same way Adhan's `SunnahTimes` does —
+    /// from Maghrib and the *next* day's Fajr — so the night cards stay coherent.
+    private static func manualTimes(_ manual: ManualPrayerTimes,
+                                    date: DateComponents,
+                                    timeZone: TimeZone) -> DuhaaPrayerTimes? {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+
+        func instant(_ minutes: Int, dayOffset: Int = 0) -> Date? {
+            var comps = DateComponents()
+            comps.year = date.year
+            comps.month = date.month
+            comps.day = date.day
+            comps.hour = minutes / 60
+            comps.minute = minutes % 60
+            guard let base = calendar.date(from: comps) else { return nil }
+            return dayOffset == 0 ? base : calendar.date(byAdding: .day, value: dayOffset, to: base)
+        }
+
+        guard let fajr = instant(manual.fajr),
+              let sunrise = instant(manual.sunrise),
+              let dhuhr = instant(manual.dhuhr),
+              let asr = instant(manual.asr),
+              let maghrib = instant(manual.maghrib),
+              let isha = instant(manual.isha),
+              let nextFajr = instant(manual.fajr, dayOffset: 1) else { return nil }
+
+        let night = nextFajr.timeIntervalSince(maghrib)
+        return DuhaaPrayerTimes(
+            fajr: fajr, sunrise: sunrise, dhuhr: dhuhr, asr: asr, maghrib: maghrib, isha: isha,
+            islamicMidnight: maghrib.addingTimeInterval(night / 2),
+            tahajjud: maghrib.addingTimeInterval(night * 2 / 3)
         )
     }
 }

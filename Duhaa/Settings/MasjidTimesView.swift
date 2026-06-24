@@ -1,10 +1,16 @@
 import SwiftUI
+import UIKit
 
 /// Lets the user add their local masjid's jamāʿah (iqāmah) times. Each prayer is
 /// optional — "Add" to set a time, the ✕ to clear it. Stored as wall-clock times,
-/// shown beside the calculated adhān times on the home screen.
+/// shown beside the calculated adhān times on the home screen. Times can be copied
+/// or shared and pasted, so two people at one masjid only enter them once.
 struct MasjidTimesView: View {
     @Environment(SettingsStore.self) private var store
+
+    @State private var justCopied = false
+    @State private var pendingPaste: MasjidTimetable?
+    @State private var showPasteFailed = false
 
     var body: some View {
         @Bindable var store = store
@@ -35,6 +41,43 @@ struct MasjidTimesView: View {
                 Text("Shown in place of Dhuhr on Fridays.")
             }
 
+            Section {
+                if store.masjid.hasAnyTime {
+                    Button {
+                        UIPasteboard.general.string = store.masjid.shareText()
+                        DuhaaHaptics.tick()
+                        justCopied = true
+                        Task {
+                            try? await Task.sleep(for: .seconds(2))
+                            justCopied = false
+                        }
+                    } label: {
+                        Label(justCopied ? "Copied" : "Copy times",
+                              systemImage: justCopied ? "checkmark.circle.fill" : "doc.on.doc")
+                            .foregroundStyle(justCopied ? Palette.success : Palette.blue)
+                    }
+                    .listRowBackground(Palette.card)
+
+                    ShareLink(item: store.masjid.shareText()) {
+                        Label("Share times…", systemImage: "square.and.arrow.up")
+                            .foregroundStyle(Palette.blue)
+                    }
+                    .listRowBackground(Palette.card)
+                }
+
+                Button {
+                    handlePaste()
+                } label: {
+                    Label("Paste times", systemImage: "doc.on.clipboard")
+                        .foregroundStyle(Palette.blue)
+                }
+                .listRowBackground(Palette.card)
+            } header: {
+                Text("Share")
+            } footer: {
+                Text("Copy your masjid's times to send to someone, or paste times a fellow worshipper shared with you.")
+            }
+
             if store.masjid.hasAnyTime {
                 Section {
                     Button(role: .destructive) {
@@ -53,6 +96,43 @@ struct MasjidTimesView: View {
         .navigationBarTitleDisplayMode(.inline)
         .tint(Palette.gold)
         .preferredColorScheme(Palette.active.colorScheme)
+        .alert("Replace your masjid times?",
+               isPresented: Binding(get: { pendingPaste != nil },
+                                    set: { if !$0 { pendingPaste = nil } })) {
+            Button("Replace", role: .destructive) {
+                if let parsed = pendingPaste { apply(parsed) }
+                pendingPaste = nil
+            }
+            Button("Cancel", role: .cancel) { pendingPaste = nil }
+        } message: {
+            Text("This overwrites the times you've entered with the ones on your clipboard.")
+        }
+        .alert("No times found", isPresented: $showPasteFailed) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Your clipboard doesn't contain masjid times Duhaa can read. Copy a timetable shared from Duhaa, then try again.")
+        }
+    }
+
+    /// Read the clipboard, parse it, and either apply it or — if the user already has
+    /// times — ask before replacing them.
+    private func handlePaste() {
+        guard let text = UIPasteboard.general.string,
+              let parsed = MasjidTimetable.parse(text) else {
+            DuhaaHaptics.tick()
+            showPasteFailed = true
+            return
+        }
+        if store.masjid.hasAnyTime {
+            pendingPaste = parsed
+        } else {
+            apply(parsed)
+        }
+    }
+
+    private func apply(_ timetable: MasjidTimetable) {
+        store.masjid = timetable
+        DuhaaHaptics.success()
     }
 
     @ViewBuilder

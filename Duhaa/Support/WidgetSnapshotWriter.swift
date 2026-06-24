@@ -36,7 +36,8 @@ enum WidgetSnapshotWriter {
             guard let t = PrayerEngine.times(latitude: location.latitude,
                                              longitude: location.longitude,
                                              date: comps,
-                                             config: config) else { continue }
+                                             config: config,
+                                             timeZone: tz) else { continue }
             days.append(PrayerTimesPayload.Day(
                 dayKey: SharedDayKey.make(date, tz),
                 fajr: t.fajr, dhuhr: t.dhuhr, asr: t.asr,

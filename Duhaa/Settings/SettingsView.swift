@@ -194,6 +194,13 @@ struct SettingsView: View {
             .listRowBackground(Palette.card)
 
             NavigationLink {
+                ManualPrayerTimesView()
+            } label: {
+                settingsRow("My Prayer Times", icon: "clock.fill", color: Palette.gold, value: store.manualTimes.enabled ? "On" : "Off")
+            }
+            .listRowBackground(Palette.card)
+
+            NavigationLink {
                 AsrMethodSettingsView()
             } label: {
                 settingsRow("Madhab", icon: "book.closed.fill", color: Palette.gold, value: store.madhab.shortName)

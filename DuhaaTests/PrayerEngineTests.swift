@@ -91,6 +91,69 @@ final class PrayerEngineTests: XCTestCase {
         XCTAssertFalse(mecca.ishaAfterIslamicMidnight, "Mecca should not")
     }
 
+    // MARK: Manual override
+
+    /// When manual mode is on, the engine returns the user's exact wall-clock times
+    /// (in the location's zone) and ignores calculation entirely.
+    func testManualTimesAreReturnedVerbatim() {
+        var config = PrayerConfig()
+        config.manual.enabled = true
+        config.manual.fajr = 5 * 60 + 12      // 5:12 AM
+        config.manual.sunrise = 6 * 60 + 34
+        config.manual.dhuhr = 13 * 60 + 5      // 1:05 PM
+        config.manual.asr = 16 * 60 + 45
+        config.manual.maghrib = 19 * 60 + 58
+        config.manual.isha = 21 * 60 + 30      // 9:30 PM
+
+        let tz = "America/New_York"
+        let t = PrayerEngine.times(latitude: 40.7128, longitude: -74.0060,
+                                   date: date, config: config,
+                                   timeZone: TimeZone(identifier: tz)!)!
+
+        XCTAssertEqual(clock(t.fajr, tz), "05:12 AM")
+        XCTAssertEqual(clock(t.sunrise, tz), "06:34 AM")
+        XCTAssertEqual(clock(t.dhuhr, tz), "01:05 PM")
+        XCTAssertEqual(clock(t.asr, tz), "04:45 PM")
+        XCTAssertEqual(clock(t.maghrib, tz), "07:58 PM")
+        XCTAssertEqual(clock(t.isha, tz), "09:30 PM")
+    }
+
+    /// Manual times ignore the calculation method — same input, different method,
+    /// identical result.
+    func testManualTimesIgnoreCalculationMethod() {
+        var a = PrayerConfig(); a.manual.enabled = true; a.method = .ummAlQura
+        var b = PrayerConfig(); b.manual.enabled = true; b.method = .karachi
+        b.manual = a.manual   // same timetable, different method
+
+        let tz = TimeZone(identifier: "Asia/Riyadh")!
+        let ta = PrayerEngine.times(latitude: 21.4225, longitude: 39.8262, date: date, config: a, timeZone: tz)!
+        let tb = PrayerEngine.times(latitude: 21.4225, longitude: 39.8262, date: date, config: b, timeZone: tz)!
+        XCTAssertEqual(ta.fajr, tb.fajr)
+        XCTAssertEqual(ta.isha, tb.isha)
+    }
+
+    /// Islamic midnight sits between Maghrib and the next day's Fajr, derived the
+    /// same way as the calculated path, so the night cards stay coherent.
+    func testManualIslamicMidnightDerivesFromMaghribAndNextFajr() {
+        var config = PrayerConfig()
+        config.manual.enabled = true
+        config.manual.maghrib = 19 * 60       // 7:00 PM
+        config.manual.fajr = 5 * 60           // 5:00 AM → night = 10h, midnight at 12:00 AM
+
+        let tz = TimeZone(identifier: "America/New_York")!
+        let t = PrayerEngine.times(latitude: 40.7128, longitude: -74.0060, date: date, config: config, timeZone: tz)!
+
+        XCTAssertGreaterThan(t.islamicMidnight, t.maghrib)
+        XCTAssertEqual(clock(t.islamicMidnight, "America/New_York"), "12:00 AM")
+        XCTAssertEqual(clock(t.tahajjud, "America/New_York"), "01:40 AM")  // Maghrib + 2/3 night
+    }
+
+    /// A bare config calculates as before — manual mode is off by default, so the
+    /// existing oracle numbers (and the verify harness) are untouched.
+    func testManualDefaultsOffSoCalculationIsUnchanged() {
+        XCTAssertFalse(PrayerConfig().manual.enabled)
+    }
+
     // MARK: Helper
 
     private func assertCity(_ name: String, _ lat: Double, _ lng: Double, _ tz: String,

@@ -88,6 +88,10 @@ final class SettingsStore {
     /// Manual per-prayer offsets in minutes (high-latitude stopgap, §13).
     var offsets: PrayerOffsets { didSet { persist() } }
 
+    /// The user's own fixed timetable. When `enabled`, it replaces the calculated
+    /// adhān times everywhere (home, countdowns, notifications, widgets).
+    var manualTimes: ManualPrayerTimes { didSet { persist() } }
+
     /// The user's local masjid jamāʿah times (optional; empty until added).
     var masjid: MasjidTimetable { didSet { persist() } }
 
@@ -106,6 +110,12 @@ final class SettingsStore {
         } else {
             offsets = PrayerOffsets()
         }
+        if let data = defaults.data(forKey: Key.manualTimes),
+           let decoded = try? JSONDecoder().decode(ManualPrayerTimes.self, from: data) {
+            manualTimes = decoded
+        } else {
+            manualTimes = ManualPrayerTimes()
+        }
         if let data = defaults.data(forKey: Key.masjid),
            let decoded = try? JSONDecoder().decode(MasjidTimetable.self, from: data) {
             masjid = decoded
@@ -119,7 +129,8 @@ final class SettingsStore {
         PrayerConfig(method: method.adhan,
                      madhab: madhab.adhanMadhab,
                      highLatitudeRule: .middleOfTheNight, // auto (spec §4); no visible toggle
-                     offsets: offsets)
+                     offsets: offsets,
+                     manual: manualTimes)
     }
 
     private func persist() {
@@ -130,6 +141,9 @@ final class SettingsStore {
         defaults.set(hijriIsPrimary, forKey: Key.hijriPrimary)
         if let data = try? JSONEncoder().encode(offsets) {
             defaults.set(data, forKey: Key.offsets)
+        }
+        if let data = try? JSONEncoder().encode(manualTimes) {
+            defaults.set(data, forKey: Key.manualTimes)
         }
         if let data = try? JSONEncoder().encode(masjid) {
             defaults.set(data, forKey: Key.masjid)
@@ -143,6 +157,7 @@ final class SettingsStore {
         static let hijriOffset = "duhaa.settings.hijriOffsetDays"
         static let hijriPrimary = "duhaa.settings.hijriIsPrimary"
         static let offsets = "duhaa.settings.offsets"
+        static let manualTimes = "duhaa.settings.manualTimes"
         static let masjid = "duhaa.settings.masjid"
     }
 }

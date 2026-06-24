@@ -325,7 +325,8 @@ final class PrayerHomeModel {
         return PrayerEngine.times(latitude: location.latitude,
                                   longitude: location.longitude,
                                   date: comps,
-                                  config: config)
+                                  config: config,
+                                  timeZone: location.timeZone)
     }
 
     // MARK: Fajr "ends at sunrise" sub-line
