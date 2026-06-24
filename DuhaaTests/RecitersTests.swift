@@ -34,6 +34,18 @@ final class RecitersTests: XCTestCase {
                        "https://download.quranicaudio.com/quran/maher_256/008.mp3")
     }
 
+    func testOnlyRecitersWithTimingSupportStartingFromAnyAyah() throws {
+        // The Alafasy classic has gapless timing → can begin at a chosen ayah.
+        let alafasyClassic = try XCTUnwrap(Reciters.byID(173))
+        XCTAssertTrue(alafasyClassic.supportsAyahSeek)
+        XCTAssertEqual(alafasyClassic.chapterTimingID, 173)
+
+        // A plain full-surah reciter without timing cannot.
+        XCTAssertFalse(try XCTUnwrap(Reciters.byID(200)).supportsAyahSeek)   // Maher
+        // A per-ayah reciter isn't a chapter recording, so the flag is false too.
+        XCTAssertFalse(try XCTUnwrap(Reciters.byID(7)).supportsAyahSeek)     // Alafasy per-ayah
+    }
+
     func testCatalogHasManyReciters() {
         // A per-ayah default plus the expanded full-surah roster.
         XCTAssertGreaterThan(Reciters.all.count, 20)

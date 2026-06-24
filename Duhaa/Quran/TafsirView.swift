@@ -20,16 +20,19 @@ struct TafsirView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 18) {
+                VStack(alignment: .leading, spacing: 22) {
                     ayahContext
                     Divider().overlay(Palette.cardBorder)
                     commentary
                     if !loading { credit }
                 }
-                .padding(20)
+                .padding(.horizontal, 22)
+                .padding(.top, 20)
+                .padding(.bottom, 28)
             }
             .scrollIndicators(.hidden)
             .background(Palette.appBg.ignoresSafeArea())
+            .textSelection(.enabled)
             .navigationTitle("Tafsir")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -78,19 +81,16 @@ struct TafsirView: View {
             }
             .padding(.vertical, 40)
         } else if let block, !block.t.isEmpty {
-            VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: 18) {
                 if block.b > block.a {
                     Label("On verses \(block.a)–\(block.b)", systemImage: "text.justify.left")
                         .duhaaFont(12, .medium)
                         .foregroundStyle(Palette.blue.opacity(0.8))
                 }
-                ForEach(Array(paragraphs(block.t).enumerated()), id: \.offset) { _, para in
-                    Text(para)
-                        .duhaaFont(15)
-                        .lineSpacing(4)
-                        .foregroundStyle(.primary.opacity(0.88))
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .fixedSize(horizontal: false, vertical: true)
+                LazyVStack(alignment: .leading, spacing: 18) {
+                    ForEach(readingBlocks(block.t)) { block in
+                        commentaryBlock(block)
+                    }
                 }
             }
         } else {
@@ -104,6 +104,56 @@ struct TafsirView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 40)
+        }
+    }
+
+    @ViewBuilder
+    private func commentaryBlock(_ block: TafsirReadingBlock) -> some View {
+        switch block.kind {
+        case .heading:
+            Text(block.text)
+                .duhaaFont(18, .semibold)
+                .lineSpacing(5)
+                .foregroundStyle(Palette.gold)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 6)
+                .accessibilityAddTraits(.isHeader)
+        case .arabic:
+            Text(block.text)
+                .font(QuranFont.reader(readerFont, size: 23))
+                .lineSpacing(10)
+                .multilineTextAlignment(.trailing)
+                .foregroundStyle(Palette.blue.opacity(0.96))
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(14)
+                .background(Palette.card.opacity(0.65), in: RoundedRectangle(cornerRadius: 8))
+                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Palette.blue.opacity(0.18), lineWidth: 1))
+                .environment(\.layoutDirection, .rightToLeft)
+        case .quote:
+            HStack(alignment: .top, spacing: 12) {
+                Rectangle()
+                    .fill(Palette.gold.opacity(0.55))
+                    .frame(width: 2)
+                Text(block.text)
+                    .duhaaFont(16)
+                    .lineSpacing(7)
+                    .foregroundStyle(.primary.opacity(0.86))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, 12)
+            .padding(.horizontal, 14)
+            .background(Palette.gold.opacity(0.07), in: RoundedRectangle(cornerRadius: 8))
+            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Palette.gold.opacity(0.14), lineWidth: 1))
+        case .body:
+            Text(block.text)
+                .duhaaFont(16)
+                .lineSpacing(7)
+                .foregroundStyle(.primary.opacity(0.90))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
@@ -136,10 +186,66 @@ struct TafsirView: View {
         .accessibilityLabel("Choose tafsir")
     }
 
-    /// Split the commentary into paragraphs on blank lines for comfortable reading.
-    private func paragraphs(_ text: String) -> [String] {
+    /// Split the commentary into display blocks while keeping the source text intact.
+    private func readingBlocks(_ text: String) -> [TafsirReadingBlock] {
         text.components(separatedBy: "\n\n")
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
+            .enumerated()
+            .map { offset, paragraph in
+                TafsirReadingBlock(id: offset, text: paragraph, kind: readingKind(for: paragraph))
+            }
+    }
+
+    private func readingKind(for paragraph: String) -> TafsirReadingBlock.Kind {
+        if isMostlyArabic(paragraph) {
+            return .arabic
+        }
+
+        if isLikelyHeading(paragraph) {
+            return .heading
+        }
+
+        if isTranslationQuote(paragraph) {
+            return .quote
+        }
+
+        return .body
+    }
+
+    private func isLikelyHeading(_ paragraph: String) -> Bool {
+        let trimmed = paragraph.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.contains("\n"), trimmed.count <= 90 else { return false }
+        if trimmed.contains(":") || trimmed.contains("\"") || trimmed.hasPrefix("(") { return false }
+        return !trimmed.hasSuffix(".") && !trimmed.hasSuffix("?") && !trimmed.hasSuffix("!") && !trimmed.hasSuffix(")")
+    }
+
+    private func isTranslationQuote(_ paragraph: String) -> Bool {
+        let trimmed = paragraph.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.hasPrefix("(") && trimmed.hasSuffix(")")
+    }
+
+    private func isMostlyArabic(_ paragraph: String) -> Bool {
+        let scalars = paragraph.unicodeScalars.filter { !$0.properties.isWhitespace }
+        guard scalars.count >= 6 else { return false }
+        let arabicScalars = scalars.filter { scalar in
+            (0x0600...0x06FF).contains(Int(scalar.value)) ||
+            (0x0750...0x077F).contains(Int(scalar.value)) ||
+            (0x08A0...0x08FF).contains(Int(scalar.value))
+        }
+        return Double(arabicScalars.count) / Double(scalars.count) > 0.45
+    }
+
+    private struct TafsirReadingBlock: Identifiable {
+        enum Kind {
+            case heading
+            case arabic
+            case quote
+            case body
+        }
+
+        let id: Int
+        let text: String
+        let kind: Kind
     }
 }

@@ -76,7 +76,9 @@ protocol QuranAudioPlaying: AnyObject {
     /// Current playback time and item duration, in seconds.
     var onTimingUpdate: ((TimeInterval, TimeInterval) -> Void)? { get set }
 
-    func prepare(url: URL) async throws
+    /// Prepare `url` for playback, optionally starting at `seekToMs` milliseconds
+    /// in (used to begin a full-surah recording at a chosen ayah).
+    func prepare(url: URL, seekToMs: Int?) async throws
     func play()
     func pause()
     func stop()
@@ -156,7 +158,7 @@ final class AVQuranAudioPlayer: NSObject, QuranAudioPlaying {
     private var timeControlObservation: NSKeyValueObservation?
     private var timeObserverToken: Any?
 
-    func prepare(url: URL) async throws {
+    func prepare(url: URL, seekToMs: Int?) async throws {
         cleanupObservers()
         FirstUseDiagnostics.event("Quran buffering started", url.absoluteString)
 
@@ -196,6 +198,13 @@ final class AVQuranAudioPlayer: NSObject, QuranAudioPlaying {
             }
         } else {
             player?.replaceCurrentItem(with: item)
+        }
+
+        // Begin mid-file when asked (chapter recording started at a chosen ayah).
+        // AVPlayer defers the seek until the item is ready, then plays from there.
+        if let seekToMs {
+            let target = CMTime(value: CMTimeValue(seekToMs), timescale: 1000)
+            await player?.seek(to: target, toleranceBefore: .zero, toleranceAfter: .zero)
         }
 
         timeControlObservation = player?.observe(\.timeControlStatus, options: [.new]) { [weak self] player, _ in
@@ -280,6 +289,7 @@ final class AyahPlayer {
     @ObservationIgnored private let audioSession: QuranAudioSessionManaging
     @ObservationIgnored private let urlResolver: QuranAudioURLResolving
     @ObservationIgnored private let audioPlayer: QuranAudioPlaying
+    @ObservationIgnored private let timingProvider: ChapterVerseTimingProviding
     @ObservationIgnored private let quran: QuranData
     @ObservationIgnored private var playbackTask: Task<Void, Never>?
     @ObservationIgnored private var generation = 0
@@ -287,11 +297,13 @@ final class AyahPlayer {
     init(audioSession: QuranAudioSessionManaging = LiveQuranAudioSessionManager(),
          urlResolver: QuranAudioURLResolving = LiveQuranAudioURLResolver(),
          audioPlayer: QuranAudioPlaying? = nil,
+         timingProvider: ChapterVerseTimingProviding = LiveChapterVerseTimings(),
          quran: QuranData = Quran.shared) {
         FirstUseDiagnostics.event("Quran audio controller init start")
         self.audioSession = audioSession
         self.urlResolver = urlResolver
         self.audioPlayer = audioPlayer ?? AVQuranAudioPlayer()
+        self.timingProvider = timingProvider
         self.quran = quran
         wirePlayerCallbacks()
         FirstUseDiagnostics.event("Quran audio controller init end")
@@ -321,6 +333,15 @@ final class AyahPlayer {
         currentRequest?.ayahNumber
     }
 
+    var isPlayingChapterRecording: Bool {
+        switch currentRequest {
+        case .some(.chapter(_)):
+            return true
+        default:
+            return false
+        }
+    }
+
     var remainingSeconds: TimeInterval? {
         guard durationSeconds.isFinite, durationSeconds > 0 else { return nil }
         return max(0, durationSeconds - elapsedSeconds)
@@ -345,8 +366,10 @@ final class AyahPlayer {
         beginPlayback(.ayah(surah: surah.number, ayah: clampedAyah), in: surah)
     }
 
-    func playChapter(in surah: Surah) {
-        beginPlayback(.chapter(surah: surah.number), in: surah)
+    /// Play a full-surah recording. `fromAyah` (for reciters with gapless timing)
+    /// starts it at that ayah by seeking; nil plays from the beginning.
+    func playChapter(in surah: Surah, fromAyah ayahNumber: Int? = nil) {
+        beginPlayback(.chapter(surah: surah.number), in: surah, seekAyah: ayahNumber)
     }
 
     func pause() {
@@ -385,6 +408,22 @@ final class AyahPlayer {
         return ayah < currentSurah.ayahs.count || nextSurah(after: currentSurah.number) != nil
     }
 
+    var canPlayPreviousItem: Bool {
+        guard let currentSurah else { return false }
+        if isPlayingChapterRecording {
+            return previousSurah(before: currentSurah.number) != nil
+        }
+        return canPlayPreviousAyah
+    }
+
+    var canPlayNextItem: Bool {
+        guard let currentSurah else { return false }
+        if isPlayingChapterRecording {
+            return nextSurah(after: currentSurah.number) != nil
+        }
+        return canPlayNextAyah
+    }
+
     @discardableResult
     func playPreviousAyah() -> Bool {
         guard let currentSurah, let ayah = playingAyahNumber else { return false }
@@ -410,6 +449,28 @@ final class AyahPlayer {
         return true
     }
 
+    @discardableResult
+    func playPreviousItem() -> Bool {
+        if isPlayingChapterRecording {
+            guard let currentSurah,
+                  let previous = previousSurah(before: currentSurah.number) else { return false }
+            playChapter(in: previous)
+            return true
+        }
+        return playPreviousAyah()
+    }
+
+    @discardableResult
+    func playNextItem() -> Bool {
+        if isPlayingChapterRecording {
+            guard let currentSurah,
+                  let next = nextSurah(after: currentSurah.number) else { return false }
+            playChapter(in: next)
+            return true
+        }
+        return playNextAyah()
+    }
+
     func stop() {
         generation += 1
         playbackTask?.cancel()
@@ -430,7 +491,7 @@ final class AyahPlayer {
 
     // MARK: Internals
 
-    private func beginPlayback(_ request: QuranAudioRequest, in surah: Surah? = nil) {
+    private func beginPlayback(_ request: QuranAudioRequest, in surah: Surah? = nil, seekAyah: Int? = nil) {
         generation += 1
         let currentGeneration = generation
         playbackTask?.cancel()
@@ -447,11 +508,11 @@ final class AyahPlayer {
 
         playbackTask = Task { [weak self] in
             await Task.yield()
-            await self?.prepareAndPlay(request, generation: currentGeneration)
+            await self?.prepareAndPlay(request, generation: currentGeneration, seekAyah: seekAyah)
         }
     }
 
-    private func prepareAndPlay(_ request: QuranAudioRequest, generation: Int) async {
+    private func prepareAndPlay(_ request: QuranAudioRequest, generation: Int, seekAyah: Int?) async {
         FirstUseDiagnostics.event("Quran first async startup begins", request.key)
 
         do {
@@ -462,8 +523,11 @@ final class AyahPlayer {
             let playableURL = try await urlResolver.resolveURL(for: request)
             guard isCurrent(generation, request) else { return }
 
+            let seekToMs = await chapterSeekMilliseconds(for: request, seekAyah: seekAyah)
+            guard isCurrent(generation, request) else { return }
+
             playbackState = .buffering
-            try await audioPlayer.prepare(url: playableURL)
+            try await audioPlayer.prepare(url: playableURL, seekToMs: seekToMs)
             guard isCurrent(generation, request) else { return }
 
             audioPlayer.play()
@@ -472,6 +536,14 @@ final class AyahPlayer {
         } catch {
             fail(error)
         }
+    }
+
+    /// For a chapter recording asked to start past ayah 1, the ms offset of that
+    /// ayah from the user's reciter timing data (nil → play from the start).
+    private func chapterSeekMilliseconds(for request: QuranAudioRequest, seekAyah: Int?) async -> Int? {
+        guard case .chapter(let surah) = request, let seekAyah, seekAyah > 1 else { return nil }
+        let reciterID = UserDefaults.standard.object(forKey: "duhaa.quran.reciter") as? Int ?? Reciters.defaultID
+        return await timingProvider.startMilliseconds(reciterID: reciterID, surah: surah, ayah: seekAyah)
     }
 
     private func wirePlayerCallbacks() {

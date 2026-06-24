@@ -29,6 +29,10 @@ struct NowPlayingView: View {
         min(max(player.playingAyahNumber ?? startAyah, 1), activeSurah.ayahs.count)
     }
 
+    private var isChapterMode: Bool {
+        reciter.supportsChapterAudio || player.isPlayingChapterRecording
+    }
+
     private var currentAyah: Ayah? {
         activeSurah.ayahs.first { $0.number == currentNumber }
     }
@@ -48,7 +52,9 @@ struct NowPlayingView: View {
 
     /// Stable key for the ayah currently being traced (reciter + surah + ayah).
     private var traceID: String {
-        "\(reciter.id):\(activeSurah.number):\(currentNumber)"
+        isChapterMode
+            ? "\(reciter.id):\(activeSurah.number):chapter"
+            : "\(reciter.id):\(activeSurah.number):\(currentNumber)"
     }
 
     private var activeWordIndex: Int? {
@@ -95,6 +101,12 @@ struct NowPlayingView: View {
     }
 
     private var upNextText: String {
+        if isChapterMode {
+            if let next = Quran.shared.surah(activeSurah.number + 1) {
+                return next.englishName
+            }
+            return "End of Quran"
+        }
         if currentNumber < activeSurah.ayahs.count {
             return "\(activeSurah.englishName) · Ayah \(currentNumber + 1)"
         }
@@ -124,11 +136,19 @@ struct NowPlayingView: View {
             .padding(.horizontal, 24)
         }
         .onAppear {
-            if player.playingAyahNumber == nil || player.currentSurah == nil {
-                player.play(in: surah, from: startAyah)
+            if player.currentRequest == nil || player.currentSurah == nil {
+                if reciter.supportsChapterAudio {
+                    player.playChapter(in: surah)
+                } else {
+                    player.play(in: surah, from: startAyah)
+                }
             }
         }
         .task(id: traceID) {
+            guard !isChapterMode else {
+                trace = nil
+                return
+            }
             // Load Quran.com's word-by-word data (Arabic + translation + timing).
             if let cached = QuranWordSegments.cachedTrace(reciterID: reciter.id,
                                                           surah: activeSurah.number, ayah: currentNumber) {
@@ -157,7 +177,7 @@ struct NowPlayingView: View {
                 Text(activeSurah.englishName)
                     .duhaaFont(15, .semibold)
                     .foregroundStyle(.primary)
-                Text("Ayah \(currentNumber) of \(activeSurah.ayahs.count)")
+                Text(isChapterMode ? "Full surah" : "Ayah \(currentNumber) of \(activeSurah.ayahs.count)")
                     .duhaaFont(11)
                     .foregroundStyle(Palette.secondaryText)
             }
@@ -211,7 +231,9 @@ struct NowPlayingView: View {
 
     private var ayahContent: some View {
         VStack(spacing: 12) {
-            if let ayah = currentAyah {
+            if isChapterMode {
+                chapterContent
+            } else if let ayah = currentAyah {
                 ArabicWordTraceView(words: currentArabicWords,
                                     activeIndex: activeWordIndex,
                                     readerFont: readerFont,
@@ -230,6 +252,27 @@ struct NowPlayingView: View {
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.35), value: activeSurah.number)
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.35), value: currentNumber)
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: activeWordIndex)
+    }
+
+    private var chapterContent: some View {
+        VStack(spacing: 12) {
+            Text(activeSurah.arabicName)
+                .font(QuranFont.reader(readerFont, size: 46))
+                .foregroundStyle(Palette.gold)
+                .multilineTextAlignment(.center)
+                .environment(\.layoutDirection, .rightToLeft)
+
+            Text(activeSurah.translation)
+                .duhaaFont(17, .semibold)
+                .foregroundStyle(Palette.blue)
+                .multilineTextAlignment(.center)
+
+            Text("\(activeSurah.ayahs.count) ayahs")
+                .duhaaFont(13, .medium)
+                .foregroundStyle(Palette.secondaryText)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .accessibilityElement(children: .combine)
     }
 
     /// Word-by-word: just the current word's meaning (compact, keeps the Arabic
@@ -355,13 +398,13 @@ struct NowPlayingView: View {
     private var controls: some View {
         HStack(spacing: 34) {
             Button {
-                guard player.playPreviousAyah() else { return }
+                guard player.playPreviousItem() else { return }
                 DuhaaHaptics.tap()
             } label: {
-                controlGlyph("backward.fill", size: 22, isEnabled: player.canPlayPreviousAyah)
+                controlGlyph("backward.fill", size: 22, isEnabled: player.canPlayPreviousItem)
             }
-            .disabled(!player.canPlayPreviousAyah)
-            .accessibilityLabel("Previous ayah")
+            .disabled(!player.canPlayPreviousItem)
+            .accessibilityLabel(isChapterMode ? "Previous surah" : "Previous ayah")
 
             Button {
                 player.togglePlayPause()
@@ -383,13 +426,13 @@ struct NowPlayingView: View {
             .accessibilityLabel(isPlaying ? "Pause" : "Play")
 
             Button {
-                guard player.playNextAyah() else { return }
+                guard player.playNextItem() else { return }
                 DuhaaHaptics.tap()
             } label: {
-                controlGlyph("forward.fill", size: 22, isEnabled: player.canPlayNextAyah)
+                controlGlyph("forward.fill", size: 22, isEnabled: player.canPlayNextItem)
             }
-            .disabled(!player.canPlayNextAyah)
-            .accessibilityLabel("Next ayah")
+            .disabled(!player.canPlayNextItem)
+            .accessibilityLabel(isChapterMode ? "Next surah" : "Next ayah")
         }
         .buttonStyle(.plain)
     }
@@ -428,41 +471,47 @@ struct NowPlayingView: View {
 
     @ViewBuilder
     private var downloadControl: some View {
-        switch offline.state(surah: activeSurah.number, reciterID: reciter.id) {
-        case .notDownloaded:
-            Button {
-                offline.download(surah: activeSurah, reciter: reciter)
-                DuhaaHaptics.tap()
-            } label: {
-                Image(systemName: "arrow.down.circle")
-                    .duhaaFont(18)
-                    .foregroundStyle(Palette.gold)
-            }
-            .accessibilityLabel("Download for offline")
-        case .downloading(let progress):
-            Button { offline.remove(surah: activeSurah, reciter: reciter) } label: {
-                ZStack {
-                    Circle().stroke(Palette.gold.opacity(0.25), lineWidth: 2.5)
-                    Circle().trim(from: 0, to: max(0.02, progress))
-                        .stroke(Palette.gold, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
-                        .rotationEffect(.degrees(-90))
-                    Image(systemName: "stop.fill")
-                        .duhaaFont(8)
+        if reciter.supportsAyahAudio {
+            switch offline.state(surah: activeSurah.number, reciterID: reciter.id) {
+            case .notDownloaded:
+                Button {
+                    offline.download(surah: activeSurah, reciter: reciter)
+                    DuhaaHaptics.tap()
+                } label: {
+                    Image(systemName: "arrow.down.circle")
+                        .duhaaFont(18)
                         .foregroundStyle(Palette.gold)
                 }
-                .frame(width: 24, height: 24)
+                .accessibilityLabel("Download for offline")
+            case .downloading(let progress):
+                Button { offline.remove(surah: activeSurah, reciter: reciter) } label: {
+                    ZStack {
+                        Circle().stroke(Palette.gold.opacity(0.25), lineWidth: 2.5)
+                        Circle().trim(from: 0, to: max(0.02, progress))
+                            .stroke(Palette.gold, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                            .rotationEffect(.degrees(-90))
+                        Image(systemName: "stop.fill")
+                            .duhaaFont(8)
+                            .foregroundStyle(Palette.gold)
+                    }
+                    .frame(width: 24, height: 24)
+                }
+                .accessibilityLabel("Downloading, \(Int(progress * 100)) percent. Tap to cancel.")
+            case .downloaded:
+                Button {
+                    offline.remove(surah: activeSurah, reciter: reciter)
+                    DuhaaHaptics.tap()
+                } label: {
+                    Image(systemName: "arrow.down.circle.fill")
+                        .duhaaFont(18)
+                        .foregroundStyle(Palette.gold)
+                }
+                .accessibilityLabel("Downloaded for offline. Tap to remove.")
             }
-            .accessibilityLabel("Downloading, \(Int(progress * 100)) percent. Tap to cancel.")
-        case .downloaded:
-            Button {
-                offline.remove(surah: activeSurah, reciter: reciter)
-                DuhaaHaptics.tap()
-            } label: {
-                Image(systemName: "arrow.down.circle.fill")
-                    .duhaaFont(18)
-                    .foregroundStyle(Palette.gold)
-            }
-            .accessibilityLabel("Downloaded for offline. Tap to remove.")
+        } else {
+            Color.clear
+                .frame(width: 18, height: 18)
+                .accessibilityHidden(true)
         }
     }
 }

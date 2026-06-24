@@ -18,6 +18,10 @@ struct Reciter: Decodable, Identifiable, Hashable, Sendable {
     /// Most QuranicAudio paths are; the newer `qdc` streaming paths use bare
     /// numbers (8.mp3). Defaults to true so existing reciters are unaffected.
     let chapterPadded: Bool
+    /// Quran.com recitation id whose gapless verse-timing data lets a full-surah
+    /// recording start at a chosen ayah (by seeking). Nil for chapter recordings
+    /// without published timing — those can only play from the start.
+    let chapterTimingID: Int?
 
     enum AudioKind: String, Decodable, Sendable {
         case ayah
@@ -42,6 +46,11 @@ struct Reciter: Decodable, Identifiable, Hashable, Sendable {
         audioKind == .chapter && chapterPrefix != nil
     }
 
+    /// A full-surah recording that can begin at a chosen ayah (has timing data).
+    var supportsAyahSeek: Bool {
+        supportsChapterAudio && chapterTimingID != nil
+    }
+
     func ayahURL(surah: Int, ayah: Int) -> URL? {
         guard supportsAyahAudio, let prefix else { return nil }
         let name = String(format: "%03d%03d", surah, ayah)
@@ -56,7 +65,7 @@ struct Reciter: Decodable, Identifiable, Hashable, Sendable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, name, audioKind, prefix, chapterPrefix, imageURL, imageAssetName, chapterPadded
+        case id, name, audioKind, prefix, chapterPrefix, imageURL, imageAssetName, chapterPadded, chapterTimingID
     }
 
     init(from decoder: Decoder) throws {
@@ -68,6 +77,7 @@ struct Reciter: Decodable, Identifiable, Hashable, Sendable {
         imageURL = try container.decodeIfPresent(URL.self, forKey: .imageURL)
         imageAssetName = try container.decodeIfPresent(String.self, forKey: .imageAssetName)
         chapterPadded = try container.decodeIfPresent(Bool.self, forKey: .chapterPadded) ?? true
+        chapterTimingID = try container.decodeIfPresent(Int.self, forKey: .chapterTimingID)
         audioKind = try container.decodeIfPresent(AudioKind.self, forKey: .audioKind)
             ?? (chapterPrefix == nil ? .ayah : .chapter)
     }

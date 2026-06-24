@@ -44,6 +44,11 @@ private final class FakeAudioURLResolver: QuranAudioURLResolving {
     var pendingCount: Int { continuations.count }
 }
 
+private struct StubChapterVerseTimings: ChapterVerseTimingProviding {
+    let milliseconds: Int?
+    func startMilliseconds(reciterID: Int, surah: Int, ayah: Int) async -> Int? { milliseconds }
+}
+
 @MainActor
 private final class FakeQuranAudioPlayer: QuranAudioPlaying {
     var onReady: (() -> Void)?
@@ -54,6 +59,7 @@ private final class FakeQuranAudioPlayer: QuranAudioPlaying {
     var onTimingUpdate: ((TimeInterval, TimeInterval) -> Void)?
 
     private(set) var preparedURLs: [URL] = []
+    private(set) var seekToMsValues: [Int?] = []
     private(set) var playCount = 0
     private(set) var pauseCount = 0
     private(set) var stopCount = 0
@@ -61,8 +67,9 @@ private final class FakeQuranAudioPlayer: QuranAudioPlaying {
     var autoReady = true
     var autoStartPlayback = true
 
-    func prepare(url: URL) async throws {
+    func prepare(url: URL, seekToMs: Int?) async throws {
         preparedURLs.append(url)
+        seekToMsValues.append(seekToMs)
         if failPrepare {
             throw QuranAudioError.playerFailed
         }
@@ -443,12 +450,44 @@ final class QuranAudioPlayerTests: XCTestCase {
               ])
     }
 
+    // MARK: Chapter recording — start from a chosen ayah
+
+    func testChapterStartsAtChosenAyahWhenTimingAvailable() async {
+        let harness = makeHarness(timingMilliseconds: 5000)
+        harness.player.playChapter(in: testSurah, fromAyah: 2)
+        await waitUntil("prepared with seek") { harness.audioPlayer.seekToMsValues == [5000] }
+        XCTAssertEqual(harness.audioPlayer.seekToMsValues, [5000])
+        XCTAssertEqual(harness.audioPlayer.playCount, 1)
+    }
+
+    func testChapterFromFirstAyahDoesNotSeek() async {
+        let harness = makeHarness(timingMilliseconds: 5000)
+        harness.player.playChapter(in: testSurah, fromAyah: 1)
+        await waitUntil("prepared") { harness.audioPlayer.preparedURLs.count == 1 }
+        XCTAssertEqual(harness.audioPlayer.seekToMsValues, [nil])
+    }
+
+    func testChapterWithoutTimingPlaysFromStart() async {
+        let harness = makeHarness(timingMilliseconds: nil)
+        harness.player.playChapter(in: testSurah, fromAyah: 2)
+        await waitUntil("prepared") { harness.audioPlayer.preparedURLs.count == 1 }
+        XCTAssertEqual(harness.audioPlayer.seekToMsValues, [nil])
+    }
+
+    func testPerAyahPlaybackNeverSeeks() async {
+        let harness = makeHarness(timingMilliseconds: 5000)
+        harness.player.play(in: testSurah, from: 2)
+        await waitUntil("prepared") { harness.audioPlayer.preparedURLs.count == 1 }
+        XCTAssertEqual(harness.audioPlayer.seekToMsValues, [nil])
+    }
+
     private func testQuran(_ surahs: [Surah]) -> QuranData {
         QuranData(bismillah: Bismillah(arabic: "", english: ""), surahs: surahs)
     }
 
     private func makeHarness(result: Result<URL, Error> = .success(URL(string: "https://example.com/audio.mp3")!),
                              delayedResolver: Bool = false,
+                             timingMilliseconds: Int? = nil,
                              quran: QuranData? = nil) -> Harness {
         let session = FakeAudioSessionManager()
         let resolver = FakeAudioURLResolver()
@@ -457,6 +496,7 @@ final class QuranAudioPlayerTests: XCTestCase {
         let player = AyahPlayer(audioSession: session,
                                 urlResolver: resolver,
                                 audioPlayer: audioPlayer,
+                                timingProvider: StubChapterVerseTimings(milliseconds: timingMilliseconds),
                                 quran: quran ?? testQuran([testSurah]))
         return Harness(player: player,
                        session: session,

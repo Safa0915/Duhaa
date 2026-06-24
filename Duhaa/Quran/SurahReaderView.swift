@@ -16,7 +16,6 @@ struct SurahReaderView: View {
     @Environment(FeedbackStore.self) private var feedback
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var furthestAyah = 0
-    @State private var showingChapterAudioHint = false
 
     // The one-time jump-to-verse: where we are, whether we've already jumped, the
     // currently-glowing ayah, and a quiet fallback message if the ayah is missing.
@@ -31,7 +30,7 @@ struct SurahReaderView: View {
     @State private var showingReadingOptions = false
     /// Whether the reciter photo gallery is showing.
     @State private var showingReciterPicker = false
-    /// Whether the immersive "Listen" player is showing (per-ayah reciters only).
+    /// Whether the immersive "Listen" player is showing.
     @State private var showingNowPlaying = false
 
     /// Place the target a little above center so it reads cleanly with context above it.
@@ -139,11 +138,6 @@ struct SurahReaderView: View {
         .onDisappear {
             bookmarks.recordRead(surah: surah.number, ayah: max(furthestAyah, scrollTo ?? 1))
         }
-        .alert("Full-surah recording", isPresented: $showingChapterAudioHint) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("\(selectedReciter?.name ?? "This reciter") recites by full surah in Duhaa. Use the play button at the top to listen.")
-        }
         .sheet(item: $tafsirAyah) { ayah in
             TafsirView(surah: surah, ayah: ayah)
         }
@@ -225,7 +219,7 @@ struct SurahReaderView: View {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
 
-            if selectedReciter?.supportsAyahAudio == true, player.isActive {
+            if player.isActive {
                 readerMiniPlayer
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
@@ -253,7 +247,9 @@ struct SurahReaderView: View {
                         .duhaaFont(13, .semibold)
                         .foregroundStyle(.primary)
                         .lineLimit(1)
-                    Text("Ayah \(ayahNumber) of \(activeSurah.ayahs.count) · \(selectedReciter?.name ?? "Recitation")")
+                    Text(player.isPlayingChapterRecording
+                         ? "Full surah · \(selectedReciter?.name ?? "Recitation")"
+                         : "Ayah \(ayahNumber) of \(activeSurah.ayahs.count) · \(selectedReciter?.name ?? "Recitation")")
                         .duhaaFont(11, .medium)
                         .foregroundStyle(Palette.blue)
                         .lineLimit(1)
@@ -354,9 +350,6 @@ struct SurahReaderView: View {
         }
     }
 
-    /// Per-ayah reciters open the immersive "Listen" player (synced, ayah-by-ayah).
-    /// Full-surah reciters can't be tracked ayah-by-ayah, so they just toggle the
-    /// whole-surah recording inline.
     @ViewBuilder
     private var surahPlayButton: some View {
         if selectedReciter?.supportsAyahAudio == true {
@@ -366,16 +359,19 @@ struct SurahReaderView: View {
             .accessibilityLabel("Listen")
         } else {
             Button {
-                if player.isActive { player.stop() } else { player.playChapter(in: surah) }
+                if !player.isPlayingChapter(surah.number) {
+                    player.playChapter(in: surah)
+                }
+                showingNowPlaying = true
             } label: {
                 if player.isLoading {
                     ProgressView().controlSize(.small).tint(Palette.gold)
                 } else {
-                    Image(systemName: player.isActive ? "pause.circle.fill" : "play.circle")
+                    Image(systemName: "headphones")
                         .foregroundStyle(Palette.gold)
                 }
             }
-            .accessibilityLabel(player.isLoading ? "Loading recitation" : (player.isActive ? "Pause surah" : "Play surah"))
+            .accessibilityLabel(player.isLoading ? "Loading recitation" : "Listen")
         }
     }
 
@@ -637,16 +633,31 @@ struct SurahReaderView: View {
 
     @ViewBuilder
     private func playButton(_ ayah: Ayah, isPlaying: Bool) -> some View {
-        if selectedReciter?.supportsChapterAudio == true {
+        if selectedReciter?.supportsAyahSeek == true {
+            // Full-surah recording that can begin at this ayah (seeks into the file).
             Button {
-                showingChapterAudioHint = true
+                player.playChapter(in: surah, fromAyah: ayah.number)
+                showingNowPlaying = true
+            } label: {
+                Image(systemName: "play.circle")
+                    .duhaaFont(16)
+                    .foregroundStyle(Palette.gold)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Play from ayah \(ayah.number)")
+        } else if selectedReciter?.supportsChapterAudio == true {
+            Button {
+                if !player.isPlayingChapter(surah.number) {
+                    player.playChapter(in: surah)
+                }
+                showingNowPlaying = true
             } label: {
                 Image(systemName: "music.note.list")
                     .duhaaFont(16)
                     .foregroundStyle(Palette.gold)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Use surah play button for this recording")
+            .accessibilityLabel("Open full-surah player")
         } else {
             Button {
                 player.toggle(in: surah, ayah: ayah)
