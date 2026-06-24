@@ -16,11 +16,6 @@ struct NowPlayingView: View {
     @AppStorage("duhaa.quran.showTranslation") private var showTranslation = true
     @AppStorage("duhaa.quran.readerFont") private var readerFont = "kfgqpc"
 
-    /// Quran.com word-by-word data (Arabic + translation + timing) for the current
-    /// ayah. nil until fetched / when unavailable — then we fall back to the
-    /// bundled text, the full translation, and the linear estimate.
-    @State private var trace: QuranAyahTrace?
-
     private var activeSurah: Surah {
         player.currentSurah ?? surah
     }
@@ -39,41 +34,6 @@ struct NowPlayingView: View {
 
     private var progressValue: Double {
         max(0, min(1, player.progress))
-    }
-
-    /// True once Quran.com word-by-word data is loaded for this ayah.
-    private var hasWordByWord: Bool { (trace?.words.isEmpty == false) }
-
-    private var currentArabicWords: [String] {
-        if let trace, !trace.words.isEmpty { return trace.words.map(\.arabic) }
-        guard let currentAyah else { return [] }
-        return QuranWordTrace.words(in: currentAyah.arabic)
-    }
-
-    /// Stable key for the ayah currently being traced (reciter + surah + ayah).
-    private var traceID: String {
-        isChapterMode
-            ? "\(reciter.id):\(activeSurah.number):chapter"
-            : "\(reciter.id):\(activeSurah.number):\(currentNumber)"
-    }
-
-    private var activeWordIndex: Int? {
-        let count = currentArabicWords.count
-        guard count > 0 else { return nil }
-        // True Quran.com word-by-word timing when we have it…
-        if let segments = trace?.segments, !segments.isEmpty {
-            let ms = Int((player.elapsedSeconds * 1000).rounded())
-            return QuranWordSegments.activeWordIndex(atMs: ms, segments: segments, wordCount: count)
-        }
-        // …otherwise the linear estimate (offline / reciter without segments).
-        return QuranWordTrace.activeWordIndex(progress: progressValue, wordCount: count)
-    }
-
-    /// The English meaning of the word currently being recited (word-by-word).
-    private var activeWordTranslation: String? {
-        guard let trace, let index = activeWordIndex, index >= 0, index < trace.words.count else { return nil }
-        let text = trace.words[index].translation.trimmingCharacters(in: .whitespacesAndNewlines)
-        return text.isEmpty ? nil : text
     }
 
     private var remainingTimeText: String {
@@ -142,21 +102,6 @@ struct NowPlayingView: View {
                 } else {
                     player.play(in: surah, from: startAyah)
                 }
-            }
-        }
-        .task(id: traceID) {
-            guard !isChapterMode else {
-                trace = nil
-                return
-            }
-            // Load Quran.com's word-by-word data (Arabic + translation + timing).
-            if let cached = QuranWordSegments.cachedTrace(reciterID: reciter.id,
-                                                          surah: activeSurah.number, ayah: currentNumber) {
-                trace = cached
-            } else {
-                trace = nil  // drop the previous ayah's data while fetching
-                trace = await QuranWordSegments.loadTrace(reciterID: reciter.id,
-                                                          surah: activeSurah.number, ayah: currentNumber)
             }
         }
     }
@@ -230,17 +175,23 @@ struct NowPlayingView: View {
     // MARK: Ayah text
 
     private var ayahContent: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 14) {
             if isChapterMode {
                 chapterContent
             } else if let ayah = currentAyah {
-                ArabicWordTraceView(words: currentArabicWords,
-                                    activeIndex: activeWordIndex,
-                                    readerFont: readerFont,
-                                    fontSize: 42,
-                                    reduceMotion: reduceMotion)
-                    .id("arabic-\(activeSurah.number)-\(ayah.number)")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                ScrollView(showsIndicators: false) {
+                    arabicText(ayah.arabic)
+                        .font(QuranFont.reader(readerFont, size: 40))
+                        .lineSpacing(22)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                        .environment(\.layoutDirection, .rightToLeft)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 6)
+                        .id("arabic-\(activeSurah.number)-\(ayah.number)")
+                        .accessibilityLabel(ayah.arabic)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                 if showTranslation {
                     translationArea(ayah)
@@ -251,7 +202,24 @@ struct NowPlayingView: View {
         .frame(maxHeight: 420)
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.35), value: activeSurah.number)
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.35), value: currentNumber)
-        .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: activeWordIndex)
+    }
+
+    /// The ayah as a single, correctly-shaped Quran string — built the same way as
+    /// the reader (one concatenated `Text` run) so the Uthmani script and its pause
+    /// marks always render perfectly. Never split word-by-word.
+    private func arabicText(_ raw: String) -> Text {
+        QuranArabicText.display(raw).reduce(Text("")) { partial, character in
+            partial + Text(String(character)).foregroundColor(markColor(character))
+        }
+    }
+
+    /// Tint the waqf (pause) and sajdah marks, matching the reader.
+    private func markColor(_ character: Character) -> Color {
+        switch character {
+        case "ۖ", "ۗ", "ۘ", "ۙ", "ۚ", "ۛ", "ۜ", "۝": Palette.gold
+        case "۞", "۩": Palette.blue
+        default: .primary
+        }
     }
 
     private var chapterContent: some View {
@@ -275,33 +243,18 @@ struct NowPlayingView: View {
         .accessibilityElement(children: .combine)
     }
 
-    /// Word-by-word: just the current word's meaning (compact, keeps the Arabic
-    /// big). Offline / no per-word data: the full ayah translation.
-    @ViewBuilder
+    /// The ayah's full English translation, scrollable for longer verses.
     private func translationArea(_ ayah: Ayah) -> some View {
-        if hasWordByWord {
-            Text(activeWordTranslation ?? " ")
-                .duhaaFont(19, .semibold)
-                .foregroundStyle(Palette.blue)
+        ScrollView(showsIndicators: false) {
+            Text(ayah.english)
+                .duhaaFont(16)
+                .lineSpacing(4)
+                .foregroundStyle(.primary.opacity(0.8))
                 .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .minimumScaleFactor(0.75)
                 .frame(maxWidth: .infinity)
-                .frame(height: 54)
-                .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: activeWordTranslation)
-                .accessibilityLabel(activeWordTranslation.map { "Word meaning: \($0)" } ?? "")
-        } else {
-            ScrollView(showsIndicators: false) {
-                Text(ayah.english)
-                    .duhaaFont(15)
-                    .lineSpacing(4)
-                    .foregroundStyle(.primary.opacity(0.78))
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity)
-                    .id("english-\(activeSurah.number)-\(ayah.number)")
-            }
-            .frame(maxHeight: 78)
+                .id("english-\(activeSurah.number)-\(ayah.number)")
         }
+        .frame(maxHeight: 96)
     }
 
     // MARK: Progress + controls
@@ -513,145 +466,5 @@ struct NowPlayingView: View {
                 .frame(width: 18, height: 18)
                 .accessibilityHidden(true)
         }
-    }
-}
-
-private struct ArabicWordTraceView: View {
-    let words: [String]
-    let activeIndex: Int?
-    let readerFont: String
-    var fontSize: CGFloat = 32
-    let reduceMotion: Bool
-
-    var body: some View {
-        ScrollViewReader { proxy in
-            ScrollView(showsIndicators: false) {
-                RTLWordWrapLayout(spacing: 4, lineSpacing: 10) {
-                    ForEach(Array(words.enumerated()), id: \.offset) { item in
-                        let index = item.offset
-                        let word = item.element
-                        Text(word)
-                            .font(QuranFont.reader(readerFont, size: fontSize))
-                            .lineLimit(1)
-                            .foregroundStyle(wordColor(index))
-                            .padding(.horizontal, 7)
-                            .padding(.vertical, 4)
-                            .background(
-                                Capsule()
-                                    .fill(Palette.gold.opacity(index == activeIndex ? 0.16 : 0))
-                            )
-                            .overlay(
-                                Capsule()
-                                    .stroke(Palette.gold.opacity(index == activeIndex ? 0.5 : 0),
-                                            lineWidth: 1)
-                            )
-                            .shadow(color: Palette.gold.opacity(index == activeIndex ? 0.22 : 0),
-                                    radius: 7,
-                                    y: 2)
-                            .id(index)
-                    }
-                }
-                .padding(.vertical, 4)
-                .frame(maxWidth: .infinity)
-            }
-            .onAppear {
-                scroll(to: activeIndex, proxy: proxy)
-            }
-            .onChange(of: activeIndex) { _, newValue in
-                scroll(to: newValue, proxy: proxy)
-            }
-        }
-        // NOTE: RTLWordWrapLayout already places words right-to-left (from maxX).
-        // Adding an RTL layoutDirection here would mirror it a second time and flip
-        // the words back to left-to-right — so it is deliberately NOT set.
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(words.joined(separator: " "))
-    }
-
-    private func wordColor(_ index: Int) -> Color {
-        guard let activeIndex else { return .primary }
-        if index == activeIndex { return Palette.gold }
-        if index < activeIndex { return .primary.opacity(0.9) }
-        return .primary.opacity(0.38)
-    }
-
-    private func scroll(to index: Int?, proxy: ScrollViewProxy) {
-        guard let index else { return }
-        let update = { proxy.scrollTo(index, anchor: .center) }
-        if reduceMotion {
-            update()
-        } else {
-            withAnimation(.easeInOut(duration: 0.26)) {
-                update()
-            }
-        }
-    }
-}
-
-private struct RTLWordWrapLayout: Layout {
-    let spacing: CGFloat
-    let lineSpacing: CGFloat
-
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let maxWidth = max(1, proposal.width ?? 320)
-        let lines = measuredLines(maxWidth: maxWidth, subviews: subviews)
-        let height = lines.enumerated().reduce(CGFloat.zero) { total, item in
-            total + item.element.height + (item.offset == 0 ? 0 : lineSpacing)
-        }
-        return CGSize(width: maxWidth, height: height)
-    }
-
-    func placeSubviews(in bounds: CGRect,
-                       proposal: ProposedViewSize,
-                       subviews: Subviews,
-                       cache: inout ()) {
-        let lines = measuredLines(maxWidth: max(1, bounds.width), subviews: subviews)
-        var y = bounds.minY
-
-        for line in lines {
-            var x = bounds.maxX
-            for entry in line.entries {
-                x -= entry.size.width
-                subviews[entry.index].place(
-                    at: CGPoint(x: x, y: y + (line.height - entry.size.height) / 2),
-                    proposal: ProposedViewSize(entry.size)
-                )
-                x -= spacing
-            }
-            y += line.height + lineSpacing
-        }
-    }
-
-    private func measuredLines(maxWidth: CGFloat, subviews: Subviews) -> [Line] {
-        var lines: [Line] = []
-        var current = Line()
-
-        for index in subviews.indices {
-            let size = subviews[index].sizeThatFits(.unspecified)
-            let nextWidth = current.entries.isEmpty
-                ? size.width
-                : current.width + spacing + size.width
-
-            if !current.entries.isEmpty && nextWidth > maxWidth {
-                lines.append(current)
-                current = Line()
-            }
-
-            current.entries.append((index, size))
-            current.width = current.entries.count == 1 ? size.width : current.width + spacing + size.width
-            current.height = max(current.height, size.height)
-        }
-
-        if !current.entries.isEmpty {
-            lines.append(current)
-        }
-
-        return lines
-    }
-
-    private struct Line {
-        var entries: [(index: Int, size: CGSize)] = []
-        var width: CGFloat = 0
-        var height: CGFloat = 0
     }
 }

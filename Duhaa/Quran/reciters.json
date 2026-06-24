@@ -261,21 +261,24 @@
   },
   {
    "id": 228,
-   "name": "Muhammad al-Mehysni",
+   "name": "Muhammad al-Mehysni (verify)",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/mehysni/"
+   "chapterPrefix": "https://download.quranicaudio.com/quran/mehysni/",
+   "imageAssetName": "reciter-muhammad-al-mehysni"
   },
   {
    "id": 229,
-   "name": "Nabil ar-Rifai",
+   "name": "Nabil ar-Rifai (verify)",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/nabil_rifa3i/"
+   "chapterPrefix": "https://download.quranicaudio.com/quran/nabil_rifa3i/",
+   "imageAssetName": "reciter-nabil-ar-rifai"
   },
   {
    "id": 230,
-   "name": "Sahl Yasin",
+   "name": "Sahl Yasin (verify)",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/sahl_yaaseen/"
+   "chapterPrefix": "https://download.quranicaudio.com/quran/sahl_yaaseen/",
+   "imageAssetName": "reciter-sahl-yasin"
   },
   {
    "id": 231,
