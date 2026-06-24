@@ -14,6 +14,10 @@ struct Reciter: Decodable, Identifiable, Hashable, Sendable {
     let imageURL: URL?
     /// Bundled profile photo asset. Preferred over the remote URL when present.
     let imageAssetName: String?
+    /// Whether chapter audio filenames are zero-padded to 3 digits (008.mp3).
+    /// Most QuranicAudio paths are; the newer `qdc` streaming paths use bare
+    /// numbers (8.mp3). Defaults to true so existing reciters are unaffected.
+    let chapterPadded: Bool
 
     enum AudioKind: String, Decodable, Sendable {
         case ayah
@@ -46,12 +50,13 @@ struct Reciter: Decodable, Identifiable, Hashable, Sendable {
 
     func chapterURL(surah: Int) -> URL? {
         guard supportsChapterAudio, let chapterPrefix else { return nil }
-        // QuranicAudio chapter files are zero-padded to 3 digits, e.g. 008.mp3.
-        return URL(string: "\(chapterPrefix)\(String(format: "%03d", surah)).mp3")
+        // Zero-padded to 3 digits (008.mp3) for most paths; bare (8.mp3) for qdc.
+        let number = chapterPadded ? String(format: "%03d", surah) : String(surah)
+        return URL(string: "\(chapterPrefix)\(number).mp3")
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, name, audioKind, prefix, chapterPrefix, imageURL, imageAssetName
+        case id, name, audioKind, prefix, chapterPrefix, imageURL, imageAssetName, chapterPadded
     }
 
     init(from decoder: Decoder) throws {
@@ -62,6 +67,7 @@ struct Reciter: Decodable, Identifiable, Hashable, Sendable {
         chapterPrefix = try container.decodeIfPresent(String.self, forKey: .chapterPrefix)
         imageURL = try container.decodeIfPresent(URL.self, forKey: .imageURL)
         imageAssetName = try container.decodeIfPresent(String.self, forKey: .imageAssetName)
+        chapterPadded = try container.decodeIfPresent(Bool.self, forKey: .chapterPadded) ?? true
         audioKind = try container.decodeIfPresent(AudioKind.self, forKey: .audioKind)
             ?? (chapterPrefix == nil ? .ayah : .chapter)
     }

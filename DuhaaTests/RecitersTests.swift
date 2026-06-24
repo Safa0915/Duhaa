@@ -11,15 +11,27 @@ final class RecitersTests: XCTestCase {
                        "https://verses.quran.com/Alafasy/mp3/008001.mp3")
     }
 
-    func testFullSurahReciterBuildsZeroPaddedChapterURL() throws {
+    func testAlafasyClassicMatchesQuranComMediaReciter173() throws {
         let reciter = try XCTUnwrap(Reciters.byID(173))
 
         XCTAssertEqual(reciter.name, "Mishary Rashid Alafasy (Classic Recording)")
         XCTAssertFalse(reciter.supportsAyahAudio)
         XCTAssertTrue(reciter.supportsChapterAudio)
-        // QuranicAudio files are zero-padded to 3 digits (008.mp3, not 8.mp3).
+        // quran.com mediaReciter=173 serves the qdc streaming path with bare,
+        // non-padded filenames (8.mp3, not 008.mp3) — verified against the API.
         XCTAssertEqual(reciter.chapterURL(surah: 8)?.absoluteString,
-                       "https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/008.mp3")
+                       "https://download.quranicaudio.com/qdc/mishari_al_afasy/streaming/mp3/8.mp3")
+        XCTAssertEqual(reciter.chapterURL(surah: 1)?.absoluteString,
+                       "https://download.quranicaudio.com/qdc/mishari_al_afasy/streaming/mp3/1.mp3")
+    }
+
+    func testFullSurahReciterBuildsZeroPaddedChapterURL() throws {
+        // The default for chapter reciters stays zero-padded to 3 digits (008.mp3).
+        let reciter = try XCTUnwrap(Reciters.byID(200))   // Maher al-Muaiqly
+
+        XCTAssertTrue(reciter.supportsChapterAudio)
+        XCTAssertEqual(reciter.chapterURL(surah: 8)?.absoluteString,
+                       "https://download.quranicaudio.com/quran/maher_256/008.mp3")
     }
 
     func testCatalogHasManyReciters() {
