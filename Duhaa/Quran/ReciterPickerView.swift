@@ -1,14 +1,18 @@
 import SwiftUI
 
-/// A circular reciter avatar: the Quran.com profile photo when it loads, with a
-/// themed gold/blue monogram as the placeholder + offline fallback.
+/// A circular reciter avatar: a bundled portrait first, then the Quran.com
+/// profile photo when it loads, with a themed monogram as the fallback.
 struct ReciterAvatar: View {
     let reciter: Reciter
     var size: CGFloat = 84
 
     var body: some View {
         Group {
-            if let url = reciter.imageURL {
+            if let imageAssetName = reciter.imageAssetName {
+                Image(imageAssetName)
+                    .resizable()
+                    .scaledToFill()
+            } else if let url = reciter.imageURL {
                 AsyncImage(url: url) { phase in
                     if case .success(let image) = phase {
                         image.resizable().scaledToFill()

@@ -7,6 +7,13 @@
    "imageURL": "https://static.qurancdn.com/images/reciters/6/mishary-rashid-alafasy-profile.jpeg"
   },
   {
+   "id": 173,
+   "name": "Mishary Rashid Alafasy (Classic Recording)",
+   "audioKind": "chapter",
+   "chapterPrefix": "https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/",
+   "imageURL": "https://static.qurancdn.com/images/reciters/6/mishary-rashid-alafasy-profile.jpeg"
+  },
+  {
    "id": 2,
    "name": "AbdulBaset AbdulSamad (Murattal)",
    "prefix": "AbdulBaset/Murattal/mp3/",
@@ -128,7 +135,8 @@
    "id": 207,
    "name": "Idrees Abkar",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/idrees_abkar/"
+   "chapterPrefix": "https://download.quranicaudio.com/quran/idrees_abkar/",
+   "imageAssetName": "reciter-idrees-abkar"
   },
   {
    "id": 208,
@@ -148,13 +156,15 @@
    "id": 210,
    "name": "Abdullah Basfar",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/abdullaah_basfar/"
+   "chapterPrefix": "https://download.quranicaudio.com/quran/abdullaah_basfar/",
+   "imageAssetName": "reciter-abdullah-basfar"
   },
   {
    "id": 211,
    "name": "Muhammad Ayyoub",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/muhammad_ayyoob/"
+   "chapterPrefix": "https://download.quranicaudio.com/quran/muhammad_ayyoob/",
+   "imageAssetName": "reciter-muhammad-ayyoub"
   },
   {
    "id": 212,
@@ -167,25 +177,29 @@
    "id": 213,
    "name": "Khalid al-Qahtani",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/khaalid_al-qahtaanee/"
+   "chapterPrefix": "https://download.quranicaudio.com/quran/khaalid_al-qahtaanee/",
+   "imageAssetName": "reciter-khalid-al-qahtani"
   },
   {
    "id": 214,
    "name": "Abdur-Rashid Sufi",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/abdurrashid_sufi/"
+   "chapterPrefix": "https://download.quranicaudio.com/quran/abdurrashid_sufi/",
+   "imageAssetName": "reciter-abdur-rashid-sufi"
   },
   {
    "id": 215,
    "name": "Fares Abbad",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/fares/"
+   "chapterPrefix": "https://download.quranicaudio.com/quran/fares/",
+   "imageAssetName": "reciter-fares-abbad"
   },
   {
    "id": 216,
    "name": "Ibrahim al-Akhdar",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/ibrahim_al_akhdar/"
+   "chapterPrefix": "https://download.quranicaudio.com/quran/ibrahim_al_akhdar/",
+   "imageAssetName": "reciter-ibrahim-al-akhdar"
   },
   {
    "id": 217,
@@ -198,7 +212,8 @@
    "id": 218,
    "name": "Salah Bukhatir",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/salaah_bukhaatir/"
+   "chapterPrefix": "https://download.quranicaudio.com/quran/salaah_bukhaatir/",
+   "imageAssetName": "reciter-salah-bukhatir"
   },
   {
    "id": 222,
@@ -211,13 +226,15 @@
    "id": 223,
    "name": "Mohammad al-Tablawi",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/mohammad_altablawi/"
+   "chapterPrefix": "https://download.quranicaudio.com/quran/mohammad_altablawi/",
+   "imageAssetName": "reciter-mohammad-al-tablawi"
   },
   {
    "id": 224,
    "name": "Muhammad Hassan",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/mu7ammad_7assan/"
+   "chapterPrefix": "https://download.quranicaudio.com/quran/mu7ammad_7assan/",
+   "imageAssetName": "reciter-muhammad-hassan"
   },
   {
    "id": 225,
@@ -237,7 +254,8 @@
    "id": 227,
    "name": "Muhammad al-Luhaidan",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/muhammad_alhaidan/"
+   "chapterPrefix": "https://download.quranicaudio.com/quran/muhammad_alhaidan/",
+   "imageAssetName": "reciter-muhammad-al-luhaidan"
   },
   {
    "id": 228,
@@ -431,13 +449,6 @@
    "name": "Abdulaziz al-Zahrani",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/abdulaziz_bin_saleh_alzahrani/"
-  },
-  {
-   "id": 173,
-   "name": "Mishary Rashid Alafasy (Classic Recording)",
-   "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/",
-   "imageURL": "https://static.qurancdn.com/images/reciters/6/mishary-rashid-alafasy-profile.jpeg"
   }
  ]
 }

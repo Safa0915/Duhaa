@@ -12,6 +12,8 @@ struct Reciter: Decodable, Identifiable, Hashable, Sendable {
     /// Profile photo (Quran.com CDN). Optional — the gallery falls back to a
     /// themed monogram when absent or if the image fails to load.
     let imageURL: URL?
+    /// Bundled profile photo asset. Preferred over the remote URL when present.
+    let imageAssetName: String?
 
     enum AudioKind: String, Decodable, Sendable {
         case ayah
@@ -49,7 +51,7 @@ struct Reciter: Decodable, Identifiable, Hashable, Sendable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, name, audioKind, prefix, chapterPrefix, imageURL
+        case id, name, audioKind, prefix, chapterPrefix, imageURL, imageAssetName
     }
 
     init(from decoder: Decoder) throws {
@@ -59,6 +61,7 @@ struct Reciter: Decodable, Identifiable, Hashable, Sendable {
         prefix = try container.decodeIfPresent(String.self, forKey: .prefix)
         chapterPrefix = try container.decodeIfPresent(String.self, forKey: .chapterPrefix)
         imageURL = try container.decodeIfPresent(URL.self, forKey: .imageURL)
+        imageAssetName = try container.decodeIfPresent(String.self, forKey: .imageAssetName)
         audioKind = try container.decodeIfPresent(AudioKind.self, forKey: .audioKind)
             ?? (chapterPrefix == nil ? .ayah : .chapter)
     }
