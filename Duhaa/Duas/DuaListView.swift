@@ -14,6 +14,7 @@ struct DuaListView: View {
             }
             .padding(.horizontal, 18)
             .padding(.vertical, 20)
+            .duhaaReadableWidth()
         }
         .scrollIndicators(.hidden)
         .background(Palette.appBg.ignoresSafeArea())

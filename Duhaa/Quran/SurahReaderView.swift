@@ -79,6 +79,7 @@ struct SurahReaderView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 40)
+                .duhaaReadableWidth()
             }
             .onAppear {
                 FirstUseDiagnostics.event("Quran reader view first appear", "\(surah.number)")

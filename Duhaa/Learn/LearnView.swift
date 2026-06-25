@@ -38,6 +38,7 @@ struct LearnView: View {
                     }
                     .padding(.horizontal, 18)
                     .padding(.vertical, 20)
+                    .duhaaReadableWidth()
                 }
                 .scrollIndicators(.hidden)
             } else {

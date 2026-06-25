@@ -970,6 +970,7 @@ private extension View {
         self
             .scrollContentBackground(.hidden)
             .scrollIndicators(.hidden)
+            .duhaaReadableWidth()
             .background(ThemeDecorativeBackground())
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)

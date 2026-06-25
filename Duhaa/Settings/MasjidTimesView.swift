@@ -91,6 +91,7 @@ struct MasjidTimesView: View {
         }
         .scrollContentBackground(.hidden)
         .scrollIndicators(.hidden)
+        .duhaaReadableWidth()
         .background(ThemeDecorativeBackground())
         .navigationTitle("Local Masjid")
         .navigationBarTitleDisplayMode(.inline)

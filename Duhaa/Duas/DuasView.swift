@@ -32,6 +32,7 @@ struct DuasView: View {
                         }
                     }
                     .padding(20)
+                    .duhaaReadableWidth()
                 }
                 .scrollIndicators(.hidden)
             } else {

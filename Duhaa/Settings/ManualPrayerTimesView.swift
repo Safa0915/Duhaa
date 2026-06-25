@@ -56,6 +56,7 @@ struct ManualPrayerTimesView: View {
         }
         .scrollContentBackground(.hidden)
         .scrollIndicators(.hidden)
+        .duhaaReadableWidth()
         .background(ThemeDecorativeBackground())
         .navigationTitle("My Prayer Times")
         .navigationBarTitleDisplayMode(.inline)

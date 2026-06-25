@@ -127,6 +127,7 @@ struct PrayerHomeView: View {
                 // The floating tab bar overlays full-screen tab content, so the
                 // final prayer rows need enough room to scroll above it.
                 .padding(.bottom, 150)
+                .duhaaReadableWidth()
             }
             .scrollIndicators(.hidden)
         }

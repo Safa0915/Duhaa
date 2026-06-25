@@ -57,6 +57,7 @@ struct QuranListView: View {
         }
         .scrollContentBackground(.hidden)
         .scrollIndicators(.hidden)
+        .duhaaReadableWidth()
     }
 
     private var loadingView: some View {

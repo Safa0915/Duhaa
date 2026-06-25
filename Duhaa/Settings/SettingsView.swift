@@ -60,6 +60,7 @@ struct SettingsView: View {
                     .scrollContentBackground(.hidden)
                     .scrollIndicators(.hidden)
                 }
+                .duhaaReadableWidth()
             }
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(isPresented: $showingProfileSettings) {
