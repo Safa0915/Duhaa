@@ -223,11 +223,27 @@ enum SharedDayKey {
 /// timelines, and tests can observe that a reload was requested without touching
 /// the real WidgetKit machinery.
 enum WidgetReloader {
-    /// Swap in tests to capture reload requests. Defaults to a real timeline reload.
-    static var handler: () -> Void = { WidgetCenter.shared.reloadAllTimelines() }
+    /// Widget kinds whose content reflects prayer-completion state. Logging a
+    /// prayer only needs these reloaded — not Daily Du'a, the Hijri date, or the
+    /// time-only widgets — so the check-off lands fast and the system does less work.
+    static let prayerWidgetKinds = [
+        "DuhaaNextPrayer", "DuhaaTodaysPrayers", "DuhaaPrayerDay",
+        "DuhaaWeeklyGrid", "DuhaaPrayerTracker", "DuhaaNextPrayerCountdown",
+    ]
 
-    static func reload() { handler() }
+    /// Reloads the given kinds, or every widget when `kinds` is nil. Swap in tests
+    /// to capture reload requests without touching the real WidgetKit machinery.
+    static var handler: (_ kinds: [String]?) -> Void = { kinds in
+        guard let kinds else {
+            WidgetCenter.shared.reloadAllTimelines()
+            return
+        }
+        for kind in kinds { WidgetCenter.shared.reloadTimelines(ofKind: kind) }
+    }
 
-    /// Reload just the prayer widget kinds (used after a completion change).
-    static func reloadPrayerWidgets() { handler() }
+    static func reload() { handler(nil) }
+
+    /// Reload just the prayer widget kinds (used after a completion change), so a
+    /// tap doesn't regenerate unrelated widgets.
+    static func reloadPrayerWidgets() { handler(prayerWidgetKinds) }
 }

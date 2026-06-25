@@ -17,12 +17,15 @@ final class PrayerWidgetStoreTests: XCTestCase {
         suiteName = "test.widget.\(UUID().uuidString)"
         defaults = UserDefaults(suiteName: suiteName)
         store = SharedPrayerStore(defaults: defaults)
-        WidgetReloader.handler = {}   // never poke WidgetKit in tests
+        WidgetReloader.handler = { _ in }   // never poke WidgetKit in tests
     }
 
     override func tearDown() {
         defaults.removePersistentDomain(forName: suiteName)
-        WidgetReloader.handler = { WidgetCenter.shared.reloadAllTimelines() }
+        WidgetReloader.handler = { kinds in
+            guard let kinds else { WidgetCenter.shared.reloadAllTimelines(); return }
+            for kind in kinds { WidgetCenter.shared.reloadTimelines(ofKind: kind) }
+        }
         super.tearDown()
     }
 
@@ -266,7 +269,7 @@ final class PrayerWidgetStoreTests: XCTestCase {
         SharedPrayerStore.current = store
         defer { SharedPrayerStore.current = SharedPrayerStore(defaults: .duhaaShared) }
         var reloaded = false
-        WidgetReloader.handler = { reloaded = true }
+        WidgetReloader.handler = { _ in reloaded = true }
 
         let intent = SetPrayerCompletionIntent(prayer: .asr, dayKey: "2026-06-17")
         intent.value = true
@@ -275,6 +278,27 @@ final class PrayerWidgetStoreTests: XCTestCase {
         XCTAssertTrue(store.isCompleted(.asr, on: "2026-06-17"))
         XCTAssertFalse(store.isCompleted(.fajr, on: "2026-06-17"))  // only Asr
         XCTAssertTrue(reloaded)                                     // reload requested
+    }
+
+    /// Logging a prayer must reload only the prayer-state widgets — not Daily Du'a,
+    /// the Hijri date, or the time-only widgets — so the check-off stays snappy.
+    func testCompletionReloadTargetsOnlyPrayerWidgets() async throws {
+        SharedPrayerStore.current = store
+        defer { SharedPrayerStore.current = SharedPrayerStore(defaults: .duhaaShared) }
+        var captured: [String]?
+        var didCall = false
+        WidgetReloader.handler = { kinds in captured = kinds; didCall = true }
+
+        let intent = SetPrayerCompletionIntent(prayer: .maghrib, dayKey: "2026-06-17")
+        intent.value = true
+        _ = try await intent.perform()
+
+        XCTAssertTrue(didCall)
+        let kinds = try XCTUnwrap(captured, "should reload specific kinds, not all (nil)")
+        XCTAssertEqual(Set(kinds), Set(WidgetReloader.prayerWidgetKinds))
+        XCTAssertFalse(kinds.contains("DuhaaDailyDua"))
+        XCTAssertFalse(kinds.contains("DuhaaHijriDate"))
+        XCTAssertFalse(kinds.contains("DuhaaMorningTimes"))
     }
 
     /// Regression: a tap must MARK even when WidgetKit doesn't inject a fresh
