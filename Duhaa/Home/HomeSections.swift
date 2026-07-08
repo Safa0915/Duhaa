@@ -17,6 +17,29 @@ struct CelestialBackground: View {
                 RadialGradient(colors: [Palette.softAccent.opacity(0.28), .clear],
                                center: .bottomTrailing, startRadius: 0, endRadius: 360)
                 LightPinkHeartsBackground()
+            } else if allowsThemeDecorations && Palette.active.showsFloatingBlossoms {
+                RadialGradient(colors: [Palette.glow.opacity(0.30), .clear],
+                               center: .top, startRadius: 0, endRadius: 360)
+                RadialGradient(colors: [Palette.softAccent.opacity(0.18), .clear],
+                               center: .bottomTrailing, startRadius: 0, endRadius: 340)
+                StarField()
+                FloatingBlossomsBackground()
+            } else if allowsThemeDecorations && Palette.active.showsFloatingLeaves {
+                RadialGradient(colors: [Palette.glow.opacity(0.22), .clear],
+                               center: .top, startRadius: 0, endRadius: 360)
+                RadialGradient(colors: [Palette.softAccent.opacity(0.12), .clear],
+                               center: .bottomTrailing, startRadius: 0, endRadius: 320)
+                FloatingLeavesBackground()
+            } else if allowsThemeDecorations && Palette.active.showsFloatingTatreez {
+                // Keffiyeh cloth under a night sky: a soft sage light up top,
+                // a whisper of tatreez red low in the corner, small stars
+                // behind the weave and its embroidered bands.
+                RadialGradient(colors: [Palette.softAccent.opacity(0.16), .clear],
+                               center: .top, startRadius: 0, endRadius: 360)
+                RadialGradient(colors: [Palette.glow.opacity(0.10), .clear],
+                               center: .bottomTrailing, startRadius: 0, endRadius: 320)
+                StarField()
+                KeffiyehTatreezBackground()
             } else if Palette.active.isDark {
                 RadialGradient(colors: [Palette.gold.opacity(0.18), .clear],
                                center: .top, startRadius: 0, endRadius: 320)
@@ -81,24 +104,16 @@ private enum StarFactory {
 
 /// A living star field: each star twinkles and drifts slowly upward, with an
 /// occasional gold shooting star streaking across the upper sky. Drawn in a
-/// Canvas (one GPU layer) and driven by `TimelineView(.animation)`.
+/// Canvas (one GPU layer) and driven by `AmbientTimelineView`, which renders a
+/// still frame under Reduce Motion and pauses the sky while it sits off-screen
+/// behind another tab.
 private struct StarField: View {
-    /// Honour Reduce Motion: render a single still frame (no animation/battery use).
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
     var body: some View {
-        Group {
-            if reduceMotion {
-                Canvas { context, size in render(&context, size, time: 0) }
-            } else {
-                TimelineView(.animation) { timeline in
-                    Canvas { context, size in
-                        render(&context, size, time: timeline.date.timeIntervalSinceReferenceDate)
-                    }
-                }
+        AmbientTimelineView { time in
+            Canvas { context, size in
+                render(&context, size, time: time)
             }
         }
-        .allowsHitTesting(false)
     }
 
     private func render(_ context: inout GraphicsContext, _ size: CGSize, time t: Double) {
@@ -216,8 +231,8 @@ struct NextPrayerBanner: View {
 
     private var eyebrow: String {
         switch displayMode {
-        case .nextPrayer: return "NEXT PRAYER"
-        case .timeRemaining: return "TIME REMAINING"
+        case .nextPrayer: return String(localized: "NEXT PRAYER")
+        case .timeRemaining: return String(localized: "TIME REMAINING")
         }
     }
 
@@ -228,7 +243,7 @@ struct NextPrayerBanner: View {
                 + Text(countdown).foregroundStyle(Palette.gold)
         case .timeRemaining:
             return Text(timeRemainingCountdown).foregroundStyle(Palette.gold)
-                + Text(" until \(timeRemainingTarget)").foregroundStyle(.primary)
+                + Text(" Until \(timeRemainingTarget)").foregroundStyle(.primary)
         }
     }
 
@@ -249,7 +264,7 @@ struct NextPrayerBanner: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.82)
 
-                Text("until \(timeRemainingTarget)")
+                Text("Until \(timeRemainingTarget)")
                     .duhaaFont(16, .semibold)
                     .foregroundStyle(.primary)
                     .lineLimit(2)
@@ -353,7 +368,7 @@ private struct PrayerRowView: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 6) {
-                        Text(row.prayer.rawValue)
+                        Text(row.prayer.displayName)
                             .duhaaFont(15, .medium)
                             .foregroundStyle(.primary)
                         if isNext { nextBadge }
@@ -380,7 +395,7 @@ private struct PrayerRowView: View {
             }
             .opacity(contentOpacity)
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("\(row.prayer.rawValue), \(row.time)"
+            .accessibilityLabel("\(row.prayer.displayName), \(row.time)"
                                 + (row.sub.map { ", \($0)" } ?? "")
                                 + (row.iqama.map { ", \(row.iqamaIsJumuah ? "Jumuʿah" : "jamāʿah") \($0)" } ?? "")
                                 + (isPrayed ? ", prayed" : ""))
@@ -433,7 +448,7 @@ private struct PrayerRowView: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(isPrayed ? "\(row.prayer.rawValue) prayed" : "Mark \(row.prayer.rawValue) as prayed")
+        .accessibilityLabel(isPrayed ? "\(row.prayer.displayName) prayed" : "Mark \(row.prayer.displayName) as prayed")
     }
 
     private var nextBadge: some View {

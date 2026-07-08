@@ -212,27 +212,20 @@ private struct DuaRequestView: View {
     }
 
     private var requestURL: URL? {
+        let draft = FeedbackEmailDraft.make(
+            reason: .manual,
+            category: .duas,
+            message: trimmedRequest,
+            contact: trimmedContact,
+            diagnostics: nil
+        )
         var components = URLComponents()
         components.scheme = "mailto"
-        components.path = recipientEmail
+        components.path = draft.recipient
         components.queryItems = [
-            URLQueryItem(name: "subject", value: "Duhaa Du'a Request"),
-            URLQueryItem(name: "body", value: emailBody)
+            URLQueryItem(name: "subject", value: draft.subject),
+            URLQueryItem(name: "body", value: draft.body)
         ]
         return components.url
-    }
-
-    private var emailBody: String {
-        var lines = [
-            trimmedRequest,
-            "",
-            "Sent from Duhaa"
-        ]
-
-        if !trimmedContact.isEmpty {
-            lines.append("Contact: \(trimmedContact)")
-        }
-
-        return lines.joined(separator: "\n")
     }
 }

@@ -47,6 +47,7 @@ struct ReciterPickerView: View {
     @Binding var selection: Int
     @Environment(\.dismiss) private var dismiss
     @State private var query = ""
+    @State private var showingRequest = false
 
     private let columns = [GridItem(.adaptive(minimum: 96), spacing: 18)]
 
@@ -56,15 +57,25 @@ struct ReciterPickerView: View {
         return Reciters.all.filter { $0.name.localizedCaseInsensitiveContains(trimmed) }
     }
 
+    /// The selected reciter is pinned to the very top; everyone else follows in
+    /// their normal order. So when you reopen the picker, your choice is first.
+    private var ordered: [Reciter] {
+        var list = filtered
+        guard let idx = list.firstIndex(where: { $0.id == selection }) else { return list }
+        let selected = list.remove(at: idx)
+        list.insert(selected, at: 0)
+        return list
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
-                if filtered.isEmpty {
+                if ordered.isEmpty {
                     ContentUnavailableView.search(text: query)
                         .padding(.top, 60)
                 } else {
                     LazyVGrid(columns: columns, spacing: 22) {
-                        ForEach(filtered) { reciter in
+                        ForEach(ordered) { reciter in
                             Button {
                                 selection = reciter.id
                                 dismiss()
@@ -76,6 +87,10 @@ struct ReciterPickerView: View {
                     }
                     .padding(20)
                 }
+
+                requestButton
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 24)
             }
             .scrollIndicators(.hidden)
             .background(Palette.appBg.ignoresSafeArea())
@@ -90,6 +105,35 @@ struct ReciterPickerView: View {
                 }
             }
         }
+        .sheet(isPresented: $showingRequest) {
+            RequestReciterView(prefilledName: query.trimmingCharacters(in: .whitespaces))
+        }
+    }
+
+    /// A gentle "missing your reciter?" prompt that emails the developer a request.
+    private var requestButton: some View {
+        VStack(spacing: 8) {
+            if ordered.isEmpty {
+                Text("Can't find them? Ask us to add them.")
+                    .duhaaFont(13)
+                    .foregroundStyle(Palette.blue.opacity(0.7))
+                    .multilineTextAlignment(.center)
+            }
+            Button {
+                showingRequest = true
+            } label: {
+                Label("Request a reciter", systemImage: "envelope")
+                    .duhaaFont(14, .semibold)
+                    .foregroundStyle(Palette.gold)
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 18)
+                    .background(Palette.gold.opacity(0.10))
+                    .clipShape(Capsule())
+                    .overlay(Capsule().stroke(Palette.gold.opacity(0.35), lineWidth: 1))
+            }
+            .buttonStyle(.plain)
+        }
+        .frame(maxWidth: .infinity)
     }
 
     private func cell(_ reciter: Reciter) -> some View {

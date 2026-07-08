@@ -14,6 +14,7 @@ struct DuhaaWidgetBundle: WidgetBundle {
         PrayerDayWidget()            // large  · Prayer Day (interactive, Widget 2 color)
         WeeklyGridWidget()           // small + accessory · 7-day consistency (Widget 5)
         DailyDuaWidget()             // medium · Daily Du'a (Widget 6)
+        DailyReflectionWidget()      // medium + large · Quran verse + hadith (Widget 7)
 
         // Lock Screen (monochrome-safe)
         NextPrayerCountdownWidget()  // circular + rectangular · countdown (Widget 1)

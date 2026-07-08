@@ -47,6 +47,13 @@ struct PrayerTimesPayload: Codable, Hashable, Sendable {
     var hijri: HijriStamp? = nil
     /// Today's du'a (picked by the app from the bundled library), for the Du'a widget.
     var dailyDua: DuaStamp? = nil
+    /// Today's hadith (picked by the app from the bundled library), for the Daily
+    /// Reflection widget. Optional + defaulted last so payloads written before this
+    /// field still decode.
+    var dailyHadith: HadithStamp? = nil
+    /// Today's verse (picked by the app from the curated rotation), for the Daily
+    /// Reflection widget. Optional + defaulted last so older payloads still decode.
+    var dailyVerse: VerseStamp? = nil
 
     var timeZone: TimeZone { TimeZone(identifier: timeZoneID) ?? .current }
 
@@ -90,4 +97,38 @@ struct DuaStamp: Codable, Hashable, Sendable {
     let en: String
     let source: String
     let status: String?      // authenticity badge (e.g. "Sourced") when present
+}
+
+/// Today's hadith, picked by the app from the bundled library and surfaced by the
+/// Daily Reflection widget. Carries just enough to render — including the grade
+/// and grader, so the widget never shows a grade without saying whose grading it
+/// is (matching the app's evidence convention).
+struct HadithStamp: Codable, Hashable, Sendable {
+    let index: Int           // stable position in the library (daily rotation)
+    let arabic: String
+    let latin: String
+    let en: String           // the motivational message
+    let narrator: String
+    let source: String
+    let grade: String        // e.g. "Sahih" / "Hasan"
+    let grader: String       // whose grading — e.g. "al-Bukhari & Muslim"
+
+    /// Compact "grade · grader" line for the widget footer / chip.
+    var gradeLine: String { "\(grade) · \(grader)" }
+}
+
+/// Today's verse of the day, picked by the app from the curated hopeful rotation
+/// and surfaced by the Daily Reflection widget. Carries just enough to render and
+/// deep-link back into the Quran.
+struct VerseStamp: Codable, Hashable, Sendable {
+    let surah: Int
+    let ayah: Int
+    let surahName: String
+    let arabic: String
+    let en: String
+
+    /// "94:6" style reference.
+    var reference: String { "\(surah):\(ayah)" }
+    /// "Ash-Sharh · 94:6" for the widget footer.
+    var citation: String { "\(surahName) · \(reference)" }
 }

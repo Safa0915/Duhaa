@@ -61,7 +61,7 @@
           "introductoryOffer": null,
           "localizations": [
             {
-              "description": "The dawn arrives. The full Duhaa+ experience.",
+              "description": "Steady support for keeping Duhaa calm, free, and privacy-first.",
               "displayName": "Fajr",
               "locale": "en_US"
             }
@@ -82,7 +82,7 @@
           "introductoryOffer": null,
           "localizations": [
             {
-              "description": "The dawn arrives. The full Duhaa+ experience.",
+              "description": "Steady support for keeping Duhaa calm, free, and privacy-first.",
               "displayName": "Fajr (Annual)",
               "locale": "en_US"
             }
@@ -103,7 +103,7 @@
           "introductoryOffer": null,
           "localizations": [
             {
-              "description": "The full morning brightness, with deeper support.",
+              "description": "Deeper support for the work behind Duhaa.",
               "displayName": "Duhaa",
               "locale": "en_US"
             }
@@ -124,7 +124,7 @@
           "introductoryOffer": null,
           "localizations": [
             {
-              "description": "The full morning brightness, with deeper support.",
+              "description": "Deeper support for the work behind Duhaa.",
               "displayName": "Duhaa (Annual)",
               "locale": "en_US"
             }

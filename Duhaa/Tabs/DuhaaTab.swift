@@ -15,12 +15,12 @@ enum DuhaaTab: String, CaseIterable, Identifiable, Codable {
 
     var title: String {
         switch self {
-        case .prayer:  "Prayer"
-        case .qibla:   "Qibla"
-        case .quran:   "Quran"
-        case .duas:    "Du'as"
-        case .learn:   "Learn"
-        case .tasbih:  "Tasbih"
+        case .prayer:  String(localized: "Prayer")
+        case .qibla:   String(localized: "Qibla")
+        case .quran:   String(localized: "Quran")
+        case .duas:    String(localized: "Du'as")
+        case .learn:   String(localized: "Learn")
+        case .tasbih:  String(localized: "Tasbih")
         }
     }
 

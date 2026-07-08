@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns='http://www.w3.org/2005/Atom' xmlns:apps='http://schemas.google.com/apps/2006'>
+  <title>Mail Filters</title>
+  <id>tag:mail.google.com,2008:filters:duhaa-feedback</id>
+  <updated>2026-06-25T16:00:00Z</updated>
+  <author>
+    <name>Duhaa</name>
+    <email>duhaaapp@gmail.com</email>
+  </author>
+
+  <entry>
+    <category term='filter'/>
+    <title>Mail Filter</title>
+    <id>tag:mail.google.com,2008:filter:duhaa-feedback-all</id>
+    <updated>2026-06-25T16:00:00Z</updated>
+    <content/>
+    <apps:property name='hasTheWord' value='to:duhaaapp@gmail.com ("Duhaa Feedback" OR "Duhaa Bug Report" OR "Duhaa Du&apos;a Request" OR "Duhaa Feedback Metadata")'/>
+    <apps:property name='label' value='Feedback'/>
+  </entry>
+
+  <entry>
+    <category term='filter'/>
+    <title>Mail Filter</title>
+    <id>tag:mail.google.com,2008:filter:duhaa-feedback-general</id>
+    <updated>2026-06-25T16:00:00Z</updated>
+    <content/>
+    <apps:property name='hasTheWord' value='subject:("[general]") OR subject:("Duhaa Feedback - General")'/>
+    <apps:property name='label' value='Feedback/General'/>
+  </entry>
+
+  <entry>
+    <category term='filter'/>
+    <title>Mail Filter</title>
+    <id>tag:mail.google.com,2008:filter:duhaa-feedback-prayer-times</id>
+    <updated>2026-06-25T16:00:00Z</updated>
+    <content/>
+    <apps:property name='hasTheWord' value='subject:("[prayer-times]") OR subject:("Duhaa Feedback - Prayer times")'/>
+    <apps:property name='label' value='Feedback/Prayer Times'/>
+  </entry>
+
+  <entry>
+    <category term='filter'/>
+    <title>Mail Filter</title>
+    <id>tag:mail.google.com,2008:filter:duhaa-feedback-quran</id>
+    <updated>2026-06-25T16:00:00Z</updated>
+    <content/>
+    <apps:property name='hasTheWord' value='subject:("[quran]") OR subject:("Duhaa Feedback - Quran")'/>
+    <apps:property name='label' value='Feedback/Quran'/>
+  </entry>
+
+  <entry>
+    <category term='filter'/>
+    <title>Mail Filter</title>
+    <id>tag:mail.google.com,2008:filter:duhaa-feedback-duas</id>
+    <updated>2026-06-25T16:00:00Z</updated>
+    <content/>
+    <apps:property name='hasTheWord' value='subject:("[duas]") OR subject:("Duhaa Du&apos;a Request")'/>
+    <apps:property name='label' value='Feedback/Duas'/>
+  </entry>
+
+  <entry>
+    <category term='filter'/>
+    <title>Mail Filter</title>
+    <id>tag:mail.google.com,2008:filter:duhaa-feedback-duas-review</id>
+    <updated>2026-06-25T16:00:00Z</updated>
+    <content/>
+    <apps:property name='hasTheWord' value='subject:("[duas]") OR subject:("Duhaa Du&apos;a Request")'/>
+    <apps:property name='label' value='Feedback/Needs Review'/>
+  </entry>
+
+  <entry>
+    <category term='filter'/>
+    <title>Mail Filter</title>
+    <id>tag:mail.google.com,2008:filter:duhaa-feedback-widgets</id>
+    <updated>2026-06-25T16:00:00Z</updated>
+    <content/>
+    <apps:property name='hasTheWord' value='subject:("[widgets]") OR subject:("Duhaa Feedback - Widgets")'/>
+    <apps:property name='label' value='Feedback/Widgets'/>
+  </entry>
+
+  <entry>
+    <category term='filter'/>
+    <title>Mail Filter</title>
+    <id>tag:mail.google.com,2008:filter:duhaa-feedback-bugs</id>
+    <updated>2026-06-25T16:00:00Z</updated>
+    <content/>
+    <apps:property name='hasTheWord' value='subject:("[bug]") OR subject:("Duhaa Bug Report")'/>
+    <apps:property name='label' value='Feedback/Bugs'/>
+  </entry>
+
+  <entry>
+    <category term='filter'/>
+    <title>Mail Filter</title>
+    <id>tag:mail.google.com,2008:filter:duhaa-feedback-ideas</id>
+    <updated>2026-06-25T16:00:00Z</updated>
+    <content/>
+    <apps:property name='hasTheWord' value='subject:("[idea]") OR subject:("Duhaa Feedback - Idea")'/>
+    <apps:property name='label' value='Feedback/Ideas'/>
+  </entry>
+</feed>

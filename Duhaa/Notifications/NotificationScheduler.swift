@@ -19,8 +19,9 @@ extension DuhaaPrayerTimes {
 /// so we pre-schedule a window of upcoming days and **re-fill on every app open**.
 /// Each trigger carries the location's IANA time zone, so it's DST-correct.
 ///
-/// Copy is warm and rotates (NotificationCopy); the sound is a soft bundled chime;
-/// Fridays get a Jumu'ah prep nudge + a Jumu'ah-flavoured midday notification.
+/// Copy is warm and rotates (NotificationCopy); adhan-mode notifications use the
+/// selected bundled adhan sound; Fridays get a Jumu'ah prep nudge + a
+/// Jumu'ah-flavoured midday notification.
 enum NotificationScheduler {
     private static let center = UNUserNotificationCenter.current()
     /// Stay under iOS's ~64 cap with headroom.
@@ -127,14 +128,7 @@ enum NotificationScheduler {
     private static func sound(for mode: PrayerNotificationMode) -> UNNotificationSound? {
         switch mode {
         case .adhan:
-            let saved = UserDefaults.standard.string(forKey: AdhanSoundPreference.key) ?? AdhanSoundPreference.duhaaChime.rawValue
-            let preference = AdhanSoundPreference(rawValue: saved) ?? .duhaaChime
-            switch preference {
-            case .duhaaChime:
-                return UNNotificationSound(named: UNNotificationSoundName(NotificationCopy.soundFileName))
-            case .systemDefault:
-                return .default
-            }
+            return AdhanSoundPreference.saved().notificationSound()
         case .silent: return nil
         case .off:    return nil
         }

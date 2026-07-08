@@ -27,11 +27,11 @@ final class RecitersTests: XCTestCase {
 
     func testFullSurahReciterBuildsZeroPaddedChapterURL() throws {
         // The default for chapter reciters stays zero-padded to 3 digits (008.mp3).
-        let reciter = try XCTUnwrap(Reciters.byID(200))   // Maher al-Muaiqly
+        let reciter = try XCTUnwrap(Reciters.byID(200))   // Maher al-Muaiqly (year 1440 recording)
 
         XCTAssertTrue(reciter.supportsChapterAudio)
         XCTAssertEqual(reciter.chapterURL(surah: 8)?.absoluteString,
-                       "https://download.quranicaudio.com/quran/maher_256/008.mp3")
+                       "https://download.quranicaudio.com/quran/maher_almu3aiqly/year1440/008.mp3")
     }
 
     func testOnlyRecitersWithTimingSupportStartingFromAnyAyah() throws {
@@ -40,10 +40,25 @@ final class RecitersTests: XCTestCase {
         XCTAssertTrue(alafasyClassic.supportsAyahSeek)
         XCTAssertEqual(alafasyClassic.chapterTimingID, 173)
 
-        // A plain full-surah reciter without timing cannot.
-        XCTAssertFalse(try XCTUnwrap(Reciters.byID(200)).supportsAyahSeek)   // Maher
+        // A full-surah reciter timed via mp3quran can too.
+        let huthaify = try XCTUnwrap(Reciters.byID(206))
+        XCTAssertTrue(huthaify.supportsAyahSeek)
+        XCTAssertNil(huthaify.chapterTimingID)
+        XCTAssertEqual(huthaify.mp3quranTimingRead, 74)
+
+        // A plain full-surah reciter without any timing source cannot.
+        XCTAssertFalse(try XCTUnwrap(Reciters.byID(226)).supportsAyahSeek)   // Adel Kalbani
         // A per-ayah reciter isn't a chapter recording, so the flag is false too.
         XCTAssertFalse(try XCTUnwrap(Reciters.byID(7)).supportsAyahSeek)     // Alafasy per-ayah
+    }
+
+    func testMP3QuranTimedRecitersStreamFromMP3QuranFolders() {
+        // mp3quran timing is only valid for the file it was made for, so any
+        // reciter carrying an mp3quran read id must also stream from mp3quran.
+        for reciter in Reciters.all where reciter.mp3quranTimingRead != nil {
+            XCTAssertTrue(reciter.chapterPrefix?.contains("mp3quran.net") == true,
+                          "\(reciter.name) has mp3quran timing but streams from elsewhere")
+        }
     }
 
     func testCatalogHasManyReciters() {

@@ -61,8 +61,10 @@ private final class FakeQuranAudioPlayer: QuranAudioPlaying {
     private(set) var preparedURLs: [URL] = []
     private(set) var seekToMsValues: [Int?] = []
     private(set) var playCount = 0
+    private(set) var playRates: [Float] = []
     private(set) var pauseCount = 0
     private(set) var stopCount = 0
+    private(set) var playbackRate: Float = 1
     var failPrepare = false
     var autoReady = true
     var autoStartPlayback = true
@@ -78,8 +80,13 @@ private final class FakeQuranAudioPlayer: QuranAudioPlaying {
         }
     }
 
+    func setPlaybackRate(_ rate: Float) {
+        playbackRate = rate
+    }
+
     func play() {
         playCount += 1
+        playRates.append(playbackRate)
         if autoStartPlayback {
             onFirstPlayback?()
         }
@@ -333,6 +340,49 @@ final class QuranAudioPlayerTests: XCTestCase {
         XCTAssertEqual(harness.audioPlayer.playCount, 1)
     }
 
+    func testPlaybackRatePersistsAndAppliesToAudioPlayer() {
+        let harness = makeHarness()
+
+        harness.player.setPlaybackRate(1.25)
+
+        XCTAssertEqual(harness.player.playbackRate, 1.25, accuracy: 0.001)
+        XCTAssertEqual(harness.audioPlayer.playbackRate, 1.25, accuracy: 0.001)
+        XCTAssertEqual(UserDefaults.standard.double(forKey: AyahPlayer.playbackRateStorageKey), 1.25, accuracy: 0.001)
+
+        let restored = makeHarness(resetPlaybackRatePreference: false)
+        XCTAssertEqual(restored.player.playbackRate, 1.25, accuracy: 0.001)
+        XCTAssertEqual(restored.audioPlayer.playbackRate, 1.25, accuracy: 0.001)
+    }
+
+    func testPlaybackUsesSelectedRateWhenStartingAndResuming() async {
+        let harness = makeHarness()
+
+        harness.player.setPlaybackRate(1.5)
+        harness.player.play(in: testSurah, from: 1)
+        await waitUntil("playback starts") { harness.player.playbackState == .playing }
+
+        XCTAssertEqual(harness.audioPlayer.playRates, [1.5])
+
+        harness.player.pause()
+        harness.player.resume()
+        XCTAssertEqual(harness.audioPlayer.playRates, [1.5, 1.5])
+    }
+
+    func testChangingPlaybackRateDuringPlaybackAppliesImmediatelyWithoutRestarting() async {
+        let harness = makeHarness()
+
+        harness.player.play(in: testSurah, from: 1)
+        await waitUntil("playback starts") { harness.player.playbackState == .playing }
+
+        harness.player.setPlaybackRate(0.75)
+
+        XCTAssertEqual(harness.player.playbackRate, 0.75, accuracy: 0.001)
+        XCTAssertEqual(harness.audioPlayer.playbackRate, 0.75, accuracy: 0.001)
+        XCTAssertEqual(harness.audioPlayer.playCount, 1)
+        XCTAssertEqual(harness.audioPlayer.preparedURLs.count, 1)
+        XCTAssertEqual(harness.resolver.requests, [.ayah(surah: 1, ayah: 1)])
+    }
+
     func testProgressCallbackUpdatesPlayerAndResetsOnStop() async {
         let harness = makeHarness()
         harness.player.play(in: testSurah, from: 1)
@@ -488,7 +538,11 @@ final class QuranAudioPlayerTests: XCTestCase {
     private func makeHarness(result: Result<URL, Error> = .success(URL(string: "https://example.com/audio.mp3")!),
                              delayedResolver: Bool = false,
                              timingMilliseconds: Int? = nil,
-                             quran: QuranData? = nil) -> Harness {
+                             quran: QuranData? = nil,
+                             resetPlaybackRatePreference: Bool = true) -> Harness {
+        if resetPlaybackRatePreference {
+            UserDefaults.standard.removeObject(forKey: AyahPlayer.playbackRateStorageKey)
+        }
         let session = FakeAudioSessionManager()
         let resolver = FakeAudioURLResolver()
         resolver.immediateResult = delayedResolver ? nil : result

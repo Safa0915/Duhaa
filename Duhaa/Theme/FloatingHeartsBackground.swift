@@ -1,13 +1,22 @@
     import SwiftUI
 
-/// Shared decorative background. Light Pink gets gentle ambient hearts; other
-/// themes receive their normal solid app background.
+/// Shared decorative background. Light Pink gets gentle ambient hearts, Chinese
+/// Blossom gets falling blossoms; other themes receive their solid app background.
 struct ThemeDecorativeBackground: View {
     var body: some View {
         ZStack {
             Palette.appBg
-            if Palette.active.showsFloatingHearts {
+            switch Palette.active.decoration {
+            case .hearts:
                 LightPinkHeartsBackground()
+            case .blossoms:
+                FloatingBlossomsBackground()
+            case .leaves:
+                FloatingLeavesBackground()
+            case .tatreez:
+                KeffiyehTatreezBackground()
+            case .none:
+                EmptyView()
             }
         }
         .ignoresSafeArea()
@@ -17,23 +26,10 @@ struct ThemeDecorativeBackground: View {
 /// A charming, deterministic heart field for the Light Pink free preview theme.
 /// It stays behind content, but is visible enough to make the theme feel special.
 struct LightPinkHeartsBackground: View {
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var animationStart = Date.timeIntervalSinceReferenceDate
-
     var body: some View {
-        Group {
-            if reduceMotion {
-                heartCanvas(time: 0)
-            } else {
-                TimelineView(.animation) { timeline in
-                    heartCanvas(time: Self.animationTime(
-                        for: timeline.date.timeIntervalSinceReferenceDate,
-                        startedAt: animationStart))
-                }
-            }
+        AmbientTimelineView { time in
+            heartCanvas(time: time)
         }
-        .allowsHitTesting(false)
-        .accessibilityHidden(true)
     }
 
     static func animationTime(for currentTime: TimeInterval, startedAt startTime: TimeInterval) -> TimeInterval {
@@ -42,10 +38,9 @@ struct LightPinkHeartsBackground: View {
 
     /// All hearts drawn into ONE Canvas layer: each icon is rasterized just once
     /// (via `symbols`) and then composited per frame with a transform + shadow.
-    /// The previous version was 34 individually-shadowed SwiftUI views, and their
-    /// `TimelineView` keeps animating even while the Light Pink home tab sits
-    /// off-screen behind another tab — that background churn is what made the
-    /// Qibla compass stutter in this theme. One flat Canvas layer makes it cheap.
+    /// The per-heart shadow filter still costs real GPU time each frame, which is
+    /// why `AmbientTimelineView` pausing this field off-screen matters: hidden
+    /// tabs (Home/More) must not keep re-drawing it behind the Qibla compass.
     private func heartCanvas(time: TimeInterval) -> some View {
         Canvas { context, size in
             for heart in FloatingHeartFactory.hearts {

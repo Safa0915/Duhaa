@@ -1,7 +1,7 @@
 import SwiftUI
 import StoreKit
 
-/// The Duhaa+ benefits catalog — every supporter perk in one scrollable list,
+/// The Duhaa+ support catalog — every supporter note in one scrollable list,
 /// with the standard account actions (restore, manage, offer codes) below.
 /// Deliberately absent: artificial limits. Worship features and the user's own
 /// data are never capped in Duhaa, member or not.
@@ -21,24 +21,24 @@ struct MembershipBenefitsView: View {
     }
 
     private let benefits: [Benefit] = [
-        Benefit(icon: "arrow.down.circle.fill", color: .teal,
-                title: "Offline Quran Audio",
-                detail: "Download surahs for offline listening"),
-        Benefit(icon: "music.mic", color: .orange,
-                title: "Expanded Reciter Library",
-                detail: "More renowned voices for your recitation"),
-        Benefit(icon: "speaker.wave.2.fill", color: .blue,
-                title: "Custom Adhan Voices",
-                detail: "A library of adhan voices for your prayer notifications"),
-        Benefit(icon: "paintpalette.fill", color: .purple,
-                title: "Tajweed-Colored Mushaf",
-                detail: "Color-coded tajweed rules for proper recitation"),
+        Benefit(icon: "heart.fill", color: .pink,
+                title: "Keeps Duhaa Free",
+                detail: "Your support helps keep prayer, Quran, du'as, learning, widgets, and tracking open to everyone"),
+        Benefit(icon: "hand.raised.fill", color: .teal,
+                title: "No Ads, No Tracking",
+                detail: "Support lets Duhaa stay privacy-first instead of depending on ads or analytics"),
+        Benefit(icon: "book.closed.fill", color: .blue,
+                title: "Funds Source Review",
+                detail: "Helps cover the careful review needed for religious content before wider release"),
+        Benefit(icon: "speaker.wave.2.fill", color: .orange,
+                title: "Future Licensed Audio",
+                detail: "Helps fund properly licensed notification and recitation improvements later"),
         Benefit(icon: "sparkles", color: .yellow,
-                title: "Early Access",
-                detail: "Try new features before everyone else"),
+                title: "Polish Before Growth",
+                detail: "Supports the quiet work: widgets, accessibility, prayer-time confidence, and bug fixes"),
         Benefit(icon: "rosette", color: Palette.gold,
-                title: "Founding Supporter",
-                detail: "Your name in About, and our lasting du'a"),
+                title: "Our Gratitude",
+                detail: "A sincere thank-you and du'a for helping Duhaa remain gentle and sustainable"),
     ]
 
     var body: some View {
@@ -52,7 +52,7 @@ struct MembershipBenefitsView: View {
         }
         .scrollIndicators(.hidden)
         .background(Palette.appBg.ignoresSafeArea())
-        .navigationTitle("Membership Benefits")
+        .navigationTitle("Support Duhaa")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -113,7 +113,7 @@ struct MembershipBenefitsView: View {
                 Task { await store.restore() }
             }
             Divider().overlay(Color.primary.opacity(0.08)).padding(.leading, 14)
-            actionRow("Manage Subscription") {
+            actionRow("Manage Subscriptions") {
                 showingManageSubscriptions = true
             }
             Divider().overlay(Color.primary.opacity(0.08)).padding(.leading, 14)

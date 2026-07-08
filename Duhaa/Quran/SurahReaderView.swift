@@ -12,6 +12,8 @@ struct SurahReaderView: View {
     var highlightTarget: Bool = false
 
     @Environment(QuranBookmarks.self) private var bookmarks
+    @Environment(QuranReadingProgress.self) private var readingProgress
+    @Environment(QuranNotes.self) private var notes
     @Environment(AyahPlayer.self) private var player
     @Environment(FeedbackStore.self) private var feedback
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -32,6 +34,10 @@ struct SurahReaderView: View {
     @State private var showingReciterPicker = false
     /// Whether the immersive "Listen" player is showing.
     @State private var showingNowPlaying = false
+    /// Whether the full-page Mushaf reader is showing.
+    @State private var showingMushaf = false
+    @State private var showingNoteEditor = false
+    @State private var variantArabicText: [Int: String] = [:]
 
     /// Place the target a little above center so it reads cleanly with context above it.
     private let jumpAnchor = UnitPoint(x: 0.5, y: 0.3)
@@ -39,9 +45,10 @@ struct SurahReaderView: View {
     // Reading preferences — shared across all surahs.
     @AppStorage("duhaa.quran.reciter") private var reciterID = Reciters.defaultID
     @AppStorage("duhaa.quran.arabicSize") private var arabicSize = 28.0
+    @AppStorage("duhaa.quran.showArabic") private var showArabic = true
+    @AppStorage("duhaa.quran.showTransliteration") private var showTransliteration = false
     @AppStorage("duhaa.quran.showTranslation") private var showTranslation = true
     @AppStorage("duhaa.quran.readerFont") private var readerFont = "kfgqpc"
-    @AppStorage("duhaa.quran.tajweedColoring") private var tajweedColoring = false
 
     private var selectedReciter: Reciter? {
         Reciters.byID(reciterID) ?? Reciters.byID(Reciters.defaultID)
@@ -62,20 +69,8 @@ struct SurahReaderView: View {
             ScrollView {
                 LazyVStack(spacing: 0) {
                     header
-                    if let page = openingPageNumber {
-                        pageMarker(page, isContinuation: openingPageIsContinuation)
-                    }
-                    if surah.number != 1 && surah.number != 9 {
-                        bismillah
-                    }
-                    ForEach(surah.ayahs) { ayah in
-                        if let page = pageStartNumber(before: ayah) {
-                            pageMarker(page, isContinuation: false)
-                        }
-                        ayahView(ayah)
-                            .id(ayah.number)
-                        Divider().overlay(Palette.blue.opacity(0.12))
-                    }
+                    readerContent
+                    reflectionSection
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 40)
@@ -89,7 +84,7 @@ struct SurahReaderView: View {
                 if key != nil,
                    player.currentSurah?.number == surah.number,
                    let ayahNumber = player.playingAyahNumber {
-                    withAnimation(.easeInOut) { proxy.scrollTo(ayahNumber, anchor: .center) }
+                    withAnimation(.easeInOut) { proxy.scrollTo(scrollTargetID(for: ayahNumber), anchor: .center) }
                 }
             }
         }
@@ -102,11 +97,17 @@ struct SurahReaderView: View {
             FirstUseDiagnostics.event("Quran feature first async startup begins", "reciters-prewarm")
             _ = await Reciters.loadAsync(priority: .utility)
         }
+        .task(id: "\(surah.number)-\(readerFont)") {
+            await loadVariantArabicText()
+        }
         .navigationTitle(surah.englishName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 surahPlayButton
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                mushafButton
             }
             ToolbarItem(placement: .topBarTrailing) {
                 reciterButton
@@ -124,6 +125,9 @@ struct SurahReaderView: View {
                                startAyah: player.playingAyahNumber ?? scrollTo ?? 1)
             }
         }
+        .fullScreenCover(isPresented: $showingMushaf) {
+            MushafReaderView(startPage: mushafStartPage)
+        }
         .onChange(of: reciterID) {
             // Seamless voice change: restart the current ayah in the new voice.
             guard player.isActive else { return }
@@ -137,11 +141,62 @@ struct SurahReaderView: View {
             }
         }
         .onDisappear {
-            bookmarks.recordRead(surah: surah.number, ayah: max(furthestAyah, scrollTo ?? 1))
+            let readAyah = max(furthestAyah, scrollTo ?? 1)
+            bookmarks.recordRead(surah: surah.number, ayah: readAyah)
+            readingProgress.recordRead(surah: surah.number, ayah: readAyah)
         }
         .sheet(item: $tafsirAyah) { ayah in
             TafsirView(surah: surah, ayah: ayah)
         }
+        .sheet(isPresented: $showingNoteEditor) {
+            SurahNoteEditor(surah: surah, notes: notes)
+        }
+    }
+
+    // MARK: Reflection (private journaling under each surah)
+
+    private var reflectionSection: some View {
+        let saved = notes.note(forSurah: surah.number)
+        let hasNote = notes.hasNote(forSurah: surah.number)
+        return Button {
+            showingNoteEditor = true
+        } label: {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 8) {
+                    Image(systemName: hasNote ? "note.text" : "square.and.pencil")
+                        .duhaaFont(14).foregroundStyle(Palette.gold)
+                    Text("Reflection")
+                        .duhaaFont(12, .semibold).tracking(0.8)
+                        .foregroundStyle(Palette.gold)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .duhaaFont(11).foregroundStyle(Palette.blue.opacity(0.5))
+                }
+                if hasNote {
+                    Text(saved)
+                        .duhaaFont(15)
+                        .foregroundStyle(.primary.opacity(0.9))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .lineLimit(6)
+                } else {
+                    Text(ReflectionPrompt.forSurah(surah.number))
+                        .duhaaFont(15)
+                        .foregroundStyle(.primary.opacity(0.7))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text("Tap to write a private note — just for you. 🤍")
+                        .duhaaFont(12)
+                        .foregroundStyle(Palette.blue.opacity(0.6))
+                }
+            }
+            .padding(16)
+            .background(Palette.card)
+            .overlay(RoundedRectangle(cornerRadius: 16).stroke(Palette.cardBorder, lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+        }
+        .buttonStyle(.plain)
+        .padding(.top, 28)
+        .accessibilityLabel(hasNote ? "Your reflection on this surah" : "Add a reflection on this surah")
+        .accessibilityHint("Opens a private note")
     }
 
     // MARK: Jump to a specific verse (Verse of the Day, bookmark, search)
@@ -162,7 +217,7 @@ struct SurahReaderView: View {
         // a second pass once heights are known lands precisely (and reveals the glow).
         // A short retry covers a target that wasn't materialized on the first attempt.
         DispatchQueue.main.async {
-            proxy.scrollTo(target, anchor: jumpAnchor)
+            proxy.scrollTo(scrollTargetID(for: target), anchor: jumpAnchor)
             scrollPrecisely(to: target, using: proxy, after: 0.35, reveal: true)
             scrollPrecisely(to: target, using: proxy, after: 0.7, reveal: false)
         }
@@ -171,13 +226,18 @@ struct SurahReaderView: View {
     private func scrollPrecisely(to target: Int, using proxy: ScrollViewProxy,
                                  after delay: TimeInterval, reveal: Bool) {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            let id = scrollTargetID(for: target)
             if reduceMotion {
-                proxy.scrollTo(target, anchor: jumpAnchor)
+                proxy.scrollTo(id, anchor: jumpAnchor)
             } else {
-                withAnimation(.easeInOut(duration: 0.4)) { proxy.scrollTo(target, anchor: jumpAnchor) }
+                withAnimation(.easeInOut(duration: 0.4)) { proxy.scrollTo(id, anchor: jumpAnchor) }
             }
             if reveal { revealHighlight(target) }
         }
+    }
+
+    private func scrollTargetID(for ayahNumber: Int) -> AnyHashable {
+        AnyHashable(ayahNumber)
     }
 
     /// Glow the target verse, then fade it after a few seconds (Reduce-Motion-aware).
@@ -203,6 +263,24 @@ struct SurahReaderView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.6) {
             guard jumpMessage == message else { return }
             withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.3)) { jumpMessage = nil }
+        }
+    }
+
+    @ViewBuilder
+    private var readerContent: some View {
+        if let page = openingPageNumber {
+            pageMarker(page, isContinuation: openingPageIsContinuation)
+        }
+        if surah.number != 1 && surah.number != 9 {
+            bismillah
+        }
+        ForEach(surah.ayahs) { ayah in
+            if let page = pageStartNumber(before: ayah) {
+                pageMarker(page, isContinuation: false)
+            }
+            ayahView(ayah)
+                .id(AnyHashable(ayah.number))
+            Divider().overlay(Palette.blue.opacity(0.12))
         }
     }
 
@@ -376,6 +454,25 @@ struct SurahReaderView: View {
         }
     }
 
+    /// The mushaf page to open the full-page reader on — the reader's current
+    /// position (furthest read, else the jump target, else the surah's start).
+    private var mushafStartPage: Int {
+        let ayah = furthestAyah > 0 ? furthestAyah : (scrollTo ?? surah.ayahs.first?.number ?? 1)
+        return QuranPageIndex.shared.pageNumber(surah: surah.number, ayah: ayah) ?? 1
+    }
+
+    /// Opens the full-page Mushaf reader (one page per screen, Arabic only).
+    private var mushafButton: some View {
+        Button {
+            showingMushaf = true
+            DuhaaHaptics.tap()
+        } label: {
+            Image(systemName: "book.pages")
+                .foregroundStyle(Palette.gold)
+        }
+        .accessibilityLabel("Read full page")
+    }
+
     /// Opens the reciter photo gallery. The button itself shows the current
     /// reciter's avatar so the active voice is visible at a glance.
     private var reciterButton: some View {
@@ -429,13 +526,39 @@ struct SurahReaderView: View {
 
             Divider().overlay(Palette.blue.opacity(0.15))
 
-            Toggle(isOn: $showTranslation) {
-                Text("Show translation").duhaaFont(15, .semibold)
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Show")
+                    .duhaaFont(15, .semibold)
+                contentToggle("Arabic", isOn: $showArabic)
+                contentToggle("Transliteration", isOn: $showTransliteration)
+                contentToggle("Translation", isOn: $showTranslation)
+                Text("Choose what shows under each ayah. At least one stays on.")
+                    .duhaaFont(11)
+                    .foregroundStyle(Palette.blue.opacity(0.7))
             }
-            .tint(Palette.gold)
         }
         .padding(20)
         .frame(width: 300)
+    }
+
+    /// Number of display layers currently enabled — used to keep at least one on.
+    private var enabledContentCount: Int {
+        [showArabic, showTransliteration, showTranslation].filter { $0 }.count
+    }
+
+    /// A display toggle that refuses to turn off the *last* enabled layer, so the
+    /// ayah is never left completely blank.
+    private func contentToggle(_ title: String, isOn: Binding<Bool>) -> some View {
+        Toggle(isOn: Binding(
+            get: { isOn.wrappedValue },
+            set: { newValue in
+                if newValue == false && isOn.wrappedValue && enabledContentCount <= 1 { return }
+                isOn.wrappedValue = newValue
+            }
+        )) {
+            Text(title).duhaaFont(14)
+        }
+        .tint(Palette.gold)
     }
 
     private var header: some View {
@@ -479,7 +602,7 @@ struct SurahReaderView: View {
     }
 
     private var bismillah: some View {
-        arabicDisplayText(Quran.shared.bismillah.arabic, defaultColor: Palette.gold.opacity(0.9))
+        arabicDisplayText(QuranFont.bismillah(for: readerFont), defaultColor: Palette.gold.opacity(0.9))
             .font(QuranFont.reader(readerFont, size: 26))
             .frame(maxWidth: .infinity)
             .padding(.bottom, 20)
@@ -565,13 +688,27 @@ struct SurahReaderView: View {
                 }
             }
 
-            arabicDisplayText(ayah.arabic, defaultColor: .primary)
-                .font(QuranFont.reader(readerFont, size: arabicSize))
-                .lineSpacing(arabicSize / 2)
-                .multilineTextAlignment(.trailing)
-                .frame(maxWidth: .infinity, alignment: .trailing)
-                .environment(\.layoutDirection, .rightToLeft)
-                .accessibilityLabel(ayah.arabic)
+            if showArabic {
+                let arabic = arabicText(for: ayah)
+                arabicDisplayText(arabic, defaultColor: .primary)
+                    .font(QuranFont.reader(readerFont, size: arabicSize))
+                    .lineSpacing(arabicSize / 2)
+                    .multilineTextAlignment(.trailing)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .environment(\.layoutDirection, .rightToLeft)
+                    .accessibilityLabel(arabic)
+            }
+
+            if showTransliteration,
+               let translit = QuranTransliteration.shared.text(surah: surah.number, ayah: ayah.number) {
+                Text(translit)
+                    .duhaaFont(14.5)
+                    .italic()
+                    .lineSpacing(3)
+                    .foregroundStyle(Palette.blue.opacity(0.9))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityLabel("Transliteration: \(translit)")
+            }
 
             if showTranslation {
                 Text(ayah.english)
@@ -596,6 +733,28 @@ struct SurahReaderView: View {
         .onAppear { furthestAyah = max(furthestAyah, ayah.number) }
     }
 
+    @MainActor
+    private func loadVariantArabicText() async {
+        let preference = QuranFontPreference(storageValue: readerFont)
+        guard preference.verseTextField != .textUthmani else {
+            variantArabicText = [:]
+            return
+        }
+
+        do {
+            let text = try await QuranTextVariantAPI.shared.chapter(surah.number, preference: preference)
+            guard !Task.isCancelled else { return }
+            variantArabicText = text
+        } catch {
+            guard !Task.isCancelled else { return }
+            variantArabicText = [:]
+        }
+    }
+
+    private func arabicText(for ayah: Ayah) -> String {
+        variantArabicText[ayah.number] ?? ayah.arabic
+    }
+
     /// Soft accent fill: the temporary verse highlight wins over the playing tint.
     private func rowFill(isPlaying: Bool, isHighlighted: Bool) -> Color {
         if isHighlighted { return Palette.gold.opacity(0.18) }
@@ -612,24 +771,7 @@ struct SurahReaderView: View {
 
     private func arabicDisplayText(_ raw: String, defaultColor: Color) -> Text {
         let display = QuranArabicText.display(raw)
-        guard tajweedColoring else {
-            return Text(display).foregroundColor(defaultColor)
-        }
-
-        return display.reduce(Text("")) { partial, character in
-            partial + Text(String(character)).foregroundColor(color(forArabicMark: character, defaultColor: defaultColor))
-        }
-    }
-
-    private func color(forArabicMark character: Character, defaultColor: Color) -> Color {
-        switch character {
-        case "ۖ", "ۗ", "ۘ", "ۙ", "ۚ", "ۛ", "ۜ", "۝":
-            Palette.gold
-        case "۞", "۩":
-            Palette.blue
-        default:
-            defaultColor
-        }
+        return Text(display).foregroundColor(defaultColor)
     }
 
     @ViewBuilder
@@ -673,6 +815,73 @@ struct SurahReaderView: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel(isPlaying ? "Pause ayah \(ayah.number)" : "Play ayah \(ayah.number)")
+        }
+    }
+}
+
+/// A private reflection editor for a surah. Writes straight to `QuranNotes` on
+/// save; a blank note clears any previous one. No sharing, no sync — just a quiet
+/// space to journal.
+private struct SurahNoteEditor: View {
+    @Environment(\.dismiss) private var dismiss
+    let surah: Surah
+    let notes: QuranNotes
+
+    @State private var text = ""
+    @FocusState private var focused: Bool
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 14) {
+                Text(ReflectionPrompt.forSurah(surah.number))
+                    .duhaaFont(15, .medium)
+                    .foregroundStyle(Palette.blue.opacity(0.9))
+                    .padding(.horizontal, 20)
+                    .padding(.top, 12)
+
+                ZStack(alignment: .topLeading) {
+                    TextEditor(text: $text)
+                        .duhaaFont(16)
+                        .scrollContentBackground(.hidden)
+                        .focused($focused)
+                        .padding(.horizontal, 16)
+                    if text.isEmpty {
+                        Text("Write your reflection…")
+                            .duhaaFont(16)
+                            .foregroundStyle(Palette.secondaryText.opacity(0.6))
+                            .padding(.top, 8)
+                            .padding(.leading, 21)
+                            .allowsHitTesting(false)
+                    }
+                }
+
+                Text("Private to you, kept on this device. 🤍")
+                    .duhaaFont(12)
+                    .foregroundStyle(Palette.blue.opacity(0.55))
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 8)
+            }
+            .background(Palette.appBg.ignoresSafeArea())
+            .navigationTitle("\(surah.englishName) · Reflection")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        notes.setNote(text, forSurah: surah.number)
+                        dismiss()
+                    }
+                    .foregroundStyle(Palette.gold)
+                }
+            }
+        }
+        .preferredColorScheme(Palette.active.colorScheme)
+        .tint(Palette.gold)
+        .onAppear {
+            text = notes.note(forSurah: surah.number)
+            focused = true
         }
     }
 }

@@ -4,7 +4,7 @@ import AppIntents
 
 /// Widget 2 — Interactive Prayer Tracker (Lock Screen). The key differentiator:
 /// each of the five prayers is tappable straight from the Lock Screen via
-/// `TogglePrayerCompletionIntent` — no need to open the app. State is shown by
+/// `SetPrayerCompletionIntent` — no need to open the app. State is shown by
 /// SF-Symbol/fill (monochrome-safe), never color. The Home Screen color version is
 /// the existing `TodaysPrayersWidget` / `PrayerDayWidget`.
 struct PrayerTrackerWidget: Widget {
@@ -44,33 +44,58 @@ private struct PrayerTrackerAccessoryView: View {
         }
         .gaugeStyle(.accessoryCircularCapacity)
         .widgetAccentable()
+        .invalidatableContent()
         .accessibilityLabel("\(snapshot.dailyCompletionCount) of \(snapshot.totalPrayerCount) prayers prayed today")
     }
 
-    // Five tappable prayers: F D A M I, each a Button running the toggle intent.
+    // Five tappable prayers: F D A M I. Each is a Toggle (not a Button) so
+    // WidgetKit flips the glyph optimistically the instant it's tapped, instead
+    // of waiting for the timeline reload to land.
     private var rectangular: some View {
         VStack(spacing: 3) {
             HStack(spacing: 0) {
                 ForEach(snapshot.prayers) { item in
-                    Button(intent: TogglePrayerCompletionIntent(prayer: item.id, dayKey: snapshot.dayKey)) {
-                        VStack(spacing: 2) {
-                            Text(String(item.displayName.prefix(1)))
-                                .font(.system(size: 9, weight: .medium))
-                                .foregroundStyle(.secondary)
-                            Image(systemName: item.state.monoSymbol)
-                                .font(.system(size: 16))
-                                .widgetAccentable()
-                        }
-                        .frame(maxWidth: .infinity)
+                    Toggle(isOn: item.isCompleted,
+                           intent: SetPrayerCompletionIntent(prayer: item.id, dayKey: snapshot.dayKey)) {
+                        Text(item.displayName)
                     }
-                    .buttonStyle(.plain)
+                    .toggleStyle(TrackerGlyphToggleStyle(item: item))
                     .accessibilityLabel("\(item.displayName), \(item.state.label). Tap to toggle.")
                 }
             }
             Text("\(snapshot.progressText) today")
                 .font(.system(size: 9, weight: .medium))
                 .foregroundStyle(.secondary)
+                .invalidatableContent()
         }
+    }
+}
+
+/// The tracker cell's letter + state glyph, rendered from `configuration.isOn` so
+/// the optimistic flip is visible immediately. When the persisted state already
+/// agrees with `isOn` it keeps the precise glyph (late = open checkmark); during
+/// an optimistic flip it shows the best guess until the reload confirms.
+private struct TrackerGlyphToggleStyle: ToggleStyle {
+    let item: PrayerSnapshotItem
+
+    func makeBody(configuration: Configuration) -> some View {
+        VStack(spacing: 2) {
+            Text(String(item.displayName.prefix(1)))
+                .font(.system(size: 9, weight: .medium))
+                .foregroundStyle(.secondary)
+            Image(systemName: symbol(isOn: configuration.isOn))
+                .font(.system(size: 16))
+                .widgetAccentable()
+        }
+        .frame(maxWidth: .infinity)
+        .contentShape(Rectangle())
+    }
+
+    private func symbol(isOn: Bool) -> String {
+        if isOn {
+            return item.state.isPrayed ? item.state.monoSymbol : "checkmark.circle.fill"
+        }
+        return item.isPast ? "circle" : "circle.dashed"
     }
 }
 

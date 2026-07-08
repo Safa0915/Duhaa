@@ -48,7 +48,9 @@ final class SalahLockController {
     // MARK: Derived state
 
     var isAuthorized: Bool { authorizationStatus == .approved }
-    var selectedCount: Int { selection.applicationTokens.count + selection.categoryTokens.count }
+    var selectedCount: Int {
+        selection.applicationTokens.count + selection.categoryTokens.count + selection.webDomainTokens.count
+    }
     var hasSelection: Bool { selectedCount > 0 }
 
     /// True once everything needed for the lock to actually fire is in place.
@@ -91,16 +93,28 @@ final class SalahLockController {
     /// idempotent — call it on launch, on foreground, and whenever times change.
     func refreshSchedule() { reschedule() }
 
-    private func reschedule() {
+    private func reschedule(now: Date = Date()) {
         // Not ready → make sure nothing stale lingers.
         guard isArmed else { stopEverything(); return }
         guard let payload = SharedPrayerStore.current.loadTimes(),
-              let today = payload.day(containing: Date()) else { return }
+              let today = payload.day(containing: now) else { return }
 
         let tz = payload.timeZone
         SalahLock.timeZoneID = tz.identifier
         var cal = Calendar(identifier: .gregorian)
         cal.timeZone = tz
+
+        let currentWindow = SalahLockWindow.activePrayerKey(in: today,
+                                                            capMinutes: capMinutes,
+                                                            now: now)
+
+        // If the app missed the monitor's end callback, or the user prayed from
+        // another surface, clear the stale shield as soon as Duhaa wakes up.
+        if let liveWindow = SalahLock.activePrayer,
+           liveWindow != currentWindow || SalahLock.didPrayToday(liveWindow, now: now) {
+            SalahLock.clearShield()
+            SalahLock.activePrayer = nil
+        }
 
         let liveWindow = SalahLock.activePrayer   // never tear down a lock that's on
 
@@ -127,6 +141,15 @@ final class SalahLockController {
                 // Most often: entitlement not provisioned yet. Safe to ignore.
             }
         }
+
+        // If Salah Lock is enabled after the adhan, or Duhaa foregrounds during
+        // the window, don't wait until tomorrow's repeated schedule to shield.
+        if let currentWindow,
+           liveWindow != currentWindow,
+           !SalahLock.didPrayToday(currentWindow, now: now) {
+            SalahLock.applyShield()
+            SalahLock.activePrayer = currentWindow
+        }
     }
 
     /// Stop every window and clear any active shield. Used when disabling, or when
@@ -147,5 +170,16 @@ final class SalahLockController {
         guard SalahLock.activePrayer == prayerRawValue else { return }
         SalahLock.clearShield()
         SalahLock.activePrayer = nil
+    }
+}
+
+enum SalahLockWindow {
+    static func activePrayerKey(in day: PrayerTimesPayload.Day,
+                                capMinutes: Int,
+                                now: Date) -> String? {
+        day.ordered.last { item in
+            let end = item.time.addingTimeInterval(Double(SalahLock.clampCap(capMinutes)) * 60)
+            return now >= item.time && now < end
+        }?.id.trackerKey
     }
 }

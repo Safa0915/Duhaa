@@ -1,28 +1,6 @@
 import SwiftUI
 import UIKit
 
-enum FeedbackCategory: String, CaseIterable, Identifiable {
-    case general
-    case prayerTimes
-    case quran
-    case widgets
-    case bug
-    case idea
-
-    var id: String { rawValue }
-
-    var label: String {
-        switch self {
-        case .general: return "General"
-        case .prayerTimes: return "Prayer times"
-        case .quran: return "Quran"
-        case .widgets: return "Widgets"
-        case .bug: return "Bug"
-        case .idea: return "Idea"
-        }
-    }
-}
-
 struct FeedbackPromptView: View {
     let reason: FeedbackPromptReason
     let onGiveFeedback: () -> Void
@@ -113,6 +91,7 @@ struct FeedbackComposerView: View {
 
     init(reason: FeedbackPromptReason,
          initialCategory: FeedbackCategory = .general,
+         initialMessage: String = "",
          onClose: @escaping () -> Void,
          onSubmitted: @escaping () -> Void) {
         self.reason = reason
@@ -120,6 +99,7 @@ struct FeedbackComposerView: View {
         self.onClose = onClose
         self.onSubmitted = onSubmitted
         _category = State(initialValue: initialCategory)
+        _message = State(initialValue: initialMessage)
     }
 
     private var trimmedMessage: String {
@@ -212,44 +192,35 @@ struct FeedbackComposerView: View {
     }
 
     private var feedbackURL: URL? {
+        let draft = emailDraft
         var components = URLComponents()
         components.scheme = "mailto"
-        components.path = FeedbackStore.recipientEmail
+        components.path = draft.recipient
         components.queryItems = [
-            URLQueryItem(name: "subject", value: subject),
-            URLQueryItem(name: "body", value: emailBody)
+            URLQueryItem(name: "subject", value: draft.subject),
+            URLQueryItem(name: "body", value: draft.body)
         ]
         return components.url
     }
 
-    private var subject: String {
-        switch reason {
-        case .bug:
-            return "Duhaa Bug Report"
-        default:
-            return "Duhaa Feedback - \(category.label)"
-        }
+    private var emailDraft: FeedbackEmailDraft {
+        FeedbackEmailDraft.make(
+            reason: reason,
+            category: category,
+            message: trimmedMessage,
+            contact: trimmedContact,
+            diagnostics: includeDiagnostics ? diagnostics : nil
+        )
     }
 
-    private var emailBody: String {
-        var lines = [
-            trimmedMessage,
-            "",
-            "Topic: \(category.label)"
-        ]
-
-        if !trimmedContact.isEmpty {
-            lines.append("Contact: \(trimmedContact)")
-        }
-
-        if includeDiagnostics {
-            lines.append("")
-            lines.append("App: \(appVersion) (\(buildNumber))")
-            lines.append("Device: \(UIDevice.current.model)")
-            lines.append("System: \(UIDevice.current.systemName) \(UIDevice.current.systemVersion)")
-        }
-
-        return lines.joined(separator: "\n")
+    private var diagnostics: FeedbackDiagnostics {
+        FeedbackDiagnostics(
+            appVersion: appVersion,
+            buildNumber: buildNumber,
+            device: UIDevice.current.model,
+            systemName: UIDevice.current.systemName,
+            systemVersion: UIDevice.current.systemVersion
+        )
     }
 
     private var appVersion: String {

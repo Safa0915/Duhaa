@@ -39,9 +39,9 @@ enum MembershipTier: String, CaseIterable, Identifiable {
 
     var tagline: String {
         switch self {
-        case .hilal: "The first light."
-        case .fajr:  "The full Duhaa+ experience."
-        case .duhaa: "Everything, with deeper support."
+        case .hilal: "The first light of support."
+        case .fajr:  "Steady support for Duhaa."
+        case .duhaa: "Deeper support for the work."
         }
     }
 
@@ -51,18 +51,18 @@ enum MembershipTier: String, CaseIterable, Identifiable {
         switch self {
         case .hilal:
             ["Keep Duhaa free, forever, for everyone",
-             "Supporter crescent on your profile",
+             "Help cover Apple, testing, and maintenance costs",
              "Our du'a and gratitude, always"]
         case .fajr:
             ["Everything in Hilal",
-             "Offline Quran audio downloads",
-             "Expanded reciter library",
-             "Early access to new features"]
+             "Help fund privacy-first development with no ads",
+             "Support careful source review before wider launch",
+             "No worship, Quran, or learning feature is locked"]
         case .duhaa:
             ["Everything in Fajr",
-             "Custom adhan voices",
-             "Priority support, direct to the founder",
-             "Your name among Duhaa's founding supporters"]
+             "Help fund future licensed audio and content work",
+             "Support faster polish for widgets, Quran, and prayer tools",
+             "A deeper share in keeping Duhaa sustainable"]
         }
     }
 

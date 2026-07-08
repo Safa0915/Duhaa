@@ -4,7 +4,7 @@ import Foundation
 struct DuaCategory: Decodable, Identifiable, Sendable {
     let name: String
     let icon: String         // SF Symbol
-    let subtitle: String?    // optional override for the count line (e.g. "4 verified adhkar")
+    let subtitle: String?    // optional override for the count line (e.g. "4 sourced adhkar")
     let duas: [Dua]
     var id: String { name }
 }

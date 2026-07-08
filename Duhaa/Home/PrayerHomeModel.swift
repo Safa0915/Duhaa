@@ -11,6 +11,18 @@ enum Prayer: String, CaseIterable {
     case maghrib = "Maghrib"
     case isha = "Isha"
 
+    /// Localized display name. `rawValue` stays English — it doubles as the
+    /// tracker/widget/Salah-Lock storage key and must never follow UI language.
+    var displayName: String {
+        switch self {
+        case .fajr:    return String(localized: "Fajr")
+        case .dhuhr:   return String(localized: "Dhuhr")
+        case .asr:     return String(localized: "Asr")
+        case .maghrib: return String(localized: "Maghrib")
+        case .isha:    return String(localized: "Isha")
+        }
+    }
+
     /// SF Symbol used in the prayer list.
     var icon: String {
         switch self {
@@ -185,13 +197,16 @@ final class PrayerHomeModel {
         } ?? today.fajr
         let preFajr = now < today.fajr
 
+        let sunriseName = String(localized: "Sunrise")
+        let midnightName = String(localized: "Islamic Midnight")
+
         if let next {
-            d.nextName = next.0.rawValue
+            d.nextName = next.0.displayName
             d.countdown = countdown(to: next.1)
-            d.nextLabel = "\(next.0.rawValue) \(clock(next.1, tz))"
+            d.nextLabel = "\(next.0.displayName) \(clock(next.1, tz))"
         }
         if let prev {
-            d.prevLabel = "\(prev.0.rawValue) \(clock(prev.1, tz))"
+            d.prevLabel = "\(prev.0.displayName) \(clock(prev.1, tz))"
         }
         if let next, let prev {
             let total = next.1.timeIntervalSince(prev.1)
@@ -210,53 +225,53 @@ final class PrayerHomeModel {
         }
 
         if let y = yesterday, preFajr, now >= y.isha, now < lastNightIshaEnd {
-            let target = y.ishaAfterIslamicMidnight ? Prayer.fajr.rawValue : "Islamic midnight"
+            let target = y.ishaAfterIslamicMidnight ? Prayer.fajr.displayName : midnightName
             setTimeRemaining(target: target,
                              start: y.isha,
                              end: lastNightIshaEnd,
-                             startLabel: "Isha \(clock(y.isha, tz))",
+                             startLabel: "\(Prayer.isha.displayName) \(clock(y.isha, tz))",
                              endLabel: "\(target) \(clock(lastNightIshaEnd, tz))")
         } else if now >= today.fajr && now < today.sunrise {
-            setTimeRemaining(target: "sunrise",
+            setTimeRemaining(target: sunriseName,
                              start: today.fajr,
                              end: today.sunrise,
-                             startLabel: "Fajr \(clock(today.fajr, tz))",
-                             endLabel: "Sunrise \(clock(today.sunrise, tz))")
+                             startLabel: "\(Prayer.fajr.displayName) \(clock(today.fajr, tz))",
+                             endLabel: "\(sunriseName) \(clock(today.sunrise, tz))")
         } else if now >= today.dhuhr && now < today.asr {
-            setTimeRemaining(target: Prayer.asr.rawValue,
+            setTimeRemaining(target: Prayer.asr.displayName,
                              start: today.dhuhr,
                              end: today.asr,
-                             startLabel: "Dhuhr \(clock(today.dhuhr, tz))",
-                             endLabel: "Asr \(clock(today.asr, tz))")
+                             startLabel: "\(Prayer.dhuhr.displayName) \(clock(today.dhuhr, tz))",
+                             endLabel: "\(Prayer.asr.displayName) \(clock(today.asr, tz))")
         } else if now >= today.asr && now < today.maghrib {
-            setTimeRemaining(target: Prayer.maghrib.rawValue,
+            setTimeRemaining(target: Prayer.maghrib.displayName,
                              start: today.asr,
                              end: today.maghrib,
-                             startLabel: "Asr \(clock(today.asr, tz))",
-                             endLabel: "Maghrib \(clock(today.maghrib, tz))")
+                             startLabel: "\(Prayer.asr.displayName) \(clock(today.asr, tz))",
+                             endLabel: "\(Prayer.maghrib.displayName) \(clock(today.maghrib, tz))")
         } else if now >= today.maghrib && now < today.isha {
-            setTimeRemaining(target: Prayer.isha.rawValue,
+            setTimeRemaining(target: Prayer.isha.displayName,
                              start: today.maghrib,
                              end: today.isha,
-                             startLabel: "Maghrib \(clock(today.maghrib, tz))",
-                             endLabel: "Isha \(clock(today.isha, tz))")
+                             startLabel: "\(Prayer.maghrib.displayName) \(clock(today.maghrib, tz))",
+                             endLabel: "\(Prayer.isha.displayName) \(clock(today.isha, tz))")
         } else if now >= today.isha && now < ishaEnd {
-            let target = today.ishaAfterIslamicMidnight ? Prayer.fajr.rawValue : "Islamic midnight"
+            let target = today.ishaAfterIslamicMidnight ? Prayer.fajr.displayName : midnightName
             setTimeRemaining(target: target,
                              start: today.isha,
                              end: ishaEnd,
-                             startLabel: "Isha \(clock(today.isha, tz))",
+                             startLabel: "\(Prayer.isha.displayName) \(clock(today.isha, tz))",
                              endLabel: "\(target) \(clock(ishaEnd, tz))")
         } else if let next {
             let start = now >= today.sunrise && now < today.dhuhr ? today.sunrise : (prev?.1 ?? now)
             let startLabel = now >= today.sunrise && now < today.dhuhr
-                ? "Sunrise \(clock(today.sunrise, tz))"
-                : (prev.map { "\($0.0.rawValue) \(clock($0.1, tz))" } ?? "")
-            setTimeRemaining(target: next.0.rawValue,
+                ? "\(sunriseName) \(clock(today.sunrise, tz))"
+                : (prev.map { "\($0.0.displayName) \(clock($0.1, tz))" } ?? "")
+            setTimeRemaining(target: next.0.displayName,
                              start: start,
                              end: next.1,
                              startLabel: startLabel,
-                             endLabel: "\(next.0.rawValue) \(clock(next.1, tz))")
+                             endLabel: "\(next.0.displayName) \(clock(next.1, tz))")
         }
 
         // Friday → Jumuʿah replaces the Dhuhr jamāʿah, when both apply.
@@ -335,18 +350,18 @@ final class PrayerHomeModel {
     /// namesake) — lives inside the Fajr row, never as a sixth prayer. The newline
     /// keeps the namesake nod on its own tidy line instead of an awkward mid-wrap.
     private func fajrSub(_ t: DuhaaPrayerTimes, _ tz: TimeZone) -> String {
-        "ends at sunrise \(clock(t.sunrise, tz))"
+        String(localized: "Ends at Sunrise \(clock(t.sunrise, tz))")
     }
 
-    // MARK: Isha "ends at Islamic midnight" sub-line
+    // MARK: Isha "ends at Islamic Midnight" sub-line
 
     private func ishaSub(_ t: DuhaaPrayerTimes, _ tz: TimeZone) -> String {
         // High-latitude anomaly (spec §13): when Isha lands after Islamic midnight,
         // the "ends at midnight" framing breaks down — say so gently instead.
         if t.ishaAfterIslamicMidnight {
-            return "approximate at this latitude"
+            return String(localized: "approximate at this latitude")
         }
-        return "ends at Islamic midnight \(clock(t.islamicMidnight, tz))"
+        return String(localized: "Ends at Islamic Midnight \(clock(t.islamicMidnight, tz))")
     }
 
     // MARK: Formatting helpers
@@ -356,16 +371,20 @@ final class PrayerHomeModel {
         let h = seconds / 3600
         let m = (seconds % 3600) / 60
         let s = seconds % 60
-        if h > 0 { return "\(h)h \(m)m" }
-        if m > 0 { return "\(m) minute\(m == 1 ? "" : "s")" }
-        return "\(s) second\(s == 1 ? "" : "s")"
+        if h > 0 { return String(localized: "\(h)h \(m)m") }
+        if m > 0 {
+            return m == 1 ? String(localized: "1 minute") : String(localized: "\(m) minutes")
+        }
+        return s == 1 ? String(localized: "1 second") : String(localized: "\(s) seconds")
     }
 
     private func clock(_ date: Date, _ tz: TimeZone) -> String { format("h:mm a", date, tz) }
 
     private func format(_ pattern: String, _ date: Date, _ tz: TimeZone) -> String {
+        // Display-only formatter — follows the user's language (storage keys
+        // use PrayerTracker's own POSIX-pinned formatters, not this).
         let f = DateFormatter()
-        f.locale = Locale(identifier: "en_US_POSIX")
+        f.locale = .autoupdatingCurrent
         f.timeZone = tz
         f.dateFormat = pattern
         return f.string(from: date)
@@ -390,7 +409,7 @@ final class PrayerHomeModel {
 
     private func weekdayLetter(_ date: Date, _ tz: TimeZone) -> String {
         let f = DateFormatter()
-        f.locale = Locale(identifier: "en_US")
+        f.locale = .autoupdatingCurrent
         f.timeZone = tz
         f.dateFormat = "EEEEE"
         return f.string(from: date)
@@ -410,7 +429,7 @@ final class PrayerHomeModel {
         let adjusted = calendar.date(byAdding: .day, value: offsetDays, to: date) ?? date
         let f = DateFormatter()
         f.calendar = calendar
-        f.locale = Locale(identifier: "en_US_POSIX")
+        f.locale = .autoupdatingCurrent
         f.timeZone = tz
         f.dateFormat = "d MMMM yyyy"
         return f.string(from: adjusted)

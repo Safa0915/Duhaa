@@ -40,9 +40,11 @@ struct SetPrayerCompletionIntent: AppIntent, SetValueIntent {
             // Unknown id/day → no-op, never crash. (Belt-and-braces: invalid input.)
             return .result()
         }
-        // Flip + persist BEFORE returning so the timeline reload reads fresh state.
+        // Flip + persist FIRST so any reload reads fresh state; the coalesced
+        // reload then fires once per tap burst (the Toggle's optimistic flip
+        // already shows the result, so the debounce is invisible).
         SharedPrayerStore.current.toggleCompleted(id, on: dayKey)
-        WidgetReloader.reloadPrayerWidgets()
+        await WidgetReloader.reloadPrayerWidgetsCoalesced()
         return .result()
     }
 }
@@ -71,7 +73,7 @@ struct TogglePrayerCompletionIntent: AppIntent {
     func perform() async throws -> some IntentResult {
         guard let id = PrayerID(rawValue: prayerID), SharedDayKey.isValid(dayKey) else { return .result() }
         SharedPrayerStore.current.toggleCompleted(id, on: dayKey)
-        WidgetReloader.reloadPrayerWidgets()
+        await WidgetReloader.reloadPrayerWidgetsCoalesced()
         return .result()
     }
 }

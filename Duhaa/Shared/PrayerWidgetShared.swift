@@ -246,4 +246,30 @@ enum WidgetReloader {
     /// Reload just the prayer widget kinds (used after a completion change), so a
     /// tap doesn't regenerate unrelated widgets.
     static func reloadPrayerWidgets() { handler(prayerWidgetKinds) }
+
+    /// How long a burst of taps may pause before the reload fires.
+    static var coalesceWindow: Duration = .milliseconds(400)
+
+    @MainActor private static var pendingReload: Task<Void, Never>?
+
+    /// Coalescing variant of `reloadPrayerWidgets()` for the widget tap intents.
+    ///
+    /// Every tap persists immediately, but rapid taps (log → unlog) used to queue
+    /// one full timeline reload EACH; the renders landed late and replayed the
+    /// intermediate states out of order (unlogged → logged → unlogged) while the
+    /// toggle's optimistic flip had already shown the right answer. Debouncing
+    /// means a burst produces ONE reload, built from the final persisted state.
+    /// The intent awaits the debounce so the extension process stays alive until
+    /// the reload is actually requested.
+    @MainActor
+    static func reloadPrayerWidgetsCoalesced() async {
+        pendingReload?.cancel()
+        let task = Task {
+            try? await Task.sleep(for: coalesceWindow)
+            guard !Task.isCancelled else { return }
+            handler(prayerWidgetKinds)
+        }
+        pendingReload = task
+        await task.value
+    }
 }

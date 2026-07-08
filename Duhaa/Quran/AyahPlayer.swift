@@ -79,6 +79,7 @@ protocol QuranAudioPlaying: AnyObject {
     /// Prepare `url` for playback, optionally starting at `seekToMs` milliseconds
     /// in (used to begin a full-surah recording at a chosen ayah).
     func prepare(url: URL, seekToMs: Int?) async throws
+    func setPlaybackRate(_ rate: Float)
     func play()
     func pause()
     func stop()
@@ -157,6 +158,8 @@ final class AVQuranAudioPlayer: NSObject, QuranAudioPlaying {
     private var statusObservation: NSKeyValueObservation?
     private var timeControlObservation: NSKeyValueObservation?
     private var timeObserverToken: Any?
+    private var playbackRate: Float = 1
+    private var wantsPlayback = false
 
     func prepare(url: URL, seekToMs: Int?) async throws {
         cleanupObservers()
@@ -165,6 +168,7 @@ final class AVQuranAudioPlayer: NSObject, QuranAudioPlaying {
         let item = FirstUseDiagnostics.measure("Quran AVPlayerItem creation", url.absoluteString) {
             AVPlayerItem(url: url)
         }
+        item.audioTimePitchAlgorithm = .spectral
 
         endObserver = NotificationCenter.default.addObserver(
             forName: .AVPlayerItemDidPlayToEndTime,
@@ -218,6 +222,19 @@ final class AVQuranAudioPlayer: NSObject, QuranAudioPlaying {
         addPeriodicTimeObserverIfNeeded()
     }
 
+    func setPlaybackRate(_ rate: Float) {
+        playbackRate = max(0.5, min(2, rate))
+        applyPlaybackRateIfNeeded()
+    }
+
+    private func applyPlaybackRateIfNeeded(force: Bool = false) {
+        guard wantsPlayback, let player else { return }
+        guard force || player.timeControlStatus == .playing || player.timeControlStatus == .waitingToPlayAtSpecifiedRate else {
+            return
+        }
+        player.playImmediately(atRate: playbackRate)
+    }
+
     private func addPeriodicTimeObserverIfNeeded() {
         guard timeObserverToken == nil, let player else { return }
         // 0.1s keeps word-by-word highlighting in step with the recitation.
@@ -237,14 +254,17 @@ final class AVQuranAudioPlayer: NSObject, QuranAudioPlaying {
 
     func play() {
         FirstUseDiagnostics.event("Quran play() called")
-        player?.play()
+        wantsPlayback = true
+        applyPlaybackRateIfNeeded(force: true)
     }
 
     func pause() {
+        wantsPlayback = false
         player?.pause()
     }
 
     func stop() {
+        wantsPlayback = false
         player?.pause()
         cleanupObservers()
         player?.replaceCurrentItem(with: nil)
@@ -272,10 +292,14 @@ final class AVQuranAudioPlayer: NSObject, QuranAudioPlaying {
 @MainActor
 @Observable
 final class AyahPlayer {
+    static let availablePlaybackRates: [Double] = [0.75, 1.0, 1.25, 1.5]
+    static let playbackRateStorageKey = "duhaa.quran.playbackRate"
+
     /// The ayah currently playing as "surah:ayah", or nil when stopped.
     private(set) var playingKey: String?
     private(set) var playbackState: QuranAudioPlaybackState = .idle
     private(set) var failureMessage: String?
+    private(set) var playbackRate: Double
     /// Fractional progress (0...1) through the currently-playing ayah.
     private(set) var progress: Double = 0
     /// Current playback time and duration in seconds, when the audio item exposes them.
@@ -305,6 +329,8 @@ final class AyahPlayer {
         self.audioPlayer = audioPlayer ?? AVQuranAudioPlayer()
         self.timingProvider = timingProvider
         self.quran = quran
+        playbackRate = Self.storedPlaybackRate()
+        self.audioPlayer.setPlaybackRate(Float(playbackRate))
         wirePlayerCallbacks()
         FirstUseDiagnostics.event("Quran audio controller init end")
     }
@@ -383,6 +409,13 @@ final class AyahPlayer {
         guard isActive, playbackState == .paused else { return }
         audioPlayer.play()
         playbackState = .playing
+    }
+
+    func setPlaybackRate(_ rate: Double) {
+        let sanitizedRate = Self.sanitizedPlaybackRate(rate)
+        playbackRate = sanitizedRate
+        UserDefaults.standard.set(sanitizedRate, forKey: Self.playbackRateStorageKey)
+        audioPlayer.setPlaybackRate(Float(sanitizedRate))
     }
 
     /// One button for the immersive player: pause when playing, resume when
@@ -656,6 +689,16 @@ final class AyahPlayer {
 
     private func isCurrent(_ generation: Int, _ request: QuranAudioRequest) -> Bool {
         !Task.isCancelled && self.generation == generation && playingKey == request.key
+    }
+
+    private static func storedPlaybackRate() -> Double {
+        let storedRate = UserDefaults.standard.double(forKey: playbackRateStorageKey)
+        guard storedRate > 0 else { return 1 }
+        return sanitizedPlaybackRate(storedRate)
+    }
+
+    private static func sanitizedPlaybackRate(_ rate: Double) -> Double {
+        availablePlaybackRates.min(by: { abs($0 - rate) < abs($1 - rate) }) ?? 1
     }
 
     private func key(_ surah: Int, _ ayah: Int) -> String { "\(surah):\(ayah)" }

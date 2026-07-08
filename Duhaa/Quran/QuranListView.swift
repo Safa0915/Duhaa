@@ -11,8 +11,10 @@ private struct VerseMatch: Identifiable {
 /// verses, plus a bookmarks shortcut.
 struct QuranListView: View {
     @Environment(QuranBookmarks.self) private var bookmarks
+    @Environment(QuranReadingProgress.self) private var progress
     @State private var query = ""
     @State private var quran: QuranData?
+    @State private var showingResetConfirm = false
 
     private var trimmed: String { query.trimmingCharacters(in: .whitespacesAndNewlines) }
     private var isSearching: Bool { !trimmed.isEmpty }
@@ -49,6 +51,7 @@ struct QuranListView: View {
             if isSearching {
                 searchResults(quran)
             } else {
+                khatmahSection
                 continueReadingSection(quran)
                 Section {
                     ForEach(quran.surahs) { surahLink($0) }
@@ -58,6 +61,59 @@ struct QuranListView: View {
         .scrollContentBackground(.hidden)
         .scrollIndicators(.hidden)
         .duhaaReadableWidth()
+        .confirmationDialog("Reset reading progress?",
+                            isPresented: $showingResetConfirm, titleVisibility: .visible) {
+            Button("Reset progress", role: .destructive) { progress.reset() }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("This clears your khatmah progress so you can begin again. Completed khatmahs are kept.")
+        }
+    }
+
+    // MARK: Khatmah progress
+
+    @ViewBuilder private var khatmahSection: some View {
+        if progress.hasProgress {
+            Section {
+                HStack(spacing: 16) {
+                    progressRing(progress.overallProgress)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Quran Progress")
+                            .duhaaFont(12, .semibold).foregroundStyle(Palette.gold)
+                        Text("\(progress.versesRead.formatted()) of \(progress.totalVerses.formatted()) verses")
+                            .duhaaFont(14).foregroundStyle(.primary)
+                        if progress.completedKhatmahs > 0 {
+                            Text("Completed \(progress.completedKhatmahs)× — alhamdulillah 🤍")
+                                .duhaaFont(11).foregroundStyle(Palette.blue.opacity(0.8))
+                        }
+                    }
+                    Spacer()
+                    Button { showingResetConfirm = true } label: {
+                        Image(systemName: "arrow.counterclockwise")
+                            .duhaaFont(15).foregroundStyle(Palette.blue.opacity(0.8))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Reset reading progress")
+                }
+                .padding(.vertical, 4)
+                .listRowBackground(Palette.card)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Quran progress, \(Int(progress.overallProgress * 100)) percent, \(progress.versesRead) of \(progress.totalVerses) verses read")
+            }
+        }
+    }
+
+    private func progressRing(_ fraction: Double) -> some View {
+        ZStack {
+            Circle().stroke(Palette.gold.opacity(0.15), lineWidth: 4)
+            Circle()
+                .trim(from: 0, to: max(0.001, fraction))
+                .stroke(Palette.gold, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+            Text("\(Int(fraction * 100))%")
+                .duhaaFont(11, .semibold).foregroundStyle(Palette.gold)
+        }
+        .frame(width: 46, height: 46)
     }
 
     private var loadingView: some View {
@@ -161,22 +217,41 @@ struct QuranListView: View {
     }
 
     private func row(_ surah: Surah) -> some View {
-        HStack(spacing: 14) {
+        let frac = progress.progress(surah: surah.number)
+        let complete = progress.isComplete(surah: surah.number)
+        return HStack(spacing: 14) {
             ZStack {
-                Circle().fill(Palette.gold.opacity(0.09))
+                Circle().fill(complete ? Palette.gold.opacity(0.9) : Palette.gold.opacity(0.09))
                 Circle().stroke(Palette.gold.opacity(0.4), lineWidth: 1.2)
-                Text("\(surah.number)")
-                    .duhaaFont(12, .semibold)
-                    .foregroundStyle(Palette.gold)
+                if complete {
+                    Image(systemName: "checkmark")
+                        .duhaaFont(13, .bold).foregroundStyle(Palette.onAccent)
+                } else {
+                    Text("\(surah.number)")
+                        .duhaaFont(12, .semibold)
+                        .foregroundStyle(Palette.gold)
+                }
             }
             .frame(width: 34, height: 34)
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(surah.englishName)
                     .duhaaFont(16, .medium)
                     .foregroundStyle(.primary)
                 Text("\(surah.translation) · \(surah.revelation) · \(surah.ayahs.count) ayahs")
                     .duhaaFont(12)
                     .foregroundStyle(Palette.blue.opacity(0.7))
+                // A quiet sliver of progress — only while a surah is partway read.
+                if frac > 0 && !complete {
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(Palette.gold.opacity(0.15))
+                            Capsule().fill(Palette.gold.opacity(0.8))
+                                .frame(width: geo.size.width * frac)
+                        }
+                    }
+                    .frame(height: 3)
+                    .padding(.trailing, 40)
+                }
             }
             Spacer()
             Text(surah.arabicName)
@@ -184,5 +259,14 @@ struct QuranListView: View {
                 .foregroundStyle(Palette.gold)
         }
         .padding(.vertical, 4)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(rowAccessibilityLabel(surah, frac: frac, complete: complete))
+    }
+
+    private func rowAccessibilityLabel(_ surah: Surah, frac: Double, complete: Bool) -> String {
+        var label = "\(surah.englishName), \(surah.translation), \(surah.ayahs.count) ayahs"
+        if complete { label += ", read" }
+        else if frac > 0 { label += ", \(Int(frac * 100)) percent read" }
+        return label
     }
 }

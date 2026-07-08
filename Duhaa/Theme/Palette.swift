@@ -44,7 +44,8 @@ struct DuhaaThemePalette {
     let colorScheme: ColorScheme
     /// True for the night-sky themes (show stars/glows); false for light themes.
     let isDark: Bool
-    let showsFloatingHearts: Bool
+    /// Animated decoration drawn behind this theme's content (hearts / blossoms / none).
+    let decoration: ThemeDecoration
 
     var pageBg: Color { secondaryBackground }
     var appBg: Color { background }
@@ -52,47 +53,83 @@ struct DuhaaThemePalette {
     var blue: Color { secondaryAccent }
     var card: Color { cardBackground }
     var cardBorder: Color { border }
+
+    /// Light Pink's rising-hearts field.
+    var showsFloatingHearts: Bool { decoration == .hearts }
+    /// Chinese Blossom's falling-blossoms field.
+    var showsFloatingBlossoms: Bool { decoration == .blossoms }
+    /// Autumn's falling-leaves field.
+    var showsFloatingLeaves: Bool { decoration == .leaves }
+    /// Palestinian's rising tatreez-motif field.
+    var showsFloatingTatreez: Bool { decoration == .tatreez }
 }
 
 typealias ThemeColors = DuhaaThemePalette
 
+/// An optional animated decoration drawn behind a theme's content.
+enum ThemeDecoration: Equatable {
+    case none
+    case hearts     // Light Pink — gentle rising hearts
+    case blossoms   // Chinese Blossom — gentle falling blossoms
+    case leaves     // Autumn — gentle falling leaves
+    case tatreez    // Palestinian — rising tatreez embroidery motifs
+}
+
 /// The selectable themes (Classic is default; Light Pink is a free preview).
 enum AppTheme: String, CaseIterable, Identifiable {
-    case dark, sisters, ocean, saudi, light, lightPink
+    case dark, sisters, ocean, saudi, palestinian, blossom, somali, turkish, autumn, light, lightPink
+
+    static let lightThemes: [AppTheme] = [.light, .lightPink]
+    static let darkThemes: [AppTheme] = [.dark, .sisters, .ocean, .saudi, .palestinian, .blossom, .somali, .turkish, .autumn]
 
     var id: String { rawValue }
 
     var displayName: String {
         switch self {
-        case .dark:      return "Classic Duhaa"
-        case .lightPink: return "Light Pink"
-        case .light:     return "Sky"
-        case .sisters:   return "Rose"   // theme kept; the Sisters section is parked
-        case .ocean:     return "Ocean"
-        case .saudi:     return "Saudi"
+        case .dark:      return String(localized: "Classic Duhaa")
+        case .lightPink: return String(localized: "Light Pink")
+        case .light:     return String(localized: "Sky Blue")
+        case .sisters:   return String(localized: "Rose")   // theme kept; the Sisters section is parked
+        case .ocean:     return String(localized: "Ocean")
+        case .saudi:     return String(localized: "Saudi")
+        case .palestinian: return String(localized: "Palestinian")
+        case .blossom:   return String(localized: "Chinese Blossom")
+        case .somali:    return String(localized: "Somali")
+        case .turkish:   return String(localized: "Turkish")
+        case .autumn:    return String(localized: "Autumn")
         }
     }
 
     var previewSubtitle: String {
         switch self {
         case .dark:
-            return "The original celestial palette"
+            return String(localized: "The original celestial palette")
         case .lightPink:
-            return "Free premium preview"
+            return String(localized: "Free premium preview")
         case .light:
-            return "Pale blue · Islamic navy"
+            return String(localized: "Pale blue · Islamic navy")
         case .sisters:
-            return "Rose night palette"
+            return String(localized: "Rose night palette")
         case .ocean:
-            return "Ocean night palette"
+            return String(localized: "Ocean night palette")
         case .saudi:
-            return "Emerald green · royal gold"
+            return String(localized: "Emerald green · royal gold")
+        case .palestinian:
+            return String(localized: "Olive night · tatreez red")
+        case .blossom:
+            return String(localized: "Moonlit plum · blossom pink")
+        case .somali:
+            return String(localized: "Sky blue · white star")
+        case .turkish:
+            return String(localized: "Turkish red · white crescent")
+        case .autumn:
+            return String(localized: "Amber dusk · falling leaves")
         }
     }
 
     var previewBadge: String? {
         switch self {
-        case .lightPink: return "Free preview"
+        case .lightPink: return String(localized: "Free preview")
         default: return nil
         }
     }
@@ -136,7 +173,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
                 prayerTime: Color.white.opacity(0.8),
                 colorScheme: .dark,
                 isDark: true,
-                showsFloatingHearts: false)
+                decoration: .none)
 
         case .lightPink:
             let ink = Color(hex: 0x35232A)
@@ -171,7 +208,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
                 prayerTime: ink.opacity(0.9),
                 colorScheme: .light,
                 isDark: false,
-                showsFloatingHearts: true)
+                decoration: .hearts)
 
         case .sisters: // all-pink celestial (still a night theme)
             return ThemeColors(
@@ -201,7 +238,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
                 prayerTime: Color.white.opacity(0.85),
                 colorScheme: .dark,
                 isDark: true,
-                showsFloatingHearts: false)
+                decoration: .none)
 
         case .ocean: // all-blue celestial — the Rose palette, in blue
             return ThemeColors(
@@ -231,7 +268,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
                 prayerTime: Color.white.opacity(0.85),
                 colorScheme: .dark,
                 isDark: true,
-                showsFloatingHearts: false)
+                decoration: .none)
 
         case .saudi: // deep emerald night + royal gold — premium, Saudi green & gold
             return ThemeColors(
@@ -261,7 +298,157 @@ enum AppTheme: String, CaseIterable, Identifiable {
                 prayerTime: Color.white.opacity(0.85),
                 colorScheme: .dark,
                 isDark: true,
-                showsFloatingHearts: false)
+                decoration: .none)
+
+        case .palestinian: // olive-grove night + tatreez red — the flag's black/white/green/red, done premium
+            return ThemeColors(
+                id: self,
+                hexes: ThemeColorHexes(
+                    background: 0x0F1A12, secondaryBackground: 0x081009,
+                    cardBackground: 0xFFFFFF, elevatedCardBackground: 0xFFFFFF,
+                    accent: 0xDE5257, onAccent: 0xFFFFFF, softAccent: 0xBFDDB4,
+                    primaryText: 0xFFFFFF, secondaryText: 0xA9C8A5,
+                    border: 0xFFFFFF, glow: 0xDE5257,
+                    success: 0x8BD39F, warning: 0xF3C76E, destructive: 0xFF7A93),
+                background: Color(hex: 0x0F1A12),
+                secondaryBackground: Color(hex: 0x081009),
+                cardBackground: Color.white.opacity(0.07),
+                elevatedCardBackground: Color.white.opacity(0.10),
+                primaryText: .white,
+                secondaryText: Color(hex: 0xA9C8A5),
+                accent: Color(hex: 0xDE5257),
+                onAccent: .white,
+                softAccent: Color(hex: 0xBFDDB4),
+                border: Color.white.opacity(0.13),
+                glow: Color(hex: 0xDE5257),
+                success: Color(hex: 0x8BD39F),
+                warning: Color(hex: 0xF3C76E),
+                destructive: Color(hex: 0xFF7A93),
+                secondaryAccent: Color(hex: 0x9CCE9F),
+                prayerTime: Color.white.opacity(0.85),
+                colorScheme: .dark,
+                isDark: true,
+                decoration: .tatreez)
+
+        case .blossom: // moonlit plum night + blossom pink, with falling blossoms
+            return ThemeColors(
+                id: self,
+                hexes: ThemeColorHexes(
+                    background: 0x1A0E18, secondaryBackground: 0x110810,
+                    cardBackground: 0xFFFFFF, elevatedCardBackground: 0xFFFFFF,
+                    accent: 0xF4A9C0, onAccent: 0x2A0E1C, softAccent: 0xF1B9CE,
+                    primaryText: 0xFFFFFF, secondaryText: 0xD9AEC1,
+                    border: 0xFFFFFF, glow: 0xF4A9C0,
+                    success: 0x8BD39F, warning: 0xF3C76E, destructive: 0xFF7A93),
+                background: Color(hex: 0x1A0E18),
+                secondaryBackground: Color(hex: 0x110810),
+                cardBackground: Color.white.opacity(0.07),
+                elevatedCardBackground: Color.white.opacity(0.10),
+                primaryText: .white,
+                secondaryText: Color(hex: 0xD9AEC1),
+                accent: Color(hex: 0xF4A9C0),
+                onAccent: Color(hex: 0x2A0E1C),
+                softAccent: Color(hex: 0xF1B9CE),
+                border: Color.white.opacity(0.13),
+                glow: Color(hex: 0xF4A9C0),
+                success: Color(hex: 0x8BD39F),
+                warning: Color(hex: 0xF3C76E),
+                destructive: Color(hex: 0xFF7A93),
+                secondaryAccent: Color(hex: 0x8FD3B0),
+                prayerTime: Color.white.opacity(0.85),
+                colorScheme: .dark,
+                isDark: true,
+                decoration: .blossoms)
+
+        case .somali: // Somali-flag sky blue + white star, on a deep azure night
+            return ThemeColors(
+                id: self,
+                hexes: ThemeColorHexes(
+                    background: 0x0B2C52, secondaryBackground: 0x06182E,
+                    cardBackground: 0xFFFFFF, elevatedCardBackground: 0xFFFFFF,
+                    accent: 0x4FA3E8, onAccent: 0x08182E, softAccent: 0xD6E8FB,
+                    primaryText: 0xFFFFFF, secondaryText: 0xBCD7F4,
+                    border: 0xFFFFFF, glow: 0x4FA3E8,
+                    success: 0x8BD39F, warning: 0xF3C76E, destructive: 0xFF7A93),
+                background: Color(hex: 0x0B2C52),
+                secondaryBackground: Color(hex: 0x06182E),
+                cardBackground: Color.white.opacity(0.07),
+                elevatedCardBackground: Color.white.opacity(0.10),
+                primaryText: .white,
+                secondaryText: Color(hex: 0xBCD7F4),
+                accent: Color(hex: 0x4FA3E8),
+                onAccent: Color(hex: 0x08182E),
+                softAccent: Color(hex: 0xD6E8FB),
+                border: Color.white.opacity(0.14),
+                glow: Color(hex: 0x4FA3E8),
+                success: Color(hex: 0x8BD39F),
+                warning: Color(hex: 0xF3C76E),
+                destructive: Color(hex: 0xFF7A93),
+                secondaryAccent: Color(hex: 0xD6E8FB),
+                prayerTime: Color.white.opacity(0.85),
+                colorScheme: .dark,
+                isDark: true,
+                decoration: .none)
+
+        case .turkish: // Turkish-flag red + white crescent, on a deep crimson night
+            return ThemeColors(
+                id: self,
+                hexes: ThemeColorHexes(
+                    background: 0x2A0810, secondaryBackground: 0x190509,
+                    cardBackground: 0xFFFFFF, elevatedCardBackground: 0xFFFFFF,
+                    accent: 0xE83A47, onAccent: 0xFFFFFF, softAccent: 0xF3D9DC,
+                    primaryText: 0xFFFFFF, secondaryText: 0xE7B9C0,
+                    border: 0xFFFFFF, glow: 0xE83A47,
+                    success: 0x8BD39F, warning: 0xF3C76E, destructive: 0xFF7A93),
+                background: Color(hex: 0x2A0810),
+                secondaryBackground: Color(hex: 0x190509),
+                cardBackground: Color.white.opacity(0.07),
+                elevatedCardBackground: Color.white.opacity(0.10),
+                primaryText: .white,
+                secondaryText: Color(hex: 0xE7B9C0),
+                accent: Color(hex: 0xE83A47),
+                onAccent: .white,
+                softAccent: Color(hex: 0xF3D9DC),
+                border: Color.white.opacity(0.13),
+                glow: Color(hex: 0xE83A47),
+                success: Color(hex: 0x8BD39F),
+                warning: Color(hex: 0xF3C76E),
+                destructive: Color(hex: 0xFF7A93),
+                secondaryAccent: Color(hex: 0xF3D9DC),
+                prayerTime: Color.white.opacity(0.85),
+                colorScheme: .dark,
+                isDark: true,
+                decoration: .none)
+
+        case .autumn: // warm amber-lit autumn night, with gently falling leaves
+            return ThemeColors(
+                id: self,
+                hexes: ThemeColorHexes(
+                    background: 0x21140A, secondaryBackground: 0x160C04,
+                    cardBackground: 0xFFFFFF, elevatedCardBackground: 0xFFFFFF,
+                    accent: 0xE0883A, onAccent: 0x241405, softAccent: 0xE7C083,
+                    primaryText: 0xFFFFFF, secondaryText: 0xDDBA8A,
+                    border: 0xFFFFFF, glow: 0xE0883A,
+                    success: 0x8BD39F, warning: 0xF3C76E, destructive: 0xFF7A93),
+                background: Color(hex: 0x21140A),
+                secondaryBackground: Color(hex: 0x160C04),
+                cardBackground: Color.white.opacity(0.07),
+                elevatedCardBackground: Color.white.opacity(0.10),
+                primaryText: .white,
+                secondaryText: Color(hex: 0xDDBA8A),
+                accent: Color(hex: 0xE0883A),
+                onAccent: Color(hex: 0x241405),
+                softAccent: Color(hex: 0xE7C083),
+                border: Color.white.opacity(0.13),
+                glow: Color(hex: 0xE0883A),
+                success: Color(hex: 0x8BD39F),
+                warning: Color(hex: 0xF3C76E),
+                destructive: Color(hex: 0xFF7A93),
+                secondaryAccent: Color(hex: 0xE7C083),
+                prayerTime: Color.white.opacity(0.85),
+                colorScheme: .dark,
+                isDark: true,
+                decoration: .leaves)
 
         case .light: // B — Sky: pale blue + Islamic navy
             let ink = Color(hex: 0x0C1F3B)
@@ -294,7 +481,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
                 prayerTime: ink.opacity(0.9),
                 colorScheme: .light,
                 isDark: false,
-                showsFloatingHearts: false)
+                decoration: .none)
         }
     }
 }

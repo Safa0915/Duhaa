@@ -27,4 +27,54 @@ final class QuranPageIndexTests: XCTestCase {
         XCTAssertEqual(index.pageNumber(surah: 11, ayah: 1), 221)
         XCTAssertEqual(index.pageStartNumber(surah: 11, ayah: 6), 222)
     }
+
+    func testSurahPageGroupsFollowPageStarts() {
+        let index = QuranPageIndex(pages: [
+            QuranPageStart(page: 1, surah: 1, ayah: 1),
+            QuranPageStart(page: 2, surah: 1, ayah: 3),
+            QuranPageStart(page: 3, surah: 2, ayah: 1)
+        ])
+        let surah = Surah(
+            number: 1,
+            arabicName: "الفاتحة",
+            englishName: "Al-Fatihah",
+            translation: "The Opening",
+            revelation: "Meccan",
+            ayahs: [
+                Ayah(number: 1, arabic: "a", english: "one"),
+                Ayah(number: 2, arabic: "b", english: "two"),
+                Ayah(number: 3, arabic: "c", english: "three")
+            ]
+        )
+
+        let groups = surah.pageGroups(using: index)
+
+        XCTAssertEqual(groups.map(\.page), [1, 2])
+        XCTAssertEqual(groups.map { $0.ayahs.map(\.number) }, [[1, 2], [3]])
+        XCTAssertEqual(groups.map(\.isContinuation), [false, false])
+    }
+
+    func testSurahPageGroupsMarkOpeningContinuation() {
+        let index = QuranPageIndex(pages: [
+            QuranPageStart(page: 1, surah: 1, ayah: 1),
+            QuranPageStart(page: 2, surah: 2, ayah: 3)
+        ])
+        let surah = Surah(
+            number: 2,
+            arabicName: "البقرة",
+            englishName: "Al-Baqarah",
+            translation: "The Cow",
+            revelation: "Medinan",
+            ayahs: [
+                Ayah(number: 1, arabic: "a", english: "one"),
+                Ayah(number: 2, arabic: "b", english: "two"),
+                Ayah(number: 3, arabic: "c", english: "three")
+            ]
+        )
+
+        let groups = surah.pageGroups(using: index)
+
+        XCTAssertEqual(groups.map(\.page), [1, 2])
+        XCTAssertEqual(groups.map(\.isContinuation), [true, false])
+    }
 }

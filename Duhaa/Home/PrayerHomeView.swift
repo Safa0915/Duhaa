@@ -9,6 +9,7 @@ struct PrayerHomeView: View {
     @Environment(PrayerTracker.self) private var tracker
     @Environment(SalahLockController.self) private var salahLock
     @Environment(FeedbackStore.self) private var feedback
+    @Environment(QadaFasts.self) private var qada
     @State private var model = PrayerHomeModel()
     @State private var showingLocationPicker = false
     @State private var showingSettings = false
@@ -20,6 +21,8 @@ struct PrayerHomeView: View {
     @State private var verseSheet: VerseRef?
     @State private var showingJourney = false
     @State private var showingMosques = false
+    @State private var showingFasting = false
+    @State private var showingPrayerTimeDetails = false
 
     private var isHighLatitude: Bool { abs(location.active.latitude) > 48 }
 
@@ -109,10 +112,25 @@ struct PrayerHomeView: View {
                         }
                         .padding(.horizontal, 22).padding(.top, 16)
 
+                        PrayerTimeDetailsButton {
+                            showingPrayerTimeDetails = true
+                        }
+                        .padding(.horizontal, 22).padding(.top, 14)
+
                         TodayProgressCard(dayKey: d.dayKey, week: d.week) {
                             showingJourney = true
                         }
                         .padding(.horizontal, 22).padding(.top, 14)
+
+                        let fastKinds = d.isRamadan ? [] :
+                            VoluntaryFast.kinds(for: Date(), timeZone: location.active.timeZone,
+                                                hijriOffsetDays: settings.hijriOffsetDays)
+                        if !d.isRamadan && (!fastKinds.isEmpty || qada.owed > 0) {
+                            FastingCard(dayKey: d.dayKey, kinds: fastKinds) {
+                                showingFasting = true
+                            }
+                            .padding(.horizontal, 22).padding(.top, 14)
+                        }
 
                         NightCard(tahajjud: d.tahajjud, islamicMidnight: d.islamicMidnight)
                             .padding(.horizontal, 22).padding(.top, 14)
@@ -143,6 +161,12 @@ struct PrayerHomeView: View {
         }
         .sheet(isPresented: $showingJourney) {
             JourneyView()
+        }
+        .sheet(isPresented: $showingFasting) {
+            FastingView()
+        }
+        .sheet(isPresented: $showingPrayerTimeDetails) {
+            PrayerTimeDetailsView()
         }
         .sheet(isPresented: $showingMosques) {
             NearbyMosquesView()
@@ -320,6 +344,7 @@ private struct VerseReaderSheet: View {
         .environment(PrayerTracker())
         .environment(SalahLockController())
         .environment(FeedbackStore())
+        .environment(QadaFasts())
 }
 
 /// A warm, dismissible welcome for someone returning after a gap (spec §5).

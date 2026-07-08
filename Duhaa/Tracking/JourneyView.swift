@@ -8,9 +8,12 @@ struct JourneyView: View {
     @Environment(PrayerTracker.self) private var tracker
     @Environment(LocationProvider.self) private var location
     @Environment(InsightsStore.self) private var insights
+    @Environment(SettingsStore.self) private var settings
 
     /// Any day inside the month currently shown in the calendar.
     @State private var monthAnchor = Date()
+    /// The past/today day the user tapped to backfill prayers, if any.
+    @State private var editingDay: EditingDay?
     /// Flips on appear: bounces the streak flame and grows the insights bar in.
     @State private var entranceDone = false
 
@@ -48,6 +51,15 @@ struct JourneyView: View {
         }
         .preferredColorScheme(Palette.active.colorScheme)
         .tint(Palette.gold)
+        .sheet(item: $editingDay) { day in
+            DayPrayersEditor(date: day.date,
+                             dayKey: PrayerTracker.dayKey(day.date, tz),
+                             hijri: HijriCalendar.string(day.date, timeZone: tz,
+                                                         offsetDays: settings.hijriOffsetDays),
+                             gregorian: accessibilityDay(day.date) + dayYearSuffix(day.date),
+                             tracker: tracker)
+                .presentationDetents([.medium, .large])
+        }
         .onAppear {
             withAnimation(.easeOut(duration: 0.6).delay(0.1)) { entranceDone = true }
         }
@@ -121,7 +133,12 @@ struct JourneyView: View {
                 .foregroundStyle(Palette.gold)
                 .accessibilityLabel("Previous month")
                 Spacer()
-                Text(monthTitle).duhaaFont(15, .semibold).foregroundStyle(.primary)
+                VStack(spacing: 2) {
+                    Text(monthTitle).duhaaFont(15, .semibold).foregroundStyle(.primary)
+                    Text(hijriMonthTitle)
+                        .duhaaFont(11)
+                        .foregroundStyle(Palette.blue.opacity(0.7))
+                }
                 Spacer()
                 Button { shiftMonth(1) } label: {
                     Image(systemName: "chevron.right").duhaaFont(15, .semibold)
@@ -143,6 +160,11 @@ struct JourneyView: View {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 7), spacing: 8) {
                 ForEach(monthCells) { cell in dayCell(cell) }
             }
+
+            Text("Tap any day to add a prayer you prayed.")
+                .duhaaFont(11)
+                .foregroundStyle(Palette.blue.opacity(0.55))
+                .frame(maxWidth: .infinity)
         }
         .padding(16)
         .background(Palette.card)
@@ -150,32 +172,47 @@ struct JourneyView: View {
         .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 
+    @ViewBuilder
     private func dayCell(_ cell: DayCell) -> some View {
-        Group {
-            if let day = cell.day, let date = cell.date {
-                let frac = Double(cell.count) / 5.0
-                // Excused (menses) days with no prayers get a soft rose tint, not an empty "missed" circle.
-                let isExcusedEmpty = cell.isExcused && cell.count == 0
-                ZStack {
-                    Circle()
-                        .fill(cell.count > 0 ? Palette.gold.opacity(0.25 + 0.75 * frac)
-                              : isExcusedEmpty ? Palette.blue.opacity(0.16) : Color.clear)
-                    Circle()
-                        .stroke(strokeColor(cell), lineWidth: cell.isToday ? 1.8 : 1)
-                    Text("\(day)")
-                        .duhaaFont(12, cell.isToday ? .bold : .regular)
-                        .foregroundStyle(cell.count >= 3 ? Palette.onAccent : Color.primary.opacity(0.75))
-                }
-                .frame(height: 38)
-                .opacity(cell.isFuture ? 0.3 : 1)
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel(cell.isExcused && cell.count == 0
-                                    ? "\(accessibilityDay(date)), excused"
-                                    : "\(accessibilityDay(date)), \(cell.count) of 5 prayers")
+        if let day = cell.day, let date = cell.date {
+            // Future days are shown (so the calendar reads as a whole month) but are
+            // never tappable — you can only log prayers for today and days past.
+            if cell.isFuture {
+                dayCircle(cell, day: day, date: date)
             } else {
-                Color.clear.frame(height: 38)
+                Button {
+                    editingDay = EditingDay(date: date)
+                } label: {
+                    dayCircle(cell, day: day, date: date)
+                }
+                .buttonStyle(.plain)
+                .accessibilityHint("Add or edit prayers for this day")
             }
+        } else {
+            Color.clear.frame(height: 38)
         }
+    }
+
+    private func dayCircle(_ cell: DayCell, day: Int, date: Date) -> some View {
+        let frac = Double(cell.count) / 5.0
+        // Excused (menses) days with no prayers get a soft rose tint, not an empty "missed" circle.
+        let isExcusedEmpty = cell.isExcused && cell.count == 0
+        return ZStack {
+            Circle()
+                .fill(cell.count > 0 ? Palette.gold.opacity(0.25 + 0.75 * frac)
+                      : isExcusedEmpty ? Palette.blue.opacity(0.16) : Color.clear)
+            Circle()
+                .stroke(strokeColor(cell), lineWidth: cell.isToday ? 1.8 : 1)
+            Text("\(day)")
+                .duhaaFont(12, cell.isToday ? .bold : .regular)
+                .foregroundStyle(cell.count >= 3 ? Palette.onAccent : Color.primary.opacity(0.75))
+        }
+        .frame(height: 38)
+        .opacity(cell.isFuture ? 0.3 : 1)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(cell.isExcused && cell.count == 0
+                            ? "\(accessibilityDay(date)), excused"
+                            : "\(accessibilityDay(date)), \(cell.count) of 5 prayers")
     }
 
     private func strokeColor(_ cell: DayCell) -> Color {
@@ -269,7 +306,7 @@ struct JourneyView: View {
                 insightLine("Late", pct: data.latePct, count: data.late, tint: Palette.blue)
                 insightLine("Missed", pct: data.missedPct, count: data.missed, tint: .primary.opacity(0.45))
 
-                Text("On time means marked before the next prayer began (Fajr: before sunrise · Isha: before Islamic midnight). A gentle mirror, not a scorecard — every prayer ahead is a fresh start. 🤍")
+                Text("On time means marked before the next prayer began (Fajr: before sunrise · Isha: before Islamic Midnight). A gentle mirror, not a scorecard — every prayer ahead is a fresh start. 🤍")
                     .duhaaFont(11)
                     .foregroundStyle(Palette.blue.opacity(0.55))
                     .padding(.top, 2)
@@ -345,6 +382,34 @@ struct JourneyView: View {
         return f.string(from: monthAnchor)
     }
 
+    /// The Hijri month(s) spanning the shown Gregorian month — e.g. "Dhuʼl-Hijjah
+    /// 1447" or "Dhuʼl-Hijjah – Muharram 1448" when the month straddles two.
+    private var hijriMonthTitle: String {
+        let cal = calendar
+        let comps = cal.dateComponents([.year, .month], from: monthAnchor)
+        guard let first = cal.date(from: comps),
+              let range = cal.range(of: .day, in: .month, for: first),
+              let last = cal.date(byAdding: .day, value: range.count - 1, to: first) else { return "" }
+        let offset = settings.hijriOffsetDays
+        let firstMonth = HijriCalendar.string(first, timeZone: tz, offsetDays: offset, format: "MMMM")
+        let lastMonth = HijriCalendar.string(last, timeZone: tz, offsetDays: offset, format: "MMMM")
+        let lastYear = HijriCalendar.string(last, timeZone: tz, offsetDays: offset, format: "yyyy")
+        if firstMonth == lastMonth {
+            return "\(firstMonth) \(lastYear) AH"
+        }
+        return "\(firstMonth) – \(lastMonth) \(lastYear) AH"
+    }
+
+    /// The year suffix for a day's full date label (the a11y label omits the year).
+    private func dayYearSuffix(_ date: Date) -> String {
+        let f = DateFormatter()
+        f.calendar = calendar
+        f.timeZone = tz
+        f.locale = Locale(identifier: "en_US")
+        f.dateFormat = ", yyyy"
+        return f.string(from: date)
+    }
+
     private var canGoForward: Bool {
         let cal = calendar
         let thisMonth = cal.dateComponents([.year, .month], from: Date())
@@ -401,4 +466,98 @@ private struct Milestone: Identifiable {
     let icon: String
     let progress: Int
     let goal: Int
+}
+
+/// The day tapped in the calendar, wrapped so it can drive a `.sheet(item:)`.
+private struct EditingDay: Identifiable {
+    let date: Date
+    var id: TimeInterval { date.timeIntervalSinceReferenceDate }
+}
+
+/// A gentle backfill sheet: tap a past (or today's) day to record which of the five
+/// prayers were prayed. Pure addition — there is no "missed" state to set, only the
+/// quiet act of checking off what you did pray. Toggling writes straight to the
+/// shared `PrayerTracker`, so the calendar and streaks update the moment it closes.
+private struct DayPrayersEditor: View {
+    @Environment(\.dismiss) private var dismiss
+    let date: Date
+    let dayKey: String
+    let hijri: String
+    let gregorian: String
+    let tracker: PrayerTracker
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 18) {
+                    header
+                    VStack(spacing: 10) {
+                        ForEach(Prayer.allCases, id: \.self) { prayer in
+                            prayerRow(prayer)
+                        }
+                    }
+                    Text("Check off the prayers you completed on this day.")
+                        .duhaaFont(12)
+                        .foregroundStyle(Palette.blue.opacity(0.6))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 12)
+                        .padding(.top, 4)
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 8)
+                .padding(.bottom, 32)
+            }
+            .scrollContentBackground(.hidden)
+            .background(Palette.appBg.ignoresSafeArea())
+            .navigationTitle("Log prayers")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }.foregroundStyle(Palette.gold)
+                }
+            }
+        }
+        .preferredColorScheme(Palette.active.colorScheme)
+        .tint(Palette.gold)
+    }
+
+    private var header: some View {
+        VStack(spacing: 4) {
+            Text(gregorian).duhaaFont(20, .semibold).foregroundStyle(.primary)
+            Text(hijri + " AH").duhaaFont(13).foregroundStyle(Palette.blue.opacity(0.8))
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 4)
+    }
+
+    private func prayerRow(_ prayer: Prayer) -> some View {
+        let marked = tracker.isMarked(prayer, dayKey: dayKey)
+        return Button {
+            tracker.toggle(prayer, dayKey: dayKey)
+        } label: {
+            HStack(spacing: 14) {
+                Image(systemName: prayer.icon)
+                    .duhaaFont(17)
+                    .foregroundStyle(marked ? Palette.gold : Palette.blue.opacity(0.7))
+                    .frame(width: 26)
+                Text(prayer.rawValue)
+                    .duhaaFont(16, .medium)
+                    .foregroundStyle(.primary)
+                Spacer()
+                Image(systemName: marked ? "checkmark.circle.fill" : "circle")
+                    .duhaaFont(22)
+                    .foregroundStyle(marked ? Palette.gold : Color.primary.opacity(0.25))
+            }
+            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
+            .background(marked ? Palette.gold.opacity(0.08) : Palette.card)
+            .overlay(RoundedRectangle(cornerRadius: 14)
+                .stroke(marked ? Palette.gold.opacity(0.4) : Palette.cardBorder, lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(prayer.rawValue)
+        .accessibilityValue(marked ? "prayed" : "not marked")
+        .accessibilityHint("Double tap to toggle")
+    }
 }

@@ -28,6 +28,10 @@ struct LearnView: View {
             if guides != nil {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 24) {
+                        if trimmed.isEmpty {
+                            practiceSection
+                        }
+
                         ForEach(groupedGuides, id: \.group) { section in
                             guideSection(section.group, guides: section.guides)
                         }
@@ -55,6 +59,31 @@ struct LearnView: View {
         .task {
             guard guides == nil else { return }
             guides = await Learn.loadAsync()
+        }
+    }
+
+    /// Entry into Islamic Essentials — study sets with flashcards, quizzes,
+    /// and match. Hidden while searching (search covers guides only).
+    private var practiceSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: "sparkles")
+                    .duhaaFont(13, .semibold)
+                    .foregroundStyle(Palette.gold.opacity(0.9))
+                Text("PRACTICE")
+                    .duhaaFont(13, .bold)
+                    .foregroundStyle(Palette.blue.opacity(0.85))
+                Spacer()
+            }
+            .padding(.horizontal, 2)
+            .accessibilityAddTraits(.isHeader)
+
+            NavigationLink {
+                IslamicEssentialsHomeView()
+            } label: {
+                EssentialsEntryCard()
+            }
+            .buttonStyle(.duhaaPress)
         }
     }
 

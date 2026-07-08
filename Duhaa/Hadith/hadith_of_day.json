@@ -1,0 +1,238 @@
+{
+  "hadiths": [
+    {
+      "arabic": "أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإِنْ قَلَّ",
+      "latin": "Ahabbu-l-aʿmāli ilā-llāhi adwamuhā wa in qall",
+      "en": "The deeds most beloved to Allah are those done regularly, even if they are few.",
+      "narrator": "Aisha (RA)",
+      "source": "Bukhari 6464 · Muslim 783",
+      "grade": "Sahih",
+      "grader": "al-Bukhari & Muslim"
+    },
+    {
+      "arabic": "إِنَّ رَحْمَتِي سَبَقَتْ غَضَبِي",
+      "latin": "Inna raḥmatī sabaqat ghaḍabī",
+      "en": "Allah says: My mercy prevails over My wrath.",
+      "narrator": "Abu Hurayrah (RA)",
+      "source": "Bukhari 7554 · Muslim 2751",
+      "grade": "Sahih",
+      "grader": "al-Bukhari & Muslim"
+    },
+    {
+      "arabic": "يَسِّرُوا وَلاَ تُعَسِّرُوا وَبَشِّرُوا وَلاَ تُنَفِّرُوا",
+      "latin": "Yassirū wa lā tuʿassirū, wa bashshirū wa lā tunaffirū",
+      "en": "Make things easy and do not make them difficult; give glad tidings and do not repel.",
+      "narrator": "Anas ibn Malik (RA)",
+      "source": "Bukhari 69 · Muslim 1734",
+      "grade": "Sahih",
+      "grader": "al-Bukhari & Muslim"
+    },
+    {
+      "arabic": "اتَّقِ اللَّهَ حَيْثُمَا كُنْتَ وَأَتْبِعِ السَّيِّئَةَ الْحَسَنَةَ تَمْحُهَا وَخَالِقِ النَّاسَ بِخُلُقٍ حَسَنٍ",
+      "latin": "Ittaqi-llāha ḥaythumā kunta, wa atbiʿi-s-sayyiʾata-l-ḥasanata tamḥuhā, wa khāliqi-n-nāsa bi-khuluqin ḥasan",
+      "en": "Fear Allah wherever you are; follow a bad deed with a good one and it will wipe it out; and treat people with good character.",
+      "narrator": "Abu Dharr (RA)",
+      "source": "Jami at-Tirmidhi 1987",
+      "grade": "Hasan",
+      "grader": "al-Albani"
+    },
+    {
+      "arabic": "عَجَبًا لِأَمْرِ الْمُؤْمِنِ إِنَّ أَمْرَهُ كُلَّهُ خَيْرٌ",
+      "latin": "ʿAjaban li-amri-l-muʾmin, inna amrahu kullahu khayr",
+      "en": "How wonderful is the affair of the believer, for all his affairs are good.",
+      "narrator": "Suhayb (RA)",
+      "source": "Sahih Muslim 2999",
+      "grade": "Sahih",
+      "grader": "Muslim"
+    },
+    {
+      "arabic": "أَنَا عِنْدَ ظَنِّ عَبْدِي بِي وَأَنَا مَعَهُ إِذَا ذَكَرَنِي",
+      "latin": "Anā ʿinda ẓanni ʿabdī bī, wa anā maʿahu idhā dhakaranī",
+      "en": "Allah says: I am as My servant thinks I am, and I am with him when he remembers Me.",
+      "narrator": "Abu Hurayrah (RA)",
+      "source": "Bukhari 7405 · Muslim 2675",
+      "grade": "Sahih",
+      "grader": "al-Bukhari & Muslim"
+    },
+    {
+      "arabic": "الْمُؤْمِنُ الْقَوِيُّ خَيْرٌ وَأَحَبُّ إِلَى اللَّهِ مِنَ الْمُؤْمِنِ الضَّعِيفِ وَفِي كُلٍّ خَيْرٌ",
+      "latin": "Al-muʾminu-l-qawiyyu khayrun wa aḥabbu ilā-llāhi mina-l-muʾmini-ḍ-ḍaʿīf, wa fī kullin khayr",
+      "en": "The strong believer is better and more beloved to Allah than the weak believer, though there is good in both.",
+      "narrator": "Abu Hurayrah (RA)",
+      "source": "Sahih Muslim 2664",
+      "grade": "Sahih",
+      "grader": "Muslim"
+    },
+    {
+      "arabic": "مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ بِهِ طَرِيقًا إِلَى الْجَنَّةِ",
+      "latin": "Man salaka ṭarīqan yaltamisu fīhi ʿilman sahhala-llāhu lahu bihi ṭarīqan ilā-l-jannah",
+      "en": "Whoever travels a path in search of knowledge, Allah will make easy for him a path to Paradise.",
+      "narrator": "Abu Hurayrah (RA)",
+      "source": "Sahih Muslim 2699",
+      "grade": "Sahih",
+      "grader": "Muslim"
+    },
+    {
+      "arabic": "لاَ يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ",
+      "latin": "Lā yuʾminu aḥadukum ḥattā yuḥibba li-akhīhi mā yuḥibbu li-nafsih",
+      "en": "None of you truly believes until he loves for his brother what he loves for himself.",
+      "narrator": "Anas ibn Malik (RA)",
+      "source": "Bukhari 13 · Muslim 45",
+      "grade": "Sahih",
+      "grader": "al-Bukhari & Muslim"
+    },
+    {
+      "arabic": "كُنْ فِي الدُّنْيَا كَأَنَّكَ غَرِيبٌ أَوْ عَابِرُ سَبِيلٍ",
+      "latin": "Kun fi-d-dunyā ka-annaka gharībun aw ʿābiru sabīl",
+      "en": "Be in this world as if you were a stranger or a traveler.",
+      "narrator": "Ibn Umar (RA)",
+      "source": "Sahih al-Bukhari 6416",
+      "grade": "Sahih",
+      "grader": "al-Bukhari"
+    },
+    {
+      "arabic": "لاَ تَحْقِرَنَّ مِنَ الْمَعْرُوفِ شَيْئًا وَلَوْ أَنْ تَلْقَى أَخَاكَ بِوَجْهٍ طَلْقٍ",
+      "latin": "Lā taḥqiranna mina-l-maʿrūfi shayʾan, wa law an talqā akhāka bi-wajhin ṭalq",
+      "en": "Do not belittle any good deed, even meeting your brother with a cheerful face.",
+      "narrator": "Abu Dharr (RA)",
+      "source": "Sahih Muslim 2626",
+      "grade": "Sahih",
+      "grader": "Muslim"
+    },
+    {
+      "arabic": "تَبَسُّمُكَ فِي وَجْهِ أَخِيكَ صَدَقَةٌ",
+      "latin": "Tabassumuka fī wajhi akhīka ṣadaqah",
+      "en": "Smiling in the face of your brother is an act of charity.",
+      "narrator": "Abu Dharr (RA)",
+      "source": "Jami at-Tirmidhi 1956",
+      "grade": "Hasan",
+      "grader": "al-Albani"
+    },
+    {
+      "arabic": "أَكْمَلُ الْمُؤْمِنِينَ إِيمَانًا أَحْسَنُهُمْ خُلُقًا",
+      "latin": "Akmalu-l-muʾminīna īmānan aḥsanuhum khuluqā",
+      "en": "The most complete of believers in faith are those with the best character.",
+      "narrator": "Abu Hurayrah (RA)",
+      "source": "Jami at-Tirmidhi 1162",
+      "grade": "Sahih",
+      "grader": "al-Albani"
+    },
+    {
+      "arabic": "لَيْسَ الْغِنَى عَنْ كَثْرَةِ الْعَرَضِ وَلَكِنَّ الْغِنَى غِنَى النَّفْسِ",
+      "latin": "Laysa-l-ghinā ʿan kathrati-l-ʿaraḍ, wa lākinna-l-ghinā ghina-n-nafs",
+      "en": "Richness is not having many possessions; rather, true richness is the contentment of the soul.",
+      "narrator": "Abu Hurayrah (RA)",
+      "source": "Bukhari 6446 · Muslim 1051",
+      "grade": "Sahih",
+      "grader": "al-Bukhari & Muslim"
+    },
+    {
+      "arabic": "إِنَّ اللَّهَ لاَ يَنْظُرُ إِلَى صُوَرِكُمْ وَأَمْوَالِكُمْ وَلَكِنْ يَنْظُرُ إِلَى قُلُوبِكُمْ وَأَعْمَالِكُمْ",
+      "latin": "Inna-llāha lā yanẓuru ilā ṣuwarikum wa amwālikum, wa lākin yanẓuru ilā qulūbikum wa aʿmālikum",
+      "en": "Allah does not look at your appearance or your wealth, but He looks at your hearts and your deeds.",
+      "narrator": "Abu Hurayrah (RA)",
+      "source": "Sahih Muslim 2564",
+      "grade": "Sahih",
+      "grader": "Muslim"
+    },
+    {
+      "arabic": "مَنْ دَلَّ عَلَى خَيْرٍ فَلَهُ مِثْلُ أَجْرِ فَاعِلِهِ",
+      "latin": "Man dalla ʿalā khayrin fa-lahu mithlu ajri fāʿilih",
+      "en": "Whoever guides someone to good will have a reward like the one who does it.",
+      "narrator": "Abu Mas'ud al-Ansari (RA)",
+      "source": "Sahih Muslim 1893",
+      "grade": "Sahih",
+      "grader": "Muslim"
+    },
+    {
+      "arabic": "مَنْ يُرِدِ اللَّهُ بِهِ خَيْرًا يُفَقِّهْهُ فِي الدِّينِ",
+      "latin": "Man yuridi-llāhu bihi khayran yufaqqihhu fi-d-dīn",
+      "en": "When Allah wishes good for someone, He gives him understanding of the religion.",
+      "narrator": "Mu'awiyah (RA)",
+      "source": "Bukhari 71 · Muslim 1037",
+      "grade": "Sahih",
+      "grader": "al-Bukhari & Muslim"
+    },
+    {
+      "arabic": "خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ",
+      "latin": "Khayrukum man taʿallama-l-qurʾāna wa ʿallamah",
+      "en": "The best of you are those who learn the Qur'an and teach it.",
+      "narrator": "Uthman ibn Affan (RA)",
+      "source": "Sahih al-Bukhari 5027",
+      "grade": "Sahih",
+      "grader": "al-Bukhari"
+    },
+    {
+      "arabic": "مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الآخِرِ فَلْيَقُلْ خَيْرًا أَوْ لِيَصْمُتْ",
+      "latin": "Man kāna yuʾminu bi-llāhi wa-l-yawmi-l-ākhiri fa-l-yaqul khayran aw li-yaṣmut",
+      "en": "Whoever believes in Allah and the Last Day, let him speak good or remain silent.",
+      "narrator": "Abu Hurayrah (RA)",
+      "source": "Bukhari 6018 · Muslim 47",
+      "grade": "Sahih",
+      "grader": "al-Bukhari & Muslim"
+    },
+    {
+      "arabic": "مَنْ نَفَّسَ عَنْ مُؤْمِنٍ كُرْبَةً مِنْ كُرَبِ الدُّنْيَا نَفَّسَ اللَّهُ عَنْهُ كُرْبَةً مِنْ كُرَبِ يَوْمِ الْقِيَامَةِ",
+      "latin": "Man naffasa ʿan muʾminin kurbatan min kurabi-d-dunyā naffasa-llāhu ʿanhu kurbatan min kurabi yawmi-l-qiyāmah",
+      "en": "Whoever relieves a believer of a hardship in this world, Allah will relieve him of a hardship on the Day of Resurrection.",
+      "narrator": "Abu Hurayrah (RA)",
+      "source": "Sahih Muslim 2699",
+      "grade": "Sahih",
+      "grader": "Muslim"
+    },
+    {
+      "arabic": "مَنْ لاَ يَشْكُرُ النَّاسَ لاَ يَشْكُرُ اللَّهَ",
+      "latin": "Man lā yashkuru-n-nāsa lā yashkuru-llāh",
+      "en": "Whoever does not thank people has not thanked Allah.",
+      "narrator": "Abu Hurayrah (RA)",
+      "source": "Jami at-Tirmidhi 1954",
+      "grade": "Sahih",
+      "grader": "al-Albani"
+    },
+    {
+      "arabic": "أَحَبُّ النَّاسِ إِلَى اللَّهِ أَنْفَعُهُمْ لِلنَّاسِ",
+      "latin": "Aḥabbu-n-nāsi ilā-llāhi anfaʿuhum li-n-nās",
+      "en": "The most beloved of people to Allah are those most beneficial to people.",
+      "narrator": "Ibn Umar (RA)",
+      "source": "al-Tabarani · Sahih al-Jami 176",
+      "grade": "Hasan",
+      "grader": "al-Albani"
+    },
+    {
+      "arabic": "اغْتَنِمْ خَمْسًا قَبْلَ خَمْسٍ شَبَابَكَ قَبْلَ هَرَمِكَ وَصِحَّتَكَ قَبْلَ سَقَمِكَ",
+      "latin": "Ightanim khamsan qabla khams: shabābaka qabla haramik, wa ṣiḥḥataka qabla saqamik",
+      "en": "Take advantage of five before five: your youth before your old age, and your health before your sickness.",
+      "narrator": "Ibn Abbas (RA)",
+      "source": "al-Hakim · Sahih al-Jami 1077",
+      "grade": "Sahih",
+      "grader": "al-Albani"
+    },
+    {
+      "arabic": "الْكَلِمَةُ الطَّيِّبَةُ صَدَقَةٌ",
+      "latin": "Al-kalimatu-ṭ-ṭayyibatu ṣadaqah",
+      "en": "A good word is an act of charity.",
+      "narrator": "Abu Hurayrah (RA)",
+      "source": "Bukhari 2989 · Muslim 1009",
+      "grade": "Sahih",
+      "grader": "al-Bukhari & Muslim"
+    },
+    {
+      "arabic": "لَلَّهُ أَشَدُّ فَرَحًا بِتَوْبَةِ عَبْدِهِ حِينَ يَتُوبُ إِلَيْهِ مِنْ أَحَدِكُمْ",
+      "latin": "La-llāhu ashaddu faraḥan bi-tawbati ʿabdihi ḥīna yatūbu ilayhi min aḥadikum",
+      "en": "Allah rejoices more at the repentance of His servant than any of you would over finding what you had lost.",
+      "narrator": "Anas ibn Malik (RA)",
+      "source": "Bukhari 6309 · Muslim 2747",
+      "grade": "Sahih",
+      "grader": "al-Bukhari & Muslim"
+    },
+    {
+      "arabic": "لَنْ يُدْخِلَ أَحَدًا عَمَلُهُ الْجَنَّةَ وَلَكِنْ سَدِّدُوا وَقَارِبُوا",
+      "latin": "Lan yudkhila aḥadan ʿamaluhu-l-jannah, wa lākin saddidū wa qāribū",
+      "en": "No one's deeds alone will admit him to Paradise — it is by Allah's mercy — so aim true, draw near, and do not despair.",
+      "narrator": "Abu Hurayrah (RA)",
+      "source": "Bukhari 6463 · Muslim 2816",
+      "grade": "Sahih",
+      "grader": "al-Bukhari & Muslim"
+    }
+  ]
+}

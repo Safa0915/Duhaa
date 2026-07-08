@@ -2,7 +2,7 @@ import SwiftUI
 
 /// First-launch onboarding (spec §7): Welcome → Location → Method/Madhab.
 /// No account, no email, under a minute. Calls `onFinish` to enter the app.
-/// (Later, the Duhaa cinematic in Slice 10 will play before this.)
+/// DuhaaApp gates this behind the first-launch opening moment.
 struct OnboardingView: View {
     @Environment(LocationProvider.self) private var location
     @Environment(SettingsStore.self) private var settings

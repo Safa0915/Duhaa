@@ -6,22 +6,24 @@ import Foundation
 enum Encouragements {
 
     /// A short reassurance shown after marking a prayer as prayed.
+    /// Scriptural lines paraphrase Ad-Duhaa / Ash-Sharh — translators should
+    /// prefer an established rendering; pending scholar review like the rest.
     static let afterPrayer: [String] = [
-        "“Your Lord has not forsaken you, nor does He despise you.” — Ad-Duhaa",
-        "Allah is with those who are patient.",
-        "A light added to your day.",
-        "Every prayer is a turning toward the dawn.",
-        "Indeed, with hardship comes ease.",
-        "He is nearer to you than your jugular vein.",
-        "One step closer to the morning brightness.",
+        String(localized: "“Your Lord has not forsaken you, nor does He despise you.” — Ad-Duhaa"),
+        String(localized: "Allah is with those who are patient."),
+        String(localized: "A light added to your day."),
+        String(localized: "Every prayer is a turning toward the dawn."),
+        String(localized: "Indeed, with hardship comes ease."),
+        String(localized: "He is nearer to you than your jugular vein."),
+        String(localized: "One step closer to the morning brightness."),
     ]
 
     /// A warm welcome for someone returning after time away — no scolding.
     static let welcomeBack: [String] = [
-        "Welcome back. Your Lord has not forsaken you.",
-        "However long it's been, the door was always open.",
-        "Returning is its own kind of worship. Welcome back.",
-        "No scolding here — only: welcome home.",
+        String(localized: "Welcome back. Your Lord has not forsaken you."),
+        String(localized: "However long it's been, the door was always open."),
+        String(localized: "Returning is its own kind of worship. Welcome back."),
+        String(localized: "No scolding here — only: welcome home."),
     ]
 
     static func afterPrayerMessage() -> String { afterPrayer.randomElement() ?? afterPrayer[0] }

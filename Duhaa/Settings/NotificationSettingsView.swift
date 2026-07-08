@@ -23,7 +23,23 @@ struct NotificationSettingsView: View {
             } header: {
                 Text("Per Prayer")
             } footer: {
-                Text("Adhan plays a sound · Silent shows a banner only · Off sends nothing.")
+                Text("Sound plays your selected notification sound · Silent shows a banner only · Off sends nothing.")
+            }
+
+            Section {
+                NavigationLink {
+                    AdhanSoundSettingsView()
+                } label: {
+                    HStack {
+                        Label("Notification Sound", systemImage: "speaker.wave.2.fill")
+                        Spacer()
+                        Text(AdhanSoundPreference.saved().label)
+                            .foregroundStyle(Palette.blue)
+                            .lineLimit(1)
+                    }
+                }
+            } footer: {
+                Text("Choose the sound used when a prayer notification plays.")
             }
 
             Section {
@@ -55,7 +71,7 @@ struct NotificationSettingsView: View {
             }
 
             Section {
-                Label("Sound plays a soft Duhaa chime. A full Makkah & Madinah adhan recording comes in a later update.",
+                Label("Sound uses the bundled Duhaa chime or the default iOS alert. Full adhan recordings will only appear once licensed audio is bundled.",
                       systemImage: "music.note")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
@@ -97,8 +113,8 @@ struct NotificationSettingsView: View {
     private func sendTestNotification() {
         let content = UNMutableNotificationContent()
         content.title = "Time for Maghrib 🌆"
-        content.body = "This is a test — you should hear the soft Duhaa chime."
-        content.sound = UNNotificationSound(named: UNNotificationSoundName(NotificationCopy.soundFileName))
+        content.body = "This is a test — you should hear your selected notification sound."
+        content.sound = AdhanSoundPreference.saved().notificationSound()
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
         let request = UNNotificationRequest(identifier: "duhaa.test", content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request)

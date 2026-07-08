@@ -58,7 +58,9 @@ enum WidgetSnapshotWriter {
             themeID: themeID,
             lastUpdated: now,
             hijri: hijriStamp(now: now, tz: tz, offsetDays: hijriOffsetDays),
-            dailyDua: todaysDua(now: now, tz: tz))
+            dailyDua: todaysDua(now: now, tz: tz),
+            dailyHadith: todaysHadith(now: now, tz: tz),
+            dailyVerse: todaysVerse(now: now))
         SharedPrayerStore.current.saveTimes(payload)
         WidgetReloader.reload()
     }
@@ -92,5 +94,27 @@ enum WidgetSnapshotWriter {
         let d = all[idx]
         return DuaStamp(index: idx, title: d.title, arabic: d.arabic,
                         latin: d.latin, en: d.en, source: d.source, status: d.status)
+    }
+
+    /// Today's hadith — a stable daily rotation over the bundled library, picked in
+    /// the location's time zone so it matches the app and flips at local midnight.
+    private static func todaysHadith(now: Date, tz: TimeZone) -> HadithStamp? {
+        var cal = Calendar(identifier: .gregorian)
+        cal.timeZone = tz
+        guard let pick = Hadiths.today(now, calendar: cal) else { return nil }
+        let h = pick.hadith
+        return HadithStamp(index: pick.index, arabic: h.arabic, latin: h.latin,
+                           en: h.en, narrator: h.narrator, source: h.source,
+                           grade: h.grade, grader: h.grader)
+    }
+
+    /// Today's verse — the same curated rotation the home's Verse of the Day card
+    /// uses, so the widget and the app always agree on the day's verse.
+    private static func todaysVerse(now: Date) -> VerseStamp? {
+        let ref = VerseOfDay.today(now)
+        guard let surah = Quran.shared.surah(ref.surah),
+              let ayah = surah.ayahs.first(where: { $0.number == ref.ayah }) else { return nil }
+        return VerseStamp(surah: ref.surah, ayah: ref.ayah, surahName: surah.englishName,
+                          arabic: ayah.arabic, en: ayah.english)
     }
 }

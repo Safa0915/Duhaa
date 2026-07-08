@@ -30,6 +30,8 @@ struct TasbihView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     /// Bumped when a goal is reached — pulses the dial once in celebration.
     @State private var completionPulse = 0
+    @State private var showingTargetEntry = false
+    @State private var targetDraft = "33"
     @AppStorage("duhaa.tasbih.target") private var customTarget = 33
 
     // Adhkar progress (persisted, kept separate from Custom).
@@ -54,24 +56,53 @@ struct TasbihView: View {
     }
 
     var body: some View {
-        ZStack {
-            CelestialBackground()
+        GeometryReader { proxy in
+            let layout = TasbihScreenLayout(size: proxy.size)
 
-            VStack(spacing: 20) {
-                Text("TASBIH")
-                    .duhaaFont(13, .semibold).tracking(3)
-                    .foregroundStyle(Palette.blue.opacity(0.7))
-                    .padding(.top, 18)
+            ZStack {
+                CelestialBackground()
 
-                modeToggle
-                middleSection
-                dial
-                footer
-                Spacer()
-                fingerNote
+                ScrollView {
+                    content(layout: layout)
+                        .frame(maxWidth: .infinity)
+                        .frame(minHeight: max(0, proxy.size.height - layout.tabBarClearance),
+                               alignment: .top)
+                        .padding(.bottom, layout.tabBarClearance)
+                }
+                .scrollIndicators(.hidden)
+                .scrollBounceBehavior(.basedOnSize)
             }
         }
         .preferredColorScheme(Palette.active.colorScheme)
+        .sheet(isPresented: $showingTargetEntry) {
+            TasbihTargetKeypadSheet(draft: $targetDraft, maxTarget: 9999) { value in
+                setTarget(value)
+                showingTargetEntry = false
+            } onCancel: {
+                showingTargetEntry = false
+            }
+            .presentationDetents([.height(430)])
+            .presentationDragIndicator(.visible)
+            .presentationBackground(Palette.pageBg)
+            .preferredColorScheme(Palette.active.colorScheme)
+        }
+    }
+
+    private func content(layout: TasbihScreenLayout) -> some View {
+        VStack(spacing: layout.spacing) {
+            Text("TASBIH")
+                .duhaaFont(13, .semibold).tracking(3)
+                .foregroundStyle(Palette.blue.opacity(0.7))
+                .padding(.top, layout.titleTopPadding)
+
+            modeToggle
+            middleSection(layout: layout)
+            dial(layout: layout)
+            footer(layout: layout)
+            Spacer(minLength: 0)
+            fingerNote
+        }
+        .padding(.horizontal, 20)
     }
 
     // MARK: Mode toggle
@@ -105,18 +136,18 @@ struct TasbihView: View {
 
     // MARK: Middle — dhikr (Adhkar) or target picker (Custom)
 
-    private var middleSection: some View {
+    private func middleSection(layout: TasbihScreenLayout) -> some View {
         Group {
             if mode == .adhkar {
-                VStack(spacing: 16) {
+                VStack(spacing: layout.dhikrGroupSpacing) {
                     phaseDots
-                    dhikrText
+                    dhikrText(layout: layout)
                 }
             } else {
                 targetSelector
             }
         }
-        .frame(height: 150)
+        .frame(height: mode == .adhkar ? layout.adhkarMiddleHeight : layout.customMiddleHeight)
     }
 
     private var phaseDots: some View {
@@ -133,37 +164,44 @@ struct TasbihView: View {
         .animation(.spring(duration: 0.3), value: aCompleted)
     }
 
-    private var dhikrText: some View {
-        VStack(spacing: 8) {
+    private func dhikrText(layout: TasbihScreenLayout) -> some View {
+        VStack(spacing: layout.dhikrTextSpacing) {
             Text(phase.arabic)
-                .font(QuranFont.uthmani(40))
+                .font(QuranFont.uthmani(layout.arabicFontSize))
                 .foregroundStyle(Palette.gold)
             Text(phase.latin)
-                .duhaaFont(17, .medium)
+                .duhaaFont(layout.latinFontSize, .medium)
                 .foregroundStyle(.primary)
             Text(phase.meaning)
-                .duhaaFont(13)
+                .duhaaFont(layout.meaningFontSize)
                 .foregroundStyle(Palette.blue.opacity(0.8))
         }
-        .frame(height: 110)
+        .frame(height: layout.dhikrTextHeight)
     }
 
     private var targetSelector: some View {
-        VStack(spacing: 14) {
+        VStack(spacing: 10) {
             Text("COUNT TO")
                 .duhaaFont(11, .semibold).tracking(2)
                 .foregroundStyle(Palette.blue.opacity(0.6))
 
-            HStack(spacing: 20) {
+            HStack(spacing: 18) {
                 stepButton("minus", enabled: customTarget > 1) { setTarget(customTarget - 1) }
-                Text("\(target)")
-                    .duhaaFont(42, .light)
-                    .foregroundStyle(Palette.gold)
-                    .frame(minWidth: 78)
-                    .contentTransition(.numericText())
-                    .lineLimit(1).minimumScaleFactor(0.5)
+                targetNumberButton
                 stepButton("plus", enabled: customTarget < 9999) { setTarget(customTarget + 1) }
             }
+
+            Button { openTargetEntry() } label: {
+                Label("Type any goal — like 200", systemImage: "keyboard")
+                    .duhaaFont(12, .medium)
+                    .foregroundStyle(Palette.blue)
+                    .padding(.vertical, 7).padding(.horizontal, 14)
+                    .background(Capsule().fill(Palette.blue.opacity(0.10)))
+                    .overlay(Capsule().stroke(Palette.blue.opacity(0.3), lineWidth: 1))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Type a custom goal")
+            .accessibilityHint("Opens a keypad to enter any number")
 
             HStack(spacing: 8) {
                 ForEach([33, 99, 100], id: \.self) { preset in
@@ -171,6 +209,36 @@ struct TasbihView: View {
                 }
             }
         }
+    }
+
+    private var targetNumberButton: some View {
+        Button {
+            openTargetEntry()
+        } label: {
+            Text("\(target)")
+                .duhaaFont(42, .light)
+                .foregroundStyle(Palette.gold)
+                .frame(minWidth: 88, minHeight: 54)
+                .padding(.horizontal, 8)
+                .contentTransition(.numericText())
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+                .background(RoundedRectangle(cornerRadius: 8).fill(Palette.gold.opacity(0.08)))
+                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Palette.gold.opacity(0.26), lineWidth: 1))
+                // A small pencil badge signals the number itself is tappable to edit.
+                .overlay(alignment: .topTrailing) {
+                    Image(systemName: "pencil")
+                        .duhaaFont(10, .semibold)
+                        .foregroundStyle(Palette.onAccent)
+                        .padding(4)
+                        .background(Circle().fill(Palette.gold))
+                        .offset(x: 6, y: -6)
+                }
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Custom target")
+        .accessibilityValue("\(target)")
+        .accessibilityHint("Double tap to enter a custom number")
     }
 
     private func stepButton(_ icon: String, enabled: Bool, _ action: @escaping () -> Void) -> some View {
@@ -202,17 +270,17 @@ struct TasbihView: View {
 
     // MARK: Dial
 
-    private var dial: some View {
+    private func dial(layout: TasbihScreenLayout) -> some View {
         Button(action: tap) {
             ZStack {
                 Circle()
-                    .stroke(Palette.gold.opacity(0.12), lineWidth: 16)
-                    .frame(width: 250, height: 250)
+                    .stroke(Palette.gold.opacity(0.12), lineWidth: layout.dialLineWidth)
+                    .frame(width: layout.dialSize, height: layout.dialSize)
                 Circle()
                     .trim(from: 0, to: progress)
-                    .stroke(Palette.gold, style: StrokeStyle(lineWidth: 16, lineCap: .round))
+                    .stroke(Palette.gold, style: StrokeStyle(lineWidth: layout.dialLineWidth, lineCap: .round))
                     .rotationEffect(.degrees(-90))
-                    .frame(width: 250, height: 250)
+                    .frame(width: layout.dialSize, height: layout.dialSize)
                     .shadow(color: Palette.gold.opacity(0.4), radius: 8)
                     .animation(.easeOut(duration: 0.25), value: progress)
 
@@ -224,7 +292,7 @@ struct TasbihView: View {
                 } else {
                     VStack(spacing: 2) {
                         Text("\(count)")
-                            .duhaaFont(76, .thin)
+                            .duhaaFont(layout.counterFontSize, .thin)
                             .foregroundStyle(.primary)
                             .contentTransition(.numericText())
                             .lineLimit(1)
@@ -259,8 +327,8 @@ struct TasbihView: View {
 
     // MARK: Footer
 
-    private var footer: some View {
-        VStack(spacing: 14) {
+    private func footer(layout: TasbihScreenLayout) -> some View {
+        VStack(spacing: layout.footerSpacing) {
             if mode == .adhkar && aCompleted {
                 Text("Tasbih complete — alhamdulillah.")
                     .duhaaFont(14, .medium)
@@ -290,7 +358,7 @@ struct TasbihView: View {
                     .padding(.horizontal, 20).padding(.vertical, 10)
                     .overlay(Capsule().stroke(Palette.blue.opacity(0.4), lineWidth: 1))
             }
-            .padding(.top, 4)
+            .padding(.top, layout.resetTopPadding)
             .accessibilityLabel("Reset tasbih counter")
         }
     }
@@ -352,6 +420,12 @@ struct TasbihView: View {
         DuhaaHaptics.count()
     }
 
+    private func openTargetEntry() {
+        targetDraft = "\(target)"
+        showingTargetEntry = true
+        DuhaaHaptics.tap()
+    }
+
     /// The only thing that clears the count — and only for the mode in view.
     private func reset() {
         withAnimation {
@@ -363,5 +437,222 @@ struct TasbihView: View {
             }
         }
         DuhaaHaptics.reset()
+    }
+}
+
+private struct TasbihScreenLayout {
+    let spacing: CGFloat
+    let titleTopPadding: CGFloat
+    let adhkarMiddleHeight: CGFloat
+    let customMiddleHeight: CGFloat
+    let dhikrGroupSpacing: CGFloat
+    let dhikrTextSpacing: CGFloat
+    let dhikrTextHeight: CGFloat
+    let arabicFontSize: CGFloat
+    let latinFontSize: CGFloat
+    let meaningFontSize: CGFloat
+    let dialSize: CGFloat
+    let dialLineWidth: CGFloat
+    let counterFontSize: CGFloat
+    let footerSpacing: CGFloat
+    let resetTopPadding: CGFloat
+    let tabBarClearance: CGFloat
+
+    init(size: CGSize) {
+        let compact = size.height < 820 || size.width <= 375
+        let veryCompact = size.height < 720
+        let availableWidth = max(0, size.width - 88)
+
+        spacing = veryCompact ? 10 : (compact ? 14 : 20)
+        titleTopPadding = compact ? 8 : 18
+        adhkarMiddleHeight = veryCompact ? 118 : (compact ? 128 : 150)
+        customMiddleHeight = veryCompact ? 142 : (compact ? 148 : 150)
+        dhikrGroupSpacing = compact ? 12 : 16
+        dhikrTextSpacing = compact ? 6 : 8
+        dhikrTextHeight = veryCompact ? 96 : (compact ? 102 : 110)
+        arabicFontSize = veryCompact ? 32 : (compact ? 35 : 40)
+        latinFontSize = compact ? 16 : 17
+        meaningFontSize = compact ? 12 : 13
+        dialSize = min(veryCompact ? 198 : (compact ? 218 : 250), availableWidth)
+        dialLineWidth = veryCompact ? 12 : (compact ? 14 : 16)
+        counterFontSize = veryCompact ? 58 : (compact ? 66 : 76)
+        footerSpacing = compact ? 10 : 14
+        resetTopPadding = compact ? 0 : 4
+        // The floating tab bar overlays full-bleed tab content on compact phones.
+        tabBarClearance = veryCompact ? 124 : (compact ? 132 : 150)
+    }
+}
+
+private struct TasbihTargetKeypadSheet: View {
+    @Binding var draft: String
+    let maxTarget: Int
+    let onSave: (Int) -> Void
+    let onCancel: () -> Void
+    @State private var shouldReplaceDraft = true
+
+    private let rows = [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]
+    ]
+
+    private var displayText: String {
+        draft.isEmpty ? "0" : draft
+    }
+
+    private var parsedValue: Int? {
+        guard let value = Int(draft), value > 0 else { return nil }
+        return min(value, maxTarget)
+    }
+
+    var body: some View {
+        VStack(spacing: 18) {
+            header
+            display
+            keypad
+            doneButton
+        }
+        .padding(.horizontal, 24)
+        .padding(.top, 18)
+        .padding(.bottom, 24)
+        .background(Palette.pageBg.ignoresSafeArea())
+        .onAppear { shouldReplaceDraft = true }
+    }
+
+    private var header: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("CUSTOM GOAL")
+                    .duhaaFont(11, .semibold).tracking(2)
+                    .foregroundStyle(Palette.blue.opacity(0.65))
+                Text("Enter any number from 1 to \(maxTarget).")
+                    .duhaaFont(13)
+                    .foregroundStyle(Palette.blue.opacity(0.72))
+            }
+
+            Spacer()
+
+            Button(action: onCancel) {
+                Image(systemName: "xmark")
+                    .duhaaFont(14, .semibold)
+                    .foregroundStyle(Palette.blue)
+                    .frame(width: 38, height: 38)
+                    .background(Circle().fill(Color.primary.opacity(0.06)))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Close custom goal keypad")
+        }
+    }
+
+    private var display: some View {
+        Text(displayText)
+            .duhaaFont(52, .light)
+            .foregroundStyle(parsedValue == nil ? Palette.blue.opacity(0.45) : Palette.gold)
+            .frame(maxWidth: .infinity, minHeight: 72)
+            .contentTransition(.numericText())
+            .lineLimit(1)
+            .minimumScaleFactor(0.45)
+            .background(RoundedRectangle(cornerRadius: 8).fill(Palette.card))
+            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Palette.cardBorder, lineWidth: 1))
+            .accessibilityLabel("Entered custom goal")
+            .accessibilityValue(displayText)
+    }
+
+    private var keypad: some View {
+        VStack(spacing: 10) {
+            ForEach(rows, id: \.self) { row in
+                HStack(spacing: 10) {
+                    ForEach(row, id: \.self) { digit in
+                        digitButton(digit)
+                    }
+                }
+            }
+
+            HStack(spacing: 10) {
+                iconButton("xmark") { clearDraft() }
+                    .accessibilityLabel("Clear")
+                digitButton(0)
+                iconButton("delete.left") { deleteLastDigit() }
+                    .accessibilityLabel("Delete last digit")
+            }
+        }
+    }
+
+    private var doneButton: some View {
+        Button {
+            guard let parsedValue else { return }
+            onSave(parsedValue)
+        } label: {
+            Label("Done", systemImage: "checkmark")
+                .duhaaFont(15, .semibold)
+                .foregroundStyle(parsedValue == nil ? Palette.blue.opacity(0.45) : Palette.onAccent)
+                .frame(maxWidth: .infinity, minHeight: 48)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(parsedValue == nil ? Color.primary.opacity(0.06) : Palette.gold)
+                )
+        }
+        .buttonStyle(.plain)
+        .disabled(parsedValue == nil)
+        .accessibilityLabel("Save custom goal")
+    }
+
+    private func digitButton(_ digit: Int) -> some View {
+        Button {
+            appendDigit(digit)
+        } label: {
+            Text("\(digit)")
+                .duhaaFont(24, .medium)
+                .foregroundStyle(Palette.primaryText)
+                .frame(maxWidth: .infinity, minHeight: 52)
+                .background(RoundedRectangle(cornerRadius: 8).fill(Color.primary.opacity(0.06)))
+                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Palette.cardBorder, lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Digit \(digit)")
+    }
+
+    private func iconButton(_ systemName: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: systemName)
+                .duhaaFont(18, .medium)
+                .foregroundStyle(Palette.blue)
+                .frame(maxWidth: .infinity, minHeight: 52)
+                .background(RoundedRectangle(cornerRadius: 8).fill(Color.primary.opacity(0.06)))
+                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Palette.cardBorder, lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func appendDigit(_ digit: Int) {
+        let maxDigits = String(maxTarget).count
+        if shouldReplaceDraft {
+            draft = ""
+            shouldReplaceDraft = false
+        }
+        guard draft.count < maxDigits else { return }
+        if draft == "0" {
+            draft = "\(digit)"
+        } else {
+            draft.append(String(digit))
+        }
+        if let value = Int(draft), value > maxTarget {
+            draft = "\(maxTarget)"
+        }
+        DuhaaHaptics.count()
+    }
+
+    private func deleteLastDigit() {
+        guard !draft.isEmpty else { return }
+        shouldReplaceDraft = false
+        draft.removeLast()
+        DuhaaHaptics.count()
+    }
+
+    private func clearDraft() {
+        guard !draft.isEmpty else { return }
+        shouldReplaceDraft = false
+        draft = ""
+        DuhaaHaptics.tap()
     }
 }

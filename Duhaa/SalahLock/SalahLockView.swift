@@ -59,8 +59,21 @@ struct SalahLockView: View {
             .tint(Palette.gold)
             .listRowBackground(Palette.card)
         } footer: {
-            Text("Salah Lock gently pauses the apps you choose when a prayer comes in — and lifts the moment you mark that prayer prayed. A quiet space to turn to Allah, never a punishment.")
+            Text(masterFooter)
         }
+    }
+
+    private var masterFooter: String {
+        if !lock.isEnabled {
+            return "Salah Lock gently pauses the apps and sites you choose when a prayer comes in — and lifts the moment you mark that prayer prayed."
+        }
+        if !lock.isAuthorized {
+            return "Salah Lock is on, but it still needs Screen Time access before iOS will pause anything."
+        }
+        if !lock.hasSelection {
+            return "Salah Lock is on, but no apps are chosen yet. Pick the apps or categories you want paused during prayer windows."
+        }
+        return "Salah Lock is armed. When a prayer window begins, Duhaa will pause your chosen apps and sites until you mark that prayer prayed, or until the safety cap ends."
     }
 
     private var enabledBinding: Binding<Bool> {
@@ -165,7 +178,7 @@ struct SalahLockView: View {
         } header: {
             Text("Apps to Pause")
         } footer: {
-            Text("Pick the apps and categories that pull you away. They'll be paused during prayer windows only — everything else stays open.")
+            Text("Pick the apps, categories, and sites that pull you away. They'll be paused during prayer windows only — everything else stays open.")
         }
     }
 

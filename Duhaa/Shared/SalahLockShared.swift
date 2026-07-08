@@ -105,7 +105,7 @@ enum SalahLock {
     /// True when the user has chosen at least one app or category to block.
     static func hasSelection() -> Bool {
         let s = loadSelection()
-        return !s.applicationTokens.isEmpty || !s.categoryTokens.isEmpty
+        return !s.applicationTokens.isEmpty || !s.categoryTokens.isEmpty || !s.webDomainTokens.isEmpty
     }
 
     /// Which prayer's window is currently shielding (set by the monitor on start,
@@ -158,6 +158,8 @@ enum SalahLock {
             ? nil : selection.applicationTokens
         store.shield.applicationCategories = selection.categoryTokens.isEmpty
             ? nil : .specific(selection.categoryTokens)
+        store.shield.webDomains = selection.webDomainTokens.isEmpty
+            ? nil : selection.webDomainTokens
     }
 
     /// Lift the shield entirely.
@@ -165,5 +167,6 @@ enum SalahLock {
         let store = store
         store.shield.applications = nil
         store.shield.applicationCategories = nil
+        store.shield.webDomains = nil
     }
 }

@@ -1,6 +1,42 @@
 import Foundation
 import Observation
 
+enum FeedbackCategory: String, CaseIterable, Identifiable {
+    case general
+    case prayerTimes
+    case quran
+    case duas
+    case widgets
+    case bug
+    case idea
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .general: return "General"
+        case .prayerTimes: return "Prayer times"
+        case .quran: return "Quran"
+        case .duas: return "Du'as"
+        case .widgets: return "Widgets"
+        case .bug: return "Bug"
+        case .idea: return "Idea"
+        }
+    }
+
+    var triageKey: String {
+        switch self {
+        case .general: return "general"
+        case .prayerTimes: return "prayer-times"
+        case .quran: return "quran"
+        case .duas: return "duas"
+        case .widgets: return "widgets"
+        case .bug: return "bug"
+        case .idea: return "idea"
+        }
+    }
+}
+
 enum FeedbackPromptReason: String, Codable, Equatable {
     case appOpen
     case prayerMarked
@@ -36,6 +72,82 @@ enum FeedbackPromptReason: String, Codable, Equatable {
         case .bug:
             return "Tell me what broke and what you were doing right before it happened."
         }
+    }
+
+    var triageKind: String {
+        switch self {
+        case .bug:
+            return "bug"
+        default:
+            return "feedback"
+        }
+    }
+}
+
+struct FeedbackDiagnostics: Equatable {
+    let appVersion: String
+    let buildNumber: String
+    let device: String
+    let systemName: String
+    let systemVersion: String
+
+    var appDisplay: String {
+        "\(appVersion) (\(buildNumber))"
+    }
+
+    var systemDisplay: String {
+        "\(systemName) \(systemVersion)"
+    }
+}
+
+struct FeedbackEmailDraft: Equatable {
+    let recipient: String
+    let subject: String
+    let body: String
+
+    static func make(reason: FeedbackPromptReason,
+                     category: FeedbackCategory,
+                     message: String,
+                     contact: String,
+                     diagnostics: FeedbackDiagnostics?) -> FeedbackEmailDraft {
+        let trimmedMessage = message.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedContact = contact.trimmingCharacters(in: .whitespacesAndNewlines)
+        let versionToken = diagnostics.map { "v\($0.appVersion) b\($0.buildNumber)" } ?? "no-diagnostics"
+        let subjectPrefix = reason == .bug ? "Duhaa Bug Report" : "Duhaa Feedback"
+
+        var lines = [
+            trimmedMessage,
+            "",
+            "---",
+            "Duhaa Feedback Metadata",
+            "Type: \(reason.triageKind)",
+            "Topic: \(category.label)",
+            "Area: \(category.triageKey)",
+            "Reason: \(reason.rawValue)"
+        ]
+
+        if trimmedContact.isEmpty {
+            lines.append("Contact: Not provided")
+        } else {
+            lines.append("Contact: \(trimmedContact)")
+        }
+
+        if let diagnostics {
+            lines.append("App: \(diagnostics.appDisplay)")
+            lines.append("Device: \(diagnostics.device)")
+            lines.append("System: \(diagnostics.systemDisplay)")
+        } else {
+            lines.append("Diagnostics: Not included by user")
+        }
+
+        lines.append("Triage: area=\(category.triageKey); severity=untriaged; source=in-app-email")
+        lines.append("Privacy: No prayer data is attached.")
+
+        return FeedbackEmailDraft(
+            recipient: FeedbackStore.recipientEmail,
+            subject: "\(subjectPrefix) [\(category.triageKey)] [\(versionToken)]",
+            body: lines.joined(separator: "\n")
+        )
     }
 }
 

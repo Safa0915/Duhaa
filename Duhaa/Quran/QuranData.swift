@@ -32,9 +32,29 @@ struct Surah: Decodable, Identifiable, Sendable {
         case number = "n", arabicName = "ar", englishName = "en"
         case translation = "tr", revelation = "type", ayahs
     }
+
+    func pageGroups(using index: QuranPageIndex = .shared) -> [QuranPageGroup] {
+        guard !ayahs.isEmpty else { return [] }
+
+        var groups: [QuranPageGroup] = []
+        for ayah in ayahs {
+            let page = index.pageNumber(surah: number, ayah: ayah.number)
+            if let lastIndex = groups.indices.last, groups[lastIndex].page == page {
+                groups[lastIndex].ayahs.append(ayah)
+            } else {
+                let isContinuation = page != nil && index.pageStartNumber(surah: number, ayah: ayah.number) == nil
+                groups.append(QuranPageGroup(page: page, isContinuation: isContinuation, ayahs: [ayah]))
+            }
+        }
+
+        if groups.isEmpty {
+            return [QuranPageGroup(page: nil, isContinuation: false, ayahs: ayahs)]
+        }
+        return groups
+    }
 }
 
-struct Ayah: Decodable, Identifiable, Sendable {
+struct Ayah: Decodable, Equatable, Identifiable, Sendable {
     let number: Int
     let arabic: String
     let english: String
@@ -42,6 +62,17 @@ struct Ayah: Decodable, Identifiable, Sendable {
     var id: Int { number }
 
     enum CodingKeys: String, CodingKey { case number = "n", arabic = "a", english = "e" }
+}
+
+struct QuranPageGroup: Identifiable, Sendable {
+    let page: Int?
+    let isContinuation: Bool
+    var ayahs: [Ayah]
+
+    var id: String {
+        if let page { return "page-\(page)" }
+        return "unpaged-\(ayahs.first?.number ?? 0)"
+    }
 }
 
 struct QuranPageStart: Decodable, Equatable, Sendable {

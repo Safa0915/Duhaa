@@ -52,6 +52,8 @@ struct PrayerWidgetSnapshot: Codable, Hashable, Sendable {
     var sunriseString: String
     var hijri: HijriStamp?
     var dailyDua: DuaStamp?
+    var dailyHadith: HadithStamp?
+    var dailyVerse: VerseStamp? = nil
     var weekly: [PrayerDayStates]
     var themeID: String
     var lastUpdated: Date
@@ -122,7 +124,8 @@ extension PrayerWidgetSnapshot {
                 dailyCompletionCount: completed.count, totalPrayerCount: 5,
                 completionProgress: progress(completed.count),
                 sunriseTime: nil, sunriseString: "—",
-                hijri: payload?.hijri, dailyDua: payload?.dailyDua, weekly: weekly,
+                hijri: payload?.hijri, dailyDua: payload?.dailyDua,
+                dailyHadith: payload?.dailyHadith, dailyVerse: payload?.dailyVerse, weekly: weekly,
                 themeID: themeID, lastUpdated: lastUpdated, status: status,
                 message: status == .unavailable
                     ? "Open Duhaa to set up prayer times"
@@ -192,7 +195,8 @@ extension PrayerWidgetSnapshot {
             completionProgress: Self.progress(completed.count),
             sunriseTime: sunrise,
             sunriseString: sunrise.map { timeFmt.string(from: $0) } ?? "—",
-            hijri: payload.hijri, dailyDua: payload.dailyDua, weekly: weekly,
+            hijri: payload.hijri, dailyDua: payload.dailyDua,
+            dailyHadith: payload.dailyHadith, dailyVerse: payload.dailyVerse, weekly: weekly,
             themeID: themeID, lastUpdated: lastUpdated, status: .ok, message: nil)
     }
 
@@ -264,7 +268,16 @@ extension PrayerWidgetSnapshot {
                                arabic: "اللَّهُمَّ رَبَّ هَٰذِهِ الدَّعْوَةِ التَّامَّةِ",
                                latin: "Allāhumma Rabba hādhihi-d-da‘wati-t-tāmmah",
                                en: "O Allah, Lord of this perfect call…",
-                               source: "Bukhari 614", status: "Sourced"))
+                               source: "Bukhari 614", status: "Sourced"),
+            dailyHadith: HadithStamp(index: 0,
+                               arabic: "أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإِنْ قَلَّ",
+                               latin: "Aḥabbu-l-aʿmāli ilā-llāhi adwamuhā wa in qall",
+                               en: "The deeds most beloved to Allah are those done regularly, even if they are few.",
+                               narrator: "Aisha (RA)", source: "Bukhari 6464 · Muslim 783",
+                               grade: "Sahih", grader: "al-Bukhari & Muslim"),
+            dailyVerse: VerseStamp(surah: 94, ayah: 6, surahName: "Ash-Sharh",
+                               arabic: "إِنَّ مَعَ ٱلْعُسْرِ يُسْرًا",
+                               en: "Indeed, with hardship comes ease."))
         let completed = Set(PrayerID.ordered.prefix(max(0, min(5, completedCount))))
         let lateSet: Set<PrayerID> = completedCount >= 2 ? [.fajr] : []
         let now = at(14, 5)   // mid-afternoon: Asr next, Dhuhr current

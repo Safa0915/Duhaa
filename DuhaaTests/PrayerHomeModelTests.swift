@@ -142,7 +142,7 @@ final class PrayerHomeModelTests: XCTestCase {
         let d = display(at: now)
 
         XCTAssertEqual(d.nextName, Prayer.dhuhr.rawValue)
-        XCTAssertEqual(d.timeRemainingTarget, "sunrise")
+        XCTAssertEqual(d.timeRemainingTarget, "Sunrise")
         XCTAssertEqual(d.timeRemainingCountdown, "5 minutes")
     }
 
@@ -152,7 +152,7 @@ final class PrayerHomeModelTests: XCTestCase {
         let d = display(at: now)
 
         XCTAssertEqual(d.nextName, Prayer.fajr.rawValue)
-        XCTAssertEqual(d.timeRemainingTarget, "Islamic midnight")
+        XCTAssertEqual(d.timeRemainingTarget, "Islamic Midnight")
         XCTAssertEqual(d.timeRemainingCountdown, "5 minutes")
     }
 

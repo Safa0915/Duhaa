@@ -31,9 +31,21 @@ final class ThemeStoreTests: XCTestCase {
             "Rose",
             "Ocean",
             "Saudi",
-            "Sky",
+            "Palestinian",
+            "Chinese Blossom",
+            "Somali",
+            "Turkish",
+            "Autumn",
+            "Sky Blue",
             "Light Pink"
         ])
+    }
+
+    func testThemeGroupsSeparateLightAndDarkPalettes() {
+        XCTAssertEqual(AppTheme.lightThemes, [.light, .lightPink])
+        XCTAssertEqual(AppTheme.darkThemes, [.dark, .sisters, .ocean, .saudi, .palestinian, .blossom, .somali, .turkish, .autumn])
+        XCTAssertTrue(AppTheme.lightThemes.allSatisfy { !$0.colors.isDark })
+        XCTAssertTrue(AppTheme.darkThemes.allSatisfy { $0.colors.isDark })
     }
 
     func testSaudiPaletteUsesEmeraldAndGold() {
@@ -53,6 +65,104 @@ final class ThemeStoreTests: XCTestCase {
         XCTAssertFalse(palette.showsFloatingHearts)
         XCTAssertFalse(AppTheme.saudi.isPremiumPreview)
         XCTAssertNil(AppTheme.saudi.previewBadge)
+    }
+
+    func testPalestinianPaletteUsesOliveNightAndTatreezRed() {
+        let palette = AppTheme.palestinian.colors
+
+        XCTAssertEqual(palette.id, .palestinian)
+        XCTAssertEqual(AppTheme.palestinian.displayName, "Palestinian")
+        XCTAssertEqual(AppTheme.palestinian.previewSubtitle, "Olive night · tatreez red")
+        XCTAssertEqual(palette.hexes.background, 0x0F1A12)
+        XCTAssertEqual(palette.hexes.secondaryBackground, 0x081009)
+        XCTAssertEqual(palette.hexes.accent, 0xDE5257)
+        XCTAssertEqual(palette.hexes.onAccent, 0xFFFFFF)
+        XCTAssertEqual(palette.hexes.softAccent, 0xBFDDB4)
+        XCTAssertEqual(palette.hexes.secondaryText, 0xA9C8A5)
+        XCTAssertEqual(palette.hexes.glow, 0xDE5257)
+        XCTAssertTrue(palette.isDark)
+        XCTAssertEqual(palette.decoration, .tatreez)
+        XCTAssertTrue(palette.showsFloatingTatreez)
+        XCTAssertFalse(palette.showsFloatingLeaves)
+        XCTAssertFalse(palette.showsFloatingHearts)
+        XCTAssertFalse(AppTheme.palestinian.isPremiumPreview)
+        XCTAssertNil(AppTheme.palestinian.previewBadge)
+    }
+
+    func testSomaliPaletteUsesSkyBlueAndWhiteStar() {
+        let palette = AppTheme.somali.colors
+
+        XCTAssertEqual(palette.id, .somali)
+        XCTAssertEqual(AppTheme.somali.displayName, "Somali")
+        XCTAssertEqual(AppTheme.somali.previewSubtitle, "Sky blue · white star")
+        XCTAssertEqual(palette.hexes.background, 0x0B2C52)
+        XCTAssertEqual(palette.hexes.secondaryBackground, 0x06182E)
+        XCTAssertEqual(palette.hexes.accent, 0x4FA3E8)
+        XCTAssertEqual(palette.hexes.onAccent, 0x08182E)
+        XCTAssertEqual(palette.hexes.softAccent, 0xD6E8FB)
+        XCTAssertEqual(palette.hexes.secondaryText, 0xBCD7F4)
+        XCTAssertEqual(palette.hexes.glow, 0x4FA3E8)
+        XCTAssertTrue(palette.isDark)
+        XCTAssertEqual(palette.decoration, .none)
+        XCTAssertFalse(palette.showsFloatingHearts)
+        XCTAssertFalse(AppTheme.somali.isPremiumPreview)
+        XCTAssertNil(AppTheme.somali.previewBadge)
+    }
+
+    func testTurkishPaletteUsesRedAndWhiteCrescent() {
+        let palette = AppTheme.turkish.colors
+
+        XCTAssertEqual(palette.id, .turkish)
+        XCTAssertEqual(AppTheme.turkish.displayName, "Turkish")
+        XCTAssertEqual(AppTheme.turkish.previewSubtitle, "Turkish red · white crescent")
+        XCTAssertEqual(palette.hexes.background, 0x2A0810)
+        XCTAssertEqual(palette.hexes.secondaryBackground, 0x190509)
+        XCTAssertEqual(palette.hexes.accent, 0xE83A47)
+        XCTAssertEqual(palette.hexes.onAccent, 0xFFFFFF)
+        XCTAssertEqual(palette.hexes.softAccent, 0xF3D9DC)
+        XCTAssertEqual(palette.hexes.secondaryText, 0xE7B9C0)
+        XCTAssertEqual(palette.hexes.glow, 0xE83A47)
+        XCTAssertTrue(palette.isDark)
+        XCTAssertEqual(palette.decoration, .none)
+        XCTAssertFalse(palette.showsFloatingHearts)
+        XCTAssertFalse(AppTheme.turkish.isPremiumPreview)
+        XCTAssertNil(AppTheme.turkish.previewBadge)
+    }
+
+    func testChineseBlossomPaletteUsesPlumAndBlossomPink() {
+        let palette = AppTheme.blossom.colors
+
+        XCTAssertEqual(palette.id, .blossom)
+        XCTAssertEqual(AppTheme.blossom.displayName, "Chinese Blossom")
+        XCTAssertEqual(AppTheme.blossom.previewSubtitle, "Moonlit plum · blossom pink")
+        XCTAssertEqual(palette.hexes.background, 0x1A0E18)
+        XCTAssertEqual(palette.hexes.accent, 0xF4A9C0)
+        XCTAssertTrue(palette.isDark)
+        XCTAssertEqual(palette.decoration, .blossoms)
+        XCTAssertTrue(palette.showsFloatingBlossoms)
+        XCTAssertFalse(palette.showsFloatingHearts)
+    }
+
+    func testAutumnPaletteUsesAmberNightAndFallingLeaves() {
+        let palette = AppTheme.autumn.colors
+
+        XCTAssertEqual(palette.id, .autumn)
+        XCTAssertEqual(AppTheme.autumn.displayName, "Autumn")
+        XCTAssertEqual(AppTheme.autumn.previewSubtitle, "Amber dusk · falling leaves")
+        XCTAssertEqual(palette.hexes.background, 0x21140A)
+        XCTAssertEqual(palette.hexes.secondaryBackground, 0x160C04)
+        XCTAssertEqual(palette.hexes.accent, 0xE0883A)
+        XCTAssertEqual(palette.hexes.onAccent, 0x241405)
+        XCTAssertEqual(palette.hexes.softAccent, 0xE7C083)
+        XCTAssertEqual(palette.hexes.secondaryText, 0xDDBA8A)
+        XCTAssertEqual(palette.hexes.glow, 0xE0883A)
+        XCTAssertTrue(palette.isDark)
+        XCTAssertEqual(palette.decoration, .leaves)
+        XCTAssertTrue(palette.showsFloatingLeaves)
+        XCTAssertFalse(palette.showsFloatingBlossoms)
+        XCTAssertFalse(palette.showsFloatingHearts)
+        XCTAssertFalse(AppTheme.autumn.isPremiumPreview)
+        XCTAssertNil(AppTheme.autumn.previewBadge)
     }
 
     func testOceanPaletteMirrorsRoseInBlue() {
@@ -107,7 +217,7 @@ final class ThemeStoreTests: XCTestCase {
         let palette = AppTheme.light.colors
 
         XCTAssertEqual(palette.id, .light)
-        XCTAssertEqual(AppTheme.light.displayName, "Sky")
+        XCTAssertEqual(AppTheme.light.displayName, "Sky Blue")
         XCTAssertEqual(AppTheme.light.previewSubtitle, "Pale blue · Islamic navy")
         XCTAssertEqual(palette.hexes.background, 0xECF4FD)
         XCTAssertEqual(palette.hexes.secondaryBackground, 0xE4EFFB)

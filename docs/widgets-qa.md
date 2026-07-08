@@ -16,6 +16,7 @@ the Simulator (App Groups + interactive intents behave most truthfully on device
 - [ ] **Hijri Date** (Lock Screen circular + inline): inline reads "D Month YYYY"; matches the app's home Hijri (incl. the user's offset).
 - [ ] **7-Day Grid**: Lock Screen accessory (monochrome 7×5) + Home **systemSmall** (color 7×5). Confirm it's gentle consistency, **no streak counter**.
 - [ ] **Daily Du'a** (Home medium): shows today's du'a (Arabic + English + source); tapping opens the Du'as tab.
+- [ ] **Verse & Hadith** (Home medium + large): shows today's Quran verse and sourced hadith together; large includes the Quran Arabic; tapping opens the Prayer tab.
 - [ ] Confirm state is legible **monochrome** on the Lock Screen (fill/symbol, not color) and **color** on Home.
 
 ## Theme parity

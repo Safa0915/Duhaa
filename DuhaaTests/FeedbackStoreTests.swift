@@ -96,6 +96,51 @@ final class FeedbackStoreTests: XCTestCase {
         XCTAssertNil(store.presentation)
     }
 
+    func testFeedbackEmailDraftIncludesTriageMetadataAndDiagnostics() {
+        let draft = FeedbackEmailDraft.make(
+            reason: .quranRead,
+            category: .quran,
+            message: "Please add a page view.",
+            contact: "reader@example.com",
+            diagnostics: FeedbackDiagnostics(
+                appVersion: "1.0",
+                buildNumber: "4",
+                device: "iPhone",
+                systemName: "iOS",
+                systemVersion: "26.5"
+            )
+        )
+
+        XCTAssertEqual(draft.recipient, "duhaaapp@gmail.com")
+        XCTAssertEqual(draft.subject, "Duhaa Feedback [quran] [v1.0 b4]")
+        XCTAssertTrue(draft.body.contains("Please add a page view."))
+        XCTAssertTrue(draft.body.contains("Type: feedback"))
+        XCTAssertTrue(draft.body.contains("Topic: Quran"))
+        XCTAssertTrue(draft.body.contains("Area: quran"))
+        XCTAssertTrue(draft.body.contains("Reason: quranRead"))
+        XCTAssertTrue(draft.body.contains("Contact: reader@example.com"))
+        XCTAssertTrue(draft.body.contains("App: 1.0 (4)"))
+        XCTAssertTrue(draft.body.contains("Device: iPhone"))
+        XCTAssertTrue(draft.body.contains("System: iOS 26.5"))
+        XCTAssertTrue(draft.body.contains("Triage: area=quran; severity=untriaged; source=in-app-email"))
+        XCTAssertTrue(draft.body.contains("Privacy: No prayer data is attached."))
+    }
+
+    func testBugEmailDraftUsesBugSubjectAndNoDiagnosticsMarker() {
+        let draft = FeedbackEmailDraft.make(
+            reason: .bug,
+            category: .bug,
+            message: "Notifications did not fire.",
+            contact: " ",
+            diagnostics: nil
+        )
+
+        XCTAssertEqual(draft.subject, "Duhaa Bug Report [bug] [no-diagnostics]")
+        XCTAssertTrue(draft.body.contains("Type: bug"))
+        XCTAssertTrue(draft.body.contains("Contact: Not provided"))
+        XCTAssertTrue(draft.body.contains("Diagnostics: Not included by user"))
+    }
+
     private func makeStore(cooldown: TimeInterval = 0,
                            maxPrompts: Int = 4) -> FeedbackStore {
         FeedbackStore(defaults: defaults,

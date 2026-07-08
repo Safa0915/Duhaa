@@ -10,6 +10,10 @@ struct NearbyMosquesView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
     @State private var model = NearbyMosquesViewModel()
+    @State private var store = CustomMosqueStore()
+    @State private var showingAdd = false
+    @State private var showingSuggest = false
+    @State private var editingMosque: CustomMosque?
 
     private var coordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: location.active.latitude,
@@ -37,12 +41,37 @@ struct NearbyMosquesView: View {
                         .accessibilityLabel("Refresh")
                     }
                 }
+                ToolbarItem(placement: .topBarLeading) {
+                    Menu {
+                        Section("Can't find your mosque?") {
+                            Button { DuhaaHaptics.tap(); showingAdd = true } label: {
+                                Label("Add it to your list", systemImage: "plus")
+                            }
+                            Button { DuhaaHaptics.tap(); showingSuggest = true } label: {
+                                Label("Suggest it to Duhaa", systemImage: "paperplane")
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "plus.circle")
+                            .foregroundStyle(Palette.gold)
+                    }
+                    .accessibilityLabel("Add or suggest a mosque")
+                }
             }
         }
         .preferredColorScheme(Palette.active.colorScheme)
         .task { await model.locateAndSearch(using: location) }
         .onChange(of: location.authorizationStatus) { _, _ in
             Task { await model.locateAndSearch(using: location) }
+        }
+        .sheet(isPresented: $showingAdd) {
+            AddMosqueView(store: store).presentationDetents([.large])
+        }
+        .sheet(item: $editingMosque) { mosque in
+            AddMosqueView(store: store, editing: mosque).presentationDetents([.large])
+        }
+        .sheet(isPresented: $showingSuggest) {
+            SuggestMosqueView().presentationDetents([.large])
         }
     }
 
@@ -59,10 +88,7 @@ struct NearbyMosquesView: View {
                       message: "Turn it on to find nearby mosques.",
                       button: ("Open Settings", openAppSettings))
         case .empty:
-            stateView(icon: "building.columns",
-                      title: "No nearby mosques found",
-                      message: "Try refreshing or expanding your search.",
-                      button: ("Refresh", { Task { await model.search(around: coordinate, force: true) } }))
+            emptyState
         case .error:
             stateView(icon: "exclamationmark.triangle.fill",
                       title: "Couldn't load nearby mosques",
@@ -95,6 +121,7 @@ struct NearbyMosquesView: View {
     private func results(_ mosques: [MosquePlace]) -> some View {
         ScrollView {
             LazyVStack(spacing: 14) {
+                savedMosquesSection
                 ForEach(mosques) { NearbyMosqueCard(mosque: $0) }
                 Text("Used only to show nearby mosques and prayer times.")
                     .duhaaFont(11)
@@ -106,6 +133,63 @@ struct NearbyMosquesView: View {
             .padding(.vertical, 18)
         }
         .scrollIndicators(.hidden)
+    }
+
+    /// Empty results — still surfaces the user's own saved mosques and a calm
+    /// "no nearby mosques" note. Add / Suggest live in the toolbar's + menu.
+    private var emptyState: some View {
+        ScrollView {
+            VStack(spacing: 16) {
+                savedMosquesSection
+                VStack(spacing: 12) {
+                    Image(systemName: "building.columns")
+                        .duhaaFont(40)
+                        .foregroundStyle(Palette.gold.opacity(0.85))
+                    Text("No nearby mosques found")
+                        .duhaaFont(18, .semibold)
+                        .foregroundStyle(.primary)
+                        .multilineTextAlignment(.center)
+                    Text("Try refreshing, or add your mosque with the + button above.")
+                        .duhaaFont(13.5)
+                        .foregroundStyle(.primary.opacity(0.62))
+                        .multilineTextAlignment(.center)
+                    Button { Task { await model.search(around: coordinate, force: true) } } label: {
+                        Text("Refresh")
+                            .duhaaFont(15, .semibold)
+                            .foregroundStyle(Palette.onAccent)
+                            .padding(.horizontal, 26).padding(.vertical, 12)
+                            .background(Palette.gold, in: Capsule())
+                    }
+                    .buttonStyle(.duhaaPress)
+                    .padding(.top, 4)
+                }
+                .padding(.top, store.mosques.isEmpty ? 40 : 16)
+            }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 18)
+        }
+        .scrollIndicators(.hidden)
+    }
+
+    /// The user's own added mosques, shown above the MapKit results. Empty →
+    /// renders nothing.
+    @ViewBuilder
+    private var savedMosquesSection: some View {
+        if !store.mosques.isEmpty {
+            VStack(alignment: .leading, spacing: 14) {
+                Text("Your mosques")
+                    .duhaaFont(12, .semibold)
+                    .foregroundStyle(Palette.blue.opacity(0.65))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                ForEach(store.mosques) { mosque in
+                    CustomMosqueCard(
+                        mosque: mosque,
+                        onEdit: { editingMosque = mosque },
+                        onDelete: { withAnimation { store.remove(mosque) } }
+                    )
+                }
+            }
+        }
     }
 
     private var permissionNeeded: some View {

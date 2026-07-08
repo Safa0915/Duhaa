@@ -10,17 +10,23 @@ struct DuhaaApp: App {
     @State private var tracker = PrayerTracker()
     @State private var theme = ThemeStore()
     @State private var quranBookmarks = QuranBookmarks()
+    @State private var quranProgress = QuranReadingProgress()
+    @State private var quranNotes = QuranNotes()
     @State private var quranOffline = QuranOfflineLibrary()
     @State private var quranAudioPlayer = AyahPlayer()
     @State private var tabSettings = TabSettings()
     @State private var fastingTracker = FastingTracker()
+    @State private var qadaFasts = QadaFasts()
     @State private var insightsStore = InsightsStore()
     @State private var subscriptions = SubscriptionStore()
     @State private var salahLock = SalahLockController()
     @State private var feedback = FeedbackStore()
+    @State private var appIcon = AppIconStore()
+    @State private var essentialsProgress = EssentialsProgressStore()
     @State private var didRunInitialNotificationSchedule = false
     @State private var lastAppNotificationReschedule: Date?
     @State private var showingNotificationOptIn = false
+    @AppStorage("duhaa.opening.didPlay") private var didPlayOpening = false
     @AppStorage("duhaa.hasOnboarded") private var hasOnboarded = false
     @AppStorage("duhaa.shortcut.targetTab") private var shortcutTargetTab = ""
     @AppStorage("duhaa.notifications.didShowOptIn") private var didShowNotificationOptIn = false
@@ -34,6 +40,12 @@ struct DuhaaApp: App {
             Group {
                 if hasOnboarded {
                     MainTabView()
+                } else if !didPlayOpening {
+                    DuhaaIntroView {
+                        withAnimation(.easeInOut(duration: 0.35)) {
+                            didPlayOpening = true
+                        }
+                    }
                 } else {
                     OnboardingView { hasOnboarded = true }
                 }
@@ -44,14 +56,19 @@ struct DuhaaApp: App {
             .environment(tracker)
             .environment(theme)
             .environment(quranBookmarks)
+            .environment(quranProgress)
+            .environment(quranNotes)
             .environment(quranOffline)
             .environment(quranAudioPlayer)
             .environment(tabSettings)
             .environment(fastingTracker)
+            .environment(qadaFasts)
             .environment(insightsStore)
             .environment(subscriptions)
             .environment(salahLock)
             .environment(feedback)
+            .environment(appIcon)
+            .environment(essentialsProgress)
             .id(theme.theme) // rebuild the tree so the new palette takes effect everywhere
             // Drive the app-wide accent from the LIVE theme. Without this, any
             // control that falls back to the default accent uses the static gold
@@ -89,10 +106,18 @@ struct DuhaaApp: App {
             .onChange(of: location.active) { _, _ in updateWidgetSnapshot() }
             .onChange(of: theme.theme) { _, _ in updateWidgetSnapshot() }
             .onChange(of: settings.prayerConfig) { _, _ in updateWidgetSnapshot() }
-            // Daily Du'a widget tap → open the Du'as tab (reuses the shortcut path).
+            // Widget taps → route to the matching tab (reuses the shortcut path).
+            // Daily Du'a → Du'as; Verse & Hadith → home, Duhaa's daily reflection
+            // surface. Older standalone verse/hadith URLs remain accepted.
             .onOpenURL { url in
-                guard url.scheme == "duhaa", url.host == "dua" else { return }
-                shortcutTargetTab = DuhaaTab.duas.rawValue
+                guard url.scheme == "duhaa" else { return }
+                switch url.host {
+                case "dua":    shortcutTargetTab = DuhaaTab.duas.rawValue
+                case "hadith", "reflection":
+                    shortcutTargetTab = DuhaaTab.prayer.rawValue
+                case "verse":  shortcutTargetTab = DuhaaTab.quran.rawValue
+                default:       break
+                }
             }
             .sheet(isPresented: $showingNotificationOptIn) {
                 NotificationOptInView(

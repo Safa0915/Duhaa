@@ -26,24 +26,34 @@ struct ThemeSettingsView: View {
     var body: some View {
         Form {
             Section {
-                ForEach(AppTheme.allCases) { theme in
-                    Button {
-                        guard themeStore.theme != theme else { return }
-                        themeStore.theme = theme
-                        DuhaaHaptics.tick()
-                    } label: {
-                        ThemeOptionRow(theme: theme, isSelected: themeStore.theme == theme)
-                    }
-                    .buttonStyle(.plain)
-                    .listRowBackground(Palette.card)
-                }
+                themeRows(AppTheme.lightThemes)
             } header: {
-                Text("Appearance")
+                Text("Light Themes")
             } footer: {
-                Text("Light Pink is a free premium preview - a taste of future premium themes. No subscription is required.")
+                Text("Sky Blue and Light Pink use bright daytime palettes. Light Pink is a free premium preview - no subscription is required.")
+            }
+
+            Section {
+                themeRows(AppTheme.darkThemes)
+            } header: {
+                Text("Dark Themes")
             }
         }
         .settingsDetailStyle(title: "Appearance")
+    }
+
+    private func themeRows(_ themes: [AppTheme]) -> some View {
+        ForEach(themes) { theme in
+            Button {
+                guard themeStore.theme != theme else { return }
+                themeStore.theme = theme
+                DuhaaHaptics.tick()
+            } label: {
+                ThemeOptionRow(theme: theme, isSelected: themeStore.theme == theme)
+            }
+            .buttonStyle(.plain)
+            .listRowBackground(Palette.card)
+        }
     }
 }
 
@@ -103,6 +113,108 @@ private struct ThemeSwatches: View {
         }
         .frame(width: 58, alignment: .leading)
         .accessibilityHidden(true)
+    }
+}
+
+/// Rarely-touched prayer controls, gathered one level down so the main Settings
+/// list stays calm. Every row links to an existing detail view — no new logic.
+struct AdvancedPrayerSettingsView: View {
+    @Environment(SettingsStore.self) private var store
+
+    var body: some View {
+        Form {
+            Section {
+                NavigationLink {
+                    ManualPrayerTimesView()
+                } label: {
+                    advancedRow("My Prayer Times", icon: "clock.fill", color: Palette.gold, value: store.manualTimes.enabled ? "On" : "Off")
+                }
+                .listRowBackground(Palette.card)
+
+                NavigationLink {
+                    PrayerDisplaySettingsView()
+                } label: {
+                    advancedRow("Home Display", icon: "timer", color: Palette.blue, value: store.nextPrayerDisplayMode.label)
+                }
+                .listRowBackground(Palette.card)
+
+                NavigationLink {
+                    PrayerTimeAdjustmentsView()
+                } label: {
+                    advancedRow("Time Adjustments", icon: "clock.badge.fill", color: Palette.gold, value: offsetsSummary)
+                }
+                .listRowBackground(Palette.card)
+
+                NavigationLink {
+                    HighLatitudeSettingsView()
+                } label: {
+                    advancedRow("High Latitude Rule", icon: "globe.europe.africa.fill", color: Palette.blue, value: "Middle of Night")
+                }
+                .listRowBackground(Palette.card)
+
+                NavigationLink {
+                    MasjidTimesView()
+                } label: {
+                    advancedRow("Local Masjid", icon: "building.columns.fill", color: Palette.gold, value: masjidSummary)
+                }
+                .listRowBackground(Palette.card)
+
+                NavigationLink {
+                    HijriDateSettingsView()
+                } label: {
+                    advancedRow("Hijri Date", icon: "moonphase.waxing.crescent", color: Palette.blue, value: hijriSummary)
+                }
+                .listRowBackground(Palette.card)
+            } footer: {
+                Text("Fine-tuning for specific locations and preferences. The defaults work well for most people.")
+            }
+        }
+        .settingsDetailStyle(title: "Advanced Prayer")
+    }
+
+    private func advancedRow(_ title: String, icon: String, color: Color, value: String) -> some View {
+        HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(color.opacity(0.18))
+                    .frame(width: 30, height: 30)
+                Image(systemName: icon)
+                    .duhaaFont(13, .semibold)
+                    .foregroundStyle(color)
+            }
+            .accessibilityHidden(true)
+            Text(title)
+                .duhaaFont(16, .semibold)
+                .foregroundStyle(.primary)
+            Spacer(minLength: 10)
+            if !value.isEmpty {
+                Text(value)
+                    .duhaaFont(14, .medium)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+            }
+        }
+        .padding(.vertical, 2)
+        .accessibilityElement(children: .combine)
+    }
+
+    private var offsetsSummary: String {
+        let offsets = [store.offsets.fajr, store.offsets.dhuhr, store.offsets.asr, store.offsets.maghrib, store.offsets.isha]
+        let changed = offsets.filter { $0 != 0 }.count
+        return changed == 0 ? "None" : "\(changed) changed"
+    }
+
+    private var hijriSummary: String {
+        store.hijriOffsetDays == 0
+            ? (store.hijriIsPrimary ? "Primary" : "Secondary")
+            : (store.hijriOffsetDays > 0 ? "+\(store.hijriOffsetDays)" : "\(store.hijriOffsetDays)")
+    }
+
+    private var masjidSummary: String {
+        guard store.masjid.hasAnyTime else { return "Off" }
+        let name = store.masjid.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        return name.isEmpty ? "On" : name
     }
 }
 
@@ -383,7 +495,7 @@ struct AdhanSoundSettingsView: View {
     @Environment(NotificationSettings.self) private var notifs
     @Environment(LocationProvider.self) private var location
     @Environment(SettingsStore.self) private var calc
-    @AppStorage(AdhanSoundPreference.key) private var soundRaw = AdhanSoundPreference.duhaaChime.rawValue
+    @AppStorage(AdhanSoundPreference.key) private var soundRaw = AdhanSoundPreference.defaultPreference.rawValue
     @State private var testMessage: String?
 
     var body: some View {
@@ -398,7 +510,7 @@ struct AdhanSoundSettingsView: View {
                 .labelsHidden()
                 .listRowBackground(Palette.card)
             } header: {
-                Text("Adhan Notification Sound")
+                Text("Prayer Notification Sound")
             } footer: {
                 Text(currentSound.detail)
             }
@@ -422,11 +534,11 @@ struct AdhanSoundSettingsView: View {
                 Text("Changing this reschedules upcoming prayer notifications immediately.")
             }
         }
-        .settingsDetailStyle(title: "Adhan Sound")
+        .settingsDetailStyle(title: "Notification Sound")
     }
 
     private var currentSound: AdhanSoundPreference {
-        AdhanSoundPreference(rawValue: soundRaw) ?? .duhaaChime
+        AdhanSoundPreference(rawValue: soundRaw) ?? .defaultPreference
     }
 
     private var soundBinding: Binding<AdhanSoundPreference> {
@@ -457,22 +569,13 @@ struct AdhanSoundSettingsView: View {
 
             let content = UNMutableNotificationContent()
             content.title = "Duhaa sound test"
-            content.body = "This is how your adhan notifications will sound."
-            content.sound = notificationSound(for: currentSound)
+            content.body = "This is how your prayer notifications will sound."
+            content.sound = currentSound.notificationSound()
 
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
             let request = UNNotificationRequest(identifier: "duhaa.sound.test", content: content, trigger: trigger)
             try? await UNUserNotificationCenter.current().add(request)
             await MainActor.run { testMessage = "Scheduled. Lock the phone or wait for the banner." }
-        }
-    }
-
-    private func notificationSound(for preference: AdhanSoundPreference) -> UNNotificationSound {
-        switch preference {
-        case .duhaaChime:
-            UNNotificationSound(named: UNNotificationSoundName(NotificationCopy.soundFileName))
-        case .systemDefault:
-            .default
         }
     }
 }
@@ -482,7 +585,6 @@ struct QuranPreferencesView: View {
     @AppStorage("duhaa.quran.reciter") private var reciterID = Reciters.defaultID
     @AppStorage("duhaa.quran.arabicSize") private var arabicSize = 28.0
     @AppStorage("duhaa.quran.showTranslation") private var showTranslation = true
-    @AppStorage("duhaa.quran.tajweedColoring") private var tajweedColoring = false
     @AppStorage("duhaa.quran.audioCacheBudgetMB") private var audioCacheBudgetMB = 0
     @Environment(QuranOfflineLibrary.self) private var offline
     @State private var showingReciterPicker = false
@@ -533,16 +635,14 @@ struct QuranPreferencesView: View {
                     .tint(Palette.gold)
 
                 Picker("Reader font", selection: $readerFont) {
-                    Text("KFGQPC HAFS").tag("kfgqpc")
-                    Text("System Arabic").tag("systemArabic")
+                    ForEach(QuranFontPreference.allCases) { font in
+                        Text(font.title).tag(font.rawValue)
+                    }
                 }
-
-                Toggle("Tajweed coloring", isOn: $tajweedColoring)
-                    .tint(Palette.gold)
             } header: {
                 Text("Reader")
             } footer: {
-                Text("Reciter, Arabic size, translation visibility, reader font, and mark coloring update the Quran reader immediately.")
+                Text("Reciter, Arabic size, translation visibility, and reader font update the Quran reader immediately. QCF V2 and Tajweed V4 are used in full-page Mushaf mode.")
             }
 
             Section {
@@ -678,7 +778,7 @@ struct DeleteLocalDataView: View {
                     Label("This only clears this device", systemImage: "trash.fill")
                         .duhaaFont(15, .semibold)
                         .foregroundStyle(.orange)
-                    Text("It removes Duhaa's local preferences, prayer marks, Quran bookmarks, tab layout, and onboarding flag from UserDefaults.")
+                    Text("It removes Duhaa's local preferences, prayer marks, Quran bookmarks, tab layout, opening, and onboarding flag from UserDefaults.")
                         .duhaaFont(13)
                         .foregroundStyle(.primary.opacity(0.74))
                 }
@@ -754,10 +854,11 @@ enum LegalDocument {
         switch self {
         case .privacy:
             [
-                LegalSection("Local First", "Duhaa is designed to work without an account. Your prayer marks, Quran bookmarks, and settings are stored on this device unless you choose to export them."),
-                LegalSection("Location", "Prayer times need a location. Duhaa stores your selected location locally and uses it to calculate times on device. City search, current-location naming, and nearby mosque search use Apple's location and MapKit services; Duhaa does not sell your location or use it for ads."),
+                LegalSection("Local First", "Duhaa is designed to work without an account. Your prayer marks, fasting logs, tasbih counts, Quran bookmarks, notes, saved mosques, tab layout, and settings are stored on this device unless you choose to export them."),
+                LegalSection("Location", "Prayer times and Qibla calculations happen on device. Current location, city naming, city search, Apple Maps directions, and nearby mosque search use Apple's location and MapKit services. Duhaa does not sell your location or use it for ads."),
+                LegalSection("Quran Network Features", "Quran audio, chapter timing, word-by-word timing, and some Mushaf page data may load from Quran.com / Quran Foundation services when you use those features. Duhaa does not attach prayer data or tracking identifiers."),
                 LegalSection("Notifications", "Prayer reminders are scheduled through iOS notifications. You can turn them off per prayer or from system Settings at any time."),
-                LegalSection("Support", "If you email a bug report or support request, your message is handled by your mail app and whatever details you choose to include."),
+                LegalSection("Support", "Voluntary Duhaa+ support purchases are handled by Apple's App Store / StoreKit. If you email feedback, a bug report, reciter request, or mosque suggestion, your message is handled by your mail app and whatever details you choose to include."),
                 LegalSection("Your Controls", "Export My Data creates a local JSON file. Delete All Local Data removes Duhaa's local keys from this device.")
             ]
         case .terms:
@@ -875,6 +976,7 @@ enum DuhaaDataExporter {
         "duhaa.notif.reminderMinutes",
         "duhaa.notif.reminderOn",
         "duhaa.notifications.didShowOptIn",
+        "duhaa.opening.didPlay",
         "duhaa.profile.gender",
         "duhaa.profile.name",
         "duhaa.quran.arabicSize",
@@ -885,7 +987,6 @@ enum DuhaaDataExporter {
         "duhaa.quran.readerFont",
         "duhaa.quran.reciter",
         "duhaa.quran.showTranslation",
-        "duhaa.quran.tajweedColoring",
         "duhaa.settings.hijriIsPrimary",
         "duhaa.settings.hijriOffsetDays",
         "duhaa.settings.madhab",
@@ -945,8 +1046,12 @@ struct WhatsNewView: View {
     var body: some View {
         Form {
             Section {
-                change("Learn", "Added the offline Learn section with step-by-step guides and inline evidence.")
-                change("Settings", "Expanded settings into a fuller structure while keeping the existing prayer controls.")
+                change("Prayer confidence", "Added Prayer Time Details on the home screen, with calculation inputs, local overrides, and a direct report path.")
+                change("Widgets", "Added a fuller widget suite, including interactive prayer tracking, Hijri date, weekly grid, daily du'a, and daily reflection.")
+                change("Quran", "Added reading progress, notes, transliteration, Mushaf reading, reciter requests, and improved audio/offline listening.")
+                change("Fasting", "Added Ramadan, voluntary fast, and make-up fast tracking with gentle reminders.")
+                change("Mosques", "Added nearby mosque search, saved custom mosques, and local masjid jama'ah/Jumu'ah times.")
+                change("Trust & support", "Improved feedback, privacy copy, notification sound truthfulness, and voluntary support wording.")
             }
         }
         .settingsDetailStyle(title: "What's New")

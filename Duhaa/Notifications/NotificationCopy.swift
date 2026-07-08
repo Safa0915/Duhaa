@@ -5,9 +5,9 @@ import Foundation
 /// guilt-trip. Picked at schedule time, so the wording varies day to day.
 enum NotificationCopy {
 
-    /// The custom bundled chime (a soft celestial bell). Falls back to the system
-    /// sound automatically if the file isn't found.
-    static let soundFileName = "duhaa-chime.wav"
+    /// Bundled notification audio. Full adhan recordings are intentionally not
+    /// exposed until licensed files are actually in the app bundle.
+    static let duhaaChimeSoundFileName = "duhaa-chime.wav"
 
     static func emoji(for prayer: Prayer) -> String {
         switch prayer {

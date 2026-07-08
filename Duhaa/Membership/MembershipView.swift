@@ -2,7 +2,7 @@ import SwiftUI
 import StoreKit
 
 /// The Duhaa+ paywall. Selecting a tier repaints the header (name, tagline,
-/// perks) — one sheet tells each tier's story. Monthly/Annual toggle, three
+/// support notes) — one sheet tells each tier's story. Monthly/Annual toggle, three
 /// plan cards, a state-aware CTA, and Restore. Worship is never paywalled;
 /// this is a supporter membership on top of a complete free app.
 struct MembershipView: View {
@@ -34,6 +34,7 @@ struct MembershipView: View {
                     topBar
                     tierHeader
                     perkList
+                    supportNote
                     periodToggle.padding(.top, 6)
                     planCards
                     renewalCaption
@@ -122,6 +123,18 @@ struct MembershipView: View {
         .padding(.top, 4)
     }
 
+    private var supportNote: some View {
+        Text("Duhaa+ is voluntary support. Prayer times, Quran, Du'as, Learn, widgets, and tracking stay free.")
+            .duhaaFont(13)
+            .foregroundStyle(Palette.blue.opacity(0.78))
+            .fixedSize(horizontal: false, vertical: true)
+            .padding(14)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Palette.card)
+            .overlay(RoundedRectangle(cornerRadius: 16).stroke(Palette.cardBorder, lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
     // MARK: Billing period
 
     private var periodToggle: some View {
@@ -181,7 +194,7 @@ struct MembershipView: View {
                                 .foregroundStyle(Palette.blue)
                         }
                     }
-                    Text("\(price)/\(annual ? "yr" : "mo")")
+                    Text("\(price) / \(annual ? "Year" : "Month")")
                         .duhaaFont(24, .bold)
                         .foregroundStyle(.primary)
                 }
@@ -231,10 +244,10 @@ struct MembershipView: View {
 
     private var renewalCaption: some View {
         VStack(spacing: 3) {
-            Text("\(selectedProduct?.displayPrice ?? fallbackPrice(selectedTier))/\(annual ? "yr" : "mo")")
+            Text("\(selectedProduct?.displayPrice ?? fallbackPrice(selectedTier)) / \(annual ? "Year" : "Month")")
                 .duhaaFont(14, .semibold)
                 .foregroundStyle(.primary.opacity(0.85))
-            Text("Auto-renews at \(selectedProduct?.displayPrice ?? fallbackPrice(selectedTier))/\(annual ? "yr" : "mo"). Cancel anytime.")
+            Text("Auto-renews at \(selectedProduct?.displayPrice ?? fallbackPrice(selectedTier)) / \(annual ? "Year" : "Month"). Cancel anytime.")
                 .duhaaFont(13)
                 .foregroundStyle(.primary.opacity(0.5))
         }
@@ -262,13 +275,15 @@ struct MembershipView: View {
         }
         .buttonStyle(.duhaaPress)
         .disabled(isCurrentSelection || selectedProduct == nil || store.purchaseInFlight)
-
+        // Products missing (store unreachable) leaves the CTA inert — dim it so it
+        // doesn't read as a tappable full-strength button.
+        .opacity(selectedProduct == nil && !isCurrentSelection ? 0.45 : 1)
     }
 
     private var ctaTitle: String {
-        if isCurrentSelection { return "Your current plan" }
+        if isCurrentSelection { return "Your Current Plan" }
         if store.isSubscribed { return "Switch to \(selectedTier.displayName)" }
-        return "Continue with \(selectedTier.displayName)"
+        return "Support with \(selectedTier.displayName)"
     }
 
     private var restoreButton: some View {
@@ -284,7 +299,7 @@ struct MembershipView: View {
     }
 
     private var storeUnavailableNote: some View {
-        Text("Plans load when the App Store is reachable. During testing, run Duhaa from Xcode to try purchases.")
+        Text("Support plans couldn't load right now. Please check your connection and try again in a moment.")
             .duhaaFont(12)
             .foregroundStyle(Palette.blue.opacity(0.7))
             .multilineTextAlignment(.center)

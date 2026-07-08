@@ -1,24 +1,28 @@
 # Salah Lock — Xcode & entitlement setup
 
-_Last updated: 2026-06-19._
+_Last updated: 2026-07-02._
 
-> ✅ **STATUS (2026-06-19): the monitor extension is now a wired target and the app +
-> monitor build clean on the Simulator** — the `.appex` embeds into
-> `Duhaa.app/PlugIns/` with `family-controls` + App-Group entitlements baked in. The
-> "Create the monitor target" step below is **already done** (added directly in
-> `project.pbxproj`, mirroring the `DuhaaWidgets` target; backup at
-> `/tmp/project.pbxproj.bak`). The paid $99 account is in place.
+> ✅ **STATUS (2026-07-02): LIVE on the dev's iPhone (development signing).** The
+> monitor `.appex` is re-embedded (the 2026-06-19 temporary de-embed is reverted),
+> the app + monitor both carry the **Family Controls (development)** capability via
+> `-allowProvisioningUpdates`, and the signed extension carries
+> `com.apple.developer.family-controls` + `group.com.duhaa.app` (verified with
+> `codesign -d --entitlements`). Device build + install succeeded on the
+> iPhone 17 Pro Max. Next: on-device smoke test (grant Screen Time access, pick
+> apps, confirm the shield at the next prayer window).
 >
-> Salah Lock still can't actually **block apps** until two things remain:
-> 1. The **Family Controls entitlement** (`com.apple.developer.family-controls`),
->    Apple grants only **on request** —
->    <https://developer.apple.com/contact/request/family-controls-distribution>.
->    Needed so it signs for **device / TestFlight**. (The Simulator signs ad-hoc so it
->    builds, but Family Controls auth always returns "Not allowed" in the Simulator.)
-> 2. A **real device** to test on.
+> ⚠️ **Before TestFlight / App Store:** the **distribution** Family Controls
+> entitlement is granted only **on request** —
+> <https://developer.apple.com/contact/request/family-controls-distribution>.
+> Until Apple approves it, **archive/TestFlight signing will fail with the monitor
+> embedded** — if a TestFlight build must ship first, temporarily de-embed again
+> (remove build file `DA000000000000000000020C` from the Embed Foundation
+> Extensions phase and dependency `DA000000000000000000020B` from the app
+> target's `dependencies` in `project.pbxproj`).
 >
-> The app target itself does **not** carry the Family Controls entitlement (only the
-> monitor extension does), so the main app's signing is unaffected.
+> The app target also carries the Family Controls entitlement because it requests
+> Screen Time authorization and presents the Family Activity picker. Without it,
+> the settings UI can look enabled while authorization never truly completes.
 
 App Group used everywhere (already enabled for widgets): **`group.com.duhaa.app`**.
 
@@ -76,8 +80,11 @@ calls `markPrayed(_:)` to lift the lock the instant a prayer is logged.
   Re-registered every foreground from the shared times payload, so it tracks the
   drifting prayer times. (Schedules use time-of-day components; if the app isn't
   opened for a long stretch the windows drift slightly until the next foreground.)
-- **Lock:** the monitor's `intervalDidStart` shields the chosen apps — *unless* that
-  prayer is already marked prayed today (praying early means it never locks).
+- **Lock:** the monitor's `intervalDidStart` shields the chosen apps, categories,
+  and sites — *unless* that prayer is already marked prayed today (praying early
+  means it never locks). iOS still requires user-selected Screen Time tokens; do
+  **not** switch this to `.all(except:)` unless Duhaa can be safely excluded, or
+  the user may be unable to reopen Duhaa to mark the prayer.
 - **Lift:** marking the prayer prayed in Duhaa clears the shield immediately
   (`SalahLockController.markPrayed`). The cap (`intervalDidEnd`) is only a backstop
   so a window can never get stuck on.

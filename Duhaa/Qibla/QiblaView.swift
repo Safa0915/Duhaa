@@ -7,8 +7,9 @@ import SwiftUI
 ///
 /// The live heading (which fires many updates per second) lives in `QiblaCompass`,
 /// not here — so the theme background and the rest of the screen are NOT
-/// re-rendered on every heading tick. That keeps the compass equally smooth in
-/// every theme (the Light Pink background no longer gets re-processed each frame).
+/// re-rendered on every heading tick. And the decorated themes' ambient fields
+/// (hearts/blossoms/leaves/stars) pause entirely while their tabs sit off-screen
+/// (`AmbientTimelineView`), so no hidden tab competes with the compass for frames.
 struct QiblaView: View {
     @Environment(LocationProvider.self) private var location
 
@@ -73,7 +74,12 @@ private struct QiblaCompass: View {
     var body: some View {
         VStack(spacing: 24) {
             compass(size: size)
-            readout
+            VStack(spacing: 12) {
+                readout
+                if viewModel.hasHeading {
+                    headingReadout
+                }
+            }
             statusLine
         }
         .onAppear {
@@ -188,6 +194,20 @@ private struct QiblaCompass: View {
         .accessibilityLabel("Qibla \(Int(qiblaBearing.rounded())) degrees \(compassPoint(qiblaBearing)), \(formattedDistance) to Makkah")
     }
 
+    /// The direction the phone itself is pointing right now, so the user can read
+    /// their own bearing and turn it toward the Qibla bearing above. Mirrors the
+    /// dial's `continuousHeading`, normalized to 0–359°. Hidden from VoiceOver —
+    /// it updates many times per second and the alignment status is the accessible
+    /// path — and only shown once a live heading exists (not in the Simulator).
+    private var headingReadout: some View {
+        let heading = QiblaAngles.normalized(viewModel.continuousHeading)
+        let degrees = Int(heading.rounded()) % 360
+        return Text("You're facing \(degrees)° \(compassPoint(heading))")
+            .duhaaFont(13, .medium)
+            .foregroundStyle(Palette.blue.opacity(0.55))
+            .accessibilityHidden(true)
+    }
+
     @ViewBuilder private var statusLine: some View {
         if viewModel.startupState == .headingUnavailable {
             note("Live compass needs a real device.\nShowing Qibla relative to North.")
@@ -196,9 +216,9 @@ private struct QiblaCompass: View {
                 .duhaaFont(15, .semibold)
                 .foregroundStyle(Palette.gold)
         } else if !viewModel.hasHeading {
-            note("Calibrating compass…")
+            note("Hold your phone flat to calibrate the compass…")
         } else {
-            note("Turn until the gold arrow points up.")
+            note("Hold your phone flat, then turn until\nthe gold arrow points up.")
         }
     }
 

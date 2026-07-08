@@ -22,6 +22,10 @@ struct Reciter: Decodable, Identifiable, Hashable, Sendable {
     /// recording start at a chosen ayah (by seeking). Nil for chapter recordings
     /// without published timing — those can only play from the start.
     let chapterTimingID: Int?
+    /// mp3quran.net "read" id with per-ayah timing for this exact recording —
+    /// the alternative timing source for reciters Quran.com doesn't time. Only
+    /// valid when `chapterPrefix` streams from the matching mp3quran folder.
+    let mp3quranTimingRead: Int?
 
     enum AudioKind: String, Decodable, Sendable {
         case ayah
@@ -48,7 +52,7 @@ struct Reciter: Decodable, Identifiable, Hashable, Sendable {
 
     /// A full-surah recording that can begin at a chosen ayah (has timing data).
     var supportsAyahSeek: Bool {
-        supportsChapterAudio && chapterTimingID != nil
+        supportsChapterAudio && (chapterTimingID != nil || mp3quranTimingRead != nil)
     }
 
     func ayahURL(surah: Int, ayah: Int) -> URL? {
@@ -65,7 +69,7 @@ struct Reciter: Decodable, Identifiable, Hashable, Sendable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, name, audioKind, prefix, chapterPrefix, imageURL, imageAssetName, chapterPadded, chapterTimingID
+        case id, name, audioKind, prefix, chapterPrefix, imageURL, imageAssetName, chapterPadded, chapterTimingID, mp3quranTimingRead
     }
 
     init(from decoder: Decoder) throws {
@@ -78,6 +82,7 @@ struct Reciter: Decodable, Identifiable, Hashable, Sendable {
         imageAssetName = try container.decodeIfPresent(String.self, forKey: .imageAssetName)
         chapterPadded = try container.decodeIfPresent(Bool.self, forKey: .chapterPadded) ?? true
         chapterTimingID = try container.decodeIfPresent(Int.self, forKey: .chapterTimingID)
+        mp3quranTimingRead = try container.decodeIfPresent(Int.self, forKey: .mp3quranTimingRead)
         audioKind = try container.decodeIfPresent(AudioKind.self, forKey: .audioKind)
             ?? (chapterPrefix == nil ? .ayah : .chapter)
     }

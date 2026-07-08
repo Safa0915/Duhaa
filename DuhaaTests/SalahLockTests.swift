@@ -42,4 +42,66 @@ final class SalahLockTests: XCTestCase {
         let date = Date(timeIntervalSince1970: 1_718_000_000)  // fixed instant
         XCTAssertEqual(SalahLock.dayKey(date, tz), PrayerTracker.dayKey(date, tz))
     }
+
+    func testActivePrayerWindowUsesLatestUnexpiredPrayer() {
+        let day = makeDay()
+
+        XCTAssertNil(SalahLockWindow.activePrayerKey(in: day,
+                                                     capMinutes: 40,
+                                                     now: date(hour: 4, minute: 59)))
+        XCTAssertEqual(SalahLockWindow.activePrayerKey(in: day,
+                                                       capMinutes: 40,
+                                                       now: date(hour: 5, minute: 10)),
+                       "Fajr")
+        XCTAssertNil(SalahLockWindow.activePrayerKey(in: day,
+                                                     capMinutes: 40,
+                                                     now: date(hour: 5, minute: 40)))
+    }
+
+    func testActivePrayerWindowClampsCapMinutes() {
+        let day = makeDay()
+
+        XCTAssertEqual(SalahLockWindow.activePrayerKey(in: day,
+                                                       capMinutes: 1,
+                                                       now: date(hour: 5, minute: 9)),
+                       "Fajr")
+        XCTAssertNil(SalahLockWindow.activePrayerKey(in: day,
+                                                     capMinutes: 1,
+                                                     now: date(hour: 5, minute: 10)))
+    }
+
+    func testActivePrayerWindowPrefersMostRecentWhenWindowsOverlap() {
+        let day = PrayerTimesPayload.Day(dayKey: "2026-07-02",
+                                         fajr: date(hour: 5, minute: 0),
+                                         dhuhr: date(hour: 5, minute: 20),
+                                         asr: date(hour: 15, minute: 30),
+                                         maghrib: date(hour: 20, minute: 0),
+                                         isha: date(hour: 22, minute: 0))
+
+        XCTAssertEqual(SalahLockWindow.activePrayerKey(in: day,
+                                                       capMinutes: 40,
+                                                       now: date(hour: 5, minute: 25)),
+                       "Dhuhr")
+    }
+
+    private func makeDay() -> PrayerTimesPayload.Day {
+        PrayerTimesPayload.Day(dayKey: "2026-07-02",
+                               fajr: date(hour: 5, minute: 0),
+                               dhuhr: date(hour: 13, minute: 10),
+                               asr: date(hour: 17, minute: 30),
+                               maghrib: date(hour: 20, minute: 0),
+                               isha: date(hour: 22, minute: 0))
+    }
+
+    private func date(hour: Int, minute: Int) -> Date {
+        var components = DateComponents()
+        components.calendar = Calendar(identifier: .gregorian)
+        components.timeZone = TimeZone(secondsFromGMT: 0)
+        components.year = 2026
+        components.month = 7
+        components.day = 2
+        components.hour = hour
+        components.minute = minute
+        return components.date!
+    }
 }

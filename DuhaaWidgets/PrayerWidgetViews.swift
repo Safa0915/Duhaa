@@ -122,6 +122,7 @@ struct SmallPrayerView: View {
                 NextPrayerHero(theme: theme, snapshot: snapshot, nameSize: 27)
                 Spacer(minLength: 8)
                 CompletionDots(theme: theme, snapshot: snapshot)
+                    .invalidatableContent()
             }
             .padding(15)
         }
@@ -146,9 +147,12 @@ struct MediumPrayerView: View {
                         staleHeader
                     }
                     Spacer(minLength: 4)
+                    // Count is timeline-frozen — mark it invalidatable so it reads
+                    // as "updating" between a tap and the coalesced reload.
                     CompletionRing(theme: theme, count: snapshot.dailyCompletionCount,
                                    total: snapshot.totalPrayerCount, lineWidth: 5)
                         .frame(width: 48, height: 48)
+                        .invalidatableContent()
                 }
                 HStack(spacing: 6) {
                     ForEach(snapshot.prayers) { item in
@@ -229,6 +233,7 @@ struct LargePrayerView: View {
             CompletionRing(theme: theme, count: snapshot.dailyCompletionCount,
                            total: snapshot.totalPrayerCount, lineWidth: 6)
                 .frame(width: 56, height: 56)
+                .invalidatableContent()
         }
     }
 

@@ -337,6 +337,36 @@ final class PrayerWidgetStoreTests: XCTestCase {
         XCTAssertFalse(store.isCompleted(.isha, on: "2026-06-17"))
     }
 
+    /// Rapid log → unlog taps must produce ONE timeline reload, built from the
+    /// final persisted state — not one reload per tap. Queued per-tap reloads
+    /// landed late and replayed the intermediate states on the widget
+    /// (unlogged → logged → unlogged) after the optimistic flips had already
+    /// shown the right answer.
+    func testRapidTapsCoalesceIntoSingleReload() async throws {
+        SharedPrayerStore.current = store
+        defer { SharedPrayerStore.current = SharedPrayerStore(defaults: .duhaaShared) }
+        let originalWindow = WidgetReloader.coalesceWindow
+        let originalHandler = WidgetReloader.handler
+        defer {
+            WidgetReloader.coalesceWindow = originalWindow
+            WidgetReloader.handler = originalHandler
+        }
+        WidgetReloader.coalesceWindow = .milliseconds(80)
+
+        var reloadCount = 0
+        WidgetReloader.handler = { _ in reloadCount += 1 }
+
+        // Two taps in quick succession: log, then unlog before the debounce fires.
+        let log = Task { _ = try await SetPrayerCompletionIntent(prayer: .asr, dayKey: "2026-06-17").perform() }
+        try await Task.sleep(for: .milliseconds(15))
+        let unlog = Task { _ = try await SetPrayerCompletionIntent(prayer: .asr, dayKey: "2026-06-17").perform() }
+        _ = try await log.value
+        _ = try await unlog.value
+
+        XCTAssertEqual(reloadCount, 1, "a tap burst should coalesce into one reload")
+        XCTAssertFalse(store.isCompleted(.asr, on: "2026-06-17"), "both taps persisted — net effect unlogged")
+    }
+
     func testIntentHandlesInvalidIDSafely() async throws {
         SharedPrayerStore.current = store
         defer { SharedPrayerStore.current = SharedPrayerStore(defaults: .duhaaShared) }

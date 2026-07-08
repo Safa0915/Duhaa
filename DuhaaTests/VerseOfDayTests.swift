@@ -49,4 +49,13 @@ final class VerseOfDayTests: XCTestCase {
         let ref = VerseOfDay.today(date)
         XCTAssertTrue(VerseOfDay.verses.contains(ref))
     }
+
+    // 6. The Daily Reflection widget snapshot carries a renderable verse stamp.
+    func testSnapshotSampleCarriesVerseStamp() throws {
+        let verse = try XCTUnwrap(PrayerWidgetSnapshot.sample().dailyVerse)
+        XCTAssertFalse(verse.arabic.isEmpty)
+        XCTAssertFalse(verse.en.isEmpty)
+        XCTAssertEqual(verse.reference, "\(verse.surah):\(verse.ayah)")
+        XCTAssertEqual(verse.citation, "\(verse.surahName) · \(verse.reference)")
+    }
 }

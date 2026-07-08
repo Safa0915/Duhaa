@@ -35,7 +35,7 @@ struct MoreView: View {
             .tint(Palette.gold)
             .navigationDestination(for: DuhaaTab.self) { tab in
                 tab.makeView()
-                    .navigationTitle(tab.title)
+                    .navigationTitle(tab.isFullBleed ? "" : tab.title)
                     .navigationBarTitleDisplayMode(.inline)
             }
         }

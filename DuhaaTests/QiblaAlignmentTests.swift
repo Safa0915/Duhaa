@@ -218,7 +218,7 @@ final class QiblaAlignmentTests: XCTestCase {
         let burst = [
             80.0, 95.0, 110.0, 115.2, // enters
             116.0, 119.0, 120.0, 121.0, 123.5, 124.9, 126.8, // jitter/stays aligned
-            127.5 // exits after hysteresis
+            132.5 // exits after hysteresis
         ]
 
         for (index, heading) in burst.enumerated() {

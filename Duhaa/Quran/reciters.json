@@ -67,14 +67,16 @@
    "id": 200,
    "name": "Maher al-Muaiqly",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/maher_256/",
-   "imageURL": "https://static.qurancdn.com/images/reciters/25/Maher-al-Muaiqly-profile.png"
+   "chapterPrefix": "https://download.quranicaudio.com/quran/maher_almu3aiqly/year1440/",
+   "imageURL": "https://static.qurancdn.com/images/reciters/25/Maher-al-Muaiqly-profile.png",
+   "chapterTimingID": 159
   },
   {
    "id": 201,
    "name": "Yasser ad-Dussary",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/yasser_ad-dussary/",
+   "chapterTimingID": 97,
    "imageURL": "https://static.qurancdn.com/images/reciters/20/yasser-profile.png"
   },
   {
@@ -82,6 +84,7 @@
    "name": "Saad al-Ghamdi",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/sa3d_al-ghaamidi/complete/",
+   "chapterTimingID": 13,
    "imageURL": "https://static.qurancdn.com/images/reciters/16/saad-al-ghamdi-profile.png"
   },
   {
@@ -89,34 +92,41 @@
    "name": "Ahmed ibn Ali al-Ajmy",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/ahmed_ibn_3ali_al-3ajamy/",
+   "chapterTimingID": 19,
    "imageURL": "https://static.qurancdn.com/images/reciters/22/Ahmed-ibn-Ali-al-Ajmy-profile.png"
   },
   {
    "id": 219,
    "name": "Mahmoud Khalil Al-Husary",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/mahmood_khaleel_al-husaree/",
-   "imageURL": "https://static.qurancdn.com/images/reciters/5/mahmoud-khalil-al-hussary-profile.png"
+   "chapterPrefix": "https://download.quranicaudio.com/qdc/khalil_al_husary/murattal/",
+   "imageURL": "https://static.qurancdn.com/images/reciters/5/mahmoud-khalil-al-hussary-profile.png",
+   "chapterTimingID": 6,
+   "chapterPadded": false
   },
   {
    "id": 220,
    "name": "Abdullah Ali Jabir",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/abdullaah_alee_jaabir/",
-   "imageURL": "https://static.qurancdn.com/images/reciters/23/Abdullah-Ali-Jabir-profile.png"
+   "chapterPrefix": "https://download.quranicaudio.com/quran/ali_jaber/",
+   "imageURL": "https://static.qurancdn.com/images/reciters/23/Abdullah-Ali-Jabir-profile.png",
+   "chapterTimingID": 158
   },
   {
    "id": 221,
    "name": "Khalifah Al Tunaiji",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/khalifah_taniji/",
-   "imageURL": "https://static.qurancdn.com/images/reciters/11/khalifa-al-tunaiji-profile.jpeg"
+   "chapterPrefix": "https://download.quranicaudio.com/qdc/khalifah_taniji/murattal/",
+   "imageURL": "https://static.qurancdn.com/images/reciters/11/khalifa-al-tunaiji-profile.jpeg",
+   "chapterTimingID": 161,
+   "chapterPadded": false
   },
   {
    "id": 204,
    "name": "Abdullah Awad al-Juhani",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/abdullaah_3awwaad_al-juhaynee/",
+   "chapterTimingID": 162,
    "imageURL": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Abdullah_Al_Juhany_%28Cropped%29.png/500px-Abdullah_Al_Juhany_%28Cropped%29.png"
   },
   {
@@ -124,34 +134,39 @@
    "name": "Nasser al-Qatami",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/nasser_bin_ali_alqatami/",
+   "chapterTimingID": 104,
    "imageURL": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/%D8%B5%D9%88%D8%B1%D8%A9_%D8%B4%D8%AE%D8%B5%D9%8A%D8%A9_%D8%A7%D9%84%D8%B4%D9%8A%D8%AE_%D9%86%D8%A7%D8%B5%D8%B1_%D8%A7%D9%84%D9%82%D8%B7%D8%A7%D9%85%D9%8A.jpg/500px-%D8%B5%D9%88%D8%B1%D8%A9_%D8%B4%D8%AE%D8%B5%D9%8A%D8%A9_%D8%A7%D9%84%D8%B4%D9%8A%D8%AE_%D9%86%D8%A7%D8%B5%D8%B1_%D8%A7%D9%84%D9%82%D8%B7%D8%A7%D9%85%D9%8A.jpg"
   },
   {
    "id": 206,
    "name": "Ali al-Huthaify",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/huthayfi/",
-   "imageURL": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Huthaify.jpg"
+   "chapterPrefix": "https://server9.mp3quran.net/hthfi/",
+   "imageURL": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Huthaify.jpg",
+   "mp3quranTimingRead": 74
   },
   {
    "id": 207,
    "name": "Idrees Abkar",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/idrees_abkar/",
-   "imageAssetName": "reciter-idrees-abkar"
+   "chapterPrefix": "https://server6.mp3quran.net/abkr/",
+   "imageAssetName": "reciter-idrees-abkar",
+   "mp3quranTimingRead": 12
   },
   {
    "id": 208,
    "name": "Raad Muhammad al-Kurdi",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/raad_mohammad_al_kurdi/mp3/",
-   "imageURL": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Raad_Mohammad_Al_Kurdi.png"
+   "chapterPrefix": "https://server6.mp3quran.net/kurdi/",
+   "imageURL": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Raad_Mohammad_Al_Kurdi.png",
+   "mp3quranTimingRead": 221
   },
   {
    "id": 209,
    "name": "Salah al-Budair",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/salahbudair/",
+   "chapterTimingID": 43,
    "imageURL": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Salah_Ibn_Mohammed_Al_Budair.jpg/500px-Salah_Ibn_Mohammed_Al_Budair.jpg"
   },
   {
@@ -159,28 +174,32 @@
    "name": "Abdullah Basfar",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/abdullaah_basfar/",
+   "chapterTimingID": 163,
    "imageAssetName": "reciter-abdullah-basfar"
   },
   {
    "id": 211,
    "name": "Muhammad Ayyoub",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/muhammad_ayyoob/",
-   "imageAssetName": "reciter-muhammad-ayyoub"
+   "chapterPrefix": "https://server8.mp3quran.net/ayyub/",
+   "imageAssetName": "reciter-muhammad-ayyoub",
+   "mp3quranTimingRead": 109
   },
   {
    "id": 212,
    "name": "AbdulBari ath-Thubaity",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/thubaity/",
-   "imageURL": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Abdulbari_ath-Thubaity_delivering_sermon_at_Prophet%27s_Mosque_Medina.jpg/500px-Abdulbari_ath-Thubaity_delivering_sermon_at_Prophet%27s_Mosque_Medina.jpg"
+   "chapterPrefix": "https://server6.mp3quran.net/thubti/",
+   "imageURL": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Abdulbari_ath-Thubaity_delivering_sermon_at_Prophet%27s_Mosque_Medina.jpg/500px-Abdulbari_ath-Thubaity_delivering_sermon_at_Prophet%27s_Mosque_Medina.jpg",
+   "mp3quranTimingRead": 49
   },
   {
    "id": 213,
    "name": "Khalid al-Qahtani",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/khaalid_al-qahtaanee/",
-   "imageAssetName": "reciter-khalid-al-qahtani"
+   "chapterPrefix": "https://server10.mp3quran.net/qht/",
+   "imageAssetName": "reciter-khalid-al-qahtani",
+   "mp3quranTimingRead": 21
   },
   {
    "id": 214,
@@ -194,20 +213,23 @@
    "name": "Fares Abbad",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/fares/",
+   "chapterTimingID": 14,
    "imageAssetName": "reciter-fares-abbad"
   },
   {
    "id": 216,
    "name": "Ibrahim al-Akhdar",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/ibrahim_al_akhdar/",
-   "imageAssetName": "reciter-ibrahim-al-akhdar"
+   "chapterPrefix": "https://server6.mp3quran.net/akdr/",
+   "imageAssetName": "reciter-ibrahim-al-akhdar",
+   "mp3quranTimingRead": 1
   },
   {
    "id": 217,
    "name": "AbdulMuhsin al-Qasim",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/abdul_muhsin_alqasim/",
+   "chapterTimingID": 11,
    "imageURL": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Abdul_Mohsin_Al-Qasim.jpg/500px-Abdul_Mohsin_Al-Qasim.jpg"
   },
   {
@@ -215,6 +237,7 @@
    "name": "Salah Bukhatir",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/salaah_bukhaatir/",
+   "chapterTimingID": 18,
    "imageAssetName": "reciter-salah-bukhatir"
   },
   {
@@ -222,6 +245,7 @@
    "name": "Muhammad Jibreel",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/muhammad_jibreel/complete/",
+   "chapterTimingID": 169,
    "imageURL": "https://upload.wikimedia.org/wikipedia/commons/3/32/Qari_Muhammad_Jebril%2C_Ramadan_2019.png"
   },
   {
@@ -229,6 +253,7 @@
    "name": "Mohammad al-Tablawi",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/mohammad_altablawi/",
+   "chapterTimingID": 91,
    "imageAssetName": "reciter-mohammad-al-tablawi"
   },
   {
@@ -243,6 +268,7 @@
    "name": "Mostafa Ismaeel",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/mostafa_ismaeel/",
+   "chapterTimingID": 88,
    "imageURL": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Mustafa_Ismail_%281%29.jpg/500px-Mustafa_Ismail_%281%29.jpg"
   },
   {
@@ -256,7 +282,7 @@
    "id": 227,
    "name": "Muhammad al-Luhaidan",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/muhammad_alhaidan/",
+   "chapterPrefix": "https://server8.mp3quran.net/lhdan/",
    "imageAssetName": "reciter-muhammad-al-luhaidan"
   },
   {
@@ -270,29 +296,33 @@
    "id": 229,
    "name": "Nabil ar-Rifai",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/nabil_rifa3i/",
-   "imageAssetName": "reciter-nabil-ar-rifai"
+   "chapterPrefix": "https://server9.mp3quran.net/nabil/",
+   "imageAssetName": "reciter-nabil-ar-rifai",
+   "mp3quranTimingRead": 87
   },
   {
    "id": 230,
    "name": "Sahl Yasin",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/sahl_yaaseen/",
+   "chapterTimingID": 17,
    "imageAssetName": "reciter-sahl-yasin"
   },
   {
    "id": 231,
    "name": "AbdulAzeez al-Ahmad",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/abdulazeez_al-ahmad/",
-   "imageAssetName": "reciter-abdulazeez-al-ahmad"
+   "chapterPrefix": "https://server11.mp3quran.net/a_ahmed/",
+   "imageAssetName": "reciter-abdulazeez-al-ahmad",
+   "mp3quranTimingRead": 55
   },
   {
    "id": 232,
    "name": "Tawfeeq as-Sawa'igh",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/tawfeeq_bin_saeed-as-sawaaigh/",
-   "imageAssetName": "reciter-tawfeeq-as-sawaigh"
+   "chapterPrefix": "https://server6.mp3quran.net/twfeeq/",
+   "imageAssetName": "reciter-tawfeeq-as-sawaigh",
+   "mp3quranTimingRead": 17
   },
   {
    "id": 233,
@@ -305,14 +335,16 @@
    "id": 234,
    "name": "AbdulWadud Haneef",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/abdulwadood_haneef/",
-   "imageAssetName": "reciter-abdulwadud-haneef"
+   "chapterPrefix": "https://server8.mp3quran.net/wdod/",
+   "imageAssetName": "reciter-abdulwadud-haneef",
+   "mp3quranTimingRead": 71
   },
   {
    "id": 235,
    "name": "Aziz Alili",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/aziz_alili/",
+   "chapterTimingID": 44,
    "imageAssetName": "reciter-aziz-alili"
   },
   {
@@ -333,8 +365,9 @@
    "id": 238,
    "name": "Salah Al-Hashim",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/salah_alhashim/",
-   "imageAssetName": "reciter-salah-al-hashim"
+   "chapterPrefix": "https://server12.mp3quran.net/salah_hashim_m/",
+   "imageAssetName": "reciter-salah-al-hashim",
+   "mp3quranTimingRead": 44
   },
   {
    "id": 240,
@@ -347,8 +380,9 @@
    "id": 241,
    "name": "Imad Zuhair Hafez",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/imad_zuhair_hafez/",
-   "imageAssetName": "reciter-imad-zuhair-hafez"
+   "chapterPrefix": "https://server6.mp3quran.net/hafz/",
+   "imageAssetName": "reciter-imad-zuhair-hafez",
+   "mp3quranTimingRead": 78
   },
   {
    "id": 242,
@@ -375,14 +409,16 @@
    "id": 245,
    "name": "Muhammad Khaleel",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/muhammad_khaleel/",
-   "imageAssetName": "reciter-muhammad-khaleel"
+   "chapterPrefix": "https://server8.mp3quran.net/m_qari/",
+   "imageAssetName": "reciter-muhammad-khaleel",
+   "mp3quranTimingRead": 229
   },
   {
    "id": 246,
    "name": "Abdullah Matroud",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/abdullah_matroud/",
+   "chapterTimingID": 124,
    "imageURL": "https://upload.wikimedia.org/wikipedia/commons/4/41/Abdullah_Al_Matroud.jpg"
   },
   {
@@ -390,6 +426,7 @@
    "name": "Ahmad Nauina",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/ahmad_nauina/",
+   "chapterTimingID": 126,
    "imageAssetName": "reciter-ahmad-nauina"
   },
   {
@@ -397,6 +434,7 @@
    "name": "Akram al-Alaqmi",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/akram_al_alaqmi/",
+   "chapterTimingID": 127,
    "imageAssetName": "reciter-akram-al-alaqmi"
   },
   {
@@ -404,6 +442,7 @@
    "name": "Ali Hajjaj Alsouasi",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/ali_hajjaj_alsouasi/",
+   "chapterTimingID": 128,
    "imageAssetName": "reciter-ali-hajjaj-alsouasi"
   },
   {
@@ -411,14 +450,16 @@
    "name": "Mahmood Ali al-Bana",
    "audioKind": "chapter",
    "chapterPrefix": "https://download.quranicaudio.com/quran/mahmood_ali_albana/",
+   "chapterTimingID": 129,
    "imageAssetName": "reciter-mahmood-ali-al-bana"
   },
   {
    "id": 251,
    "name": "Wadee Hammadi al-Yamani",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/wadee_hammadi_al-yamani/",
-   "imageAssetName": "reciter-wadee-hammadi-al-yamani"
+   "chapterPrefix": "https://server6.mp3quran.net/wdee3/",
+   "imageAssetName": "reciter-wadee-hammadi-al-yamani",
+   "mp3quranTimingRead": 219
   },
   {
    "id": 252,
@@ -451,8 +492,9 @@
    "id": 256,
    "name": "Peshawa Qadir al-Kurdi",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/peshawa_qadir_al-kurdi/mp3/",
-   "imageAssetName": "reciter-peshawa-qadir-al-kurdi"
+   "chapterPrefix": "https://server16.mp3quran.net/peshawa/Rewayat-Hafs-A-n-Assem/",
+   "imageAssetName": "reciter-peshawa-qadir-al-kurdi",
+   "mp3quranTimingRead": 268
   },
   {
    "id": 257,
@@ -472,8 +514,9 @@
    "id": 259,
    "name": "Abdulaziz al-Zahrani",
    "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/abdulaziz_bin_saleh_alzahrani/",
-   "imageAssetName": "reciter-abdulaziz-al-zahrani"
+   "chapterPrefix": "https://server9.mp3quran.net/zahrani/",
+   "imageAssetName": "reciter-abdulaziz-al-zahrani",
+   "mp3quranTimingRead": 56
   }
  ]
 }

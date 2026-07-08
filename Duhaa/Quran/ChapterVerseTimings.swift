@@ -10,11 +10,18 @@ protocol ChapterVerseTimingProviding: Sendable {
     func startMilliseconds(reciterID: Int, surah: Int, ayah: Int) async -> Int?
 }
 
-/// Live provider backed by Quran.com's gapless verse-timing API.
+/// Live provider backed by Quran.com's gapless verse-timing API, with
+/// mp3quran.net's ayah-timing API covering reciters Quran.com doesn't time.
 struct LiveChapterVerseTimings: ChapterVerseTimingProviding {
     func startMilliseconds(reciterID: Int, surah: Int, ayah: Int) async -> Int? {
-        guard let timingID = Reciters.byID(reciterID)?.chapterTimingID else { return nil }
-        return await ChapterVerseTimings.timings(timingID: timingID, surah: surah)[ayah]
+        guard let reciter = Reciters.byID(reciterID) else { return nil }
+        if let timingID = reciter.chapterTimingID {
+            return await ChapterVerseTimings.timings(timingID: timingID, surah: surah)[ayah]
+        }
+        if let read = reciter.mp3quranTimingRead {
+            return await ChapterVerseTimings.mp3quranTimings(read: read, surah: surah)[ayah]
+        }
+        return nil
     }
 }
 
@@ -39,6 +46,43 @@ enum ChapterVerseTimings {
             return map
         } catch {
             return [:]
+        }
+    }
+
+    /// `[ayahNumber: startMs]` for a surah from mp3quran.net's ayat-timing API,
+    /// for reciters whose chapter audio streams from an mp3quran folder. Same
+    /// fetch-once cache and empty-map fallback as the Quran.com path.
+    static func mp3quranTimings(read: Int, surah: Int) async -> [Int: Int] {
+        let cacheKey = "mp3quran:\(read):\(surah)"
+        if let cached = cache[cacheKey] { return cached }
+        guard let url = URL(string:
+            "https://www.mp3quran.net/api/v3/ayat_timing?surah=\(surah)&read=\(read)") else { return [:] }
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let map = parseMP3Quran(data)
+            if !map.isEmpty { cache[cacheKey] = map }
+            return map
+        } catch {
+            return [:]
+        }
+    }
+
+    /// Decode mp3quran's `[{ayah, start_time}]` into `[ayahNumber: startMs]`.
+    nonisolated static func parseMP3Quran(_ data: Data) -> [Int: Int] {
+        guard let entries = try? JSONDecoder().decode([MP3QuranTiming].self, from: data) else { return [:] }
+        var map: [Int: Int] = [:]
+        for entry in entries {
+            if let ayah = entry.ayah, let start = entry.startTime { map[ayah] = start }
+        }
+        return map
+    }
+
+    private struct MP3QuranTiming: Decodable {
+        let ayah: Int?
+        let startTime: Int?
+        enum CodingKeys: String, CodingKey {
+            case ayah
+            case startTime = "start_time"
         }
     }
 

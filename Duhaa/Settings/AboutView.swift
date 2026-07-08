@@ -4,6 +4,8 @@ import SwiftUI
 /// Several licenses require attribution (duas dataset MIT, Adhan MIT, KFGQPC
 /// font terms), so this screen is part of being shippable, not just polite.
 struct AboutView: View {
+    @State private var showingOpening = false
+
     private var version: String {
         let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
         let b = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
@@ -33,13 +35,47 @@ struct AboutView: View {
                 .listRowBackground(Color.clear)
             }
 
+            Section {
+                Button {
+                    showingOpening = true
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "sunrise.fill")
+                            .duhaaFont(18, .semibold)
+                            .foregroundStyle(Palette.gold)
+                            .frame(width: 30)
+
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Replay the Duhaa Opening")
+                                .duhaaFont(14, .medium)
+                                .foregroundStyle(.primary)
+                            Text("The first-launch dawn moment")
+                                .duhaaFont(12)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Spacer()
+
+                        Image(systemName: "play.circle.fill")
+                            .foregroundStyle(Palette.blue)
+                    }
+                    .padding(.vertical, 2)
+                }
+                .buttonStyle(.plain)
+                .listRowBackground(Palette.card)
+            }
+
             Section("Qur'an") {
                 credit("Arabic text",
                        "The Uthmani text of the Qur'an (public heritage of the ummah), via the Quran.com API.")
                 credit("English translation",
                        "ClearQuran by Talal Itani (Allah edition), used under its Creative Commons license (BY-NC-ND). ClearQuran.com.")
+                credit("Transliteration",
+                       "English transliteration of the Qur'an, bundled offline via the alquran.cloud API.")
                 credit("Uthmani script font",
                        "KFGQPC HAFS Uthmanic Script — King Fahd Glorious Qur'an Printing Complex, Madinah.")
+                credit("Quran page fonts",
+                       "QPC Hafs, Indo-Pak Nastaleeq, QCF V2, and Tajweed V4 font assets served by Quran Foundation / Quran.com.")
                 credit("Recitation",
                        "Nine renowned reciters — Alafasy, AbdulBaset, Sudais, Minshawi, and others — streamed from the Quran Foundation's audio service (Quran.com).")
                 credit("Tafsir",
@@ -72,6 +108,11 @@ struct AboutView: View {
         .background(Palette.appBg.ignoresSafeArea())
         .navigationTitle("About")
         .navigationBarTitleDisplayMode(.inline)
+        .fullScreenCover(isPresented: $showingOpening) {
+            DuhaaOpeningView(isReplay: true) {
+                showingOpening = false
+            }
+        }
     }
 
     private func credit(_ title: String, _ detail: String) -> some View {

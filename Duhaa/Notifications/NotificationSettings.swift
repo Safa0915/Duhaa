@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import UserNotifications
 
 /// How a given prayer notifies. Per-prayer control (spec §8).
 enum PrayerNotificationMode: String, CaseIterable, Identifiable {
@@ -10,7 +11,7 @@ enum PrayerNotificationMode: String, CaseIterable, Identifiable {
     var id: String { rawValue }
     var label: String {
         switch self {
-        case .adhan:  return "Adhan"
+        case .adhan:  return "Sound"
         case .silent: return "Silent"
         case .off:    return "Off"
         }
@@ -22,6 +23,7 @@ enum AdhanSoundPreference: String, CaseIterable, Identifiable {
     case systemDefault
 
     static let key = "duhaa.notif.adhanSound"
+    static let defaultPreference: AdhanSoundPreference = .duhaaChime
 
     var id: String { rawValue }
 
@@ -37,6 +39,24 @@ enum AdhanSoundPreference: String, CaseIterable, Identifiable {
         case .duhaaChime: "The soft bundled Duhaa notification chime."
         case .systemDefault: "The default iOS notification sound."
         }
+    }
+
+    var fileName: String? {
+        switch self {
+        case .duhaaChime: NotificationCopy.duhaaChimeSoundFileName
+        case .systemDefault: nil
+        }
+    }
+
+    func notificationSound(in bundle: Bundle = .main) -> UNNotificationSound {
+        guard let fileName else { return .default }
+        guard bundle.url(forResource: fileName, withExtension: nil) != nil else { return .default }
+        return UNNotificationSound(named: UNNotificationSoundName(fileName))
+    }
+
+    static func saved(in defaults: UserDefaults = .standard) -> AdhanSoundPreference {
+        let saved = defaults.string(forKey: key) ?? defaultPreference.rawValue
+        return AdhanSoundPreference(rawValue: saved) ?? defaultPreference
     }
 }
 
