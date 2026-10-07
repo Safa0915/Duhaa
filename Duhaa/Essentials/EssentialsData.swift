@@ -111,7 +111,7 @@ enum StudyMode: String, Codable, CaseIterable, Identifiable, Hashable, Sendable 
         case .learn: "Learn"
         case .match: "Match"
         case .test: "Test"
-        case .reviewMissed: "Review Missed"
+        case .reviewMissed: "Review"
         }
     }
 
@@ -131,7 +131,7 @@ enum StudyMode: String, Codable, CaseIterable, Identifiable, Hashable, Sendable 
         case .learn: "Multiple choice with gentle explanations"
         case .match: "Pair each term with its meaning"
         case .test: "A short check of what has settled in"
-        case .reviewMissed: "Revisit the questions you missed"
+        case .reviewMissed: "Revisit missed questions and cards due back"
         }
     }
 }

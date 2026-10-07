@@ -1,16 +1,21 @@
 import SwiftUI
 
-/// Review Missed: questions answered wrong come back here, plus calm per-set
-/// learning progress. Only progress is counted — never what went wrong.
+/// Review: missed questions and scheduled spaced-repetition revisits come back
+/// here, plus calm per-set learning progress. Only progress is counted —
+/// never what went wrong.
 struct ReviewMasteryView: View {
     @Environment(EssentialsProgressStore.self) private var progress
 
     private let sets = Essentials.sets
 
-    /// Real missed questions from the progress store.
-    private var missed: [EssentialsCard] { progress.missedQuestions(across: sets) }
+    /// Today's real review queue: missed questions plus scheduled revisits.
+    private var queue: [EssentialsCard] { progress.reviewQueue(across: sets) }
 
-    /// Until something is actually missed, offer a gentle practice mix
+    /// True when at least one queued card was actually answered wrong (vs. a
+    /// scheduled refresh) — picks the honest headline.
+    private var hasMissed: Bool { !progress.missedQuestions(across: sets).isEmpty }
+
+    /// Until something is actually due, offer a gentle practice mix
     /// (one question per set) so the review button always has content.
     private var practiceMix: [EssentialsCard] {
         sets.compactMap { $0.cards.first(where: \.isMultipleChoice) }
@@ -35,38 +40,41 @@ struct ReviewMasteryView: View {
         }
         .scrollIndicators(.hidden)
         .background(Palette.appBg.ignoresSafeArea())
-        .navigationTitle("Review Missed")
+        .navigationTitle("Review")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var heroHeadline: String {
+        if queue.isEmpty { return "Nothing to review right now" }
+        return hasMissed
+            ? "\(queue.count) cards are ready to review"
+            : "\(queue.count) ready for a gentle refresh"
     }
 
     private var heroCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Label("REVIEW MISSED", systemImage: "arrow.counterclockwise")
+            Label("TODAY'S REVIEW", systemImage: "arrow.counterclockwise")
                 .duhaaFont(11, .semibold)
                 .tracking(1)
                 .foregroundStyle(Palette.gold.opacity(0.9))
 
-            Text(missed.isEmpty
-                 ? "Nothing missed right now"
-                 : "\(missed.count) questions you missed are due today")
+            Text(heroHeadline)
                 .duhaaFont(18, .semibold)
                 .foregroundStyle(.primary)
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text(missed.isEmpty
-                 ? "When a question slips, it gently returns here."
+            Text(queue.isEmpty
+                 ? "When a question slips or comes back on schedule, it gently returns here."
                  : "A short, calm review — a few minutes is plenty.")
                 .duhaaFont(13)
                 .foregroundStyle(.primary.opacity(0.66))
                 .fixedSize(horizontal: false, vertical: true)
 
             NavigationLink {
-                LearnQuizView(title: "Review",
-                              chipText: "Review Missed",
-                              chipIcon: "arrow.counterclockwise",
-                              cards: missed.isEmpty ? practiceMix : missed)
+                FlashcardStudyView(title: "Review",
+                                   cards: queue.isEmpty ? practiceMix : queue)
             } label: {
-                Text(missed.isEmpty ? "Practice a quick mix" : "Start Review")
+                Text(queue.isEmpty ? "Practice a quick mix" : "Start Review")
                     .duhaaFont(15, .semibold)
                     .foregroundStyle(Palette.onAccent)
                     .padding(.horizontal, 22)

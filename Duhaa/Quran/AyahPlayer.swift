@@ -287,13 +287,15 @@ final class AVQuranAudioPlayer: NSObject, QuranAudioPlaying {
 }
 
 /// Streams per-ayah Quran recitation from the Quran Foundation CDN (the user's
-/// chosen reciter) and auto-advances through the surah. Reader-scoped
-/// (`@State` in SurahReaderView) so it stops when you leave the surah.
+/// chosen reciter) and auto-advances through the surah. App-wide (owned by
+/// `DuhaaApp`), publishes to the system Now Playing card, and answers Lock
+/// Screen / headphone remote commands so recitation continues in the background.
 @MainActor
 @Observable
 final class AyahPlayer {
     static let availablePlaybackRates: [Double] = [0.75, 1.0, 1.25, 1.5]
     static let playbackRateStorageKey = "duhaa.quran.playbackRate"
+    static let sleepTimerMinuteOptions = [15, 30, 45, 60]
 
     /// The ayah currently playing as "surah:ayah", or nil when stopped.
     private(set) var playingKey: String?
@@ -309,29 +311,46 @@ final class AyahPlayer {
     /// the reader screen when autoplay crosses into the next surah.
     private(set) var currentSurah: Surah?
     private(set) var currentRequest: QuranAudioRequest?
+    /// When the minute-based sleep timer will pause playback, nil when off.
+    private(set) var sleepTimerEndsAt: Date?
+    /// Sleep-timer "after this surah": playback stops instead of auto-advancing.
+    private(set) var sleepsAfterCurrentSurah = false
 
     @ObservationIgnored private let audioSession: QuranAudioSessionManaging
     @ObservationIgnored private let urlResolver: QuranAudioURLResolving
     @ObservationIgnored private let audioPlayer: QuranAudioPlaying
     @ObservationIgnored private let timingProvider: ChapterVerseTimingProviding
+    @ObservationIgnored private let nowPlaying: QuranNowPlayingIntegrating
     @ObservationIgnored private let quran: QuranData
     @ObservationIgnored private var playbackTask: Task<Void, Never>?
+    @ObservationIgnored private var sleepTimerTask: Task<Void, Never>?
     @ObservationIgnored private var generation = 0
+    @ObservationIgnored private var itemPrepared = false
+    @ObservationIgnored private var requestedSeekAyah: Int?
+    /// Set when a system interruption (call, Siri) paused us, so we only
+    /// auto-resume playback the user didn't stop themselves.
+    @ObservationIgnored private var pausedByInterruption = false
+    /// The item duration last pushed to Now Playing, so the Lock Screen bar
+    /// updates once the real duration is known without republishing at 10Hz.
+    @ObservationIgnored private var publishedDurationSeconds: TimeInterval = 0
 
     init(audioSession: QuranAudioSessionManaging = LiveQuranAudioSessionManager(),
          urlResolver: QuranAudioURLResolving = LiveQuranAudioURLResolver(),
          audioPlayer: QuranAudioPlaying? = nil,
          timingProvider: ChapterVerseTimingProviding = LiveChapterVerseTimings(),
+         nowPlaying: QuranNowPlayingIntegrating? = nil,
          quran: QuranData = Quran.shared) {
         FirstUseDiagnostics.event("Quran audio controller init start")
         self.audioSession = audioSession
         self.urlResolver = urlResolver
         self.audioPlayer = audioPlayer ?? AVQuranAudioPlayer()
         self.timingProvider = timingProvider
+        self.nowPlaying = nowPlaying ?? LiveQuranNowPlayingCenter()
         self.quran = quran
         playbackRate = Self.storedPlaybackRate()
         self.audioPlayer.setPlaybackRate(Float(playbackRate))
         wirePlayerCallbacks()
+        wireNowPlayingCallbacks()
         FirstUseDiagnostics.event("Quran audio controller init end")
     }
 
@@ -373,6 +392,52 @@ final class AyahPlayer {
         return max(0, durationSeconds - elapsedSeconds)
     }
 
+    // MARK: Sleep timer
+
+    var isSleepTimerActive: Bool {
+        sleepTimerEndsAt != nil || sleepsAfterCurrentSurah
+    }
+
+    var sleepTimerRemainingSeconds: TimeInterval? {
+        guard let sleepTimerEndsAt else { return nil }
+        return max(0, sleepTimerEndsAt.timeIntervalSinceNow)
+    }
+
+    /// Pause playback after `minutes` — for listening while falling asleep.
+    /// Pausing (not stopping) keeps the queue, so the morning resume continues
+    /// right where the night left off.
+    func setSleepTimer(minutes: Int) {
+        cancelSleepTimer()
+        let seconds = TimeInterval(max(0, minutes) * 60)
+        sleepTimerEndsAt = Date().addingTimeInterval(seconds)
+        sleepTimerTask = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+            guard !Task.isCancelled else { return }
+            self?.sleepTimerFired()
+        }
+    }
+
+    /// Let the current surah finish, then stop instead of auto-advancing.
+    func setSleepAfterCurrentSurah() {
+        cancelSleepTimer()
+        sleepsAfterCurrentSurah = true
+    }
+
+    func cancelSleepTimer() {
+        sleepTimerTask?.cancel()
+        sleepTimerTask = nil
+        sleepTimerEndsAt = nil
+        sleepsAfterCurrentSurah = false
+    }
+
+    private func sleepTimerFired() {
+        sleepTimerTask = nil
+        sleepTimerEndsAt = nil
+        pausedByInterruption = false
+        guard isActive, playbackState != .paused else { return }
+        pause()
+    }
+
     func isPlayingChapter(_ surahNumber: Int) -> Bool {
         playingKey == chapterKey(surahNumber)
     }
@@ -399,16 +464,24 @@ final class AyahPlayer {
     }
 
     func pause() {
+        pausedByInterruption = false
         playbackTask?.cancel()
         audioPlayer.pause()
         playbackState = .paused
+        publishNowPlaying()
     }
 
     /// Resume a paused ayah (no-op unless paused on an active ayah).
     func resume() {
         guard isActive, playbackState == .paused else { return }
+        pausedByInterruption = false
+        if !itemPrepared, let currentRequest {
+            beginPlayback(currentRequest, in: currentSurah, seekAyah: requestedSeekAyah)
+            return
+        }
         audioPlayer.play()
         playbackState = .playing
+        publishNowPlaying()
     }
 
     func setPlaybackRate(_ rate: Double) {
@@ -416,6 +489,7 @@ final class AyahPlayer {
         playbackRate = sanitizedRate
         UserDefaults.standard.set(sanitizedRate, forKey: Self.playbackRateStorageKey)
         audioPlayer.setPlaybackRate(Float(sanitizedRate))
+        if isActive { publishNowPlaying() }
     }
 
     /// One button for the immersive player: pause when playing, resume when
@@ -517,6 +591,10 @@ final class AyahPlayer {
         progress = 0
         elapsedSeconds = 0
         durationSeconds = 0
+        pausedByInterruption = false
+        publishedDurationSeconds = 0
+        cancelSleepTimer()
+        nowPlaying.clear()
         Task { [audioSession] in
             await audioSession.deactivate()
         }
@@ -528,7 +606,11 @@ final class AyahPlayer {
         generation += 1
         let currentGeneration = generation
         playbackTask?.cancel()
+        pausedByInterruption = false
         failureMessage = nil
+        itemPrepared = false
+        requestedSeekAyah = seekAyah
+        publishedDurationSeconds = 0
         playingKey = request.key
         currentRequest = request
         currentSurah = surah ?? currentSurah(for: request.surahNumber)
@@ -536,6 +618,7 @@ final class AyahPlayer {
         progress = 0
         elapsedSeconds = 0
         durationSeconds = 0
+        publishNowPlaying()
         FirstUseDiagnostics.event("Quran play button tapped", request.key)
         FirstUseDiagnostics.event("Quran loading UI shown", request.key)
 
@@ -563,10 +646,12 @@ final class AyahPlayer {
             try await audioPlayer.prepare(url: playableURL, seekToMs: seekToMs)
             guard isCurrent(generation, request) else { return }
 
+            itemPrepared = true
             audioPlayer.play()
         } catch is CancellationError {
             return
         } catch {
+            guard isCurrent(generation, request) else { return }
             fail(error)
         }
     }
@@ -581,13 +666,14 @@ final class AyahPlayer {
 
     private func wirePlayerCallbacks() {
         audioPlayer.onReady = { [weak self] in
-            guard let self, self.isActive else { return }
+            guard let self, self.isActive, self.playbackState != .paused else { return }
             self.playbackState = .ready
             FirstUseDiagnostics.event("Quran first audio ready", self.playingKey ?? "")
         }
         audioPlayer.onFirstPlayback = { [weak self] in
-            guard let self, self.isActive else { return }
+            guard let self, self.isActive, self.playbackState != .paused else { return }
             self.playbackState = .playing
+            self.publishNowPlaying()
         }
         audioPlayer.onFailed = { [weak self] error in
             self?.fail(error)
@@ -603,7 +689,87 @@ final class AyahPlayer {
             guard let self, self.isActive else { return }
             self.elapsedSeconds = max(0, elapsed)
             self.durationSeconds = max(0, duration)
+            // Republish once the real item duration becomes known (or the item
+            // changes length) so the Lock Screen progress bar is correct.
+            if abs(self.durationSeconds - self.publishedDurationSeconds) > 1 {
+                self.publishNowPlaying()
+            }
         }
+    }
+
+    // MARK: Now Playing / remote control
+
+    private func wireNowPlayingCallbacks() {
+        nowPlaying.onPlayCommand = { [weak self] in
+            self?.handleRemotePlay()
+        }
+        nowPlaying.onPauseCommand = { [weak self] in
+            guard let self, self.isActive, self.playbackState != .paused else { return }
+            self.pause()
+        }
+        nowPlaying.onTogglePlayPauseCommand = { [weak self] in
+            self?.togglePlayPause()
+        }
+        nowPlaying.onNextTrackCommand = { [weak self] in
+            self?.playNextItem()
+        }
+        nowPlaying.onPreviousTrackCommand = { [weak self] in
+            self?.playPreviousItem()
+        }
+        nowPlaying.onInterruptionBegan = { [weak self] in
+            guard let self, self.isActive, self.playbackState != .paused else { return }
+            self.pause()
+            self.pausedByInterruption = true
+        }
+        nowPlaying.onInterruptionEnded = { [weak self] shouldResume in
+            guard let self, self.pausedByInterruption else { return }
+            self.pausedByInterruption = false
+            if shouldResume {
+                self.resume()
+            }
+        }
+        nowPlaying.onRouteDisconnected = { [weak self] in
+            // Headphones unplugged: pause rather than recite out loud.
+            guard let self, self.isActive, self.playbackState != .paused else { return }
+            self.pause()
+        }
+    }
+
+    /// Lock Screen / headphone "play": resume when paused, restart when idle.
+    private func handleRemotePlay() {
+        switch playbackState {
+        case .paused:
+            resume()
+        case .idle, .failed:
+            restartCurrentRequest()
+        case .playing, .ready, .loading, .buffering:
+            break
+        }
+    }
+
+    /// Pushes the current item + transport state to the system Now Playing
+    /// card. Called on transitions (start/pause/resume/rate/duration-found),
+    /// not on the 10Hz progress tick — iOS extrapolates elapsed time itself.
+    private func publishNowPlaying() {
+        guard let currentSurah, currentRequest != nil else { return }
+
+        var title = currentSurah.englishName
+        if let ayah = playingAyahNumber {
+            title += " — \(String(localized: "Ayah")) \(ayah)"
+        }
+        let reciterID = UserDefaults.standard.object(forKey: "duhaa.quran.reciter") as? Int ?? Reciters.defaultID
+        let reciterName = (Reciters.byID(reciterID) ?? Reciters.byID(Reciters.defaultID))?.name ?? ""
+
+        publishedDurationSeconds = durationSeconds
+        nowPlaying.publish(QuranNowPlayingInfo(
+            title: title,
+            artist: reciterName,
+            elapsedSeconds: elapsedSeconds,
+            durationSeconds: durationSeconds > 0 ? durationSeconds : nil,
+            playbackRate: playbackState == .playing ? playbackRate : 0,
+            canGoNext: canPlayNextItem,
+            canGoPrevious: canPlayPreviousItem
+        ))
     }
 
     private func advanceOrStop() {
@@ -622,13 +788,17 @@ final class AyahPlayer {
             let nextAyah = ayah + 1
             if nextAyah <= currentSurah.ayahs.count {
                 beginPlayback(.ayah(surah: currentSurah.number, ayah: nextAyah), in: currentSurah)
+            } else if sleepsAfterCurrentSurah {
+                stop()
             } else if let nextSurah = nextSurah(after: currentSurah.number) {
                 beginPlayback(.ayah(surah: nextSurah.number, ayah: 1), in: nextSurah)
             } else {
                 stop()
             }
         case .chapter(let surahNumber):
-            if let nextSurah = nextSurah(after: surahNumber) {
+            if sleepsAfterCurrentSurah {
+                stop()
+            } else if let nextSurah = nextSurah(after: surahNumber) {
                 beginPlayback(.chapter(surah: nextSurah.number), in: nextSurah)
             } else {
                 stop()
@@ -681,6 +851,10 @@ final class AyahPlayer {
         progress = 0
         elapsedSeconds = 0
         durationSeconds = 0
+        pausedByInterruption = false
+        publishedDurationSeconds = 0
+        nowPlaying.clear()
+        cancelSleepTimer()
         let message = (error as? LocalizedError)?.errorDescription ?? "Couldn’t start this recitation."
         failureMessage = message
         playbackState = .failed(message)
@@ -725,6 +899,7 @@ final class AyahPlayer {
 
     deinit {
         playbackTask?.cancel()
+        sleepTimerTask?.cancel()
         let audioPlayer = audioPlayer
         Task { @MainActor in
             audioPlayer.stop()

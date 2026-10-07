@@ -399,13 +399,6 @@
    "imageAssetName": "reciter-abdul-munim-abdul-mubdi"
   },
   {
-   "id": 244,
-   "name": "Ahmad al-Huthaify",
-   "audioKind": "chapter",
-   "chapterPrefix": "https://download.quranicaudio.com/quran/ahmad_alhuthayfi/",
-   "imageAssetName": "reciter-ahmad-al-huthaify"
-  },
-  {
    "id": 245,
    "name": "Muhammad Khaleel",
    "audioKind": "chapter",

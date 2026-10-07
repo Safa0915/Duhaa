@@ -106,6 +106,12 @@ struct NowPlayingView: View {
         case .buffering, .ready:
             return String(localized: "Buffering")
         case .playing:
+            if player.sleepsAfterCurrentSurah {
+                return String(localized: "Resting after this surah")
+            }
+            if let sleepIn = player.sleepTimerRemainingSeconds {
+                return String(localized: "Sleep in \(formatRemainingTime(sleepIn))")
+            }
             return String(localized: "Now playing")
         case .paused:
             return String(localized: "Paused")
@@ -208,12 +214,57 @@ struct NowPlayingView: View {
             Spacer()
 
             HStack(spacing: 16) {
+                sleepTimerButton
                 ambienceButton
                 downloadControl
             }
         }
         .padding(.top, 4)
         .padding(.bottom, 1)
+    }
+
+    /// Sleep timer for night listening: pause after a set time, or let the
+    /// current surah finish and rest there.
+    private var sleepTimerButton: some View {
+        Menu {
+            if player.isSleepTimerActive {
+                Button {
+                    player.cancelSleepTimer()
+                    DuhaaHaptics.tap()
+                } label: {
+                    Label("Turn off sleep timer", systemImage: "moon.zzz")
+                }
+                Divider()
+            }
+            ForEach(AyahPlayer.sleepTimerMinuteOptions, id: \.self) { minutes in
+                Button {
+                    player.setSleepTimer(minutes: minutes)
+                    DuhaaHaptics.tap()
+                } label: {
+                    Label("\(minutes) minutes", systemImage: "timer")
+                }
+            }
+            Button {
+                player.setSleepAfterCurrentSurah()
+                DuhaaHaptics.tap()
+            } label: {
+                Label("After this surah", systemImage: "moon.stars")
+            }
+        } label: {
+            Image(systemName: player.isSleepTimerActive ? "moon.zzz.fill" : "moon.zzz")
+                .duhaaFont(17)
+                .foregroundStyle(ambience.accentColor)
+        }
+        .accessibilityLabel("Sleep timer")
+        .accessibilityValue(sleepTimerAccessibilityValue)
+    }
+
+    private var sleepTimerAccessibilityValue: String {
+        if player.sleepsAfterCurrentSurah { return String(localized: "On, after this surah") }
+        if let remaining = player.sleepTimerRemainingSeconds {
+            return String(localized: "On, \(formatRemainingTime(remaining)) left")
+        }
+        return String(localized: "Off")
     }
 
     /// Opens the listening-ambience picker (Night Sky, Rain Window, …).

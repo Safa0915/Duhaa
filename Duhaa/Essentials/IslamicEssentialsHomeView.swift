@@ -10,6 +10,14 @@ struct IslamicEssentialsHomeView: View {
 
     private var dueCount: Int { progress.dueCount(across: sets) }
 
+    /// When the queue is clear, say when spaced repetition brings cards back.
+    private var restDayLine: String {
+        guard let next = progress.nextScheduledReview(across: sets) else {
+            return "Explore a set below — short, calm sessions."
+        }
+        return "All caught up — your next review is \(next.formatted(.relative(presentation: .named)))."
+    }
+
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 24) {
@@ -51,7 +59,7 @@ struct IslamicEssentialsHomeView: View {
 
             Text(dueCount > 0
                  ? "A few calm minutes keeps what you've learned fresh."
-                 : "Explore a set below — short, calm sessions.")
+                 : restDayLine)
                 .duhaaFont(13)
                 .foregroundStyle(.primary.opacity(0.66))
                 .fixedSize(horizontal: false, vertical: true)
