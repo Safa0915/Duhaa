@@ -4,11 +4,12 @@ import SwiftUI
 /// or a plain crossfade under Reduce Motion.
 struct FlashcardStudyView: View {
     let title: String
-    let cards: [EssentialsCard]
+    // Keep the session stable as answers remove cards from the live due queue.
+    @State private var cards: [EssentialsCard]
 
     init(title: String, cards: [EssentialsCard]) {
         self.title = title
-        self.cards = cards
+        self._cards = State(initialValue: cards)
     }
 
     init(set: StudySet) {
