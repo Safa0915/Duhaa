@@ -704,7 +704,7 @@ final class AyahPlayer {
             self?.handleRemotePlay()
         }
         nowPlaying.onPauseCommand = { [weak self] in
-            guard let self, self.isActive, self.playbackState != .paused else { return }
+            guard let self, self.isActive else { return }
             self.pause()
         }
         nowPlaying.onTogglePlayPauseCommand = { [weak self] in
@@ -729,8 +729,8 @@ final class AyahPlayer {
             }
         }
         nowPlaying.onRouteDisconnected = { [weak self] in
-            // Headphones unplugged: pause rather than recite out loud.
-            guard let self, self.isActive, self.playbackState != .paused else { return }
+            // Also clear interruption auto-resume if the headphones disappear during a call.
+            guard let self, self.isActive else { return }
             self.pause()
         }
     }

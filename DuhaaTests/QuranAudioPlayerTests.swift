@@ -680,6 +680,26 @@ final class QuranAudioPlayerTests: XCTestCase {
         XCTAssertEqual(harness.player.playbackState, .paused)
     }
 
+    func testRemotePauseDuringInterruptionPreventsAutomaticResume() async {
+        let harness = makeHarness()
+        harness.player.play(in: testSurah, from: 1)
+        await waitUntil("playback") { harness.player.playbackState == .playing }
+        harness.nowPlaying.onInterruptionBegan?()
+        harness.nowPlaying.onPauseCommand?()
+        harness.nowPlaying.onInterruptionEnded?(true)
+        XCTAssertEqual(harness.player.playbackState, .paused)
+    }
+
+    func testHeadphonesDisconnectDuringInterruptionPreventsSpeakerResume() async {
+        let harness = makeHarness()
+        harness.player.play(in: testSurah, from: 1)
+        await waitUntil("playback") { harness.player.playbackState == .playing }
+        harness.nowPlaying.onInterruptionBegan?()
+        harness.nowPlaying.onRouteDisconnected?()
+        harness.nowPlaying.onInterruptionEnded?(true)
+        XCTAssertEqual(harness.player.playbackState, .paused)
+    }
+
     func testRouteDisconnectPausesPlayback() async {
         let harness = makeHarness()
         harness.player.play(in: testSurah, from: 1)
